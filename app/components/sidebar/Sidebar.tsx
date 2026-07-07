@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../provider/AuthProvider';
 
 //CSS
-import './sidebar.css';
+import './Sidebar.css';
 
 //FA-ICONS
 import { FaDumbbell, FaWeight, FaChartBar } from 'react-icons/fa';
