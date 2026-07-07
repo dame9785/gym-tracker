@@ -8,24 +8,11 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const { user, token } = await authService.login(body.email, body.password);
-    const cookieStore = await cookies();
-
-    cookieStore.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/',
-    });
+    const { token } = await authService.login(body.email, body.password);
 
     return NextResponse.json(
       {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        token,
       },
       { status: 200 },
     );

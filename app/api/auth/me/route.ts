@@ -1,18 +1,17 @@
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
 import { AuthService } from '@/services/AuthService';
 
 const authService = new AuthService();
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
+    const authHeader = request.headers.get('authorization');
 
-    const token = cookieStore.get('token')?.value;
-
-    if (!token) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
+
+    const token = authHeader.replace('Bearer ', '');
 
     const user = await authService.getCurrentUser(token);
 

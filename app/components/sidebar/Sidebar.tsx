@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 //Auth
-// import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from '../../provider/AuthProvider';
 
 //CSS
 import './sidebar.css';
@@ -17,25 +17,21 @@ import { FaTrophy } from 'react-icons/fa6';
 import { FaHistory } from 'react-icons/fa';
 import { IoIosSettings } from 'react-icons/io';
 import { BsPersonCircle } from 'react-icons/bs';
-import { IoLogOutOutline } from 'react-icons/io5';
 import { FaHome } from 'react-icons/fa';
 
 function Sidebar() {
-  //   const { user, logOut, loading } = useAuth();
-  const user = null;
+  const { user, loading, refreshUser } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
 
   const handleLogout = async () => {
-    await logOut();
+    localStorage.removeItem('token');
     router.push('/login');
+    refreshUser();
   };
 
-  // if (loading) { // return <aside className="sidebar">Laddar...</aside>; // }
-
-  // if (loading) {
-  //   return <aside className="sidebar">Laddar...</aside>;
-  // }
+  if (!loading) {
+    return null;
+  }
 
   return (
     <>
@@ -108,30 +104,20 @@ function Sidebar() {
             </ul>
           </nav>
         </div>
-        {user ? (
-          <div className="sidebar-bottom">
-            <div className="sidebar-bottom-wrapper flex align-center">
-              <BsPersonCircle />
-              <p>
-                Welcome,
-                <span> Användarnamn </span>
-              </p>
-            </div>
-
-            <div className="logout-wrapper flex justify-center">
-              <IoLogOutOutline />
-              <Link href="/login">Logga ut</Link>
-            </div>
+        <div className="sidebar-bottom">
+          <div className="sidebar-bottom-wrapper flex align-center">
+            <BsPersonCircle />
+            <p>
+              Welcome,
+              <span> {user?.username == null ? 'Kompis' : user?.username}</span>
+            </p>
           </div>
-        ) : (
-          <div className="sidebar-bottom">
-            <div className="logout-wrapper flex justify-center">
-              <button className="btn btn-secondary" onClick={handleLogout}>
-                Logga ut
-              </button>
-            </div>
+          <div className="logout-wrapper flex justify-center mt-5">
+            <button className="btn btn-secondary" onClick={handleLogout}>
+              Logga ut
+            </button>
           </div>
-        )}
+        </div>
       </aside>
     </>
   );
