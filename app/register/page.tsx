@@ -1,3 +1,5 @@
+'use client';
+
 //FONTAWSOME ICONS
 import {
   FaEnvelope,
@@ -20,7 +22,7 @@ import '../form.css';
 //Link
 import Link from 'next/link';
 
-export default function register() {
+export default function Register() {
   return (
     <div className="container">
       <div className="form-wrapper flex justify-center items-center">
