@@ -1,0 +1,115 @@
+.sidebar {
+  gap: var(--gap-20);
+  padding: 1em;
+  width: fit-content;
+  height: 100vh;
+  position: fixed;
+  background-color: var(--dark-900-clr);
+}
+
+.sidebar-top {
+  gap: var(--gap-20);
+}
+
+.sidebar-intro-wrapper {
+  gap: var(--gap-20);
+}
+
+.sidebar-intro-wrapper .fa-dumbbell {
+  width: 40px;
+  height: 40px;
+  color: var(--orange-clr);
+}
+
+.sidebar-intro-wrapper .sidebar-intro-text {
+  font-size: var(--font-size-l);
+  font-weight: var(--font-w-800);
+
+  span {
+    color: var(--orange-clr);
+  }
+}
+
+.sidebar-nav .ul-list {
+  /* display: grid; */
+  /* grid-auto-flow: row; */
+  gap: var(--gap-20);
+}
+
+.sidebar .ul-list .li {
+  /* display: flex; */
+  /* align-items: center; */
+  gap: var(--gap-15);
+  border-left: 3px solid transparent;
+  padding-left: 10px;
+  padding: 1em;
+}
+
+.sidebar .ul-list .li.active {
+  border-left-color: var(--orange-clr);
+  background-color: #8080802e;
+}
+
+.sidebar .ul-list .li .fa-icon {
+  width: 25px;
+  height: 25px;
+}
+
+.sidebar-nav a {
+  text-decoration: none;
+  font-size: var(--font-size-m);
+  font-weight: var(--font-w-400);
+  color: var(--text-grey-100);
+  gap: var(--gap-10);
+  /* display: grid; */
+  grid-template-columns: auto auto;
+  transition: 0.5s;
+  letter-spacing: 2px;
+
+  &:hover {
+    color: var(--orange-clr);
+  }
+}
+
+.sidebar-bottom-wrapper {
+  /* align-items: center; */
+  gap: var(--gap-10);
+  border-bottom: solid 1px grey;
+  padding: 0.4em;
+}
+
+.sidebar-bottom-wrapper p {
+  text-decoration: none;
+  font-size: var(--font-size-m);
+  font-weight: var(--font-w-400);
+  color: var(--text-grey-100);
+  gap: var(--gap-10);
+  letter-spacing: 2px;
+
+  span {
+    color: var(--orange-clr);
+  }
+}
+
+.sidebar-bottom-wrapper svg {
+  height: 25px;
+  width: 25px;
+  color: var(--orange-clr);
+}
+
+.logout-wrapper svg {
+  height: 20px;
+  width: 20px;
+}
+
+.logout-wrapper a {
+  text-decoration: none;
+  font-size: var(--font-size-s);
+  font-weight: var(--font-w-400);
+  color: var(--text-grey-100);
+  letter-spacing: 2px;
+
+  &:hover {
+    color: var(--orange-clr);
+  }
+}

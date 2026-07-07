@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  firstName     String?  @db.VarChar(50)
+  lastName      String?  @db.VarChar(50)
+  username      String   @unique @db.VarChar(50)
+  email         String   @unique @db.VarChar(100)
+  passwordHash  String
+  description   String?  @db.VarChar(500)
+  bodyWeight    Decimal? @db.Decimal(5,2)
+  height        Decimal? @db.Decimal(5,2)
+  gender        Gender?
+  birthDate     DateTime? @db.Date
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  goals         Goal[]
+  workoutDays   WorkoutDay[]
+}
+
+model Goal {
+  id       Int   @id @default(autoincrement())
+  userId   Int
+  user     User @relation(fields: [userId], references: [id])
+  title    String
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model WorkoutDay {
+  id          Int   @id @default(autoincrement())
+  userId      Int
+  user        User @relation(fields: [userId], references: [id])
+  workoutDate DateTime @db.Date
+  note        String? @db.VarChar(500)
+}
