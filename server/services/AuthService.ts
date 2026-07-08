@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
-import { UserRepository } from '@/repositories/UserRepository';
-import { generateToken } from './lib/jwt';
-import { verifyToken } from './lib/jwt';
+import { UserRepository } from '../repositories/UserRepository';
+import { generateToken, verifyToken } from '../../lib/jwt';
 
 export class AuthService {
   private userRepository = new UserRepository();
