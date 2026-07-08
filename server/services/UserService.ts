@@ -1,11 +1,22 @@
 import bcrypt from 'bcryptjs';
 import { UserRepository } from '../repositories/UserRepository';
 import { generateToken, verifyToken } from '../../lib/jwt';
+import { Gender } from '@prisma/client';
 
 export class AuthService {
   private userRepository = new UserRepository();
 
-  async register(data: { username: string; email: string; password: string; firstName?: string; lastName?: string }) {
+  async register(data: {
+    username: string;
+    email: string;
+    password: string;
+    firstName?: string;
+    lastName?: string;
+    description?: string;
+    height: number;
+    gender: Gender;
+    birtDate: Date;
+  }) {
     const existingEmail = await this.userRepository.findByEmail(data.email);
 
     if (existingEmail) {
@@ -20,12 +31,17 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(data.password, 10);
 
-    return await this.userRepository.create({
+    return await this.userRepository.registerUser({
       firstName: data.firstName,
       lastName: data.lastName,
       username: data.username,
       email: data.email,
-      passwordHash,
+      passwordHash: passwordHash,
+      description: data.description,
+      height: data.height,
+      gender: data.gender,
+      birthDate: data.birtDate,
+      createdAt: new Date(),
     });
   }
 
