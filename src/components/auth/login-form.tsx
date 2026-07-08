@@ -11,7 +11,7 @@ import { FaEnvelope, FaLock, FaDumbbell } from 'react-icons/fa6';
 import Link from 'next/link';
 
 //Auth
-import { useAuth } from '../../provider/AuthProvider';
+import { useAuth } from '../../provider/auth-provider';
 
 //CSS
 import styles from './Form.module.css';

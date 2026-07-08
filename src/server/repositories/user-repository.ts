@@ -1,7 +1,6 @@
 import { prisma } from '../../lib/prisma';
 import { Gender } from '@prisma/client';
-import { Goal } from '@prisma/client';
-import { WorkoutDay } from '@prisma/client';
+
 export class UserRepository {
   async findByEmail(email: string) {
     return await prisma.user.findUnique({
