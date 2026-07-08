@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { AuthService } from '@/services/AuthService';
+import { AuthService } from '../../../../services/AuthService';
 import { cookies } from 'next/headers';
 
 const authService = new AuthService();

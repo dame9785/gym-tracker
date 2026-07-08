@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
-import './globals.css';
-import { AuthProvider } from './provider/AuthProvider';
-import Sidebar from './components/sidebar/Sidebar';
+import '../css/globals.css';
+import { AuthProvider } from '../provider/AuthProvider';
+import Sidebar from '../components/sidebar/Sidebar';
 
 const roboto = Roboto({
   variable: '--font-geist-sans',
