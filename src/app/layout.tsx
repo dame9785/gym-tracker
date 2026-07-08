@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
-import '../css/globals.css';
+import './globals.css';
 import { AuthProvider } from '../provider/AuthProvider';
 import Sidebar from '../components/sidebar/Sidebar';
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv" className={`${roboto.variable} ${roboto.variable} h-full antialiased`}>
+    <html lang="sv" className={`${roboto.variable} ${roboto.variable} min-h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <AuthProvider>
           <main>

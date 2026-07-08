@@ -104,7 +104,14 @@ function RegisterForm() {
             Email
           </label>
         </div>
-        <input type="email" id="email" required placeholder="E-post..." onChange={(e) => setEmail(e.target.value)} />
+        <input
+          className={styles.formInput}
+          type="email"
+          id="email"
+          required
+          placeholder="E-post..."
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </div>
 
       {/* USERNAME */}
@@ -116,6 +123,7 @@ function RegisterForm() {
           </label>
         </div>
         <input
+          className={styles.formInput}
           type="text"
           id="username"
           maxLength={20}
@@ -134,6 +142,7 @@ function RegisterForm() {
           </label>
         </div>
         <input
+          className={styles.formInput}
           type="text"
           id="name"
           maxLength={20}
@@ -152,6 +161,7 @@ function RegisterForm() {
           </label>
         </div>
         <input
+          className={styles.formInput}
           type="text"
           maxLength={50}
           id="lastName"
@@ -170,6 +180,7 @@ function RegisterForm() {
           </label>
         </div>
         <input
+          className={styles.formInput}
           type="tel"
           id="number"
           maxLength={15}
@@ -188,6 +199,7 @@ function RegisterForm() {
           </label>
         </div>
         <input
+          className={styles.formInput}
           type="number"
           step="0.1"
           id="weight"
@@ -206,6 +218,7 @@ function RegisterForm() {
           </label>
         </div>
         <input
+          className={styles.formInput}
           type="number"
           step="0.1"
           id="lenght"
@@ -223,7 +236,7 @@ function RegisterForm() {
             Kön
           </label>
         </div>
-        <select id="gender" className="select" onChange={(e) => setGender(e.target.value)}>
+        <select className={styles.formSelect} id="gender" onChange={(e) => setGender(e.target.value)}>
           <option value="">Välj kön</option>
           <option value={0}>Man</option>
           <option value={1}>Kvinna</option>
@@ -238,7 +251,13 @@ function RegisterForm() {
             Född
           </label>
         </div>
-        <input type="date" id="birth" placeholder="1997-09-26" onChange={(e) => setBirthDate(e.target.value)} />
+        <input
+          className={styles.formInput}
+          type="date"
+          id="birth"
+          placeholder="1997-09-26"
+          onChange={(e) => setBirthDate(e.target.value)}
+        />
       </div>
 
       {/* Goal */}
@@ -249,7 +268,7 @@ function RegisterForm() {
             Mål
           </label>
         </div>
-        <select className="select" id="goal" onChange={(e) => setGoal(e.target.value)}>
+        <select className={styles.formSelect} id="goal" onChange={(e) => setGoal(e.target.value)}>
           <option value="0">Välj mål</option>
           <option value="1">Bygga muskler</option>
           <option value="2">Gå ner i vikt</option>
@@ -268,6 +287,7 @@ function RegisterForm() {
           </label>
         </div>
         <input
+          className={styles.formInput}
           type="number"
           step="0.1"
           placeholder="Ex: 75"
@@ -284,7 +304,7 @@ function RegisterForm() {
             Måldatum
           </label>
         </div>
-        <input type="date" id="goalDate" onChange={(e) => setGoalDate(e.target.value)} />
+        <input className={styles.formInput} type="date" id="goalDate" onChange={(e) => setGoalDate(e.target.value)} />
       </div>
 
       {/* PASSWORD */}
@@ -297,6 +317,7 @@ function RegisterForm() {
         </div>
 
         <input
+          className={styles.formInput}
           type="password"
           id="password"
           required

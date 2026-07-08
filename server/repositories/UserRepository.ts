@@ -1,4 +1,4 @@
-import { prisma } from '../../src/lib/prisma';
+import { prisma } from '../../lib/prisma';
 
 export class UserRepository {
   async findByEmail(email: string) {
