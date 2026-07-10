@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 //Auth
-import { useAuth } from '../../provider/AuthProvider';
+import { useAuth } from '../../provider/auth-provider';
 
 //CSS
-import './Sidebar.css';
+import './sidebar.css';
 
 //FA-ICONS
 import { FaDumbbell, FaWeight, FaChartBar } from 'react-icons/fa';

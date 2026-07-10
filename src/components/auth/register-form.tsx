@@ -1,4 +1,4 @@
-'use strict';
+'use client';
 
 //FONTAWSOME ICONS
 import {
@@ -16,15 +16,30 @@ import {
   FaLock,
 } from 'react-icons/fa6';
 
+//Gender Enum
+import { Gender } from '@prisma/client';
+
+//Components
+import Button from '@/components/button/button';
+
 //CSS
-import styles from './Form.module.css';
+import styles from './form.module.css';
+import buttonStyles from '@/components/button/button.module.css';
 
 //Link
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+//Services
+import { getGoals, GoalType } from '@/services/goal.service';
 
 function RegisterForm() {
-  type RegisterRequest = {
+  interface GoalType {
+    id: number;
+    title: string;
+  }
+
+  interface RegisterFormData {
     email: string;
     username: string;
     firstName: string;
@@ -33,45 +48,77 @@ function RegisterForm() {
     weight: number;
     height: number;
     lenght: number;
-    gender: number;
+    gender: Gender;
     birthDate: string;
+    goalTypeId: number;
     goal: number;
     goalWeight: number;
     goalDate: string;
     password: string;
-  };
+  }
 
-  const [email, setEmail] = useState('');
-  const [userName, setUserName] = useState('');
-  const [name, setName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [weight, setWeight] = useState('');
-  const [lenght, setLenght] = useState('');
-  const [gender, setGender] = useState('');
-  const [goalWeight, setGoalWeight] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [goalDate, setGoalDate] = useState('');
-  const [password, setPassword] = useState('');
-  const [goal, setGoal] = useState('');
+  const [goals, setGoals] = useState<GoalType[]>([]);
+
+  //Get all goals
+  useEffect(() => {
+    async function loadGoals() {
+      try {
+        const data = await getGoals();
+        console.log('Data', data);
+        setGoals(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadGoals();
+  }, []);
+
+  const [formData, setFormData] = useState<RegisterFormData>({
+    email: '',
+    username: '',
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    weight: 0,
+    height: 0,
+    lenght: 0,
+    gender: Gender.MALE,
+    birthDate: '',
+    goalTypeId: 0,
+    goal: 0,
+    goalWeight: 0,
+    goalDate: '',
+    password: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const user: RegisterRequest = {
-      email,
-      username: userName,
-      firstName: name,
-      lastName,
-      phoneNumber,
-      weight: Number(weight),
-      height: Number(lenght),
-      lenght: Number(lenght),
-      gender: Number(gender),
-      birthDate,
-      goal: Number(goal),
-      goalWeight: Number(goalWeight),
-      goalDate,
-      password,
+
+    const user: RegisterFormData = {
+      email: formData.email,
+      username: formData.username,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phoneNumber: formData.phoneNumber,
+      weight: Number(formData.weight),
+      height: Number(formData.height),
+      gender: formData.gender,
+      lenght: Number(formData.lenght),
+      birthDate: formData.birthDate,
+      goal: Number(formData.goal),
+      goalTypeId: Number(formData.goalTypeId),
+      goalWeight: Number(formData.goalWeight),
+      goalDate: formData.goalDate,
+      password: formData.password,
     };
 
     console.log('Registed User Data', user);
@@ -96,238 +143,254 @@ function RegisterForm() {
         </h1>
       </div>
 
-      {/* EMAIL */}
-      <div className="form-group flex flex-col gap=[0.5rem] mb-[1.2rem]">
-        <div className="items-center input-label-wrapper gap-[10px] flex">
-          <FaEnvelope className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="email">
-            Email
-          </label>
-        </div>
-        <input
-          className={styles.formInput}
-          type="email"
-          id="email"
-          required
-          placeholder="E-post..."
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
+      <div className={styles.formGrid}>
+        <div className="form-left">
+          {/* EMAIL */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaEnvelope className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="email">
+                Email
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="email"
+              type="email"
+              id="email"
+              required
+              placeholder="E-post..."
+              onChange={handleChange}
+            />
+          </div>
 
-      {/* USERNAME */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaUser className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="username">
-            Användarnamn
-          </label>
-        </div>
-        <input
-          className={styles.formInput}
-          type="text"
-          id="username"
-          maxLength={20}
-          required
-          placeholder="Användarnamn..."
-          onChange={(e) => setUserName(e.target.value)}
-        />
-      </div>
+          {/* USERNAME */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaUser className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="username">
+                Användarnamn
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="username"
+              type="text"
+              id="username"
+              maxLength={20}
+              required
+              placeholder="Användarnamn..."
+              onChange={handleChange}
+            />
+          </div>
 
-      {/* NAME */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaSignature className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="name">
-            Namn
-          </label>
-        </div>
-        <input
-          className={styles.formInput}
-          type="text"
-          id="name"
-          maxLength={20}
-          required
-          placeholder="Namn..."
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
+          {/* NAME */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaSignature className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="firstName">
+                Namn
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="firstName"
+              type="text"
+              id="firstName"
+              maxLength={20}
+              required
+              placeholder="Namn..."
+              onChange={handleChange}
+            />
+          </div>
 
-      {/* LAST NAME */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaSignature className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="lastName">
-            Efternamn
-          </label>
-        </div>
-        <input
-          className={styles.formInput}
-          type="text"
-          maxLength={50}
-          id="lastName"
-          required
-          placeholder="Efternamn..."
-          onChange={(e) => setLastName(e.target.value)}
-        />
-      </div>
+          {/* LAST NAME */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaSignature className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="lastName">
+                Efternamn
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="lastName"
+              type="text"
+              maxLength={50}
+              id="lastName"
+              required
+              placeholder="Efternamn..."
+              onChange={handleChange}
+            />
+          </div>
 
-      {/* PHONE */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaPhone className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="number">
-            Nummer
-          </label>
-        </div>
-        <input
-          className={styles.formInput}
-          type="tel"
-          id="number"
-          maxLength={15}
-          required
-          placeholder="Telefonnummer..."
-          onChange={(e) => setPhoneNumber(e.target.value)}
-        />
-      </div>
+          {/* PHONE */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaPhone className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="phoneNumber">
+                Nummer
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="phoneNumber"
+              type="tel"
+              id="phoneNumber"
+              maxLength={15}
+              required
+              placeholder="Telefonnummer..."
+              onChange={handleChange}
+            />
+          </div>
 
-      {/* Body Weight */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaWeightScale className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="weight">
-            Kroppsvikt (kg)
-          </label>
-        </div>
-        <input
-          className={styles.formInput}
-          type="number"
-          step="0.1"
-          id="weight"
-          required
-          placeholder="Ex (40.2kg)"
-          onChange={(e) => setWeight(e.target.value)}
-        />
-      </div>
-
-      {/* Body lenght */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaRulerVertical className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="lenght">
-            Längd (cm)
-          </label>
-        </div>
-        <input
-          className={styles.formInput}
-          type="number"
-          step="0.1"
-          id="lenght"
-          required
-          placeholder="Ex (150.5cm)"
-          onChange={(e) => setLenght(e.target.value)}
-        />
-      </div>
-
-      {/* GENDER */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaMars className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="gender">
-            Kön
-          </label>
-        </div>
-        <select className={styles.formSelect} id="gender" onChange={(e) => setGender(e.target.value)}>
-          <option value="">Välj kön</option>
-          <option value={0}>Man</option>
-          <option value={1}>Kvinna</option>
-        </select>
-      </div>
-
-      {/* Birth */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaCakeCandles className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="birth">
-            Född
-          </label>
-        </div>
-        <input
-          className={styles.formInput}
-          type="date"
-          id="birth"
-          placeholder="1997-09-26"
-          onChange={(e) => setBirthDate(e.target.value)}
-        />
-      </div>
-
-      {/* Goal */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaBullseye className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="goal">
-            Mål
-          </label>
-        </div>
-        <select className={styles.formSelect} id="goal" onChange={(e) => setGoal(e.target.value)}>
-          <option value="0">Välj mål</option>
-          <option value="1">Bygga muskler</option>
-          <option value="2">Gå ner i vikt</option>
-          <option value="3">Gå upp i vikt</option>
-          <option value="4">Bli starkare</option>
-          <option value="5">Uthållighet</option>
-        </select>
-      </div>
-
-      {/* Goal weight*/}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaWeightHanging className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="goalWeight">
-            Mål vikt (kg)
-          </label>
-        </div>
-        <input
-          className={styles.formInput}
-          type="number"
-          step="0.1"
-          placeholder="Ex: 75"
-          id="goalWeight"
-          onChange={(e) => setGoalWeight(e.target.value)}
-        />
-      </div>
-
-      {/* Goal Date */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaFlagCheckered className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="goalDate">
-            Måldatum
-          </label>
-        </div>
-        <input className={styles.formInput} type="date" id="goalDate" onChange={(e) => setGoalDate(e.target.value)} />
-      </div>
-
-      {/* PASSWORD */}
-      <div className={styles.formGroup}>
-        <div className="items-center input-label-wrapper mb-[0.5rem] gap-[10px] flex">
-          <FaLock className={styles.formIcon} />
-          <label htmlFor="password" className={styles.formLabel}>
-            Lösenord
-          </label>
+          {/* Body Weight */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaWeightScale className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="weight">
+                Kroppsvikt (kg)
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="weight"
+              type="number"
+              step="0.1"
+              id="weight"
+              required
+              placeholder="Ex (40.2kg)"
+              onChange={handleChange}
+            />
+          </div>
+          {/* PASSWORD */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaLock className={styles.formIcon} />
+              <label htmlFor="password" className={styles.formLabel}>
+                Lösenord
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="password"
+              type="password"
+              id="password"
+              required
+              placeholder="Lösenord..."
+              onChange={handleChange}
+            />
+          </div>
         </div>
 
-        <input
-          className={styles.formInput}
-          type="password"
-          id="password"
-          required
-          placeholder="Lösenord..."
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="form-right">
+          {/* Body lenght */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaRulerVertical className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="lenght">
+                Längd (cm)
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="lenght"
+              type="number"
+              step="0.1"
+              id="lenght"
+              required
+              placeholder="Ex (150.5cm)"
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* GENDER */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaMars className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="gender">
+                Kön
+              </label>
+            </div>
+            <select className={styles.formSelect} id="gender" name="gender" onChange={handleChange}>
+              <option value="">Välj kön</option>
+              <option value={Gender.MALE}>Man</option>
+              <option value={Gender.FEMALE}>Kvinna</option>
+              <option value={Gender.OTHER}>Annat</option>
+            </select>
+          </div>
+
+          {/* Birth */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaCakeCandles className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="birthDate">
+                Född
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="birthDate"
+              type="date"
+              id="birthDate"
+              placeholder="1997-09-26"
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Goal */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaBullseye className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="goal">
+                Mål
+              </label>
+            </div>
+            <select className={styles.formSelect} name="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
+              <option value="">Välj mål</option>
+
+              {goals.map((goal) => (
+                <option key={goal.id} value={goal.id}>
+                  {goal.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Goal weight*/}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaWeightHanging className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="goalWeight">
+                Mål vikt (kg)
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="number"
+              type="number"
+              step="0.1"
+              placeholder="Ex: 75"
+              id="goalWeight"
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Goal Date */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaFlagCheckered className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="goalDate">
+                Måldatum
+              </label>
+            </div>
+            <input className={styles.formInput} name="goalDate" type="date" id="goalDate" onChange={handleChange} />
+          </div>
+        </div>
       </div>
       <div className="grid grid-2">
-        <button className="btn btn-primary text-center">Skapa konto</button>
-        <Link href="/login" className="btn btn-secondary text-center">
+        <Button type="submit" text="Skapa konto" variant="primary"></Button>
+        <Link href="/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
           Gå tillbaks
         </Link>
       </div>

@@ -145,37 +145,3 @@ img {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: var(--gap-20);
 }
-
-.btn {
-  border-radius: 25px;
-  border: none;
-  font-size: var(--font-size-s);
-  color: #fff;
-  cursor: pointer;
-  line-height: 1.2;
-  letter-spacing: 2px;
-  padding: 0.6rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.btn-primary {
-  background-color: var(--btn-bg-primary);
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-1px);
-    background-color: oklch(0.63 0.15 69.21 / 0.94);
-  }
-}
-
-.btn-secondary {
-  background-color: var(--btn-bg-secondary);
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-1px);
-    background-color: #1b49af;
-  }
-}

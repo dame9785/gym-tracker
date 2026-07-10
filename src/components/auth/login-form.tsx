@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { useAuth } from '../../provider/auth-provider';
 
 //CSS
-import styles from './Form.module.css';
+import styles from './form.module.css';
 
 function LoginForm() {
   const router = useRouter();
