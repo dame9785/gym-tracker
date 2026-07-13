@@ -5,6 +5,19 @@
   height: 100vh;
   position: fixed;
   background-color: var(--dark-900-clr);
+  animation: sidebarIn 0.4s ease;
+}
+
+@keyframes sidebarIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .sidebar-top {

@@ -4,10 +4,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 //Auth
-import { useAuth } from '../../provider/auth-provider';
+import { useAuth } from '@/provider/auth-provider';
 
 //CSS
 import './sidebar.css';
+
+//Components
+import Button from '@/components/button/button';
 
 //FA-ICONS
 import { FaDumbbell, FaWeight, FaChartBar } from 'react-icons/fa';
@@ -113,9 +116,7 @@ function Sidebar() {
             </p>
           </div>
           <div className="logout-wrapper flex justify-center mt-5">
-            <button className="btn btn-secondary" onClick={handleLogout}>
-              Logga ut
-            </button>
+            <Button type="button" text="Logga ut" variant="secondary" onClick={handleLogout}></Button>
           </div>
         </div>
       </aside>

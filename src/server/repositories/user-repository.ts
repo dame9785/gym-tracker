@@ -1,5 +1,5 @@
-import { prisma } from '../../lib/prisma';
-import { Gender } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 
 export class UserRepository {
   async findByEmail(email: string) {
@@ -11,20 +11,8 @@ export class UserRepository {
   }
 
   //Register User
-  async registerUser(data: {
-    firstName?: string;
-    lastName?: string;
-    username: string;
-    email: string;
-    passwordHash: string;
-    description?: string;
-    bodyWeight?: number;
-    height?: number;
-    gender?: Gender;
-    birthDate?: Date;
-    createdAt: Date;
-  }) {
-    return await prisma.user.create({
+  async create(data: Prisma.UserCreateInput): Promise<User> {
+    return prisma.user.create({
       data,
     });
   }
@@ -35,12 +23,6 @@ export class UserRepository {
       where: {
         username,
       },
-    });
-  }
-
-  async create(data: { firstName?: string; lastName?: string; username: string; email: string; passwordHash: string }) {
-    return await prisma.user.create({
-      data,
     });
   }
 

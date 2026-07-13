@@ -1,38 +1,28 @@
 import { NextResponse } from 'next/server';
-import { AuthService } from '../../../../AuthService';
+import { AuthService } from '@/server/services/authService';
+import type { RegisterUserDto } from '@/server/dto/register-user-dto';
+import { UserValidationResponse } from '@/server/responses/user-validation-response';
 
 const authService = new AuthService();
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<NextResponse> {
   try {
-    const body = await request.json();
+    const registerDto: RegisterUserDto = await request.json();
+    const result: UserValidationResponse = await authService.register(registerDto);
 
-    const user = await authService.register(body);
-
+    return NextResponse.json(result, {
+      status: result.success ? 201 : 400,
+    });
+  } catch {
     return NextResponse.json(
       {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        username: user.username,
-        email: user.email,
-        description: user.description,
-        bodyWeight: user.bodyWeight,
-        height: user.height,
-        gender: user.gender,
-        birthDate: user.birthDate,
-        createdAt: user.createdAt,
+        success: false,
+        message: 'Ett oväntat fel inträffade.',
+        errors: [],
       },
-      { status: 201 },
-    );
-
-    return NextResponse.json(user, { status: 201 });
-  } catch (error) {
-    return NextResponse.json(
       {
-        message: error instanceof Error ? error.message : 'Unknown error',
+        status: 500,
       },
-      { status: 400 },
     );
   }
 }

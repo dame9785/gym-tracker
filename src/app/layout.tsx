@@ -3,7 +3,7 @@ import { Roboto } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '../provider/auth-provider';
 import Sidebar from '../components/sidebar/sidebar';
-
+import { Toaster } from 'sonner';
 const roboto = Roboto({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -26,6 +26,7 @@ export default function RootLayout({
           <main>
             <Sidebar />
             {children}
+            <Toaster richColors position="top-right" />
           </main>
         </AuthProvider>
       </body>

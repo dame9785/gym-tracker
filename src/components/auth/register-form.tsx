@@ -19,6 +19,9 @@ import {
 //Gender Enum
 import { Gender } from '@prisma/client';
 
+//Toast Alert
+import { toast } from 'sonner';
+
 //Components
 import Button from '@/components/button/button';
 
@@ -28,10 +31,16 @@ import buttonStyles from '@/components/button/button.module.css';
 
 //Link
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import { useState, useEffect } from 'react';
 
 //Services
-import { getGoals, GoalType } from '@/services/goal.service';
+import { getGoals } from '@/services/goal.service';
+import authService from '@/services/user.service';
+
+//Providers
+import { useAuth } from '@/provider/auth-provider';
 
 function RegisterForm() {
   interface GoalType {
@@ -46,18 +55,19 @@ function RegisterForm() {
     lastName: string;
     phoneNumber: string;
     weight: number;
-    height: number;
     lenght: number;
     gender: Gender;
     birthDate: string;
     goalTypeId: number;
-    goal: number;
     goalWeight: number;
     goalDate: string;
     password: string;
   }
 
+  const router = useRouter();
   const [goals, setGoals] = useState<GoalType[]>([]);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const { refreshUser } = useAuth();
 
   //Get all goals
   useEffect(() => {
@@ -81,12 +91,10 @@ function RegisterForm() {
     lastName: '',
     phoneNumber: '',
     weight: 0,
-    height: 0,
     lenght: 0,
     gender: Gender.MALE,
     birthDate: '',
     goalTypeId: 0,
-    goal: 0,
     goalWeight: 0,
     goalDate: '',
     password: '',
@@ -103,35 +111,41 @@ function RegisterForm() {
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const user: RegisterFormData = {
+    const userData: RegisterFormData = {
       email: formData.email,
       username: formData.username,
       firstName: formData.firstName,
       lastName: formData.lastName,
       phoneNumber: formData.phoneNumber,
       weight: Number(formData.weight),
-      height: Number(formData.height),
       gender: formData.gender,
       lenght: Number(formData.lenght),
       birthDate: formData.birthDate,
-      goal: Number(formData.goal),
       goalTypeId: Number(formData.goalTypeId),
       goalWeight: Number(formData.goalWeight),
       goalDate: formData.goalDate,
       password: formData.password,
     };
 
-    console.log('Registed User Data', user);
-    return;
-    const response = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    });
+    try {
+      const result = await authService.register(userData);
+      console.log('Resultat user register', result);
+      if (!result.success) {
+        setErrorMessages(result.errors);
+        toast.error('Användaren skapades inte!');
+        return;
+      }
 
-    console.log(response);
+      toast.success('Användaren registrerades!');
+      localStorage.setItem('token', result.userToken);
+      refreshUser();
+
+      setTimeout(() => {
+        router.push('/account/settings');
+      }, 1000);
+    } catch (error: unknown) {
+      console.log(error);
+    }
   };
 
   return (
@@ -139,10 +153,21 @@ function RegisterForm() {
       <div className={styles.formWrapper}>
         <h1 className={styles.formTitle}>
           Registera
-          <span>Konto</span>
+          <span> Konto</span>
         </h1>
+        {errorMessages.length > 0 && (
+          <div className={styles.formErrorMessage}>
+            <ul>
+              {errorMessages.map((error) => (
+                <li key={error}>
+                  {'-'}
+                  {error}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
-
       <div className={styles.formGrid}>
         <div className="form-left">
           {/* EMAIL */}
@@ -367,7 +392,7 @@ function RegisterForm() {
             </div>
             <input
               className={styles.formInput}
-              name="number"
+              name="goalWeight"
               type="number"
               step="0.1"
               placeholder="Ex: 75"

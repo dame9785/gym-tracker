@@ -10,33 +10,40 @@ import { FaEnvelope, FaLock, FaDumbbell } from 'react-icons/fa6';
 //Link
 import Link from 'next/link';
 
-//Auth
+//Providers
 import { useAuth } from '../../provider/auth-provider';
 
 //CSS
 import styles from './form.module.css';
+import buttonStyles from '@/components/button/button.module.css';
 
+//Components
+import Button from '@/components/button/button';
+
+//Services
+import AuthService from '@/services/user.service';
 function LoginForm() {
   const router = useRouter();
   const { refreshUser } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  interface LoginFormData {
+    email: string;
+    password: string;
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
+    const LoginData: LoginFormData = {
+      email: email,
+      password: password,
+    };
 
+    const response = await AuthService.login(LoginData);
     const data = await response.json();
+
     if (response.ok) {
       localStorage.setItem('token', data.token);
       router.push('/dashboard');
@@ -48,7 +55,7 @@ function LoginForm() {
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form className={`${styles.form} max-w-[800px] mx-auto`}>
       <div className={styles.formWrapper}>
         <FaDumbbell className="label-icon dumbell" />
         <h1 className={styles.formTitle}>
@@ -89,11 +96,9 @@ function LoginForm() {
         ></input>
       </div>
       <div className="grid grid-2">
-        <button type="submit" className="btn btn-primary text-center">
-          Logga in
-        </button>
-        <Link href="/register" className="btn btn-secondary text-center">
-          Registera konto
+        <Button type="submit" text="Logga in" variant="primary"></Button>
+        <Link href="/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
+          Gå tillbaks
         </Link>
       </div>
     </form>
