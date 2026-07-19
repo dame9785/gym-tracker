@@ -27,13 +27,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const refreshUser = async () => {
-    setLoading(true);
-
     const token = localStorage.getItem('token');
 
     if (!token) {
       setUser(null);
-      setLoading(false);
       return;
     }
 

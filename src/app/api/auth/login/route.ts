@@ -6,12 +6,11 @@ const authService = new AuthService();
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-
-    const { token } = await authService.login(body.email, body.password);
+    const response = await authService.login(body.email, body.password);
 
     return NextResponse.json(
       {
-        token,
+        response,
       },
       { status: 200 },
     );

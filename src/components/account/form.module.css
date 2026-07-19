@@ -5,6 +5,7 @@
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(6px);
+  max-width: 800px;
 }
 
 .formWrapper {

@@ -1,5 +1,18 @@
 'use client';
 
+//CSS
+import styles from './form.module.css';
+import buttonStyles from '@/components/button/button.module.css';
+
+//Services
+import UserService from '@/services/user.service';
+
+//React Routing
+import { useState, useEffect } from 'react';
+
+//Gender Enum
+import { Gender } from '@prisma/client';
+
 //FONTAWSOME ICONS
 import {
   FaEnvelope,
@@ -16,144 +29,30 @@ import {
   FaLock,
 } from 'react-icons/fa6';
 
-//Gender Enum
-import { Gender } from '@prisma/client';
+interface UpdateUserFormProps {
+  userId: string;
+}
 
-//Toast Alert
-import { toast } from 'sonner';
+export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
+  const [errorMessages, setErrorsMessages] = useState([]);
 
-//Components
-import Button from '@/components/button/button';
-
-//CSS
-import styles from './form.module.css';
-import buttonStyles from '@/components/button/button.module.css';
-
-//Link
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-
-import { useState, useEffect } from 'react';
-
-//Services
-import { getGoals } from '@/services/goal.service';
-import authService from '@/services/user.service';
-
-//Providers
-import { useAuth } from '@/provider/auth-provider';
-
-function RegisterForm() {
-  interface GoalType {
-    id: number;
-    title: string;
-  }
-
-  interface RegisterFormData {
-    email: string;
-    username: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    weight: number;
-    lenght: number;
-    gender: Gender;
-    birthDate: string;
-    goalTypeId: number;
-    goalWeight: number;
-    goalDate: string;
-    password: string;
-  }
-
-  const router = useRouter();
-  const [goals, setGoals] = useState<GoalType[]>([]);
-  const [errorMessages, setErrorMessages] = useState<string[]>([]);
-  const { refreshUser } = useAuth();
-
-  //Get all goals
   useEffect(() => {
-    async function loadGoals() {
-      try {
-        const data = await getGoals();
-        console.log('Data', data);
-        setGoals(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    loadGoals();
-  }, []);
-
-  const [formData, setFormData] = useState<RegisterFormData>({
-    email: '',
-    username: '',
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    weight: 0,
-    lenght: 0,
-    gender: Gender.MALE,
-    birthDate: '',
-    goalTypeId: 0,
-    goalWeight: 0,
-    goalDate: '',
-    password: '',
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const userData: RegisterFormData = {
-      email: formData.email,
-      username: formData.username,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phoneNumber: formData.phoneNumber,
-      weight: Number(formData.weight),
-      gender: formData.gender,
-      lenght: Number(formData.lenght),
-      birthDate: formData.birthDate,
-      goalTypeId: Number(formData.goalTypeId),
-      goalWeight: Number(formData.goalWeight),
-      goalDate: formData.goalDate,
-      password: formData.password,
+    const fetchUser = async () => {
+      const data = await UserService.getUserById(userId);
+      console.log('Data', data);
     };
 
-    try {
-      const result = await authService.register(userData);
-      console.log('Resultat user register', result);
-      if (!result.success) {
-        setErrorMessages(result.errors);
-        toast.error('Användaren skapades inte!');
-        return;
-      }
+    fetchUser();
+  }, []);
 
-      toast.success('Användaren registrerades!');
-      localStorage.setItem('token', result.userToken);
-      refreshUser();
-
-      setTimeout(() => {
-        router.push('/account/settings');
-      }, 1000);
-    } catch (error: unknown) {
-      console.log(error);
-    }
-  };
+  const handleChange = async () => {};
 
   return (
-    <form className={styles.form} onSubmit={handleSumbit}>
+    <form className={styles.form} onSubmit={handleChange}>
       <div className={styles.formWrapper}>
         <h1 className={styles.formTitle}>
-          Registera
-          <span> Konto</span>
+          Ändra konto
+          <span> Inställningar</span>
         </h1>
         {errorMessages.length > 0 && (
           <div className={styles.formErrorMessage}>
@@ -371,7 +270,7 @@ function RegisterForm() {
                 Mål
               </label>
             </div>
-            <select className={styles.formSelect} name="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
+            {/* <select className={styles.formSelect} name="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
               <option value="">Välj mål</option>
 
               {goals.map((goal) => (
@@ -379,7 +278,7 @@ function RegisterForm() {
                   {goal.title}
                 </option>
               ))}
-            </select>
+            </select> */}
           </div>
 
           {/* Goal weight*/}
@@ -413,14 +312,12 @@ function RegisterForm() {
           </div>
         </div>
       </div>
-      <div className="grid grid-2">
+      {/* <div className="grid grid-2">
         <Button type="submit" text="Skapa konto" variant="primary"></Button>
         <Link href="/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
           Gå tillbaks
         </Link>
-      </div>
+      </div> */}
     </form>
   );
 }
-
-export default RegisterForm;

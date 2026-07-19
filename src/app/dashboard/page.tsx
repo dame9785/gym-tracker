@@ -7,7 +7,7 @@ export default function Dashboard() {
 
   if (loading) return <h1>Laddar...</h1>;
 
-  if (!user) return <h1>Ingen användare</h1>;
+  if (!user) return <h1>Inte inloggad</h1>;
 
   return (
     <>

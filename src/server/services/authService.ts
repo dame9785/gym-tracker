@@ -1,14 +1,18 @@
 import bcrypt from 'bcryptjs';
 
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { UserRepository } from '@/server/repositories/user-repository';
 import { generateToken, verifyToken } from '../../lib/jwt';
 import { RegisterUserDto } from '@/server/dto/register-user-dto';
 import { UserValidationResponse } from '@/server/responses/user-validation-response';
+import { id } from 'zod/locales';
+import { UserSettingViewModel } from '@/server/view-models/UserSettingsViewModel';
+import { UserMapper } from '../mapping/UserMapper';
 
 export class AuthService {
   private userRepository = new UserRepository();
 
+  //Register
   async register(data: RegisterUserDto): Promise<UserValidationResponse> {
     const validationResponse: UserValidationResponse = {
       success: true,
@@ -78,34 +82,58 @@ export class AuthService {
     return validationResponse;
   }
 
-  async login(email: string, password: string) {
+  //Login
+  async login(email: string, password: string): Promise<UserValidationResponse> {
+    const validationResponse: UserValidationResponse = {
+      success: true,
+      message: '',
+      errors: [],
+    };
+
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      throw new Error('Invalid email or password.');
+      validationResponse.success = false;
+      validationResponse.message = 'Valideringen misslyckades.';
+      validationResponse.errors.push('E-postadressen existerar inte.');
+      return validationResponse;
     }
 
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
-
     if (!passwordMatch) {
-      throw new Error('Invalid email or password.');
+      validationResponse.success = false;
+      validationResponse.message = 'Valideringen misslyckades.';
+      validationResponse.errors.push('Lösenordet är fel.');
+      return validationResponse;
     }
 
     const token = generateToken(user.id);
-    return { user, token };
+    validationResponse.userToken = token;
+    return validationResponse;
   }
 
+  //Get Current User
   async getCurrentUser(token: string) {
     const payload = verifyToken(token) as {
       userId: number;
     };
 
     const user = await this.userRepository.findById(payload.userId);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+    return user;
+  }
 
+  //Get User By Id
+  async getUserById(id: number) {
+    const user = await this.userRepository.findById(id);
     if (!user) {
       throw new Error('User not found.');
     }
 
-    return user;
+    // User -> ViewModel
+    const viewModel: UserSettingViewModel = UserMapper.userModelToViewModel(user);
+    return viewModel;
   }
 }

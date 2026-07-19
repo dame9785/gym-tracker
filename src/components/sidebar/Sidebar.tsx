@@ -23,18 +23,16 @@ import { BsPersonCircle } from 'react-icons/bs';
 import { FaHome } from 'react-icons/fa';
 
 function Sidebar() {
-  const { user, loading, refreshUser } = useAuth();
+  const { user, refreshUser } = useAuth();
   const router = useRouter();
+
+  if (user == null) return null;
 
   const handleLogout = async () => {
     localStorage.removeItem('token');
-    router.push('/login');
+    router.push('/account/login');
     refreshUser();
   };
-
-  if (!loading) {
-    return null;
-  }
 
   return (
     <>

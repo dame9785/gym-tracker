@@ -33,6 +33,7 @@ const AuthService = {
       body: JSON.stringify(data),
     });
 
+    console.log('Response', response);
     return response;
   },
 
@@ -48,6 +49,21 @@ const AuthService = {
 
     const result = await response.json();
     return result;
+  },
+
+  //GET: Current User Account Data
+  async getUserById(token: string) {
+    try {
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log('Failed', error);
+    }
   },
 };
 

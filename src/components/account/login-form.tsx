@@ -22,7 +22,11 @@ import Button from '@/components/button/button';
 
 //Services
 import AuthService from '@/services/user.service';
-function LoginForm() {
+
+//Toast Alert
+import { toast } from 'sonner';
+
+export default function LoginForm() {
   const router = useRouter();
   const { refreshUser } = useAuth();
   const [email, setEmail] = useState('');
@@ -44,18 +48,25 @@ function LoginForm() {
     const response = await AuthService.login(LoginData);
     const data = await response.json();
 
-    if (response.ok) {
-      localStorage.setItem('token', data.token);
-      router.push('/dashboard');
-      router.refresh();
-      refreshUser();
-    } else {
-      alert(data.message);
+    if (!data.response.success) {
+      const errorMessages: string[] = data.response.errors;
+
+      errorMessages.forEach((message: string) => {
+        toast.error(message);
+      });
+
+      return;
     }
+
+    console.log('Data', data);
+    localStorage.setItem('token', data.response.userToken);
+    refreshUser();
+    router.refresh();
+    router.push('/');
   };
 
   return (
-    <form className={`${styles.form} max-w-[800px] mx-auto`}>
+    <form onSubmit={handleSubmit} className={`${styles.form} mx-auto`}>
       <div className={styles.formWrapper}>
         <FaDumbbell className="label-icon dumbell" />
         <h1 className={styles.formTitle}>
@@ -80,7 +91,7 @@ function LoginForm() {
         ></input>
       </div>
       <div className={styles.formGroup}>
-        <div className="flex items-center items-center gap-4">
+        <div className="flex items-center gap-4">
           <FaLock className={styles.formIcon} />
           <label htmlFor="email" className={styles.formLabel}>
             Lösenord
@@ -104,5 +115,3 @@ function LoginForm() {
     </form>
   );
 }
-
-export default LoginForm;
