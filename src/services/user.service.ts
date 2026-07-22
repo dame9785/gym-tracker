@@ -17,6 +17,20 @@ interface RegisterFormData {
   password: string;
 }
 
+interface UpdateUserFormData {
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  bodyWeight: number;
+  bodyLenght: number;
+  birthDate: string;
+  goalWeight: number;
+  goalDate: string;
+  goalTypeId: number;
+}
+
 interface LoginFormData {
   email: string;
   password: string;
@@ -51,8 +65,8 @@ const AuthService = {
     return result;
   },
 
-  //GET: Current User Account Data
-  async getUserById(token: string) {
+  //GET: User By Token
+  async getUserByToken(token: string) {
     try {
       const response = await fetch('/api/auth/me', {
         headers: {
@@ -64,6 +78,28 @@ const AuthService = {
     } catch (error) {
       console.log('Failed', error);
     }
+  },
+
+  //GET: User by ID
+  async getUserById(userId: string) {
+    const response = await fetch('/api/auth/setting/' + userId, {
+      method: 'GET',
+    });
+
+    return response.json();
+  },
+
+  //PUT: User
+  async updateUser(userData: UpdateUserFormData, userId: string) {
+    const response = await fetch('/api/auth/update/' + userId, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    return await response.json();
   },
 };
 

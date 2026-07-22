@@ -98,7 +98,7 @@ function Sidebar() {
 
               <li className="li flex items-center">
                 <IoIosSettings className="fa-icon" />
-                <Link href="/" className="grid">
+                <Link href={`/account/settings/${user.id}`} className="grid">
                   Settings
                 </Link>
               </li>

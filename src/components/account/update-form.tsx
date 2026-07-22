@@ -2,10 +2,13 @@
 
 //CSS
 import styles from './form.module.css';
-import buttonStyles from '@/components/button/button.module.css';
+
+//Components
+import Button from '@/components/button/button';
 
 //Services
 import UserService from '@/services/user.service';
+import { getGoals } from '@/services/goal.service';
 
 //React Routing
 import { useState, useEffect } from 'react';
@@ -19,36 +22,158 @@ import {
   FaWeightScale,
   FaPhone,
   FaRulerVertical,
-  FaMars,
   FaCakeCandles,
-  FaBullseye,
   FaWeightHanging,
   FaFlagCheckered,
   FaUser,
   FaSignature,
-  FaLock,
+  FaBullseye,
 } from 'react-icons/fa6';
 
 interface UpdateUserFormProps {
   userId: string;
 }
 
+interface GoalType {
+  id: number;
+  title: string;
+}
+
+interface User {
+  id: number;
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  bodyWeight: number;
+  bodyLenght: number;
+  goalTypeId: number;
+  gender: Gender;
+  birthDate: string;
+  goalWeight: number;
+  goalDate: string;
+}
+
+interface UserFormData {
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  bodyWeight: number;
+  bodyLenght: number;
+  birthDate: string;
+  goalWeight: number;
+  goalDate: string;
+  goalTypeId: number;
+}
+
+interface UpdateResult {
+  errors: string[];
+  message: string;
+  success: boolean;
+}
+
 export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
-  const [errorMessages, setErrorsMessages] = useState([]);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [user, setUserData] = useState<User | null>(null);
+  const [goals, setGoals] = useState<GoalType[]>([]);
+
+  const [formData, setFormData] = useState<UserFormData>({
+    email: '',
+    username: '',
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    bodyWeight: 0,
+    bodyLenght: 0,
+    birthDate: '',
+    goalWeight: 0,
+    goalDate: '',
+    goalTypeId: 0,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const userData: UserFormData = {
+      email: formData.email,
+      username: formData.username,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phoneNumber: formData.phoneNumber,
+      bodyWeight: Number(formData.bodyWeight),
+      bodyLenght: Number(formData.bodyLenght),
+      birthDate: formData.birthDate,
+      goalWeight: Number(formData.goalWeight),
+      goalDate: formData.goalDate,
+      goalTypeId: formData.goalTypeId,
+    };
+
+    const result: UpdateResult = await UserService.updateUser(userData, userId);
+    if (!result.success) {
+      setErrorMessages(result.errors);
+    }
+
+    //Tömmer fel meddelandet
+    setErrorMessages([]);
+  };
+
+  //Get all goals
+  useEffect(() => {
+    async function loadGoals() {
+      try {
+        const data = await getGoals();
+        console.log('Data', data);
+        setGoals(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadGoals();
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const data = await UserService.getUserById(userId);
-      console.log('Data', data);
+      const fetchedUser: User = await UserService.getUserById(userId);
+
+      setUserData(fetchedUser);
+      setFormData({
+        email: fetchedUser.email,
+        username: fetchedUser.username,
+        firstName: fetchedUser.firstName,
+        lastName: fetchedUser.lastName,
+        phoneNumber: fetchedUser.phoneNumber,
+        bodyWeight: fetchedUser.bodyWeight,
+        bodyLenght: fetchedUser.bodyLenght,
+        birthDate: fetchedUser.birthDate.split('T')[0],
+        goalWeight: fetchedUser.goalWeight,
+        goalDate: fetchedUser.goalDate?.split('T')[0] ?? '',
+        goalTypeId: fetchedUser.goalTypeId,
+      });
+
+      console.log('Fetched User', fetchedUser);
     };
 
     fetchUser();
-  }, []);
+  }, [userId]);
 
-  const handleChange = async () => {};
+  if (!user) {
+    return <p>Laddar...</p>;
+  }
 
   return (
-    <form className={styles.form} onSubmit={handleChange}>
+    <form className={styles.form} onSubmit={handleSumbit}>
       <div className={styles.formWrapper}>
         <h1 className={styles.formTitle}>
           Ändra konto
@@ -84,6 +209,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               id="email"
               required
               placeholder="E-post..."
+              value={formData.email}
               onChange={handleChange}
             />
           </div>
@@ -104,6 +230,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               maxLength={20}
               required
               placeholder="Användarnamn..."
+              value={formData.username}
               onChange={handleChange}
             />
           </div>
@@ -124,6 +251,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               maxLength={20}
               required
               placeholder="Namn..."
+              value={formData.firstName}
               onChange={handleChange}
             />
           </div>
@@ -144,6 +272,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               id="lastName"
               required
               placeholder="Efternamn..."
+              value={formData.lastName}
               onChange={handleChange}
             />
           </div>
@@ -164,10 +293,30 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               maxLength={15}
               required
               placeholder="Telefonnummer..."
+              value={formData.phoneNumber}
               onChange={handleChange}
             />
           </div>
+          {/* Goal Date */}
+          <div className={styles.formGroup}>
+            <div className={styles.labelWrapper}>
+              <FaFlagCheckered className={styles.formIcon} />
+              <label className={styles.formLabel} htmlFor="goalDate">
+                Måldatum
+              </label>
+            </div>
+            <input
+              className={styles.formInput}
+              name="goalDate"
+              type="date"
+              id="goalDate"
+              value={formData.goalDate?.split('T')[0] ?? ''}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
 
+        <div className="form-right">
           {/* Body Weight */}
           <div className={styles.formGroup}>
             <div className={styles.labelWrapper}>
@@ -184,30 +333,10 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               id="weight"
               required
               placeholder="Ex (40.2kg)"
+              value={formData.bodyWeight}
               onChange={handleChange}
             />
           </div>
-          {/* PASSWORD */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaLock className={styles.formIcon} />
-              <label htmlFor="password" className={styles.formLabel}>
-                Lösenord
-              </label>
-            </div>
-            <input
-              className={styles.formInput}
-              name="password"
-              type="password"
-              id="password"
-              required
-              placeholder="Lösenord..."
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="form-right">
           {/* Body lenght */}
           <div className={styles.formGroup}>
             <div className={styles.labelWrapper}>
@@ -224,24 +353,9 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               id="lenght"
               required
               placeholder="Ex (150.5cm)"
+              value={formData.bodyLenght}
               onChange={handleChange}
             />
-          </div>
-
-          {/* GENDER */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaMars className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="gender">
-                Kön
-              </label>
-            </div>
-            <select className={styles.formSelect} id="gender" name="gender" onChange={handleChange}>
-              <option value="">Välj kön</option>
-              <option value={Gender.MALE}>Man</option>
-              <option value={Gender.FEMALE}>Kvinna</option>
-              <option value={Gender.OTHER}>Annat</option>
-            </select>
           </div>
 
           {/* Birth */}
@@ -258,6 +372,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               type="date"
               id="birthDate"
               placeholder="1997-09-26"
+              value={formData.birthDate?.split('T')[0] ?? ''}
               onChange={handleChange}
             />
           </div>
@@ -270,7 +385,12 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
                 Mål
               </label>
             </div>
-            {/* <select className={styles.formSelect} name="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
+            <select
+              className={styles.formSelect}
+              name="goalTypeId"
+              value={user.goalTypeId}
+              onChange={handleChange}
+            >
               <option value="">Välj mål</option>
 
               {goals.map((goal) => (
@@ -278,7 +398,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
                   {goal.title}
                 </option>
               ))}
-            </select> */}
+            </select>
           </div>
 
           {/* Goal weight*/}
@@ -296,28 +416,15 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               step="0.1"
               placeholder="Ex: 75"
               id="goalWeight"
+              value={formData.goalWeight}
               onChange={handleChange}
             />
           </div>
-
-          {/* Goal Date */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaFlagCheckered className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="goalDate">
-                Måldatum
-              </label>
-            </div>
-            <input className={styles.formInput} name="goalDate" type="date" id="goalDate" onChange={handleChange} />
-          </div>
         </div>
       </div>
-      {/* <div className="grid grid-2">
-        <Button type="submit" text="Skapa konto" variant="primary"></Button>
-        <Link href="/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
-          Gå tillbaks
-        </Link>
-      </div> */}
+      <div className="grid grid-2">
+        <Button type="submit" text="Uppdatera konto" variant="primary"></Button>
+      </div>
     </form>
   );
 }

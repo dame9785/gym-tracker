@@ -58,7 +58,6 @@ export default function LoginForm() {
       return;
     }
 
-    console.log('Data', data);
     localStorage.setItem('token', data.response.userToken);
     refreshUser();
     router.refresh();

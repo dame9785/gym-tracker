@@ -1,4 +1,5 @@
-import { Gender, GoalType } from '@prisma/client';
+import { Gender } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/client';
 
 export interface UserSettingsViewModel {
   id: number;
@@ -6,12 +7,14 @@ export interface UserSettingsViewModel {
   lastName: string | null;
   username: string;
   email: string;
-  passwordHash: string;
   description: string | null;
   bodyWeight: Decimal | null;
-  height: Decimal | null;
+  bodyLenght: Decimal | null;
+  goalWeight: Decimal | null;
+  phoneNumber: string | null;
   gender: Gender | null;
   birthDate: Date | null;
+  goalDate: Date | null;
   createdAt: Date;
   updatedAt: Date;
   goalTypeId: number | null;

@@ -13,12 +13,14 @@ model User {
   lastName     String?      @db.VarChar(50)
   username     String       @unique @db.VarChar(50)
   email        String       @unique @db.VarChar(100)
+  phoneNumber  String?      
   passwordHash String
-  description  String?      @db.VarChar(500)
   bodyWeight   Decimal?     @db.Decimal(5, 2)
-  height       Decimal?     @db.Decimal(5, 2)
+  goalWeight   Decimal?     @db.Decimal(5, 2)
+  bodyLenght   Decimal?      
   gender       Gender?
   birthDate    DateTime?    @db.Date
+  goalDate     DateTime?    @db.Date
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   goalTypeId   Int?

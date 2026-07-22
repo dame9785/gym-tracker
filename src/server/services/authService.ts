@@ -1,13 +1,14 @@
 import bcrypt from 'bcryptjs';
 
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { UserRepository } from '@/server/repositories/user-repository';
 import { generateToken, verifyToken } from '../../lib/jwt';
 import { RegisterUserDto } from '@/server/dto/register-user-dto';
 import { UserValidationResponse } from '@/server/responses/user-validation-response';
-import { id } from 'zod/locales';
-import { UserSettingViewModel } from '@/server/view-models/UserSettingsViewModel';
+import { UserSettingsViewModel } from '@/server/view-models/UserSettingsViewModel';
 import { UserMapper } from '../mapping/UserMapper';
+import { UpdateUserDto } from '../dto/update-user-dto';
+import { email } from 'zod';
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -47,7 +48,7 @@ export class AuthService {
         firstName: data.firstName,
         lastName: data.lastName,
         bodyWeight: data.weight,
-        height: data.height,
+        bodyLenght: data.height,
         gender: data.gender,
         birthDate: new Date(data.birthDate),
         goalType: {
@@ -133,7 +134,63 @@ export class AuthService {
     }
 
     // User -> ViewModel
-    const viewModel: UserSettingViewModel = UserMapper.userModelToViewModel(user);
+    const viewModel: UserSettingsViewModel = UserMapper.userModelToViewModel(user);
     return viewModel;
+  }
+
+  //Update User
+  async updateUser(dto: UpdateUserDto, userId: number): Promise<UserValidationResponse> {
+    const validationResponse: UserValidationResponse = {
+      success: true,
+      message: '',
+      errors: [],
+    };
+
+    const existingEmail = await this.userRepository.emailExists(dto.email, userId);
+    if (existingEmail) {
+      validationResponse.success = false;
+      validationResponse.message = 'Validation failed';
+      validationResponse.errors.push('E-postadressen finns redan registrerad');
+    }
+
+    const usernameExists = await this.userRepository.userNameAlreadyExist(dto.username, userId);
+    if (usernameExists) {
+      validationResponse.success = false;
+      validationResponse.message = 'Validation failed';
+      validationResponse.errors.push('Användarnamnet finns redan registrerad');
+    }
+
+    if (!validationResponse.success) {
+      return validationResponse;
+    }
+
+    const updateData = {
+      email: dto.email,
+      username: dto.username,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      phoneNumber: dto.phoneNumber,
+      bodyWeight: dto.bodyWeight,
+      bodyLenght: dto.bodyLenght,
+      birthDate: new Date(dto.birthDate),
+      goalWeight: dto.goalWeight,
+      goalDate: new Date(dto.goalDate),
+      goalType: {
+        connect: {
+          id: dto.goalTypeId,
+        },
+      },
+    };
+
+    try {
+      await this.userRepository.update(userId, updateData);
+    } catch (error) {
+      console.error(error);
+      validationResponse.success = false;
+      validationResponse.message = 'Update failed';
+      validationResponse.errors.push('Något gick fel.');
+    }
+
+    return validationResponse;
   }
 }

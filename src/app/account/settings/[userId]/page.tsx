@@ -8,5 +8,11 @@ interface PageProps {
 
 export default async function UserSettings({ params }: PageProps) {
   const { userId } = await params;
-  return <UpdateUserForm userId={userId} />;
+  return (
+    <div className="container">
+      <div className="form-wrapper flex justify-center items-center m-[5em]">
+        <UpdateUserForm userId={userId} />
+      </div>
+    </div>
+  );
 }
