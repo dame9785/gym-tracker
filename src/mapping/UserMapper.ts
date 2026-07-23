@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { UserSettingsViewModel } from '../view-models/UserSettingsViewModel';
+import { UserSettingsViewModel } from '../../view-models/UserSettingsViewModel';
 
 export class UserMapper {
   static userModelToViewModel(user: User): UserSettingsViewModel {

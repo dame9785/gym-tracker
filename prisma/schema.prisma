@@ -13,11 +13,11 @@ model User {
   lastName     String?      @db.VarChar(50)
   username     String       @unique @db.VarChar(50)
   email        String       @unique @db.VarChar(100)
-  phoneNumber  String?      
+  phoneNumber  String?      @db.VarChar(20)
   passwordHash String
   bodyWeight   Decimal?     @db.Decimal(5, 2)
   goalWeight   Decimal?     @db.Decimal(5, 2)
-  bodyLenght   Decimal?      
+  bodyLength   Decimal?     @db.Decimal(5, 2)
   gender       Gender?
   birthDate    DateTime?    @db.Date
   goalDate     DateTime?    @db.Date
@@ -25,7 +25,8 @@ model User {
   updatedAt    DateTime     @updatedAt
   goalTypeId   Int?
   goalType     GoalType?    @relation(fields: [goalTypeId], references: [id])
-  workoutDays  WorkoutDay[]
+  goal         Goal?
+  workout      Workout[]
 }
 
 model GoalType {
@@ -34,16 +35,51 @@ model GoalType {
   users User[]
 }
 
+model Goal {
+  id            Int @id @default(autoincrement())
+  userId        Int @unique
+  user          User @relation(fields: [userId], references: [id])
+  calories      Int?
+  protein       Int?
+  carbs         Int?
+  fat           Int?
+}
+
 enum Gender {
   MALE
   FEMALE
   OTHER
 }
 
-model WorkoutDay {
+model Workout {
   id          Int      @id @default(autoincrement())
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
-  workoutDate DateTime @db.Date
-  note        String?  @db.VarChar(500)
+  name        String   @db.VarChar(100)
+  description String?  @db.VarChar(500)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  exercises   WorkoutExercise[]
 }
+
+model WorkoutExercise {
+  id          Int @id @default(autoincrement())
+  workoutId   Int
+  workout     Workout @relation(fields: [workoutId], references: [id])
+  exerciseId  Int
+  exercise    Exercise @relation(fields: [exerciseId], references: [id])
+  sets        Int
+  reps        Int
+  weight      Float?
+  restSeconds Int?
+  order       Int
+  note        String? @db.VarChar(500)
+}
+
+model Exercise {
+  id          Int @id @default(autoincrement())
+  name        String
+  muscleGroup String
+  equipment   String? @db.VarChar(50)
+  workouts    WorkoutExercise[]
+} 

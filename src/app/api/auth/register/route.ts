@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { AuthService } from '@/server/services/authService';
-import type { RegisterUserDto } from '@/server/dto/register-user-dto';
-import { UserValidationResponse } from '@/server/responses/user-validation-response';
+import { AuthService } from '@/services-server/authService';
+import type { RegisterUserDto } from '@/dto/register-user-dto';
+import { UserValidationResponse } from '@/responses/user-validation-response';
 
 const authService = new AuthService();
 

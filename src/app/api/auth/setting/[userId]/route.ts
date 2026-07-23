@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthService } from '@/server/services/authService';
+import { AuthService } from '@/services-server/authService';
 
 const authService = new AuthService();
-export async function GET(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ userId: string }> },
+) {
   const { userId } = await params;
 
   // Hämta användaren från databasen

@@ -1,11 +1,11 @@
 import bcrypt from 'bcryptjs';
 
 import { Prisma } from '@prisma/client';
-import { UserRepository } from '@/server/repositories/user-repository';
-import { generateToken, verifyToken } from '../../lib/jwt';
-import { RegisterUserDto } from '@/server/dto/register-user-dto';
-import { UserValidationResponse } from '@/server/responses/user-validation-response';
-import { UserSettingsViewModel } from '@/server/view-models/UserSettingsViewModel';
+import { UserRepository } from '@/repositories/user-repository';
+import { generateToken, verifyToken } from '../lib/jwt';
+import { RegisterUserDto } from '@/dto/register-user-dto';
+import { UserValidationResponse } from '@/responses/user-validation-response';
+import { UserSettingsViewModel } from '@/view-models/UserSettingsViewModel';
 import { UserMapper } from '../mapping/UserMapper';
 import { UpdateUserDto } from '../dto/update-user-dto';
 import { email } from 'zod';
