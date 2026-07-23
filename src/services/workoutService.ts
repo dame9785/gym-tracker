@@ -1,20 +1,5 @@
 import type { ExerciseViewModel } from '@/view-models/ExcerciseViewModel';
-
-interface WorkoutExercise {
-  exerciseId: number;
-  sets: number;
-  reps: number;
-  weight: number;
-  rest: number;
-  note: string;
-}
-
-interface RegisterWorkoutFormData {
-  name: string;
-  description: string;
-  note: string;
-  workoutExercises: WorkoutExercise[];
-}
+import type { RegisterWorkoutDto } from '@/dto/register-workout-dto';
 
 export default class WorkoutService {
   static async get(): Promise<ExerciseViewModel[]> {
@@ -26,13 +11,21 @@ export default class WorkoutService {
     return exerices;
   }
 
-  static async create(dto: RegisterWorkoutFormData) {
+  static async create(dto: RegisterWorkoutDto) {
     const response = await fetch('/api/workouts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(dto),
+    });
+
+    return await response.json();
+  }
+
+  static async getAll() {
+    const response = await fetch('/api/workouts', {
+      method: 'GET',
     });
 
     return await response.json();

@@ -1,15 +1,15 @@
 'use client';
 
-//React
+// React
 import { useState, useEffect } from 'react';
 
 // Styles
 import FormStyles from '@/components/form.module.css';
 
-//Services
+// Services
 import WorkoutService from '@/services/workoutService';
 
-//ViewModels
+// ViewModels
 import type { ExerciseViewModel } from '@/view-models/ExcerciseViewModel';
 
 interface WorkoutExercise {
@@ -24,35 +24,32 @@ interface WorkoutExercise {
 interface RegisterWorkoutFormData {
   name: string;
   description: string;
-  note: string;
   workoutExercises: WorkoutExercise[];
 }
 
 export default function AddWorkoutForm() {
-  const [exercises, setExercies] = useState<ExerciseViewModel[]>([]);
+  const [exercises, setExercises] = useState<ExerciseViewModel[]>([]);
 
   const [formData, setFormData] = useState<RegisterWorkoutFormData>({
     name: '',
     description: '',
-    note: '',
     workoutExercises: [],
   });
 
-  //GET Execerises
   useEffect(() => {
     const fetchExercises = async () => {
-      const exercises = await WorkoutService.get();
-      setExercies(exercises);
+      const data = await WorkoutService.get();
+      setExercises(data);
     };
 
     fetchExercises();
   }, []);
 
-  //Add workout
-  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      await WorkoutService.create(formData);
-
+      const workout = await WorkoutService.create(formData);
+      console.log(workout);
       console.log('Workout sparad!');
     } catch (error) {
       console.error(error);
@@ -60,10 +57,10 @@ export default function AddWorkoutForm() {
   };
 
   const addExercise = () => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       workoutExercises: [
-        ...formData.workoutExercises,
+        ...prev.workoutExercises,
         {
           exerciseId: 0,
           sets: 0,
@@ -73,7 +70,7 @@ export default function AddWorkoutForm() {
           note: '',
         },
       ],
-    });
+    }));
   };
 
   const updateExercise = (index: number, field: keyof WorkoutExercise, value: number | string) => {
@@ -91,7 +88,7 @@ export default function AddWorkoutForm() {
   };
 
   return (
-    <form onSubmit={handleSumbit} className={`${FormStyles.form} mx-auto`}>
+    <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
       <div className={FormStyles.formWrapper}>
         <h1 className={FormStyles.formTitle}>
           Lägg till <span>Workout</span>
@@ -140,27 +137,6 @@ export default function AddWorkoutForm() {
         />
       </div>
 
-      {/* Workout note */}
-      <div className={FormStyles.formGroup}>
-        <label htmlFor="workoutNote" className={FormStyles.formLabel}>
-          Notering
-        </label>
-
-        <textarea
-          className={FormStyles.formTextarea}
-          id="workoutNote"
-          rows={4}
-          placeholder="Skriv en notering..."
-          value={formData.note}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              note: e.target.value,
-            })
-          }
-        />
-      </div>
-
       {/* Exercises */}
       <div className={FormStyles.exerciseSection}>
         <h2 className={FormStyles.sectionTitle}>Övningar</h2>
@@ -168,12 +144,12 @@ export default function AddWorkoutForm() {
         {formData.workoutExercises.map((exercise, index) => (
           <div key={index} className={FormStyles.exerciseCard}>
             <div className={FormStyles.formGroup}>
-              <label htmlFor="exercise" className={FormStyles.formLabel}>
+              <label htmlFor={`exercise-${index}`} className={FormStyles.formLabel}>
                 Övning
               </label>
 
               <select
-                id="exercise"
+                id={`exercise-${index}`}
                 className={FormStyles.formSelect}
                 value={exercise.exerciseId}
                 onChange={(e) => updateExercise(index, 'exerciseId', Number(e.target.value))}
@@ -182,9 +158,9 @@ export default function AddWorkoutForm() {
                   Välj övning
                 </option>
 
-                {exercises.map((exercise) => (
-                  <option key={exercise.id} value={exercise.id}>
-                    {exercise.name}
+                {exercises.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
                   </option>
                 ))}
               </select>
@@ -192,74 +168,86 @@ export default function AddWorkoutForm() {
 
             <div className={FormStyles.exerciseGrid}>
               <div className={FormStyles.formGroup}>
-                <label htmlFor="sets" className={FormStyles.formLabel}>
+                <label htmlFor={`sets-${index}`} className={FormStyles.formLabel}>
                   Set
                 </label>
 
                 <input
-                  id="sets"
+                  id={`sets-${index}`}
                   type="number"
                   min={1}
-                  placeholder="4"
                   className={FormStyles.formInput}
+                  value={exercise.sets}
+                  onChange={(e) => updateExercise(index, 'sets', Number(e.target.value))}
                 />
               </div>
 
               <div className={FormStyles.formGroup}>
-                <label htmlFor="reps" className={FormStyles.formLabel}>
+                <label htmlFor={`reps-${index}`} className={FormStyles.formLabel}>
                   Reps
                 </label>
 
                 <input
-                  id="reps"
+                  id={`reps-${index}`}
                   type="number"
                   min={1}
-                  placeholder="8"
                   className={FormStyles.formInput}
+                  value={exercise.reps}
+                  onChange={(e) => updateExercise(index, 'reps', Number(e.target.value))}
                 />
               </div>
 
               <div className={FormStyles.formGroup}>
-                <label htmlFor="weight" className={FormStyles.formLabel}>
+                <label htmlFor={`weight-${index}`} className={FormStyles.formLabel}>
                   Vikt (kg)
                 </label>
 
                 <input
-                  id="weight"
+                  id={`weight-${index}`}
                   type="number"
                   step="0.5"
-                  placeholder="80"
                   className={FormStyles.formInput}
+                  value={exercise.weight}
+                  onChange={(e) => updateExercise(index, 'weight', Number(e.target.value))}
                 />
               </div>
 
               <div className={FormStyles.formGroup}>
-                <label htmlFor="rest" className={FormStyles.formLabel}>
+                <label htmlFor={`rest-${index}`} className={FormStyles.formLabel}>
                   Vila (sek)
                 </label>
 
-                <input id="rest" type="number" placeholder="90" className={FormStyles.formInput} />
+                <input
+                  id={`rest-${index}`}
+                  type="number"
+                  className={FormStyles.formInput}
+                  value={exercise.rest}
+                  onChange={(e) => updateExercise(index, 'rest', Number(e.target.value))}
+                />
               </div>
             </div>
 
             <div className={FormStyles.formGroup}>
-              <label htmlFor="exerciseNote" className={FormStyles.formLabel}>
+              <label htmlFor={`note-${index}`} className={FormStyles.formLabel}>
                 Anteckning
               </label>
 
               <textarea
-                id="exerciseNote"
+                id={`note-${index}`}
                 rows={3}
-                placeholder="Anteckning om övningen..."
                 className={FormStyles.formTextarea}
+                value={exercise.note}
+                onChange={(e) => updateExercise(index, 'note', e.target.value)}
               />
             </div>
           </div>
         ))}
+
         <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>
           + Lägg till övning
         </button>
       </div>
+
       <button type="submit" className={FormStyles.submitButton}>
         Spara Workout
       </button>

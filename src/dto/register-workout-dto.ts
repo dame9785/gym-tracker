@@ -1,4 +1,10 @@
-export interface WorkoutExercise {
+export interface RegisterWorkoutDto {
+  name: string;
+  description: string;
+  workoutExercises: RegisterWorkoutExerciseDto[];
+}
+
+export interface RegisterWorkoutExerciseDto {
   exerciseId: number;
   sets: number;
   reps: number;
@@ -7,9 +13,13 @@ export interface WorkoutExercise {
   note: string;
 }
 
-export interface RegisterWorkoutDto {
-  name: string;
-  description: string;
+export interface CreateWorkoutExerciseDto {
+  workoutId: number;
+  exerciseId: number;
+  sets: number;
+  reps: number;
+  weight: number;
+  rest: number;
   note: string;
-  workoutExercises: WorkoutExercise[];
+  order: number;
 }
