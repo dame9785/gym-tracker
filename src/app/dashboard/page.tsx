@@ -1,18 +1,30 @@
-'use client';
+import WeeklyOverview from '@/components/dashboard/weekly-overview';
+import TodayWorkout from '@/components/dashboard/today-workout';
+import WeeklySummary from '@/components/dashboard/weekly-summary';
+import { DashboardService } from '@/services-server/dashboardService';
 
-import { useAuth } from '@/provider/auth-provider';
+const dashboardService = new DashboardService();
 
-export default function Dashboard() {
-  const { user, loading } = useAuth();
+export default async function DashboardPage() {
+  const result = await dashboardService.getDashboard();
 
-  if (loading) return <h1>Laddar...</h1>;
+  if (!result.success || !result.dashboard) {
+    return <p>Could not load dashboard.</p>;
+  }
 
-  if (!user) return <h1>Inte inloggad</h1>;
+  const dashboard = result.dashboard;
 
   return (
-    <>
-      <h1>Dashboard</h1>
-      <h2>Hej {user.username}</h2>
-    </>
+    <main className="container space-y-8">
+      <h1 className="text-4xl font-bold">Dashboard</h1>
+
+      <WeeklyOverview workouts={dashboard.weeklyOverview} />
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TodayWorkout workout={dashboard.todayWorkout} />
+
+        <WeeklySummary summary={dashboard.weeklySummary} />
+      </div>
+    </main>
   );
 }

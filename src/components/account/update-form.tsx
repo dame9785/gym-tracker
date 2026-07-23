@@ -1,14 +1,14 @@
 'use client';
 
 //CSS
-import styles from './form.module.css';
+import styles from '@/components/form.module.css';
 
 //Components
 import Button from '@/components/button/button';
 
 //Services
-import UserService from '@/services/user.service';
-import { getGoals } from '@/services/goal.service';
+// import UserService from '@/services/user.service';
+// import { getGoals } from '@/services/goal.service';
 
 //React Routing
 import { useState, useEffect } from 'react';
