@@ -8,7 +8,6 @@ export class DashboardService {
   async getDashboard(): Promise<DashboardResponse> {
     try {
       const weeklyOverview = await this.dashboardRepository.getWeeklyOverview();
-
       const weeklyOverviewViewModel = mapWeeklyOverview(weeklyOverview);
 
       const today = new Date();

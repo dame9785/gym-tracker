@@ -49,8 +49,6 @@ export default function AddWorkoutForm() {
     e.preventDefault();
     try {
       const workout = await WorkoutService.create(formData);
-
-      console.log('Workout sparad!');
     } catch (error) {
       console.error(error);
     }

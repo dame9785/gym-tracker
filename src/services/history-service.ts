@@ -3,7 +3,6 @@ export default class HistoryService {
     try {
       const response = await fetch('/api/history');
       const data = await response.json();
-      console.log(data);
       return {
         success: true,
         history: data.history,

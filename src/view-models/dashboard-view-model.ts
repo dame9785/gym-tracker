@@ -1,3 +1,4 @@
+import { WorkoutSessionStatus } from '@prisma/client';
 export interface WorkoutExerciseViewModel {
   id: number;
   name: string;
@@ -13,8 +14,7 @@ export interface WeeklyWorkoutViewModel {
   date: string;
   exerciseCount: number;
   estimatedMinutes: number;
-  completed: boolean;
-  hasActiveSession: boolean;
+  status: WorkoutSessionStatus;
   activeSessionId: number | null;
   exercises: WorkoutExerciseViewModel[];
 }

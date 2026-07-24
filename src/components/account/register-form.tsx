@@ -74,7 +74,7 @@ export default function RegisterForm() {
     async function loadGoals() {
       try {
         const data = await getGoals();
-        console.log('Data', data);
+
         setGoals(data);
       } catch (error) {
         console.error(error);
@@ -129,7 +129,7 @@ export default function RegisterForm() {
 
     try {
       const result = await authService.register(userData);
-      console.log('Resultat user register', result);
+
       if (!result.success) {
         setErrorMessages(result.errors);
         toast.error('Användaren skapades inte!');
@@ -143,9 +143,7 @@ export default function RegisterForm() {
       setTimeout(() => {
         router.push('/account/settings');
       }, 1000);
-    } catch (error: unknown) {
-      console.log(error);
-    }
+    } catch (error: unknown) {}
   };
 
   return (
@@ -371,7 +369,12 @@ export default function RegisterForm() {
                 Mål
               </label>
             </div>
-            <select className={styles.formSelect} name="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
+            <select
+              className={styles.formSelect}
+              name="goalTypeId"
+              value={formData.goalTypeId}
+              onChange={handleChange}
+            >
               <option value="">Välj mål</option>
 
               {goals.map((goal) => (
@@ -409,7 +412,13 @@ export default function RegisterForm() {
                 Måldatum
               </label>
             </div>
-            <input className={styles.formInput} name="goalDate" type="date" id="goalDate" onChange={handleChange} />
+            <input
+              className={styles.formInput}
+              name="goalDate"
+              type="date"
+              id="goalDate"
+              onChange={handleChange}
+            />
           </div>
         </div>
       </div>

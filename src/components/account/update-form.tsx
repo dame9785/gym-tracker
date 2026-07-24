@@ -133,7 +133,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
     async function loadGoals() {
       try {
         const data = await getGoals();
-        console.log('Data', data);
+
         setGoals(data);
       } catch (error) {
         console.error(error);
@@ -161,8 +161,6 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
         goalDate: fetchedUser.goalDate?.split('T')[0] ?? '',
         goalTypeId: fetchedUser.goalTypeId,
       });
-
-      console.log('Fetched User', fetchedUser);
     };
 
     fetchUser();

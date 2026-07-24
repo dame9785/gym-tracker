@@ -14,7 +14,7 @@ export class WorkoutScheduleService {
         workoutSchedule,
       };
     } catch (error) {
-      console.error(error);
+      console.error('Error', error);
 
       return {
         success: false,

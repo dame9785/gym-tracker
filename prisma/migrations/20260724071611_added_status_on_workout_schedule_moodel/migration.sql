@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `workoutschedule` ADD COLUMN `status` ENUM('ACTIVE', 'COMPLETED', 'CANCELLED') NOT NULL DEFAULT 'ACTIVE';

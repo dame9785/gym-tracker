@@ -7,7 +7,6 @@ export async function GET() {
     const goals = await prisma.goalType.findMany();
     return NextResponse.json(goals, { status: 200 });
   } catch (error) {
-    console.log(error);
     return NextResponse.json({ message: 'Kunde inte hämta mål.' }, { status: 500 });
   }
 }

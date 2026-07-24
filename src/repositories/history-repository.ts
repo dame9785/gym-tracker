@@ -25,8 +25,6 @@ export class HistoryRepository {
       },
     });
 
-    console.log('Completed sessions:', sessions);
-
     return sessions;
   }
 

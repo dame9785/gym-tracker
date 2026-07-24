@@ -56,7 +56,7 @@ enum Gender {
 enum WorkoutSessionStatus {
   ACTIVE
   COMPLETED
-  CANCELLED
+  NOTCOMPLETED
 }
 
 model Workout {
@@ -103,6 +103,7 @@ model WorkoutSchedule {
   workout   Workout  @relation(fields: [workoutId], references: [id])
   date      DateTime
   createdAt DateTime @default(now())
+  status     WorkoutSessionStatus @default(ACTIVE)
 }
 
 model WorkoutSession {

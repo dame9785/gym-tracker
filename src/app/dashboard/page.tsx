@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   }
 
   const dashboard = result.dashboard;
-
+  console.log(dashboard);
   return (
     <main className="container space-y-8">
       <h1 className="text-4xl font-bold">Dashboard</h1>

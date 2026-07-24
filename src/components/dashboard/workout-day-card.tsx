@@ -8,18 +8,20 @@ interface WorkoutDayCardProps {
 
 export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCardProps) {
   const hasWorkout = !!workout;
-
+  console.log(workout);
   return (
     <div
       onClick={onClick}
       className={`cursor-pointer rounded-xl border p-4 transition-all duration-200 hover:scale-[1.02] ${
-        hasWorkout ? 'border-orange-500 bg-zinc-900' : 'border-zinc-800 bg-zinc-950'
+        workout?.status === 'COMPLETED'
+          ? 'border-green-500 bg-zinc-900'
+          : 'border-zinc-800 bg-zinc-950'
       }`}
     >
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-zinc-400">{day}</p>
 
-        {workout?.completed && (
+        {workout?.status == 'COMPLETED' && (
           <span className="rounded-full bg-green-500/20 px-2 py-1 text-xs font-semibold text-green-400">
             ✓ Done
           </span>

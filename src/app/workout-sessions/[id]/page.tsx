@@ -23,6 +23,6 @@ export default async function WorkoutSessionPage({ params }: PageProps) {
   }
 
   const workoutSession = result.workoutSession!;
-  console.log(JSON.stringify(workoutSession, null, 2));
+
   return <WorkoutSession workoutSession={workoutSession} />;
 }

@@ -10,22 +10,10 @@ export class DashboardService {
       const weeklyOverview = await this.dashboardRepository.getWeeklyOverview();
       const weeklyOverviewViewModel = mapWeeklyOverview(weeklyOverview);
       const today = new Date();
-      console.log(
-        weeklyOverviewViewModel.map((w) => ({
-          workout: w.workoutName,
-          date: w.date,
-        })),
-      );
+
       const todayWorkout = weeklyOverviewViewModel.find((workout) => {
         const workoutDate = new Date(workout.date);
-        console.log({
-          today: today.toISOString(),
-          workout: workout.workoutName,
-          workoutDate: workoutDate.toISOString(),
-          sameYear: workoutDate.getFullYear() === today.getFullYear(),
-          sameMonth: workoutDate.getMonth() === today.getMonth(),
-          sameDay: workoutDate.getDate() === today.getDate(),
-        });
+
         return (
           workoutDate.getFullYear() === today.getFullYear() &&
           workoutDate.getMonth() === today.getMonth() &&
