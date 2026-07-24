@@ -21,7 +21,18 @@ export class DashboardRepository {
         },
       },
       include: {
-        workout: true,
+        workout: {
+          include: {
+            exercises: {
+              include: {
+                exercise: true,
+              },
+              orderBy: {
+                order: 'asc',
+              },
+            },
+          },
+        },
       },
       orderBy: {
         date: 'asc',

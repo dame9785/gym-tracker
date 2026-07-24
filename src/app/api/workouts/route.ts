@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { WorkoutService } from '@/services-server/workoutService';
+import { WorkoutService } from '@/services-server/workout-service';
 
 const workoutService = new WorkoutService();
 
 export async function POST(request: NextRequest) {
   try {
     const dto = await request.json();
-    console.log(dto);
+    console.log('Dto', dto);
     const result = await workoutService.create(dto);
 
     return NextResponse.json(result, { status: 201 });

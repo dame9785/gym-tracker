@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import WorkoutService from '@/services/workoutService';
+import WorkoutService from '@/services/workout-service';
 import WorkoutScheduleService from '@/services/workout-schedule-service';
 
 //Components
@@ -23,8 +23,11 @@ export default function ScheduleWorkoutForm() {
 
   useEffect(() => {
     async function loadWorkouts() {
-      const data = await WorkoutService.getAll();
-      setWorkouts(data);
+      const result = await WorkoutService.getAll();
+
+      if (result.success) {
+        setWorkouts(result.workouts);
+      }
     }
 
     loadWorkouts();

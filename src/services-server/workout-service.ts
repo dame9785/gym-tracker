@@ -3,6 +3,8 @@ import { WorkoutRepository } from '@/repositories/workout-repository';
 // Dtos
 import { RegisterWorkoutDto } from '@/dto/register-workout-dto';
 
+import { mapWorkout } from '@/mapping/workout-mapping';
+
 export class WorkoutService {
   private workoutRepository = new WorkoutRepository();
 
@@ -41,6 +43,46 @@ export class WorkoutService {
   }
 
   async getAll() {
-    return await this.workoutRepository.getAll();
+    try {
+      const workouts = await this.workoutRepository.getAll();
+
+      return {
+        success: true,
+        workouts,
+      };
+    } catch (error) {
+      console.error('Kunde inte hämta workouts:', error);
+
+      return {
+        success: false,
+        message: 'Något gick fel när träningspassen skulle hämtas.',
+      };
+    }
+  }
+
+  async getById(id: number) {
+    try {
+      const workout = await this.workoutRepository.getById(id);
+      if (!workout) {
+        return {
+          success: false,
+          message: 'Workout hittades inte.',
+        };
+      }
+
+      const workoutViewModel = mapWorkout(workout);
+
+      return {
+        success: true,
+        workout: workoutViewModel,
+      };
+    } catch (error) {
+      console.error('Kunde inte hämta workout:', error);
+
+      return {
+        success: false,
+        message: 'Något gick fel när träningspasset skulle hämtas.',
+      };
+    }
   }
 }

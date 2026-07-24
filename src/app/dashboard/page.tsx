@@ -1,13 +1,12 @@
 import WeeklyOverview from '@/components/dashboard/weekly-overview';
 import TodayWorkout from '@/components/dashboard/today-workout';
 import WeeklySummary from '@/components/dashboard/weekly-summary';
-import { DashboardService } from '@/services-server/dashboardService';
+import { DashboardService } from '@/services-server/dashboard-service';
 
 const dashboardService = new DashboardService();
 
 export default async function DashboardPage() {
   const result = await dashboardService.getDashboard();
-
   if (!result.success || !result.dashboard) {
     return <p>Could not load dashboard.</p>;
   }

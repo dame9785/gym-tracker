@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { DashboardService } from '@/services-server/dashboardService';
+import { DashboardService } from '@/services-server/dashboard-service';
 
 const dashboardService = new DashboardService();
 

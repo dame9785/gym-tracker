@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { AuthService } from '@/services-server/authService';
+import { AuthService } from '@/services-server/auth-service';
 import type { RegisterUserDto } from '@/dto/register-user-dto';
 import { UserValidationResponse } from '@/responses/user-validation-response';
 

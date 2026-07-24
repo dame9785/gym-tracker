@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthService } from '@/services-server/authService';
+import { AuthService } from '@/services-server/auth-service';
 import { UpdateUserDto } from '@/dto/update-user-dto';
 
 const authService = new AuthService();

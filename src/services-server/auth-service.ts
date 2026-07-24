@@ -5,9 +5,10 @@ import { UserRepository } from '@/repositories/user-repository';
 import { generateToken, verifyToken } from '../lib/jwt';
 import { RegisterUserDto } from '@/dto/register-user-dto';
 import { UserValidationResponse } from '@/responses/user-validation-response';
-import { UserSettingsViewModel } from '@/view-models/UserSettingsViewModel';
-import { UserMapper } from '@/mapping/UserMapper';
-import { UpdateUserDto } from '@/dto/update-user-dto';
+import { UserSettingsViewModel } from '@/view-models/user-settings-view-model';
+import { UserMapper } from '../mapping/user-mapping';
+import { UpdateUserDto } from '../dto/update-user-dto';
+import { email } from 'zod';
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -47,7 +48,7 @@ export class AuthService {
         firstName: data.firstName,
         lastName: data.lastName,
         bodyWeight: data.weight,
-        bodyLength: data.height,
+        bodyLenght: data.height,
         gender: data.gender,
         birthDate: new Date(data.birthDate),
         goalType: {

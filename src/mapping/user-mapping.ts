@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { UserSettingsViewModel } from '../../view-models/UserSettingsViewModel';
+import { UserSettingsViewModel } from '@/view-models/user-settings-view-model';
 
 export class UserMapper {
   static userModelToViewModel(user: User): UserSettingsViewModel {
@@ -10,15 +10,12 @@ export class UserMapper {
       firstName: user.firstName ?? '',
       lastName: user.lastName ?? '',
       phoneNumber: user.phoneNumber,
-      passwordHash: user.passwordHash,
-      description: user.description,
       bodyWeight: user.bodyWeight,
       goalWeight: user.goalWeight,
-      height: user.height,
+      bodyLenght: user.bodyLength,
       gender: user.gender,
       birthDate: user.birthDate,
       goalDate: user.goalDate,
-      bodyLenght: user.bodyLenght,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       goalTypeId: user.goalTypeId,

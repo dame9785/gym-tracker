@@ -7,10 +7,10 @@ import { useState, useEffect } from 'react';
 import FormStyles from '@/components/form.module.css';
 
 // Services
-import WorkoutService from '@/services/workoutService';
+import WorkoutService from '@/services/workout-service';
 
 // ViewModels
-import type { ExerciseViewModel } from '@/view-models/ExcerciseViewModel';
+import type { ExerciseViewModel } from '@/view-models/excercise-view-model';
 
 interface WorkoutExercise {
   exerciseId: number;
@@ -49,7 +49,7 @@ export default function AddWorkoutForm() {
     e.preventDefault();
     try {
       const workout = await WorkoutService.create(formData);
-      console.log(workout);
+
       console.log('Workout sparad!');
     } catch (error) {
       console.error(error);

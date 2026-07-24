@@ -21,13 +21,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sv" className={`${roboto.variable} ${roboto.variable} min-h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen">
         <AuthProvider>
-          <main>
-            <Sidebar />
-            {children}
-            <Toaster richColors position="top-right" />
-          </main>
+          <Sidebar />
+
+          <main className="ml-64 min-h-screen p-8">{children}</main>
+
+          <Toaster richColors position="top-right" />
         </AuthProvider>
       </body>
     </html>

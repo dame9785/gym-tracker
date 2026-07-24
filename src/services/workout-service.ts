@@ -1,4 +1,4 @@
-import type { ExerciseViewModel } from '@/view-models/ExcerciseViewModel';
+import type { ExerciseViewModel } from '@/view-models/excercise-view-model';
 import type { RegisterWorkoutDto } from '@/dto/register-workout-dto';
 
 export default class WorkoutService {

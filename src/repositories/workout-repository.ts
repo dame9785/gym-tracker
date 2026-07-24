@@ -45,4 +45,23 @@ export class WorkoutRepository {
       },
     });
   }
+
+  async getById(id: number) {
+    return await prisma.workout.findFirst({
+      where: {
+        id,
+        userId: 15, // Tillfälligt tills vi använder inloggad användare
+      },
+      include: {
+        exercises: {
+          include: {
+            exercise: true,
+          },
+          orderBy: {
+            order: 'asc',
+          },
+        },
+      },
+    });
+  }
 }

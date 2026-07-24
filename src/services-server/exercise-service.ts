@@ -1,5 +1,5 @@
 import { ExerciseRepository } from '../repositories/exercise-repository';
-import { ExerciseViewModel } from '../view-models/ExcerciseViewModel';
+import { ExerciseViewModel } from '../view-models/excercise-view-model';
 
 export class ExerciseService {
   private exerciseRepository = new ExerciseRepository();

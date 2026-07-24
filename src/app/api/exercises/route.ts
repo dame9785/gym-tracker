@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ExerciseService } from '@/services-server/exerciseService';
+import { ExerciseService } from '@/services-server/exercise-service';
 
 const exerciseService = new ExerciseService();
 

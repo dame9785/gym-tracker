@@ -28,6 +28,7 @@ model User {
   goal             Goal?
   workout          Workout[]
   workoutSchedules WorkoutSchedule[]
+  workoutSessions  WorkoutSession[]
 }
 
 model GoalType {
@@ -52,6 +53,12 @@ enum Gender {
   OTHER
 }
 
+enum WorkoutSessionStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
 model Workout {
   id          Int               @id @default(autoincrement())
   userId      Int
@@ -62,20 +69,22 @@ model Workout {
   updatedAt   DateTime          @updatedAt
   exercises   WorkoutExercise[]
   schedules   WorkoutSchedule[]
+  sessions    WorkoutSession[]
 }
 
 model WorkoutExercise {
-  id          Int      @id @default(autoincrement())
-  workoutId   Int
-  workout     Workout  @relation(fields: [workoutId], references: [id])
-  exerciseId  Int
-  exercise    Exercise @relation(fields: [exerciseId], references: [id])
-  sets        Int
-  reps        Int
-  weight      Float?
-  restSeconds Int?
-  order       Int
-  note        String?  @db.VarChar(500)
+  id               Int                      @id @default(autoincrement())
+  workoutId        Int
+  workout          Workout                  @relation(fields: [workoutId], references: [id])
+  exerciseId       Int
+  exercise         Exercise                 @relation(fields: [exerciseId], references: [id])
+  sets             Int
+  reps             Int
+  weight           Float?
+  restSeconds      Int?
+  order            Int
+  note             String?                  @db.VarChar(500)
+  sessionExercises WorkoutSessionExercise[]
 }
 
 model Exercise {
@@ -94,4 +103,54 @@ model WorkoutSchedule {
   workout   Workout  @relation(fields: [workoutId], references: [id])
   date      DateTime
   createdAt DateTime @default(now())
+}
+
+model WorkoutSession {
+  id Int @id @default(autoincrement())
+
+  userId    Int
+  workoutId Int
+
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  status WorkoutSessionStatus @default(ACTIVE)
+
+  user      User                     @relation(fields: [userId], references: [id])
+  workout   Workout                  @relation(fields: [workoutId], references: [id])
+  exercises WorkoutSessionExercise[]
+}
+
+model WorkoutSessionExercise {
+  id Int @id @default(autoincrement())
+
+  workoutSessionId  Int
+  workoutExerciseId Int
+
+  order Int
+
+  workoutSession  WorkoutSession  @relation(fields: [workoutSessionId], references: [id])
+  workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id])
+
+  sets WorkoutSessionSet[]
+}
+
+model WorkoutSessionSet {
+  id Int @id @default(autoincrement())
+
+  workoutSessionExerciseId Int
+
+  setNumber Int
+
+  targetReps   Int
+  targetWeight Float?
+
+  actualReps   Int?
+  actualWeight Float?
+
+  completed Boolean @default(false)
+
+  completedAt DateTime?
+
+  workoutSessionExercise WorkoutSessionExercise @relation(fields: [workoutSessionExerciseId], references: [id])
 }

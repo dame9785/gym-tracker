@@ -7,7 +7,6 @@ export interface UserSettingsViewModel {
   lastName: string | null;
   username: string;
   email: string;
-  description: string | null;
   bodyWeight: Decimal | null;
   bodyLenght: Decimal | null;
   goalWeight: Decimal | null;
