@@ -31,6 +31,15 @@ export class DashboardRepository {
                 order: 'asc',
               },
             },
+            sessions: {
+              where: {
+                userId: 15,
+              },
+              orderBy: {
+                startedAt: 'desc',
+              },
+              take: 1,
+            },
           },
         },
       },

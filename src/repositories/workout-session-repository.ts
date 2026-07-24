@@ -4,6 +4,17 @@ import { WorkoutRepository } from './workout-repository';
 export class WorkoutSessionRepository {
   private workoutRepository = new WorkoutRepository();
   async create(userId: number, workoutId: number) {
+    const activeSession = await prisma.workoutSession.findFirst({
+      where: {
+        userId,
+        workoutId,
+        status: 'ACTIVE',
+      },
+    });
+
+    if (activeSession) {
+      return activeSession;
+    }
     const workout = await this.workoutRepository.getById(workoutId);
 
     if (!workout) {
@@ -87,6 +98,18 @@ export class WorkoutSessionRepository {
         actualReps,
         actualWeight,
         completed: true,
+      },
+    });
+  }
+
+  async finish(id: number) {
+    return await prisma.workoutSession.update({
+      where: {
+        id,
+      },
+      data: {
+        status: 'COMPLETED',
+        finishedAt: new Date(),
       },
     });
   }

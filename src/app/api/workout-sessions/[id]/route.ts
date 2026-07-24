@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
 
 const workoutSessionService = new WorkoutSessionService();
@@ -31,4 +31,14 @@ export async function GET(request: Request, { params }: RouteParams) {
       },
     );
   }
+}
+
+export async function PUT(request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
+
+  const result = await workoutSessionService.finish(Number(id));
+
+  return NextResponse.json(result, {
+    status: result.success ? 200 : 400,
+  });
 }

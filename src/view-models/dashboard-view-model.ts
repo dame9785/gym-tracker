@@ -14,6 +14,8 @@ export interface WeeklyWorkoutViewModel {
   exerciseCount: number;
   estimatedMinutes: number;
   completed: boolean;
+  hasActiveSession: boolean;
+  activeSessionId: number | null;
   exercises: WorkoutExerciseViewModel[];
 }
 

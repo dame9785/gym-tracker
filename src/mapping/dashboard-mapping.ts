@@ -13,6 +13,7 @@ type WeeklyOverview = Prisma.WorkoutScheduleGetPayload<{
             exercise: true;
           };
         };
+        sessions: true;
       };
     };
   };
@@ -31,18 +32,17 @@ export function mapWeeklyOverview(workouts: WeeklyOverview[]): WeeklyWorkoutView
       }),
     );
 
+    const latestSession = workout.workout.sessions[0];
+
     return {
       id: workout.workout.id,
       workoutName: workout.workout.name,
       date: workout.date.toISOString(),
-
       exerciseCount: exercises.length,
-
-      // Tillfälligt värde tills vi räknar ut tiden från övningarna
       estimatedMinutes: 45,
-
-      completed: false,
-
+      completed: latestSession?.status === 'COMPLETED',
+      hasActiveSession: latestSession?.status === 'ACTIVE',
+      activeSessionId: latestSession?.id ?? null,
       exercises,
     };
   });

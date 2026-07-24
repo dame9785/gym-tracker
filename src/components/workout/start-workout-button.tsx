@@ -11,7 +11,7 @@ export default function StartWorkoutButton({ workoutId }: StartWorkoutButtonProp
   const workoutSessionService = new WorkoutSessionService();
   async function handleStartWorkout() {
     const result = await workoutSessionService.create(workoutId);
-    router.push(`/workout-session/${result.workoutSession.id}`);
+    router.push(`/workout-sessions/${result.workoutSession.id}`);
   }
   return (
     <button

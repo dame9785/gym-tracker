@@ -13,7 +13,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
   const [actualWeight, setActualWeight] = useState(set.actualWeight ?? set.targetWeight ?? 0);
 
   const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(set.completed);
 
   const workoutSessionService = new WorkoutSessionService();
 

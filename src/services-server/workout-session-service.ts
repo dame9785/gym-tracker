@@ -54,4 +54,22 @@ export class WorkoutSessionService {
       workoutSessionSet: updatedSet,
     };
   }
+
+  async finish(id: number) {
+    try {
+      const workoutSession = await this.workoutSessionRepository.finish(id);
+
+      return {
+        success: true,
+        workoutSession,
+      };
+    } catch (error) {
+      console.error(error);
+
+      return {
+        success: false,
+        message: 'Kunde inte avsluta träningspasset.',
+      };
+    }
+  }
 }
