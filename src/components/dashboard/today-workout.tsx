@@ -17,7 +17,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
       return;
     }
 
-    if (workout.hasActiveSession && workout.activeSessionId) {
+    if (workout?.status === 'ACTIVE' && workout.activeSessionId) {
       router.push(`/workout-sessions/${workout.activeSessionId}`);
       return;
     }

@@ -8,15 +8,25 @@ interface WorkoutDayCardProps {
 
 export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCardProps) {
   const hasWorkout = !!workout;
-  console.log(workout);
+
+  let borderColor = '';
+  if (workout) {
+    console.log('Workout', workout);
+    if (workout.status === 'COMPLETED') {
+      borderColor = 'border-green-500';
+    } else if (workout.status === 'ACTIVE') {
+      borderColor = 'border-orange-500';
+    } else if (workout.status === 'NOTCOMPLETED') {
+      borderColor = 'border-red-500';
+    }
+  } else {
+    borderColor = 'border-yellow-500';
+  }
+
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer rounded-xl border p-4 transition-all duration-200 hover:scale-[1.02] ${
-        workout?.status === 'COMPLETED'
-          ? 'border-green-500 bg-zinc-900'
-          : 'border-zinc-800 bg-zinc-950'
-      }`}
+      className={`cursor-pointer roun= () =>{}d-xl border p-4 transition-all bg-zinc-900 duration-200 hover:scale-[1.02] ${borderColor}`}
     >
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-zinc-400">{day}</p>
