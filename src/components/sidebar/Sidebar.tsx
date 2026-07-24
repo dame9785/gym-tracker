@@ -91,7 +91,7 @@ function Sidebar() {
 
               <li className="li flex items-center">
                 <FaHistory className="fa-icon" />
-                <Link href="/" className="grid">
+                <Link href="/history" className="grid">
                   History
                 </Link>
               </li>
@@ -114,7 +114,12 @@ function Sidebar() {
             </p>
           </div>
           <div className="logout-wrapper flex justify-center mt-5">
-            <Button type="button" text="Logga ut" variant="secondary" onClick={handleLogout}></Button>
+            <Button
+              type="button"
+              text="Logga ut"
+              variant="secondary"
+              onClick={handleLogout}
+            ></Button>
           </div>
         </div>
       </aside>

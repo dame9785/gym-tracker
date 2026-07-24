@@ -1,9 +1,16 @@
 'use client';
 
+//React hooks
 import { useEffect, useState } from 'react';
+
+//FA-Icons
 import { CalendarDays, Clock3, Dumbbell, History } from 'lucide-react';
 
+//View-models
 import { HistoryViewModel } from '@/view-models/history-view-models';
+
+//Services
+import HistoryService from '@/services/history-service';
 
 function formatDuration(minutes: number) {
   const hours = Math.floor(minutes / 60);
@@ -29,10 +36,7 @@ export default function HistoryPage() {
   useEffect(() => {
     const loadHistory = async () => {
       try {
-        const response = await fetch('/api/history');
-
-        const result = await response.json();
-
+        const result = await HistoryService.getHistory();
         if (result.success) {
           setHistory(result.history);
           setSummary(result.summary);
@@ -57,7 +61,6 @@ export default function HistoryPage() {
   }
 
   const totalMinutes = history.reduce((sum, workout) => sum + workout.durationInMinutes, 0);
-
   const totalExercises = history.reduce((sum, workout) => sum + workout.exerciseCount, 0);
 
   return (
