@@ -26,7 +26,7 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer roun= () =>{}d-xl border p-4 transition-all bg-zinc-900 duration-200 hover:scale-[1.02] ${borderColor}`}
+      className={`cursor-pointer roun= () =>{}d-xl border rounded-xl p-4 transition-all bg-zinc-900 duration-200 hover:scale-[1.02] ${borderColor}`}
     >
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-zinc-400">{day}</p>

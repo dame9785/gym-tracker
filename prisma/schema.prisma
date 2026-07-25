@@ -103,20 +103,16 @@ model WorkoutSchedule {
   workout   Workout  @relation(fields: [workoutId], references: [id])
   date      DateTime
   createdAt DateTime @default(now())
-  status     WorkoutSessionStatus @default(ACTIVE)
+  
 }
 
 model WorkoutSession {
   id Int @id @default(autoincrement())
-
   userId    Int
   workoutId Int
-
   startedAt  DateTime  @default(now())
   finishedAt DateTime?
-
   status WorkoutSessionStatus @default(ACTIVE)
-
   user      User                     @relation(fields: [userId], references: [id])
   workout   Workout                  @relation(fields: [workoutId], references: [id])
   exercises WorkoutSessionExercise[]

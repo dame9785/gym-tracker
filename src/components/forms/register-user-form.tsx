@@ -26,7 +26,7 @@ import { toast } from 'sonner';
 import Button from '@/components/button/button';
 
 //CSS
-import styles from './form.module.css';
+import FormStyles from './form.module.css';
 import buttonStyles from '@/components/button/button.module.css';
 
 //Link
@@ -36,32 +36,19 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 //Services
-import { getGoals } from '@/services/goal.service';
-import authService from '@/services/user.service';
+import AuthService from '@/services/auth-service';
+import GoalService from '@/services/goal-service';
 
 //Providers
 import { useAuth } from '@/provider/auth-provider';
+
+//Dtos
+import RegisterUserDto from '@/dto/register-user-dto';
 
 export default function RegisterForm() {
   interface GoalType {
     id: number;
     title: string;
-  }
-
-  interface RegisterFormData {
-    email: string;
-    username: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    weight: number;
-    lenght: number;
-    gender: Gender;
-    birthDate: string;
-    goalTypeId: number;
-    goalWeight: number;
-    goalDate: string;
-    password: string;
   }
 
   const router = useRouter();
@@ -73,9 +60,11 @@ export default function RegisterForm() {
   useEffect(() => {
     async function loadGoals() {
       try {
-        const data = await getGoals();
-
-        setGoals(data);
+        const goals = await GoalService.getAll();
+        if (goals.length === 0) {
+          toast.warning('Det finns inga mål ännu.');
+        }
+        setGoals(goals);
       } catch (error) {
         console.error(error);
       }
@@ -84,14 +73,14 @@ export default function RegisterForm() {
     loadGoals();
   }, []);
 
-  const [formData, setFormData] = useState<RegisterFormData>({
+  const [formData, setFormData] = useState<RegisterUserDto>({
     email: '',
     username: '',
     firstName: '',
     lastName: '',
     phoneNumber: '',
-    weight: 0,
-    lenght: 0,
+    bodyWeight: 0,
+    bodyLenght: 0,
     gender: Gender.MALE,
     birthDate: '',
     goalTypeId: 0,
@@ -111,15 +100,20 @@ export default function RegisterForm() {
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const userData: RegisterFormData = {
+    if (goals.length === 0) {
+      toast.warning('Något är fel, inga mål finns.');
+      return;
+    }
+
+    const userData: RegisterUserDto = {
       email: formData.email,
       username: formData.username,
       firstName: formData.firstName,
       lastName: formData.lastName,
       phoneNumber: formData.phoneNumber,
-      weight: Number(formData.weight),
+      bodyWeight: Number(formData.bodyWeight),
       gender: formData.gender,
-      lenght: Number(formData.lenght),
+      bodyLenght: Number(formData.bodyLenght),
       birthDate: formData.birthDate,
       goalTypeId: Number(formData.goalTypeId),
       goalWeight: Number(formData.goalWeight),
@@ -128,7 +122,7 @@ export default function RegisterForm() {
     };
 
     try {
-      const result = await authService.register(userData);
+      const result = await AuthService.register(userData);
 
       if (!result.success) {
         setErrorMessages(result.errors);
@@ -143,18 +137,20 @@ export default function RegisterForm() {
       setTimeout(() => {
         router.push('/account/settings');
       }, 1000);
-    } catch (error: unknown) {}
+    } catch (error: unknown) {
+      toast.error('Något gick fel, kontot kunde inte registreras');
+    }
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSumbit}>
-      <div className={styles.formWrapper}>
-        <h1 className={styles.formTitle}>
+    <form className={FormStyles.form} onSubmit={handleSumbit}>
+      <div className={FormStyles.formWrapper}>
+        <h1 className={FormStyles.formTitle}>
           Registera
           <span> Konto</span>
         </h1>
         {errorMessages.length > 0 && (
-          <div className={styles.formErrorMessage}>
+          <div className={FormStyles.formErrorMessage}>
             <ul>
               {errorMessages.map((error) => (
                 <li key={error}>
@@ -166,18 +162,18 @@ export default function RegisterForm() {
           </div>
         )}
       </div>
-      <div className={styles.formGrid}>
+      <div className={FormStyles.formGrid}>
         <div className="form-left">
           {/* EMAIL */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaEnvelope className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="email">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaEnvelope className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="email">
                 Email
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="email"
               type="email"
               id="email"
@@ -188,15 +184,15 @@ export default function RegisterForm() {
           </div>
 
           {/* USERNAME */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaUser className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="username">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaUser className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="username">
                 Användarnamn
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="username"
               type="text"
               id="username"
@@ -208,15 +204,15 @@ export default function RegisterForm() {
           </div>
 
           {/* NAME */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaSignature className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="firstName">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaSignature className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="firstName">
                 Namn
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="firstName"
               type="text"
               id="firstName"
@@ -228,15 +224,15 @@ export default function RegisterForm() {
           </div>
 
           {/* LAST NAME */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaSignature className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="lastName">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaSignature className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="lastName">
                 Efternamn
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="lastName"
               type="text"
               maxLength={50}
@@ -248,15 +244,15 @@ export default function RegisterForm() {
           </div>
 
           {/* PHONE */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaPhone className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="phoneNumber">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaPhone className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="phoneNumber">
                 Nummer
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="phoneNumber"
               type="tel"
               id="phoneNumber"
@@ -268,15 +264,15 @@ export default function RegisterForm() {
           </div>
 
           {/* Body Weight */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaWeightScale className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="weight">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaWeightScale className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="weight">
                 Kroppsvikt (kg)
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="weight"
               type="number"
               step="0.1"
@@ -287,15 +283,15 @@ export default function RegisterForm() {
             />
           </div>
           {/* PASSWORD */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaLock className={styles.formIcon} />
-              <label htmlFor="password" className={styles.formLabel}>
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaLock className={FormStyles.formIcon} />
+              <label htmlFor="password" className={FormStyles.formLabel}>
                 Lösenord
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="password"
               type="password"
               id="password"
@@ -308,15 +304,15 @@ export default function RegisterForm() {
 
         <div className="form-right">
           {/* Body lenght */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaRulerVertical className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="lenght">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaRulerVertical className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="lenght">
                 Längd (cm)
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="lenght"
               type="number"
               step="0.1"
@@ -328,14 +324,19 @@ export default function RegisterForm() {
           </div>
 
           {/* GENDER */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaMars className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="gender">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaMars className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="gender">
                 Kön
               </label>
             </div>
-            <select className={styles.formSelect} id="gender" name="gender" onChange={handleChange}>
+            <select
+              className={FormStyles.formSelect}
+              id="gender"
+              name="gender"
+              onChange={handleChange}
+            >
               <option value="">Välj kön</option>
               <option value={Gender.MALE}>Man</option>
               <option value={Gender.FEMALE}>Kvinna</option>
@@ -344,15 +345,15 @@ export default function RegisterForm() {
           </div>
 
           {/* Birth */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaCakeCandles className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="birthDate">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaCakeCandles className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="birthDate">
                 Född
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="birthDate"
               type="date"
               id="birthDate"
@@ -362,15 +363,15 @@ export default function RegisterForm() {
           </div>
 
           {/* Goal */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaBullseye className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="goal">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaBullseye className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="goal">
                 Mål
               </label>
             </div>
             <select
-              className={styles.formSelect}
+              className={FormStyles.formSelect}
               name="goalTypeId"
               value={formData.goalTypeId}
               onChange={handleChange}
@@ -386,15 +387,15 @@ export default function RegisterForm() {
           </div>
 
           {/* Goal weight*/}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaWeightHanging className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="goalWeight">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaWeightHanging className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="goalWeight">
                 Mål vikt (kg)
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="goalWeight"
               type="number"
               step="0.1"
@@ -405,15 +406,15 @@ export default function RegisterForm() {
           </div>
 
           {/* Goal Date */}
-          <div className={styles.formGroup}>
-            <div className={styles.labelWrapper}>
-              <FaFlagCheckered className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="goalDate">
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaFlagCheckered className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="goalDate">
                 Måldatum
               </label>
             </div>
             <input
-              className={styles.formInput}
+              className={FormStyles.formInput}
               name="goalDate"
               type="date"
               id="goalDate"

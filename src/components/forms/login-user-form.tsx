@@ -21,7 +21,7 @@ import buttonStyles from '@/components/button/button.module.css';
 import Button from '@/components/button/button';
 
 //Services
-import AuthService from '@/services/user.service';
+import AuthService from '@/services/auth-service';
 
 //Toast Alert
 import { toast } from 'sonner';

@@ -17,7 +17,6 @@ export default async function DashboardPage() {
     <main className="container space-y-8">
       <h1 className="text-4xl font-bold">Dashboard</h1>
       <WeeklyOverview workouts={dashboard.weeklyOverview} />
-
       <div className="grid gap-6 lg:grid-cols-2">
         <TodayWorkout workout={dashboard.todayWorkout} />
         <WeeklySummary summary={dashboard.weeklySummary} />

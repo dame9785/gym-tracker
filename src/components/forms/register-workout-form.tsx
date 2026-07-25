@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 
 // Styles
-import FormStyles from '@/components/form.module.css';
+import FormStyles from '@/components/forms/form.module.css';
 
 // Services
 import WorkoutService from '@/services/workout-service';

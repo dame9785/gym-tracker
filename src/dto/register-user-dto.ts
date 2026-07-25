@@ -1,13 +1,13 @@
 import { Gender } from '@prisma/client';
 
-export interface RegisterUserDto {
+export default interface RegisterUserDto {
   email: string;
   username: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  weight: number;
-  height: number;
+  bodyWeight: number;
+  bodyLenght: number;
   gender: Gender;
   birthDate: string;
   goalTypeId: number;

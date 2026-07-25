@@ -8,7 +8,7 @@ import WorkoutScheduleService from '@/services/workout-schedule-service';
 import Button from '@/components/button/button';
 
 // Styles
-import FormStyles from '@/components/form.module.css';
+import FormStyles from '@/components/forms/form.module.css';
 
 interface Workout {
   id: number;
