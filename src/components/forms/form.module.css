@@ -42,6 +42,12 @@
   margin-bottom: 2rem;
 }
 
+.formLabel {
+  font-size: 1.2rem;
+  color: var(--text-grey-100);
+  letter-spacing: 1px;
+}
+
 .formSvg {
   width: 15px;
   height: 15px;
@@ -52,12 +58,6 @@
   display: flex;
   gap: 10px;
   align-items: center;
-}
-
-.formLabel {
-  font-size: 1.2rem;
-  color: var(--text-grey-100);
-  letter-spacing: 1px;
 }
 
 .formIcon {
