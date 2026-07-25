@@ -13,6 +13,21 @@
   text-align: center;
 }
 
+.sm {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+}
+
+.md {
+  padding: 10px 18px;
+  font-size: 1rem;
+}
+
+.lg {
+  padding: 14px 24px;
+  font-size: 1.125rem;
+}
+
 .primary {
   background-color: var(--btn-bg-primary);
   transition: all 0.2s ease;
@@ -30,5 +45,16 @@
   &:hover {
     transform: translateY(-1px);
     background-color: #1b49af;
+  }
+}
+
+.delete {
+  background-color: color-mix(in oklab, var(--color-red-500) 20%, transparent);
+  transition: all 0.2s ease;
+  color: var(--color-red-400);
+
+  &:hover {
+    transform: translateY(-1px);
+    background-color: color-mix(in oklab, lab(55 75.08 48.85 / 0.56) 20%, transparent);
   }
 }

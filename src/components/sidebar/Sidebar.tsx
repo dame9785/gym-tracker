@@ -84,7 +84,7 @@ function Sidebar() {
 
               <li className="li flex items-center">
                 <FaTrophy className="fa-icon" />
-                <Link href="/exercise/register" className="grid">
+                <Link href="/exercise" className="grid">
                   Övningar
                 </Link>
               </li>

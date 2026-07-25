@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '../provider/auth-provider';
-import Sidebar from '../components/sidebar/sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
 import { Toaster } from 'sonner';
 const roboto = Roboto({
   variable: '--font-geist-sans',
