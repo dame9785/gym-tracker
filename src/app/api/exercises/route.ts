@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ExerciseService } from '@/services-server/exercise-service';
 import RegisterResponse from '@/responses/exercise-response';
+import RegisterExerciseDto from '@/dto/register-exercise.dto';
 
 const exerciseService = new ExerciseService();
 
@@ -22,7 +23,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  const body: RegisterExerciseDto = await request.json();
 
-  return NextResponse.json();
+  const response = await exerciseService.registerExercise(body);
+
+  return NextResponse.json(response);
 }

@@ -3,14 +3,23 @@
 //Hooks
 import { useState } from 'react';
 
+//Link
+import { useRouter } from 'next/navigation';
+
 //Styles
 import FormStyles from '@/components/forms/form.module.css';
 import Button from '@/components/button/button';
 
+//Services
+import ExerciseService from '@/services/exercise-service';
+
 //DTO:s
 import RegisterExerciseDto from '@/dto/register-exercise.dto';
+import { toast } from 'sonner';
 
 export default function RegisterForm() {
+  const router = useRouter();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -33,6 +42,19 @@ export default function RegisterForm() {
       muscleGroup: formData.muscleGroup,
       equipment: formData.equipment,
     };
+
+    if (registerDto.name === '' || registerDto.muscleGroup === '' || registerDto.equipment === '') {
+      toast.error('Alla fält måste fyllas i');
+      return;
+    }
+
+    const result = await ExerciseService.register(registerDto);
+    if (!result.success) {
+      toast.error('Något gick fel. Övning ej skapad');
+    }
+
+    toast.success('Övning blev skapad');
+    router.push('/dashboard');
   };
 
   return (
@@ -51,6 +73,7 @@ export default function RegisterForm() {
           <input
             className={FormStyles.formInput}
             id="name"
+            name="name"
             type="text"
             required
             placeholder="T.ex. knäböj"
@@ -64,6 +87,7 @@ export default function RegisterForm() {
           <input
             className={FormStyles.formInput}
             id="muscleGroup"
+            name="muscleGroup"
             type="text"
             required
             placeholder="T.ex. ben"
@@ -77,6 +101,7 @@ export default function RegisterForm() {
           <input
             className={FormStyles.formInput}
             id="equipment"
+            name="equipment"
             type="text"
             required
             placeholder="T.ex. kettlebell / kroppsvikt"

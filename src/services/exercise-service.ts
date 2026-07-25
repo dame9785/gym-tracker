@@ -1,9 +1,10 @@
 import RegisterExerciseDto from '@/dto/register-exercise.dto';
+import ExerciseResponse from '@/responses/exercise-response';
 
 export default class ExerciseService {
-  static async register(dto: RegisterExerciseDto) {
+  static async register(dto: RegisterExerciseDto): Promise<ExerciseResponse> {
     try {
-      const response = fetch('/api/exercises', {
+      const response = await fetch('/api/exercises', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -11,13 +12,21 @@ export default class ExerciseService {
         body: JSON.stringify(dto),
       });
 
-      if ((await response).ok) {
-        return 'Något gick fel';
+      // API:t returnerar alltid ett ExerciseResponse
+      const result: ExerciseResponse = await response.json();
+
+      // Om servern svarade med t.ex. 400 eller 500
+      if (!response.ok) {
+        return result;
       }
 
-      return (await response).json();
-    } catch (error) {
-      return 'Något gick fel';
+      return result;
+    } catch {
+      // Endast om fetch misslyckas, t.ex. servern är nere
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern.',
+      };
     }
   }
 }
