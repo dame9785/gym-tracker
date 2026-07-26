@@ -1,4 +1,4 @@
-import RegisterWorkoutForm from '@/components/forms/register-workout-form';
+import RegisterWorkoutForm from '@/components/forms/workout/register-workout-form';
 
 export default async function RegisterWorkout() {
   return (

@@ -3,6 +3,7 @@ import ExerciseResponse from '@/responses/exercise-response';
 import ExerciseViewModel from '@/view-models/excercise-view-model';
 
 export default class ExerciseService {
+  //GET: Exericses
   static async getAll(): Promise<ExerciseViewModel[]> {
     try {
       const response = await fetch('/api/exercises', {
@@ -15,6 +16,7 @@ export default class ExerciseService {
     }
   }
 
+  //POST: Register Exericse
   static async register(dto: RegisterExerciseDto): Promise<ExerciseResponse> {
     try {
       const response = await fetch('/api/exercises', {
@@ -43,6 +45,7 @@ export default class ExerciseService {
     }
   }
 
+  //DELETE: Exericse by id
   static async delete(id: number) {
     try {
       const response = await fetch(`/api/exercises/${id}`, {
@@ -56,6 +59,37 @@ export default class ExerciseService {
         success: false,
         message: 'Gick inte radera',
       };
+    }
+  }
+
+  //PUT: Edit Exericse
+  static async edit(id: string, dto: RegisterExerciseDto) {
+    try {
+      const response = await fetch(`/api/exercises/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dto),
+      });
+      if (!response.ok) {
+        throw Error('Gick inte uppdatera övning');
+      }
+      return response.json();
+    } catch (error) {
+      throw new Error();
+    }
+  }
+
+  //GET Exericse by Id
+  static async getById(id: string) {
+    try {
+      const response = await fetch(`/api/exercises/${id}`, {
+        method: 'GET',
+      });
+      return await response.json();
+    } catch (error) {
+      throw new Error('Gick inte hämta');
     }
   }
 }

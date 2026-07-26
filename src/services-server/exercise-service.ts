@@ -2,6 +2,8 @@ import { ExerciseRepository } from '../repositories/exercise-repository';
 import ExerciseViewModel from '../view-models/excercise-view-model';
 import ExerciseResponse from '@/responses/exercise-response';
 import RegisterExerciseDto from '@/dto/register-exercise.dto';
+import { ExerciseMapper } from '@/mapping/exericse-mapping';
+
 export class ExerciseService {
   private exerciseRepository = new ExerciseRepository();
 
@@ -54,6 +56,33 @@ export class ExerciseService {
     } catch (error) {
       response.message = 'Något gick fel, övning blev inte skapad';
       return response;
+    }
+  }
+
+  async getById(id: number): Promise<ExerciseViewModel> {
+    try {
+      const exericse = await this.exerciseRepository.getById(id);
+      if (!exericse) {
+        throw new Error('Övning hittades inte');
+      }
+      const viewModel = ExerciseMapper.exerciseModelToViewModel(exericse);
+      return viewModel;
+    } catch (error) {
+      throw new Error('Något gick fel');
+    }
+  }
+
+  async update(id: number, dto: RegisterExerciseDto): Promise<ExerciseViewModel> {
+    try {
+      const updatedExericse = await this.exerciseRepository.update(id, dto);
+      if (!updatedExericse) {
+        throw new Error('Övning ej uppdaterad');
+      }
+
+      const viewModel = ExerciseMapper.exerciseModelToViewModel(updatedExericse);
+      return viewModel;
+    } catch (error) {
+      throw new Error('Något gick fel');
     }
   }
 }

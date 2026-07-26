@@ -1,4 +1,4 @@
-import ScheduleWorkoutForm from '@/components/forms/schedule-workout-form';
+import ScheduleWorkoutForm from '@/components/forms/workout/schedule-workout-form';
 
 export default function WorkoutSchedulePage() {
   return (

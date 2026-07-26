@@ -24,4 +24,25 @@ export class ExerciseRepository {
       },
     });
   }
+
+  async update(id: number, dto: RegisterExerciseDto) {
+    return await prisma.exercise.update({
+      where: {
+        id,
+      },
+      data: {
+        name: dto.name,
+        muscleGroup: dto.muscleGroup,
+        equipment: dto.equipment,
+      },
+    });
+  }
+
+  async getById(id: number) {
+    return await prisma.exercise.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import UpdateUserForm from '@/components/forms/update-user-form';
+import UpdateUserForm from '@/components/forms/user/update-user-form';
 
 interface PageProps {
   params: Promise<{

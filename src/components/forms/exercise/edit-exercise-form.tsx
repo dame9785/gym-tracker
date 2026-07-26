@@ -1,24 +1,45 @@
 'use client';
 
-//Hooks
-import { useState } from 'react';
-
-//Link
-import { useRouter } from 'next/navigation';
-
-//Styles
 import FormStyles from '@/components/forms/form.module.css';
 import Button from '@/components/button/button';
-
-//Services
 import ExerciseService from '@/services/exercise-service';
-
-//DTO:s
+import { useEffect, useState } from 'react';
 import RegisterExerciseDto from '@/dto/register-exercise.dto';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+type Props = {
+  exerciseId: string;
+};
 
-export default function RegisterForm() {
+export default function EditExercise({ exerciseId }: Props) {
   const router = useRouter();
+
+  const [formData, setFormData] = useState<RegisterExerciseDto>({
+    name: '',
+    muscleGroup: '',
+    equipment: '',
+  });
+
+  useEffect(() => {
+    const fetchExercise = async () => {
+      const result = await ExerciseService.getById(exerciseId);
+
+      const exericse = result.exericse;
+      if (!exericse) {
+        toast.error('Gick inte att hämta övning');
+        return;
+      }
+
+      setFormData({
+        name: exericse.name,
+        muscleGroup: exericse.muscleGroup,
+        equipment: exericse.equipment,
+      });
+    };
+
+    fetchExercise();
+  }, [exerciseId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -27,12 +48,6 @@ export default function RegisterForm() {
       [name]: value,
     }));
   };
-
-  const [formData, setFormData] = useState<RegisterExerciseDto>({
-    name: '',
-    muscleGroup: '',
-    equipment: '',
-  });
 
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,24 +62,23 @@ export default function RegisterForm() {
       toast.error('Alla fält måste fyllas i');
       return;
     }
-
-    const result = await ExerciseService.register(registerDto);
+    const result = await ExerciseService.edit(exerciseId, registerDto);
     if (!result.success) {
-      toast.error('Något gick fel. Övning ej skapad');
+      toast.error('Uppdateringen misslyckades, försök igen');
     }
-
-    toast.success('Övning blev skapad');
-    router.push('/dashboard');
+    toast.success('Uppdateringen lyckades');
+    router.push('/exercise');
   };
 
   return (
     <div className="container">
       <div className={FormStyles.formWrapper}>
         <h1 className={FormStyles.formTitle}>
-          Lägg till
+          Redigera
           <span> Övning</span>
         </h1>
       </div>
+
       <form className={FormStyles.form} onSubmit={handleSumbit}>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="name">
@@ -77,6 +91,7 @@ export default function RegisterForm() {
             type="text"
             required
             placeholder="T.ex. knäböj"
+            value={formData.name}
             onChange={handleChange}
           ></input>
         </div>
@@ -91,6 +106,7 @@ export default function RegisterForm() {
             type="text"
             required
             placeholder="T.ex. ben"
+            value={formData.muscleGroup}
             onChange={handleChange}
           ></input>
         </div>
@@ -105,6 +121,7 @@ export default function RegisterForm() {
             type="text"
             required
             placeholder="T.ex. kettlebell / kroppsvikt"
+            value={formData.equipment}
             onChange={handleChange}
           ></input>
         </div>

@@ -2,12 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import Button from '@/components/button/button';
+import ButtonStyle from '@/components/button/button.module.css';
 import ExerciseService from '@/services/exercise-service';
 import ExerciseViewModel from '@/view-models/excercise-view-model';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 export default function ExerciseTable() {
   const [exercises, setExercises] = useState<ExerciseViewModel[]>([]);
+
+  //Get all exericses
   useEffect(() => {
     const fetchExercises = async () => {
       const data = await ExerciseService.getAll();
@@ -26,7 +30,7 @@ export default function ExerciseTable() {
   };
 
   //Pop up verify delete
-  const verifyDelete = (id: number) => {
+  const verifyDelete = (id: number): void => {
     toast('Är du säker på att du vill radera övningen?', {
       action: {
         label: 'Radera',
@@ -42,7 +46,7 @@ export default function ExerciseTable() {
   };
 
   //Remove Exercise from array
-  const removeExericse = (id: number) => {
+  const removeExericse = (id: number): void => {
     setExercises((prev) => prev.filter((f) => f.id !== id));
     toast.success('Övning raderad');
   };
@@ -79,7 +83,12 @@ export default function ExerciseTable() {
               </td>
               <td className="border-b border-zinc-800 px-6 py-4 text-zinc-300">
                 <div className="flex gap-4">
-                  <Button type="submit" text="Redigera övning" variant="primary" size="sm"></Button>
+                  <Link
+                    className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}
+                    href={`/exercise/${exercise.id}`}
+                  >
+                    Redigera
+                  </Link>
                   <Button
                     type="submit"
                     text="Radera övning"
