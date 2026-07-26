@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import RegisterExerciseDto from '@/dto/register-exercise.dto';
+import { id } from 'zod/locales';
 
 export class ExerciseRepository {
   async getAll() {
@@ -12,6 +13,14 @@ export class ExerciseRepository {
         name: dto.name,
         muscleGroup: dto.muscleGroup,
         equipment: dto.equipment,
+      },
+    });
+  }
+
+  async delete(id: number) {
+    return await prisma.exercise.delete({
+      where: {
+        id,
       },
     });
   }

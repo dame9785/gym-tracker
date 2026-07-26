@@ -1,7 +1,20 @@
 import RegisterExerciseDto from '@/dto/register-exercise.dto';
 import ExerciseResponse from '@/responses/exercise-response';
+import ExerciseViewModel from '@/view-models/excercise-view-model';
 
 export default class ExerciseService {
+  static async getAll(): Promise<ExerciseViewModel[]> {
+    try {
+      const response = await fetch('/api/exercises', {
+        method: 'GET',
+      });
+      const data = response.json();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async register(dto: RegisterExerciseDto): Promise<ExerciseResponse> {
     try {
       const response = await fetch('/api/exercises', {
@@ -26,6 +39,22 @@ export default class ExerciseService {
       return {
         success: false,
         message: 'Kunde inte ansluta till servern.',
+      };
+    }
+  }
+
+  static async delete(id: number) {
+    try {
+      const response = await fetch(`/api/exercises/${id}`, {
+        method: 'delete',
+      });
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Gick inte radera',
       };
     }
   }

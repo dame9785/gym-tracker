@@ -1,19 +1,41 @@
 import { ExerciseRepository } from '../repositories/exercise-repository';
-import { ExerciseViewModel } from '../view-models/excercise-view-model';
+import ExerciseViewModel from '../view-models/excercise-view-model';
 import ExerciseResponse from '@/responses/exercise-response';
 import RegisterExerciseDto from '@/dto/register-exercise.dto';
 export class ExerciseService {
   private exerciseRepository = new ExerciseRepository();
 
   async getAllExersise(): Promise<ExerciseViewModel[]> {
-    const exercises = await this.exerciseRepository.getAll();
+    try {
+      const exercises = await this.exerciseRepository.getAll();
+      return exercises.map((exercise) => {
+        return {
+          id: exercise.id,
+          name: exercise.name,
+          muscleGroup: exercise.muscleGroup,
+          equipment: exercise.equipment,
+        };
+      });
+    } catch (error) {
+      throw new Error('Något gick fel');
+    }
+  }
 
-    return exercises.map((exercise) => {
-      return {
-        id: exercise.id,
-        name: exercise.name,
-      };
-    });
+  async delete(id: number) {
+    const response: ExerciseResponse = {
+      message: '',
+      success: false,
+    };
+
+    try {
+      await this.exerciseRepository.delete(id);
+      response.message = 'Övning sparad';
+      response.success = true;
+      return response;
+    } catch (error) {
+      response.message = 'Något gick fel, övning blev inte skapad';
+      return response;
+    }
   }
 
   async registerExercise(dto: RegisterExerciseDto): Promise<ExerciseResponse> {
