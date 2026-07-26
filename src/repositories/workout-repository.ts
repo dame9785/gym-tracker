@@ -6,7 +6,7 @@ export class WorkoutRepository {
     return await prisma.$transaction(async (tx) => {
       const workout = await tx.workout.create({
         data: {
-          userId: 15,
+          userId: 1,
           name: dto.name,
           description: dto.description,
         },

@@ -16,6 +16,7 @@ import ExerciseService from '@/services/exercise-service';
 //DTO:s
 import RegisterExerciseDto from '@/dto/register-exercise.dto';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -55,17 +56,15 @@ export default function RegisterForm() {
     }
 
     toast.success('Övning blev skapad');
-    router.push('/dashboard');
+    router.push('/exercise');
   };
 
   return (
-    <div className="container">
-      <div className={FormStyles.formWrapper}>
-        <h1 className={FormStyles.formTitle}>
-          Lägg till
-          <span> Övning</span>
-        </h1>
-      </div>
+    <div className={FormStyles.formContainer}>
+      <h1 className={FormStyles.formTitle}>
+        Lägg till
+        <span> Övning</span>
+      </h1>
       <form className={FormStyles.form} onSubmit={handleSumbit}>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="name">
@@ -109,7 +108,12 @@ export default function RegisterForm() {
             onChange={handleChange}
           ></input>
         </div>
-        <Button type="submit" text="Lägg till övning" variant="primary"></Button>
+        <div className="flex gap-2">
+          <Button type="submit" text="Lägg till övning" variant="primary"></Button>
+          <Link href="/exercise">
+            <Button type="button" text="Gå tillbaks" variant="secondary" />
+          </Link>
+        </div>
       </form>
     </div>
   );
