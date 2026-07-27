@@ -1,7 +1,6 @@
 import { ExerciseService } from '@/services-server/exercise-service';
 import { NextRequest, NextResponse } from 'next/server';
 import RegisterExerciseDto from '@/dto/register-exercise.dto';
-import { success } from 'zod';
 
 const exerciseService = new ExerciseService();
 export async function DELETE(
@@ -31,13 +30,13 @@ export async function DELETE(
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body: RegisterExerciseDto = await request.json();
-
   try {
     const viewModel = await exerciseService.update(Number(id), body);
     return NextResponse.json(
       {
         success: true,
         viewModel,
+        message: 'Övning uppdaterad',
       },
       { status: 200 },
     );
@@ -46,6 +45,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       {
         success: false,
         viewModel: [],
+        message: 'Övning ej uppdaterad',
       },
       { status: 500 },
     );

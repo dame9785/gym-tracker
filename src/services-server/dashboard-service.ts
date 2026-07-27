@@ -1,3 +1,4 @@
+import WeeklyOverview from '@/components/dashboard/weekly-overview';
 import { mapWeeklyOverview } from '@/mapping/dashboard-mapping';
 import { DashboardRepository } from '@/repositories/dashboard-repository';
 import { DashboardResponse } from '@/responses/dashboard-response';
@@ -7,13 +8,11 @@ export class DashboardService {
 
   async getDashboard(): Promise<DashboardResponse> {
     try {
-      const weeklyOverview = await this.dashboardRepository.getWeeklyOverview();
-      const weeklyOverviewViewModel = mapWeeklyOverview(weeklyOverview);
+      const weeklyOverviewViewModel = await this.getWeeklyOverView();
       const today = new Date();
 
       const todayWorkout = weeklyOverviewViewModel.find((workout) => {
         const workoutDate = new Date(workout.date);
-
         return (
           workoutDate.getFullYear() === today.getFullYear() &&
           workoutDate.getMonth() === today.getMonth() &&
@@ -26,6 +25,9 @@ export class DashboardService {
         trainingTime: 45,
         streak: 3,
       };
+
+      console.log('weeklyOverviewViewModel:', weeklyOverviewViewModel);
+      console.log('weeklySummary:', weeklySummary);
 
       return {
         success: true,
@@ -43,5 +45,12 @@ export class DashboardService {
         message: 'Något gick fel.',
       };
     }
+  }
+
+  async getWeeklyOverView() {
+    const weeklyOverViewDat = await this.dashboardRepository.getWeeklyOverview();
+    const viewModel = mapWeeklyOverview(weeklyOverViewDat);
+
+    return viewModel; // ✅
   }
 }

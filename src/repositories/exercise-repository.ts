@@ -4,7 +4,11 @@ import { id } from 'zod/locales';
 
 export class ExerciseRepository {
   async getAll() {
-    return await prisma.exercise.findMany();
+    return await prisma.exercise.findMany({
+      orderBy: {
+        id: 'desc',
+      },
+    });
   }
 
   async register(dto: RegisterExerciseDto) {

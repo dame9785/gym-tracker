@@ -3,12 +3,11 @@ import bcrypt from 'bcryptjs';
 import { Prisma } from '@prisma/client';
 import { UserRepository } from '@/repositories/user-repository';
 import { generateToken, verifyToken } from '../lib/jwt';
-import { RegisterUserDto } from '@/dto/register-user-dto';
+import RegisterUserDto from '@/dto/register-user-dto';
 import { UserValidationResponse } from '@/responses/user-validation-response';
 import { UserSettingsViewModel } from '@/view-models/user-settings-view-model';
 import { UserMapper } from '../mapping/user-mapping';
 import { UpdateUserDto } from '../dto/update-user-dto';
-import { email } from 'zod';
 
 export class AuthService {
   private userRepository = new UserRepository();

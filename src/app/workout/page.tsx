@@ -9,9 +9,12 @@ export default function Workouts() {
         <p className="mt-2 text-zinc-400">
           Här syns alla träningspass, som du kan redigera eller ta bort
         </p>
-        <div className="mt-5">
+        <div className="mt-5 flex  gap-5">
           <Link href="/workout/register">
             <Button type="button" text="Lägg till träningspass" variant="secondary" />
+          </Link>
+          <Link href="/workout-schedule">
+            <Button type="button" text="Shema lägg träningspass" variant="secondary" />
           </Link>
         </div>
       </div>

@@ -107,7 +107,7 @@ export default function WorkoutTable() {
               <td className="max-w-sm px-6 py-5 text-zinc-300">{workout.description ?? '-'}</td>
               <td className="px-6 py-5">
                 <div className="flex flex-wrap gap-2">
-                  {workout.exercises.map((exercise) => (
+                  {workout.exercise.map((exercise) => (
                     <span
                       key={exercise.id}
                       className="rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-xs font-medium text-orange-300"
@@ -127,7 +127,7 @@ export default function WorkoutTable() {
               <td className="px-6 py-5">
                 <div className="flex flex-col gap-2">
                   <Link
-                    href={`/workout/${workout.id}`}
+                    href={`/workout/edit/${workout.id}`}
                     className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}
                   >
                     Redigera

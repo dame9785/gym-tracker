@@ -77,7 +77,6 @@ export default function ScheduleWorkoutForm() {
           onChange={(e) => setSelectedWorkoutId(e.target.value)}
         >
           <option value="">Välj workout</option>
-
           {workouts.map((workout) => (
             <option key={workout.id} value={workout.id}>
               {workout.name}

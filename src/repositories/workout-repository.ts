@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
-import { RegisterWorkoutDto } from '@/dto/register-workout-dto';
+import { EditWorkoutDto, RegisterWorkoutDto } from '@/dto/register-workout-dto';
+import { Prisma } from '@prisma/client';
 
 export class WorkoutRepository {
   async create(dto: RegisterWorkoutDto) {
@@ -22,7 +23,6 @@ export class WorkoutRepository {
             sets: exercise.sets,
             reps: exercise.reps,
             weight: exercise.weight,
-            restSeconds: exercise.rest,
             note: exercise.note,
             order,
           },
@@ -46,13 +46,54 @@ export class WorkoutRepository {
             exercise: true,
           },
           orderBy: {
-            order: 'asc',
+            id: 'desc',
           },
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: 'asc',
       },
+    });
+  }
+
+  async update(id: number, dto: EditWorkoutDto) {
+    return await prisma.$transaction(async (tx) => {
+      // Uppdatera workout
+      await tx.workout.update({
+        where: {
+          id,
+        },
+        data: {
+          name: dto.name,
+          description: dto.description,
+        },
+      });
+
+      // Ta bort alla gamla övningar
+      await tx.workoutExercise.deleteMany({
+        where: {
+          workoutId: id,
+        },
+      });
+
+      // Lägg till de nya
+      let order = 1;
+
+      for (const exercise of dto.workoutExercises) {
+        await tx.workoutExercise.create({
+          data: {
+            workoutId: id,
+            exerciseId: exercise.exerciseId,
+            sets: exercise.sets,
+            reps: exercise.reps,
+            weight: exercise.weight,
+            note: exercise.note,
+            order,
+          },
+        });
+
+        order++;
+      }
     });
   }
 
@@ -60,7 +101,7 @@ export class WorkoutRepository {
     return await prisma.workout.findFirst({
       where: {
         id,
-        userId: 15, // Tillfälligt tills vi använder inloggad användare
+        userId: 1, // Tillfälligt tills vi använder inloggad användare
       },
       include: {
         exercises: {

@@ -14,11 +14,11 @@ export class WorkoutScheduleService {
         workoutSchedule,
       };
     } catch (error) {
-      console.error('Error', error);
+      console.error('WorkoutScheduleService.create ERROR:', error);
 
       return {
         success: false,
-        message: 'Något gick fel.',
+        message: error instanceof Error ? error.message : 'Något gick fel.',
       };
     }
   }

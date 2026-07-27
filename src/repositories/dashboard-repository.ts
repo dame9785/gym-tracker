@@ -14,7 +14,7 @@ export class DashboardRepository {
 
     return await prisma.workoutSchedule.findMany({
       where: {
-        userId: 15,
+        userId: 1,
         date: {
           gte: startOfWeek,
           lte: endOfWeek,
@@ -33,7 +33,7 @@ export class DashboardRepository {
             },
             sessions: {
               where: {
-                userId: 15,
+                userId: 1,
               },
               orderBy: {
                 startedAt: 'desc',

@@ -17,7 +17,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
 
   return (
     <section>
-      <h2 className="mb-6 text-2xl font-semibold p-[10px]">Weekly Overview</h2>
+      <h2 className="mb-6 text-2xl font-semibold p-[10px]">Veckans översikt</h2>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-7">
         {week.map((day) => {

@@ -4,6 +4,7 @@ import { WorkoutRepository } from '@/repositories/workout-repository';
 // DTO:S
 import { RegisterWorkoutDto } from '@/dto/register-workout-dto';
 import { WorkoutMapper } from '@/mapping/workout-mapping';
+import { EditWorkoutDto } from '@/dto/edit-workout-dto';
 
 export class WorkoutService {
   private workoutRepository = new WorkoutRepository();
@@ -42,6 +43,23 @@ export class WorkoutService {
     }
   }
 
+  async update(id: number, dto: EditWorkoutDto) {
+    try {
+      const workout = await this.workoutRepository.update(id, dto);
+      return {
+        success: true,
+        message: 'Träningspass sparad',
+        workout: workout,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Något gick fel när träningspassen skulle hämtas.',
+        workout: [],
+      };
+    }
+  }
+
   async getAll() {
     try {
       const workouts = await this.workoutRepository.getAll();
@@ -49,6 +67,7 @@ export class WorkoutService {
       return {
         success: true,
         workouts: viewModels,
+        message: 'Träningspass uppdaterad',
       };
     } catch (error) {
       console.error('Kunde inte hämta workouts:', error);
@@ -56,6 +75,7 @@ export class WorkoutService {
       return {
         success: false,
         message: 'Något gick fel när träningspassen skulle hämtas.',
+        workouts: [],
       };
     }
   }
@@ -63,6 +83,7 @@ export class WorkoutService {
   async getById(id: number) {
     try {
       const workout = await this.workoutRepository.getById(id);
+
       if (!workout) {
         return {
           success: false,
@@ -70,11 +91,11 @@ export class WorkoutService {
         };
       }
 
-      const workoutViewModel = WorkoutMapper.workoutDtoToViewModel(workout);
+      const viewModel = WorkoutMapper.workoutDtoToEditViewModel(workout);
 
       return {
         success: true,
-        workout: workoutViewModel,
+        workout: viewModel,
       };
     } catch (error) {
       console.error('Kunde inte hämta workout:', error);

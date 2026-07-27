@@ -5,7 +5,7 @@ const dashboardService = new DashboardService();
 
 export async function GET() {
   try {
-    const result = await dashboardService.getWeeklyOverview();
+    const result = await dashboardService.getDashboard();
 
     if (!result.success) {
       return NextResponse.json(result, { status: 400 });

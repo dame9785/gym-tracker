@@ -8,10 +8,9 @@ export interface RegisterWorkoutExerciseDto {
   exerciseId: number;
   sets: number;
   reps: number;
-  weight: number;
+  weight: number | null;
   note: string;
 }
-
 export interface CreateWorkoutExerciseDto {
   workoutId: number;
   exerciseId: number;

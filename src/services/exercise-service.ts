@@ -9,7 +9,8 @@ export default class ExerciseService {
       const response = await fetch('/api/exercises', {
         method: 'GET',
       });
-      const data = response.json();
+      const data = await response.json();
+      console.log(data);
       return data;
     } catch (error) {
       throw error;

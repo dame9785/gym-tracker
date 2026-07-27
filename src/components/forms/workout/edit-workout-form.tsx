@@ -1,37 +1,37 @@
 'use client';
 
-// React
-import { useEffect, useState } from 'react';
-
-// Next
+//React hooks
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
-// Styles
+//Styles
 import FormStyles from '@/components/forms/form.module.css';
 
-// Components
-import WorkoutExerciseCard from '@/components/forms/workout/workout-exercise-card';
+import type ExerciseViewModel from '@/view-models/excercise-view-model';
 
-// Services
-import WorkoutService from '@/services/workout-service';
+import ExerciseService from '@/services/exercise-service';
 
 //Helpers
 import { hasDuplicateExercises } from '@/helpers/check-dupplicate-exericse-helper';
 import { validateWorkoutHelper } from '@/helpers/validation-workout-helper';
 
-// DTOs
-import type { RegisterWorkoutDto, RegisterWorkoutExerciseDto } from '@/dto/register-workout-dto';
+//DTO:S
+import type { EditWorkoutDto, EditWorkoutExerciseDto } from '@/dto/edit-workout-dto';
 
-// ViewModels
-import type ExerciseViewModel from '@/view-models/excercise-view-model';
-
+//Services
+import WorkoutService from '@/services/workout-service';
 import { toast } from 'sonner';
+import { EditWorkoutViewModel } from '@/view-models/workout-edit-view-model';
 
-export default function AddWorkoutForm() {
+import EditWorkoutExericeCard from '@/components/forms/workout/edit-workout-exericse-card';
+
+type pageProps = {
+  workoutId: string;
+};
+
+export default function EditWorkoutForm({ workoutId }: pageProps) {
   const router = useRouter();
-
   const [exercises, setExercises] = useState<ExerciseViewModel[]>([]);
-  const [formData, setFormData] = useState<RegisterWorkoutDto>({
+  const [formData, setFormData] = useState<EditWorkoutDto>({
     name: '',
     description: '',
     workoutExercises: [],
@@ -39,18 +39,91 @@ export default function AddWorkoutForm() {
 
   useEffect(() => {
     const fetchExercises = async () => {
-      const data = await WorkoutService.get();
+      const data = await ExerciseService.getAll();
       setExercises(data);
     };
 
     fetchExercises();
   }, []);
 
+  const handleWorkoutData = (workout: EditWorkoutViewModel) => {
+    setFormData({
+      name: workout.name,
+      description: workout.description ?? '',
+      workoutExercises: workout.workoutExercises.map((x) => ({
+        name: x.name,
+        exerciseId: x.exerciseId,
+        sets: x.sets ?? 0,
+        reps: x.reps ?? 0,
+        weight: x.weight ?? 0,
+        note: x.note ?? '',
+      })),
+    });
+  };
+
+  const addExercise = () => {
+    setFormData((prev) => ({
+      ...prev,
+      workoutExercises: [
+        ...prev.workoutExercises,
+        {
+          name: '',
+          exerciseId: 0,
+          sets: 0,
+          reps: 0,
+          weight: 0,
+          note: '',
+        },
+      ],
+    }));
+  };
+
+  const updateExercise = (
+    index: number,
+    field: keyof EditWorkoutExerciseDto,
+    value: number | string,
+  ) => {
+    setFormData((prev) => {
+      const updated = [...prev.workoutExercises];
+
+      updated[index] = {
+        ...updated[index],
+        [field]: value,
+      };
+
+      return {
+        ...prev,
+        workoutExercises: updated,
+      };
+    });
+  };
+
+  const removeExercise = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      workoutExercises: prev.workoutExercises.filter((_, i) => i !== index),
+    }));
+  };
+
+  //GET: Workout/{ID}
+  useEffect(() => {
+    const fetchWorkout = async () => {
+      const result = await WorkoutService.getById(Number(workoutId));
+      if (!result.success) {
+        toast('Något gick fel, gick inte hämta träningspass');
+      }
+      handleWorkoutData(result.workout);
+    };
+    fetchWorkout();
+  }, [workoutId]);
+
+  //Handle Sumbit
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     //Validate form data.
     const validationResult = validateWorkoutHelper(formData);
+
     if (!validationResult.success) {
       toast.error(validationResult.message);
       return;
@@ -63,7 +136,7 @@ export default function AddWorkoutForm() {
     }
 
     try {
-      const result = await WorkoutService.create(formData);
+      const result = await WorkoutService.update(Number(workoutId), formData);
       if (!result.success) {
         toast.error('Något gick fel, kunde inte skapa');
         return;
@@ -74,49 +147,6 @@ export default function AddWorkoutForm() {
     } catch (error) {
       toast.error('Något är fel, övning ej skapad');
     }
-  };
-
-  const addExercise = () => {
-    setFormData((prev) => ({
-      ...prev,
-      workoutExercises: [
-        ...prev.workoutExercises,
-        {
-          exerciseId: 0,
-          sets: 0,
-          reps: 0,
-          weight: 0,
-          note: '',
-        },
-      ],
-    }));
-  };
-
-  const removeExercise = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      workoutExercises: prev.workoutExercises.filter((_, i) => i !== index),
-    }));
-  };
-
-  const updateExercise = (
-    index: number,
-    field: keyof RegisterWorkoutExerciseDto,
-    value: number | string,
-  ) => {
-    setFormData((prev) => {
-      const updatedExercises = [...prev.workoutExercises];
-
-      updatedExercises[index] = {
-        ...updatedExercises[index],
-        [field]: value,
-      };
-
-      return {
-        ...prev,
-        workoutExercises: updatedExercises,
-      };
-    });
   };
 
   return (
@@ -175,7 +205,7 @@ export default function AddWorkoutForm() {
           <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
           {formData.workoutExercises.map((exercise, index) => (
-            <WorkoutExerciseCard
+            <EditWorkoutExericeCard
               key={index}
               index={index}
               exercise={exercise}

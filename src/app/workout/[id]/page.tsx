@@ -13,6 +13,7 @@ export default async function WorkoutPage({ params }: PageProps) {
   const { id } = await params;
 
   const result = await workoutService.getById(Number(id));
+  console.log(result);
 
   if (!result.success) {
     return (

@@ -40,8 +40,8 @@ export function mapWeeklyOverview(workouts: WeeklyOverview[]): WeeklyWorkoutView
       date: workout.date.toISOString(),
       exerciseCount: exercises.length,
       estimatedMinutes: 45,
-      status: latestSession.status,
       activeSessionId: latestSession?.id ?? null,
+      status: latestSession?.status,
       exercises,
     };
   });

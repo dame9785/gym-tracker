@@ -15,7 +15,7 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
     if (workout.status === 'COMPLETED') {
       borderColor = 'border-green-500';
     } else if (workout.status === 'ACTIVE') {
-      borderColor = 'border-orange-500';
+      borderColor = 'border-red-500';
     } else if (workout.status === 'NOTCOMPLETED') {
       borderColor = 'border-red-500';
     }
