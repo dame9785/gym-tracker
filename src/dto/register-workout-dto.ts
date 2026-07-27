@@ -9,7 +9,6 @@ export interface RegisterWorkoutExerciseDto {
   sets: number;
   reps: number;
   weight: number;
-  rest: number;
   note: string;
 }
 

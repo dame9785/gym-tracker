@@ -264,3 +264,20 @@
     text-align: center;
   }
 }
+
+.removeExerciseButton {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ef4444;
+  border-radius: 10px;
+  background: transparent;
+  color: #ef4444;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.removeExerciseButton:hover {
+  background: #ef4444;
+  color: white;
+}

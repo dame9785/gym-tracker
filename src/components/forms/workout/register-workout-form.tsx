@@ -1,42 +1,34 @@
 'use client';
 
 // React
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-//Link
+// Next
 import { useRouter } from 'next/navigation';
 
 // Styles
 import FormStyles from '@/components/forms/form.module.css';
 
+// Components
+import WorkoutExerciseCard from '@/components/forms/workout/workout-exercise-card';
+
 // Services
 import WorkoutService from '@/services/workout-service';
 
+// DTOs
+import type { RegisterWorkoutDto, RegisterWorkoutExerciseDto } from '@/dto/register-workout-dto';
+
 // ViewModels
 import type ExerciseViewModel from '@/view-models/excercise-view-model';
+
 import { toast } from 'sonner';
-
-interface WorkoutExercise {
-  exerciseId: number;
-  sets: number;
-  reps: number;
-  weight: number;
-  rest: number;
-  note: string;
-}
-
-interface RegisterWorkoutFormData {
-  name: string;
-  description: string;
-  workoutExercises: WorkoutExercise[];
-}
 
 export default function AddWorkoutForm() {
   const router = useRouter();
 
   const [exercises, setExercises] = useState<ExerciseViewModel[]>([]);
 
-  const [formData, setFormData] = useState<RegisterWorkoutFormData>({
+  const [formData, setFormData] = useState<RegisterWorkoutDto>({
     name: '',
     description: '',
     workoutExercises: [],
@@ -51,8 +43,54 @@ export default function AddWorkoutForm() {
     fetchExercises();
   }, []);
 
+  const validateFormData = () => {
+    if (formData.name.trim() === '') {
+      toast.error('Workout namn måste fyllas i.');
+      return false;
+    }
+
+    if (formData.description.trim() === '') {
+      toast.error('Beskrivning måste fyllas i.');
+      return false;
+    }
+
+    if (formData.workoutExercises.length === 0) {
+      toast.error('Du måste lägga till minst en övning.');
+      return false;
+    }
+
+    for (const exercise of formData.workoutExercises) {
+      if (exercise.exerciseId === 0) {
+        toast.error('Välj en övning.');
+        return false;
+      }
+
+      if (exercise.sets < 1) {
+        toast.error('Set måste vara minst 1.');
+        return false;
+      }
+
+      if (exercise.reps < 1) {
+        toast.error('Reps måste vara minst 1.');
+        return false;
+      }
+
+      if (exercise.weight < 0) {
+        toast.error('Vikten kan inte vara negativ.');
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    //Validate form data.
+    if (!validateFormData()) {
+      return;
+    }
 
     try {
       const result = await WorkoutService.create(formData);
@@ -60,10 +98,11 @@ export default function AddWorkoutForm() {
         toast.error('Något gick fel, kunde inte skapa');
         return;
       }
-      toast.success('Träningspass tillagd');
+
+      toast.success('Träningspass tillagt');
       router.push('/workout');
     } catch (error) {
-      console.error(error);
+      toast.error('Något är fel, övning ej skapad');
     }
   };
 
@@ -77,180 +116,103 @@ export default function AddWorkoutForm() {
           sets: 0,
           reps: 0,
           weight: 0,
-          rest: 0,
           note: '',
         },
       ],
     }));
   };
 
-  const updateExercise = (index: number, field: keyof WorkoutExercise, value: number | string) => {
-    const updatedExercises = [...formData.workoutExercises];
+  const removeExercise = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      workoutExercises: prev.workoutExercises.filter((_, i) => i !== index),
+    }));
+  };
 
-    updatedExercises[index] = {
-      ...updatedExercises[index],
-      [field]: value,
-    };
+  const updateExercise = (
+    index: number,
+    field: keyof RegisterWorkoutExerciseDto,
+    value: number | string,
+  ) => {
+    setFormData((prev) => {
+      const updatedExercises = [...prev.workoutExercises];
 
-    setFormData({
-      ...formData,
-      workoutExercises: updatedExercises,
+      updatedExercises[index] = {
+        ...updatedExercises[index],
+        [field]: value,
+      };
+
+      return {
+        ...prev,
+        workoutExercises: updatedExercises,
+      };
     });
   };
 
   return (
     <div className={FormStyles.formContainer}>
       <h1 className={FormStyles.formTitle}>
-        Lägg till
-        <span> träningspass</span>
+        Lägg till <span>träningspass</span>
       </h1>
+
       <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
-        {/* Workout name */}
+        {/* Workout namn */}
         <div className={FormStyles.formGroup}>
           <label htmlFor="name" className={FormStyles.formLabel}>
             Workout namn *
           </label>
 
           <input
-            className={FormStyles.formInput}
+            required
             id="name"
             type="text"
+            className={FormStyles.formInput}
             placeholder="T.ex. Push Day"
             value={formData.name}
             onChange={(e) =>
-              setFormData({
-                ...formData,
+              setFormData((prev) => ({
+                ...prev,
                 name: e.target.value,
-              })
+              }))
             }
           />
         </div>
 
-        {/* Description */}
+        {/* Beskrivning */}
         <div className={FormStyles.formGroup}>
           <label htmlFor="description" className={FormStyles.formLabel}>
             Beskrivning
           </label>
 
           <textarea
-            className={FormStyles.formTextarea}
+            required
             id="description"
             rows={4}
-            placeholder="Beskriv workouten..."
+            className={FormStyles.formTextarea}
+            placeholder="Fokusera på axlar, bröst..."
             value={formData.description}
             onChange={(e) =>
-              setFormData({
-                ...formData,
+              setFormData((prev) => ({
+                ...prev,
                 description: e.target.value,
-              })
+              }))
             }
           />
         </div>
 
-        {/* Exercises */}
+        {/* Övningar */}
         <div className={FormStyles.exerciseSection}>
           <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
           {formData.workoutExercises.map((exercise, index) => (
-            <div key={index} className={FormStyles.exerciseCard}>
-              <div className={FormStyles.formGroup}>
-                <label htmlFor={`exercise-${index}`} className={FormStyles.formLabel}>
-                  Övning
-                </label>
-
-                <select
-                  id={`exercise-${index}`}
-                  className={FormStyles.formSelect}
-                  value={exercise.exerciseId}
-                  onChange={(e) => updateExercise(index, 'exerciseId', Number(e.target.value))}
-                >
-                  <option value={0} disabled>
-                    Välj övning
-                  </option>
-
-                  {exercises.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className={FormStyles.exerciseGrid}>
-                <div className={FormStyles.formGroup}>
-                  <label htmlFor={`sets-${index}`} className={FormStyles.formLabel}>
-                    Set
-                  </label>
-
-                  <input
-                    id={`sets-${index}`}
-                    type="number"
-                    min={1}
-                    className={FormStyles.formInput}
-                    value={exercise.sets}
-                    onChange={(e) => updateExercise(index, 'sets', Number(e.target.value))}
-                  />
-                </div>
-
-                <div className={FormStyles.formGroup}>
-                  <label htmlFor={`reps-${index}`} className={FormStyles.formLabel}>
-                    Reps
-                  </label>
-
-                  <input
-                    id={`reps-${index}`}
-                    type="number"
-                    min={1}
-                    className={FormStyles.formInput}
-                    value={exercise.reps}
-                    onChange={(e) => updateExercise(index, 'reps', Number(e.target.value))}
-                  />
-                </div>
-
-                <div className={FormStyles.formGroup}>
-                  <label htmlFor={`weight-${index}`} className={FormStyles.formLabel}>
-                    Vikt (kg)
-                  </label>
-
-                  <input
-                    id={`weight-${index}`}
-                    type="number"
-                    step="0.5"
-                    className={FormStyles.formInput}
-                    value={exercise.weight}
-                    onChange={(e) => updateExercise(index, 'weight', Number(e.target.value))}
-                  />
-                </div>
-
-                <div className={FormStyles.formGroup}>
-                  <label htmlFor={`rest-${index}`} className={FormStyles.formLabel}>
-                    Vila (sek)
-                  </label>
-
-                  <input
-                    id={`rest-${index}`}
-                    type="number"
-                    className={FormStyles.formInput}
-                    value={exercise.rest}
-                    onChange={(e) => updateExercise(index, 'rest', Number(e.target.value))}
-                  />
-                </div>
-              </div>
-
-              <div className={FormStyles.formGroup}>
-                <label htmlFor={`note-${index}`} className={FormStyles.formLabel}>
-                  Anteckning
-                </label>
-
-                <textarea
-                  id={`note-${index}`}
-                  rows={3}
-                  className={FormStyles.formTextarea}
-                  value={exercise.note}
-                  onChange={(e) => updateExercise(index, 'note', e.target.value)}
-                />
-              </div>
-            </div>
+            <WorkoutExerciseCard
+              key={index}
+              index={index}
+              exercise={exercise}
+              exercises={exercises}
+              onUpdate={updateExercise}
+              onRemove={removeExercise}
+            />
           ))}
 
           <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>
