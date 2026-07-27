@@ -1,7 +1,9 @@
+import { WorkoutViewModel } from '@/view-models/workout-view-model';
+import { Workout } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import { WorkoutExerciseViewModel, WorkoutViewModel } from '@/view-models/workout-view-model';
+import { ExerciseMapper } from '@/mapping/exericse-mapping';
 
-type Workout = Prisma.WorkoutGetPayload<{
+type WorkoutWithExercises = Prisma.WorkoutGetPayload<{
   include: {
     exercises: {
       include: {
@@ -11,21 +13,21 @@ type Workout = Prisma.WorkoutGetPayload<{
   };
 }>;
 
-export function mapWorkout(workout: Workout): WorkoutViewModel {
-  const exercises: WorkoutExerciseViewModel[] = workout.exercises.map((workoutExercise) => ({
-    id: workoutExercise.exercise.id,
-    name: workoutExercise.exercise.name,
-    sets: workoutExercise.sets,
-    reps: workoutExercise.reps,
-    weight: workoutExercise.weight,
-    restSeconds: workoutExercise.restSeconds,
-    order: workoutExercise.order,
-  }));
+export class WorkoutMapper {
+  static workoutDtoToViewModel(workout: WorkoutWithExercises): WorkoutViewModel {
+    return {
+      id: workout.id,
+      name: workout.name,
+      description: workout.description,
+      createdAt: workout.createdAt,
+      updatedAt: workout.updatedAt,
+      exercises: workout.exercises.map((we) =>
+        ExerciseMapper.exerciseModelToViewModel(we.exercise),
+      ),
+    };
+  }
 
-  return {
-    id: workout.id,
-    name: workout.name,
-    description: workout.description,
-    exercises,
-  };
+  static workoutDtosToViewModels(workouts: WorkoutWithExercises[]): WorkoutViewModel[] {
+    return workouts.map(this.workoutDtoToViewModel);
+  }
 }

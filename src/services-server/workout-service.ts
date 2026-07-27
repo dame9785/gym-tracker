@@ -1,9 +1,9 @@
+//Repositories
 import { WorkoutRepository } from '@/repositories/workout-repository';
 
-// Dtos
+// DTO:S
 import { RegisterWorkoutDto } from '@/dto/register-workout-dto';
-
-import { mapWorkout } from '@/mapping/workout-mapping';
+import { WorkoutMapper } from '@/mapping/workout-mapping';
 
 export class WorkoutService {
   private workoutRepository = new WorkoutRepository();
@@ -45,10 +45,10 @@ export class WorkoutService {
   async getAll() {
     try {
       const workouts = await this.workoutRepository.getAll();
-
+      const viewModels = WorkoutMapper.workoutDtosToViewModels(workouts);
       return {
         success: true,
-        workouts,
+        workouts: viewModels,
       };
     } catch (error) {
       console.error('Kunde inte hämta workouts:', error);
@@ -70,7 +70,7 @@ export class WorkoutService {
         };
       }
 
-      const workoutViewModel = mapWorkout(workout);
+      const workoutViewModel = WorkoutMapper.workoutDtoToViewModel(workout);
 
       return {
         success: true,

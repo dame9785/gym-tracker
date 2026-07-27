@@ -56,7 +56,7 @@ function Sidebar() {
 
               <li className="li flex items-center">
                 <CiDumbbell className="fa-icon" />
-                <Link href="/" className="grid">
+                <Link href="/workout" className="grid">
                   Workouts
                 </Link>
               </li>

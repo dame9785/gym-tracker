@@ -124,7 +124,7 @@ export default function EditExercise({ exerciseId }: Props) {
           ></input>
         </div>
         <div className="flex gap-2">
-          <Button type="submit" text="Lägg till övning" variant="primary"></Button>
+          <Button type="submit" text="Uppdatera" variant="primary"></Button>
           <Link href="/exercise">
             <Button type="button" text="Gå tillbaks" variant="secondary" />
           </Link>

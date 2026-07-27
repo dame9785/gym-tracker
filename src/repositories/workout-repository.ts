@@ -38,7 +38,17 @@ export class WorkoutRepository {
   async getAll() {
     return await prisma.workout.findMany({
       where: {
-        userId: 15, // Tillfälligt tills vi använder inloggad användare
+        userId: 1,
+      },
+      include: {
+        exercises: {
+          include: {
+            exercise: true,
+          },
+          orderBy: {
+            order: 'asc',
+          },
+        },
       },
       orderBy: {
         createdAt: 'desc',
