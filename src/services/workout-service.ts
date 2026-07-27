@@ -1,6 +1,11 @@
 import type ExerciseViewModel from '@/view-models/excercise-view-model';
 import type { RegisterWorkoutDto } from '@/dto/register-workout-dto';
 
+export interface DeleteWorkoutResponse {
+  success: boolean;
+  message: string;
+}
+
 export default class WorkoutService {
   static async get(): Promise<ExerciseViewModel[]> {
     const response = await fetch('/api/exercises', {
@@ -29,5 +34,28 @@ export default class WorkoutService {
     });
 
     return await response.json();
+  }
+
+  //DELETE: Workout
+  static async delete(id: number) {
+    try {
+      const response = await fetch(`/api/workouts/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: 'Något gick fel, träningspass blev ej borttagen',
+        };
+      }
+
+      return (await response.json()) as DeleteWorkoutResponse;
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Något gick fel, träningspass blev ej borttagen',
+      };
+    }
   }
 }

@@ -7,14 +7,15 @@ import Button from '@/components/button/button';
 import ButtonStyle from '@/components/button/button.module.css';
 import WorkoutService from '@/services/workout-service';
 import { WorkoutViewModel } from '@/view-models/workout-view-model';
+import { toast } from 'sonner';
 
 export default function WorkoutTable() {
   const [workouts, setWorkouts] = useState<WorkoutViewModel[]>([]);
 
+  //GET: Workouts
   useEffect(() => {
     const fetchWorkouts = async () => {
       const result = await WorkoutService.getAll();
-
       if (result.success) {
         setWorkouts(result.workouts);
       }
@@ -22,6 +23,52 @@ export default function WorkoutTable() {
 
     fetchWorkouts();
   }, []);
+
+  //Handle Delete workout
+  const handledDelete = async (id: number): Promise<void> => {
+    if (!id) {
+      toast('Kunde inte hitta workout');
+    }
+    confirmDelete(id);
+  };
+
+  //Confirm delete or not.
+  const confirmDelete = (id: number) => {
+    toast('Är du säker på att du vill radera övningen?', {
+      action: {
+        label: 'Radera',
+        onClick: async () => {
+          await callDeleteApi(id);
+        },
+      },
+      cancel: {
+        label: 'Avbryt',
+        onClick: () => {},
+      },
+    });
+  };
+
+  //Call API To Delete Workout
+  const callDeleteApi = async (id: number) => {
+    try {
+      const result = await WorkoutService.delete(id);
+
+      if (!result.success) {
+        toast.error('Något gick fel, övning ej borttagen');
+        return;
+      }
+      //Remove workout from list
+      removeWorkoutFromList(id);
+    } catch {
+      toast.error('Något gick fel, övning ej borttagen');
+    }
+  };
+
+  //Remove Workout from workout-list
+  const removeWorkoutFromList = (id: number): void => {
+    setWorkouts((prev) => prev.filter((workout) => workout.id !== id));
+    toast.success('Övning borttagen');
+  };
 
   return (
     <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 shadow-xl">
@@ -37,9 +84,7 @@ export default function WorkoutTable() {
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
               Övningar
             </th>
-            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Antal
-            </th>
+
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
               Skapad
             </th>
@@ -73,9 +118,6 @@ export default function WorkoutTable() {
                 </div>
               </td>
 
-              <td className="px-6 py-5 text-center font-semibold text-orange-400">
-                {workout.exercises.length}
-              </td>
               <td className="px-6 py-5 text-zinc-300">
                 {new Date(workout.createdAt).toLocaleDateString('sv-SE')}
               </td>
@@ -96,7 +138,7 @@ export default function WorkoutTable() {
                     text="Ta bort"
                     variant="delete"
                     size="sm"
-                    onClick={() => console.log(workout.id)}
+                    onClick={() => handledDelete(workout.id)}
                   />
                 </div>
               </td>

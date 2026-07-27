@@ -85,4 +85,19 @@ export class WorkoutService {
       };
     }
   }
+
+  async delete(id: number) {
+    try {
+      await this.workoutRepository.delete(id);
+      return {
+        success: true,
+        message: 'Bortagning lyckades',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Något gick fel, gick inte ta bort träningspasset',
+      };
+    }
+  }
 }

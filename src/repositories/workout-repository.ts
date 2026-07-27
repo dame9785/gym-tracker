@@ -74,4 +74,12 @@ export class WorkoutRepository {
       },
     });
   }
+
+  async delete(id: number) {
+    return await prisma.workout.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }

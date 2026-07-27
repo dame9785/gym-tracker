@@ -3,6 +3,9 @@
 // React
 import { useState, useEffect } from 'react';
 
+//Link
+import { useRouter } from 'next/navigation';
+
 // Styles
 import FormStyles from '@/components/forms/form.module.css';
 
@@ -29,6 +32,8 @@ interface RegisterWorkoutFormData {
 }
 
 export default function AddWorkoutForm() {
+  const router = useRouter();
+
   const [exercises, setExercises] = useState<ExerciseViewModel[]>([]);
 
   const [formData, setFormData] = useState<RegisterWorkoutFormData>({
@@ -56,6 +61,7 @@ export default function AddWorkoutForm() {
         return;
       }
       toast.success('Träningspass tillagd');
+      router.push('/workout');
     } catch (error) {
       console.error(error);
     }

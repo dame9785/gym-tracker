@@ -32,3 +32,25 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
     );
   }
 }
+
+//DELETE
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+
+    const result = await workoutService.delete(Number(id));
+
+    return NextResponse.json(result);
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Något gick fel.',
+      },
+      { status: 500 },
+    );
+  }
+}
