@@ -3,83 +3,78 @@ import bcrypt from 'bcryptjs';
 import { Prisma } from '@prisma/client';
 import { UserRepository } from '@/repositories/user-repository';
 import { generateToken, verifyToken } from '../lib/jwt';
-import RegisterUserDto from '@/dto/register-user-dto';
-import { UserValidationResponse } from '@/responses/user-validation-response';
+
 import { UserSettingsViewModel } from '@/view-models/user-settings-view-model';
 import { UserMapper } from '../mapping/user-mapping';
-import { UpdateUserDto } from '../dto/update-user-dto';
+
+//Types
+import type { RegisterUserDto, UpdateUserDto } from '@/dto/user-dtos';
+import type { RegisterUserResponse } from '@/responses/user-responses';
 
 export class AuthService {
   private userRepository = new UserRepository();
 
   //Register
-  async register(data: RegisterUserDto): Promise<UserValidationResponse> {
-    const validationResponse: UserValidationResponse = {
+  async register(dto: RegisterUserDto): Promise<RegisterUserResponse> {
+    const response: RegisterUserResponse = {
       success: true,
       message: '',
       errors: [],
     };
 
-    const existingEmail = await this.userRepository.findByEmail(data.email);
+    const [existingEmail, existingUsername] = await Promise.all([
+      this.userRepository.findByEmail(dto.email),
+      this.userRepository.findByUsername(dto.username),
+    ]);
+
     if (existingEmail) {
-      validationResponse.success = false;
-      validationResponse.message = 'Valideringen misslyckades.';
-      validationResponse.errors.push('E-postadressen existerar redan.');
+      response.errors.push('E-postadressen existerar redan.');
     }
 
-    const existingUsername = await this.userRepository.findByUsername(data.username);
     if (existingUsername) {
-      validationResponse.success = false;
-      validationResponse.message = 'Valideringen misslyckades.';
-      validationResponse.errors.push('Användarnamnet existerar redan.');
+      response.errors.push('Användarnamnet existerar redan.');
     }
 
-    if (!validationResponse.success) {
-      return validationResponse;
+    if (response.errors.length > 0) {
+      response.success = false;
+      response.message = 'Valideringen misslyckades.';
+      return response;
     }
 
     try {
-      const passwordHash = await bcrypt.hash(data.password, 10);
-      const user = await this.userRepository.create({
-        username: data.username,
-        email: data.email,
-        passwordHash,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        bodyWeight: data.weight,
-        bodyLenght: data.height,
-        gender: data.gender,
-        birthDate: new Date(data.birthDate),
-        goalType: {
-          connect: {
-            id: data.goalTypeId,
-          },
-        },
-      });
+      const passwordHash = await bcrypt.hash(dto.password, 10);
+      const userData = UserMapper.userDtoToDbModel(dto, passwordHash);
 
-      validationResponse.userToken = generateToken(user.id);
-      validationResponse.message = 'Användaren registrerades.';
+      const user = await this.userRepository.create(userData);
+
+      response.userToken = generateToken(user.id);
+      response.message = 'Användaren registrerades.';
+
+      return response;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           const target = error.meta?.target;
           if (Array.isArray(target) && target.includes('email')) {
-            validationResponse.errors.push('E-postadressen används redan.');
+            response.errors.push('E-postadressen används redan.');
           }
           if (Array.isArray(target) && target.includes('username')) {
-            validationResponse.errors.push('Användarnamnet används redan.');
+            response.errors.push('Användarnamnet används redan.');
           }
 
-          validationResponse.success = false;
-          validationResponse.message = 'Valideringen misslyckades.';
-          return validationResponse;
+          response.success = false;
+          response.message = 'Valideringen misslyckades.';
+          return response;
         }
       }
-      validationResponse.success = false;
-      validationResponse.message = 'Kunde inte skapa användaren.';
-      return validationResponse;
+
+      response.success = false;
+      response.message = 'Kunde inte skapa användaren.';
+
+      console.error(error);
+
+      return response;
     }
-    return validationResponse;
   }
 
   //Login

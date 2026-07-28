@@ -1,7 +1,6 @@
-export interface UserValidationResponse {
+export interface RegisterUserResponse {
   success: boolean;
   message: string;
   errors: string[];
-  userId?: number;
   userToken?: string;
 }

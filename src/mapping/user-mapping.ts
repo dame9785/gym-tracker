@@ -1,5 +1,7 @@
-import { User } from '@prisma/client';
-import { UserSettingsViewModel } from '@/view-models/user-settings-view-model';
+import { Prisma, type User } from '@prisma/client';
+
+import type { UserSettingsViewModel } from '@/view-models/user-settings-view-model';
+import type { RegisterUserDto } from '@/dto/user-dtos';
 
 export class UserMapper {
   static userModelToViewModel(user: User): UserSettingsViewModel {
@@ -19,6 +21,24 @@ export class UserMapper {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       goalTypeId: user.goalTypeId,
+    };
+  }
+  static userDtoToDbModel(dto: RegisterUserDto, passwordHash: string): Prisma.UserCreateInput {
+    return {
+      username: dto.username,
+      email: dto.email,
+      passwordHash,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      bodyWeight: dto.bodyWeight,
+      bodyLength: dto.bodyLenght,
+      gender: dto.gender,
+      birthDate: new Date(dto.birthDate),
+      goalType: {
+        connect: {
+          id: dto.goalTypeId,
+        },
+      },
     };
   }
 }

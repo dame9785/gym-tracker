@@ -11,10 +11,10 @@ import { FaEnvelope, FaLock, FaDumbbell } from 'react-icons/fa6';
 import Link from 'next/link';
 
 //Providers
-import { useAuth } from '../../provider/auth-provider';
+import { useAuth } from '@/provider/auth-provider';
 
 //CSS
-import styles from './form.module.css';
+import styles from '@/components/forms/form.module.css';
 import buttonStyles from '@/components/button/button.module.css';
 
 //Components

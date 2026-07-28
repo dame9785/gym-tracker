@@ -26,7 +26,7 @@ import { toast } from 'sonner';
 import Button from '@/components/button/button';
 
 //CSS
-import FormStyles from './form.module.css';
+import FormStyles from '@/components/forms/form.module.css';
 import buttonStyles from '@/components/button/button.module.css';
 
 //Link
@@ -43,7 +43,7 @@ import GoalService from '@/services/goal-service';
 import { useAuth } from '@/provider/auth-provider';
 
 //Dtos
-import RegisterUserDto from '@/dto/register-user-dto';
+import type { RegisterUserDto } from '@/dto/user-dtos';
 
 export default function RegisterForm() {
   interface GoalType {
@@ -82,11 +82,12 @@ export default function RegisterForm() {
     bodyWeight: 0,
     bodyLenght: 0,
     gender: Gender.MALE,
-    birthDate: '',
+    birthDate: new Date(),
     goalTypeId: 0,
     goalWeight: 0,
     goalDate: '',
     password: '',
+    passwordhash: null,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -119,6 +120,7 @@ export default function RegisterForm() {
       goalWeight: Number(formData.goalWeight),
       goalDate: formData.goalDate,
       password: formData.password,
+      passwordhash: null,
     };
 
     try {
@@ -130,8 +132,13 @@ export default function RegisterForm() {
         return;
       }
 
-      toast.success('Användaren registrerades!');
+      if (!result.userToken) {
+        toast.error('Ingen token returnerades.');
+        return;
+      }
+
       localStorage.setItem('token', result.userToken);
+      toast.success('Användaren registrerades!');
       refreshUser();
 
       setTimeout(() => {
