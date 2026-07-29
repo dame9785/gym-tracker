@@ -17,6 +17,11 @@ export interface RegisterUserDto {
   passwordhash: string | null;
 }
 
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
 export interface UpdateUserDto {
   email: string;
   username: string;

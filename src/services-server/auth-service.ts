@@ -9,7 +9,7 @@ import { UserMapper } from '../mapping/user-mapping';
 
 //Types
 import type { RegisterUserDto, UpdateUserDto } from '@/dto/user-dtos';
-import type { RegisterUserResponse } from '@/responses/user-responses';
+import type { RegisterUserResponse, LoginUserResponse } from '@/responses/user-responses';
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -78,11 +78,12 @@ export class AuthService {
   }
 
   //Login
-  async login(email: string, password: string): Promise<UserValidationResponse> {
-    const validationResponse: UserValidationResponse = {
+  async login(email: string, password: string): Promise<LoginUserResponse> {
+    const validationResponse: LoginUserResponse = {
       success: true,
       message: '',
       errors: [],
+      userToken: '',
     };
 
     const user = await this.userRepository.findByEmail(email);

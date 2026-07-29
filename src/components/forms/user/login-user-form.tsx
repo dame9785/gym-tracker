@@ -4,6 +4,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { LoginDto } from '@/dto/user-dtos';
+
 //FONTAWSOME ICONS
 import { FaEnvelope, FaLock, FaDumbbell } from 'react-icons/fa6';
 
@@ -32,21 +34,16 @@ export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  interface LoginFormData {
-    email: string;
-    password: string;
-  }
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const LoginData: LoginFormData = {
+    const LoginData: LoginDto = {
       email: email,
       password: password,
     };
 
-    const response = await AuthService.login(LoginData);
-    const data = await response.json();
+    const data = await AuthService.login(LoginData);
+    console.log(data.response.success);
 
     if (!data.response.success) {
       const errorMessages: string[] = data.response.errors;

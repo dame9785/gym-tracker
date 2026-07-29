@@ -29,6 +29,19 @@ model User {
   workout           Workout[]
   workoutSchedules  WorkoutSchedule[]
   workoutSessions   WorkoutSession[]
+  weightLogs WeightLog[]
+}
+
+model WeightLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  weight    Decimal  @db.Decimal(5,2)
+  note      String?  @db.VarChar(255)
+  loggedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, loggedAt])
 }
 
 model GoalType {
@@ -102,6 +115,7 @@ model WorkoutSchedule {
   createdAt DateTime @default(now())
   user     User     @relation(fields: [userId], references: [id])
   workout  Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  
 }
 
 model WorkoutSession {

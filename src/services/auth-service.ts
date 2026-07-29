@@ -1,9 +1,27 @@
-import type { RegisterUserDto } from '@/dto/user-dtos';
-import type { RegisterUserResponse } from '@/responses/user-responses';
+import type { LoginDto, RegisterUserDto } from '@/dto/user-dtos';
+import type { RegisterUserResponse, LoginUserResponse } from '@/responses/user-responses';
 
 const API_URL = '/api/auth/';
 
 export default class AuthService {
+  //Login
+  static async login(dto: LoginDto): Promise<LoginUserResponse> {
+    try {
+      const response = await fetch(API_URL + 'login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dto),
+      });
+
+      const data: LoginUserResponse = await response.json();
+      return data;
+    } catch (error) {
+      throw new Error();
+    }
+  }
+
   //Register
   static async register(dto: RegisterUserDto): Promise<RegisterUserResponse> {
     try {

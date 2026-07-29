@@ -63,7 +63,7 @@ function Sidebar() {
 
               <li className="li flex items-center">
                 <FaWeight className="fa-icon" />
-                <Link href="/" className="grid">
+                <Link href="/log-weight" className="grid">
                   Log weight
                 </Link>
               </li>
