@@ -14,7 +14,7 @@ export default function WorkoutDetails({ workout }: WorkoutDetailsProps) {
       {workout.description && <p className="mt-2 text-zinc-400">{workout.description}</p>}
 
       <div className="mt-8 space-y-4">
-        {workout.exercises.map((exercise, index) => (
+        {workout.exercise.map((exercise, index) => (
           <ExerciseCard key={`${exercise.id}-${index}`} exercise={exercise} />
         ))}
       </div>

@@ -21,6 +21,14 @@ export class WeightLogRepository {
     });
   }
 
+  async delete(id: number) {
+    return await prisma.weightLog.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
   async lastLog(userId: number) {
     return await prisma.weightLog.findFirst({
       where: {

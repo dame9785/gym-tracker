@@ -36,6 +36,35 @@ export class WeightLogService {
     }
   }
 
+  async delete(id: number): Promise<LogWeightResponse> {
+    if (!id) {
+      return {
+        success: false,
+        message: 'Request body saknas.',
+        statusCode: 400,
+        log: null,
+      };
+    }
+
+    try {
+      await this.weightLogRepository.delete(id);
+      return {
+        success: true,
+        message: 'Vikt borttagen',
+        statusCode: 200,
+        log: null,
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        success: false,
+        message: 'Server fel',
+        statusCode: 500,
+        log: null,
+      };
+    }
+  }
+
   async create(dto: LogWeightDto): Promise<LogWeightResponse> {
     if (dto === null || dto === undefined) {
       return {

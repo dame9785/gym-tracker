@@ -135,8 +135,10 @@ model WorkoutSessionExercise {
   workoutSessionId  Int
   workoutExerciseId Int
   order             Int
-  workoutSession WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id])
+
+  workoutSession  WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
+
   sets WorkoutSessionSet[]
 }
 

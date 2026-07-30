@@ -1,0 +1,29 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { WeightLogService } from '@/services-server/weight-log-service';
+
+const weightLogService = new WeightLogService();
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+
+    console.log(id);
+
+    const result = await weightLogService.delete(Number(id));
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('Error delete log', error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Något gick fel.',
+      },
+      { status: 500 },
+    );
+  }
+}

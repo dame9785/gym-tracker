@@ -1,6 +1,5 @@
 import WorkoutSession from '@/components/workout/workout-session';
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
-import { WorkoutSessionViewModel } from '@/view-models/workout-session-view-model';
 
 const workoutSessionService = new WorkoutSessionService();
 
@@ -12,6 +11,7 @@ interface PageProps {
 
 export default async function WorkoutSessionPage({ params }: PageProps) {
   const { id } = await params;
+  console.log(id);
   const result = await workoutSessionService.getById(Number(id));
 
   if (!result.success) {

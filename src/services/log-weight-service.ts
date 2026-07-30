@@ -20,6 +20,18 @@ export class LogWeightService {
     }
   }
 
+  static async delete(id: number) {
+    try {
+      const response = await fetch(`/api/log-weight/${id}`, {
+        method: 'DELETE',
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   static async create(dto: LogWeightDto): Promise<LogWeightResponse | string> {
     try {
       const response = await fetch('/api/log-weight', {

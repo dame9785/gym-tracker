@@ -1,6 +1,7 @@
 import { WeeklyWorkoutViewModel } from '@/view-models/dashboard-view-model';
 import Link from 'next/link';
-
+import StartWorkoutButton from '@/components/workout/start-workout-button';
+import ButtonStyle from '@/components/button/button.module.css';
 interface SelectedWorkoutProps {
   workout: WeeklyWorkoutViewModel;
 }
@@ -42,10 +43,11 @@ export default function SelectedWorkout({ workout }: SelectedWorkoutProps) {
         </ul>
       </div>
 
-      <div className="mt-6 flex justify-end">
+      <div className="mt-6 flex justify-end gap-5">
+        <StartWorkoutButton workoutId={workout.id}></StartWorkoutButton>
         <Link
           href={`/workout/${workout.id}`}
-          className="rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600"
+          className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}
         >
           View Workout →
         </Link>
