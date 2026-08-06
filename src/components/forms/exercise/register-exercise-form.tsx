@@ -50,7 +50,6 @@ export default function RegisterForm() {
     }
 
     const result = await ExerciseService.register(registerDto);
-    console.log(result);
     if (!result.success) {
       toast.error('Något gick fel. Övning ej skapad');
     }

@@ -14,9 +14,9 @@ export class WeightLogService {
       //   this.weightLogRepository.getAll(1),
       // ]);
 
-      const lastLog = await this.weightLogRepository.lastLog(1);
-      const firstLog = await this.weightLogRepository.firstLog(1);
-      const allLogs = await this.weightLogRepository.getAll(1);
+      const lastLog = await this.weightLogRepository.lastLog(2);
+      const firstLog = await this.weightLogRepository.firstLog(2);
+      const allLogs = await this.weightLogRepository.getAll(2);
 
       const viewModel = LogWeightMapper.mapLogViewModel(allLogs, firstLog, lastLog);
       return {
@@ -26,7 +26,6 @@ export class WeightLogService {
         success: true,
       };
     } catch (error) {
-      console.log('Log-Weight Error', error);
       return {
         message: 'Server error',
         success: false,
@@ -55,7 +54,6 @@ export class WeightLogService {
         log: null,
       };
     } catch (error) {
-      console.log(error);
       return {
         success: false,
         message: 'Server fel',
@@ -74,9 +72,8 @@ export class WeightLogService {
         log: null,
       };
     }
-    console.log(dto);
     try {
-      await this.weightLogRepository.create(1, dto);
+      await this.weightLogRepository.create(2, dto);
       return {
         success: true,
         message: 'Vikt loggad',
@@ -84,7 +81,6 @@ export class WeightLogService {
         log: null,
       };
     } catch (error) {
-      console.log(error);
       return {
         success: false,
         message: 'Server fel',

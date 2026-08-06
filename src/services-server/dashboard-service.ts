@@ -26,9 +26,6 @@ export class DashboardService {
         streak: 3,
       };
 
-      console.log('weeklyOverviewViewModel:', weeklyOverviewViewModel);
-      console.log('weeklySummary:', weeklySummary);
-
       return {
         success: true,
         dashboard: {

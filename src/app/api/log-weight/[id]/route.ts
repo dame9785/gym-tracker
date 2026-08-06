@@ -10,8 +10,6 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    console.log(id);
-
     const result = await weightLogService.delete(Number(id));
 
     return NextResponse.json(result);

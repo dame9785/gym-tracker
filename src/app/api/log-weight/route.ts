@@ -10,7 +10,6 @@ export async function GET(): Promise<NextResponse> {
       status: response.statusCode,
     });
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       {
         message: 'Server error',

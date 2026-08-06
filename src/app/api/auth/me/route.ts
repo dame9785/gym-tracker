@@ -12,8 +12,10 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.replace('Bearer ', '');
-
     const user = await authService.getCurrentUser(token);
+    if (user == null) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
 
     return NextResponse.json({
       id: user.id,
@@ -22,7 +24,7 @@ export async function GET(request: NextRequest) {
       firstName: user.firstName,
       lastName: user.lastName,
       bodyWeight: user.bodyWeight,
-      height: user.height,
+      height: user.bodyLength,
       gender: user.gender,
       birthDate: user.birthDate,
     });

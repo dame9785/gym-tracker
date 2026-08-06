@@ -43,7 +43,6 @@ export default function LoginForm() {
     };
 
     const data = await AuthService.login(LoginData);
-    console.log(data.response.success);
 
     if (!data.response.success) {
       const errorMessages: string[] = data.response.errors;

@@ -11,7 +11,6 @@ interface PageProps {
 
 export default async function WorkoutSessionPage({ params }: PageProps) {
   const { id } = await params;
-  console.log(id);
   const result = await workoutSessionService.getById(Number(id));
 
   if (!result.success) {

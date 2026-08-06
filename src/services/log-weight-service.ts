@@ -9,7 +9,6 @@ export class LogWeightService {
       });
 
       const result = await response.json();
-      console.log(result);
       if (!result) {
         throw new Error('Nåogit gick fel');
       }

@@ -117,12 +117,6 @@ export class WorkoutService {
         message: 'Bortagning lyckades',
       };
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.log(error.code);
-        console.log(error.meta);
-      }
-
-      console.error(error);
       return {
         success: false,
         message: 'Något gick fel, gick inte ta bort träningspasset',

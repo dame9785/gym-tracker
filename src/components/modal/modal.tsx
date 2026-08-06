@@ -13,7 +13,6 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
   if (!isOpen) {
     return null;
   }
-  console.log(title);
   return (
     <div
       onClick={onClose}

@@ -28,10 +28,6 @@ export class DashboardService {
         streak: 3,
       };
 
-      console.log('weeklyOverviewViewModel');
-      console.log(weeklyOverviewViewModel);
-      console.log(Array.isArray(weeklyOverviewViewModel));
-
       return {
         success: true,
         dashboard: {

@@ -1,6 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import AuthService from '@/services/auth-service';
+import { useRouter } from 'next/navigation';
 
 type User = {
   id: number;
@@ -23,6 +25,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,21 +34,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (!token) {
       setUser(null);
+      router.push('account/login');
       return;
     }
 
-    const response = await fetch('/api/auth/me', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
+    const response = await AuthService.me(token);
     if (response.ok) {
       const user = await response.json();
       setUser(user);
       return;
     } else {
       setUser(null);
+      router.push('account/login');
     }
 
     setLoading(false);

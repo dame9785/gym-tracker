@@ -1,7 +1,10 @@
+import DashboardHeader from '@/components/dashboard/dashboard-header';
 import WeeklyOverview from '@/components/dashboard/weekly-overview';
 import TodayWorkout from '@/components/dashboard/today-workout';
 import WeeklySummary from '@/components/dashboard/weekly-summary';
 import { DashboardService } from '@/services-server/dashboard-service';
+import DashboardStats from '@/components/dashboard/dashboard-stats';
+import DashboardStatCard from '@/components/dashboard/dashboard-stat-card';
 
 export default async function DashboardPage() {
   const dashboardService = new DashboardService();
@@ -14,7 +17,8 @@ export default async function DashboardPage() {
   const dashboard = result.dashboard;
   return (
     <main className="container space-y-8">
-      <h1 className="text-4xl font-bold">Dashboard</h1>
+      <DashboardHeader />
+      <DashboardStats summary={dashboard.weeklySummary} />
       <WeeklyOverview workouts={dashboard.weeklyOverview} />
       <div className="grid gap-6 lg:grid-cols-2">
         <TodayWorkout workout={dashboard.todayWorkout} />

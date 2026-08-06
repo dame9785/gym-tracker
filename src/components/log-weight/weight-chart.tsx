@@ -21,7 +21,6 @@ export default function WeightChart({ logList }: WeightChartProps) {
       date: new Date(log.logDate ?? '').toLocaleDateString('sv-SE'),
       weight: Number(log.weight),
     }));
-  console.log(chartData);
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={chartData}>

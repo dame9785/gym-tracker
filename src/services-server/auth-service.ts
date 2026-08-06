@@ -110,15 +110,18 @@ export class AuthService {
 
   //Get Current User
   async getCurrentUser(token: string) {
-    const payload = verifyToken(token) as {
-      userId: number;
-    };
-
-    const user = await this.userRepository.findById(payload.userId);
-    if (!user) {
-      throw new Error('User not found.');
+    try {
+      const payload = verifyToken(token) as {
+        userId: number;
+      };
+      const user = await this.userRepository.findById(payload.userId);
+      if (!user) {
+        throw new Error('User not found.');
+      }
+      return user;
+    } catch (error) {
+      return null;
     }
-    return user;
   }
 
   //Get User By Id
