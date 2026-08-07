@@ -1,4 +1,7 @@
+//Prisma
 import { prisma } from '@/lib/prisma';
+
+//Repository
 import { WorkoutRepository } from './workout-repository';
 
 export class WorkoutSessionRepository {

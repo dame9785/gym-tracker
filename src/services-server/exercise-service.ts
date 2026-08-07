@@ -1,7 +1,10 @@
+//Repository
 import { ExerciseRepository } from '../repositories/exercise-repository';
-import ExerciseViewModel from '../view-models/excercise-view-model';
-import ExerciseResponse from '@/responses/exercise-response';
-import RegisterExerciseDto from '@/dto/register-exercise.dto';
+
+//Types
+import type { ExerciseResponse, ExerciseViewModel, RegisterExerciseDto } from '@/types/exercise-types';
+
+//Mapper
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
 
 export class ExerciseService {
@@ -16,6 +19,10 @@ export class ExerciseService {
           name: exercise.name,
           muscleGroup: exercise.muscleGroup,
           equipment: exercise.equipment,
+          order: 0,
+          sets: 0,
+          reps: 0,
+          weigth: 0,
         };
       });
     } catch (error) {
@@ -26,13 +33,13 @@ export class ExerciseService {
   async delete(id: number) {
     const response: ExerciseResponse = {
       message: '',
-      success: false,
+      isSuccess: false,
     };
 
     try {
       await this.exerciseRepository.delete(id);
       response.message = 'Övning sparad';
-      response.success = true;
+      response.isSuccess = true;
       return response;
     } catch (error) {
       response.message = 'Något gick fel, övning blev inte skapad';
@@ -43,14 +50,14 @@ export class ExerciseService {
   async registerExercise(dto: RegisterExerciseDto): Promise<ExerciseResponse> {
     const response: ExerciseResponse = {
       message: '',
-      success: false,
+      isSuccess: false,
     };
 
     try {
       await this.exerciseRepository.register(dto);
 
       response.message = 'Övning sparad';
-      response.success = true;
+      response.isSuccess = true;
 
       return response;
     } catch (error) {

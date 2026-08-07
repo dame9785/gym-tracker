@@ -1,4 +1,7 @@
+//Services
 import { WeightLogService } from '@/services-server/weight-log-service';
+
+//Next Response
 import { NextResponse } from 'next/server';
 
 const weightLogService = new WeightLogService();
@@ -27,10 +30,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   try {
     const body = await request.json();
     if (!body) {
-      return NextResponse.json(
-        { success: false, message: 'Request body saknas.' },
-        { status: 400 },
-      );
+      return NextResponse.json({ success: false, message: 'Request body saknas.' }, { status: 400 });
     }
     const result = await weightLogService.create(body);
 
@@ -39,9 +39,6 @@ export async function POST(request: Request): Promise<NextResponse> {
     });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { success: false, message: 'Ett serverfel inträffade.' },
-      { status: 500 },
-    );
+    return NextResponse.json({ success: false, message: 'Ett serverfel inträffade.' }, { status: 500 });
   }
 }

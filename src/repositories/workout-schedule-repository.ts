@@ -1,5 +1,8 @@
+//Prisma
 import { prisma } from '@/lib/prisma';
-import { RegisterWorkoutScheduleDto } from '@/dto/register-workout-schedule-dto';
+
+//Types
+import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
 
 export class WorkoutScheduleRepository {
   async create(dto: RegisterWorkoutScheduleDto) {

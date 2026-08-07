@@ -1,4 +1,7 @@
+//Responses
 import { NextResponse } from 'next/server';
+
+//Services
 import { DashboardService } from '@/services-server/dashboard-service';
 
 const dashboardService = new DashboardService();

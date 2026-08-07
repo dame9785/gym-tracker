@@ -1,13 +1,22 @@
 'use client';
 
-import FormStyles from '@/components/forms/form.module.css';
+//Components
 import Button from '@/components/button/button';
 import ExerciseService from '@/services/exercise-service';
-import { useEffect, useState } from 'react';
-import RegisterExerciseDto from '@/dto/register-exercise.dto';
+
+//CSS Modules
+import FormStyles from '@/components/forms/form.module.css';
+
+//Types
+import type { RegisterExerciseDto } from '@/types/exercise-types';
+
+//Toast alert
 import { toast } from 'sonner';
+
+//Next &  Routing
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 type Props = {
   exerciseId: string;

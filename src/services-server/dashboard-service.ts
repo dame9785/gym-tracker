@@ -1,7 +1,11 @@
-import WeeklyOverview from '@/components/dashboard/weekly-overview';
+//Mapping
 import { mapWeeklyOverview } from '@/mapping/dashboard-mapping';
+
+//Repository
 import { DashboardRepository } from '@/repositories/dashboard-repository';
-import { DashboardResponse } from '@/responses/dashboard-response';
+
+//Types
+import type { DashboardResponse } from '@/types/dashboard-types';
 
 export class DashboardService {
   private dashboardRepository = new DashboardRepository();
@@ -13,11 +17,7 @@ export class DashboardService {
 
       const todayWorkout = weeklyOverviewViewModel.find((workout) => {
         const workoutDate = new Date(workout.date);
-        return (
-          workoutDate.getFullYear() === today.getFullYear() &&
-          workoutDate.getMonth() === today.getMonth() &&
-          workoutDate.getDate() === today.getDate()
-        );
+        return workoutDate.getFullYear() === today.getFullYear() && workoutDate.getMonth() === today.getMonth() && workoutDate.getDate() === today.getDate();
       });
 
       const weeklySummary = {

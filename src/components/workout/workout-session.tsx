@@ -1,8 +1,15 @@
 'use client';
 
+//Routing
 import { useRouter } from 'next/navigation';
+
+//Services
 import { WorkoutSessionService } from '@/services/workout-session-service';
-import { WorkoutSessionViewModel } from '@/view-models/workout-session-view-model';
+
+//Types
+import type { WorkoutSessionViewModel } from '@/types/workout-types';
+
+//Components
 import WorkoutSessionExerciseCard from './workout-session-exercise-card';
 
 interface WorkoutSessionProps {
@@ -36,10 +43,7 @@ export default function WorkoutSession({ workoutSession }: WorkoutSessionProps) 
         ))}
       </div>
       <div className="mt-8 flex justify-end">
-        <button
-          onClick={handleFinishWorkout}
-          className="rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600"
-        >
+        <button onClick={handleFinishWorkout} className="rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600">
           Finish Workout
         </button>
       </div>

@@ -1,16 +1,11 @@
-type DashboardStatCardProps = {
+export type DashboardStatCardProps = {
   icon: React.ReactNode;
   title: string;
   value: string | number;
   subtitle?: string;
 };
 
-export default function DashboardStatCard({
-  icon,
-  title,
-  value,
-  subtitle,
-}: DashboardStatCardProps) {
+export default function DashboardStatCard({ icon, title, value, subtitle }: DashboardStatCardProps) {
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/10">
       <div className="mb-5 text-3xl">{icon}</div>

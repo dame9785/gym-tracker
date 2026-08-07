@@ -1,6 +1,8 @@
-import RegisterExerciseDto from '@/dto/register-exercise.dto';
-import ExerciseResponse from '@/responses/exercise-response';
-import ExerciseViewModel from '@/view-models/excercise-view-model';
+//Types
+import type { RegisterExerciseDto, ExerciseResponse, ExerciseViewModel } from '@/types/exercise-types';
+
+//Next Redirect
+import { redirect } from 'next/navigation';
 
 export default class ExerciseService {
   //GET: Exericses
@@ -12,7 +14,8 @@ export default class ExerciseService {
       const data = await response.json();
       return data;
     } catch (error) {
-      throw error;
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
@@ -36,12 +39,9 @@ export default class ExerciseService {
       }
 
       return result;
-    } catch {
-      // Endast om fetch misslyckas, t.ex. servern är nere
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern.',
-      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
@@ -55,10 +55,8 @@ export default class ExerciseService {
       const result = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Gick inte radera',
-      };
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
@@ -77,7 +75,8 @@ export default class ExerciseService {
       }
       return response.json();
     } catch (error) {
-      throw new Error();
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
@@ -89,7 +88,8 @@ export default class ExerciseService {
       });
       return await response.json();
     } catch (error) {
-      throw new Error('Gick inte hämta');
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 }

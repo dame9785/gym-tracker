@@ -1,11 +1,21 @@
 'use client';
 
-import { LogItemViewModel } from '@/view-models/log-weight-view-moodel';
+//Types
+import type { LogItemViewModel } from '@/types/log-weight-types';
+
+//Components
 import Button from '@/components/button/button';
+
+//Services
 import { LogWeightService } from '@/services/log-weight-service';
+
+//Alert toast sooner
 import { toast } from 'sonner';
+
+//Routing
 import { useRouter } from 'next/navigation';
 
+//Props
 type PageProps = {
   logItem: LogItemViewModel;
 };
@@ -43,9 +53,7 @@ export default function LogHistory({ logItem }: PageProps) {
   return (
     <>
       <tr className="border-t border-zinc-800 hover:bg-zinc-800/50">
-        <td className="px-6 py-4 text-white">
-          {new Date(logItem.logDate ?? '').toLocaleDateString('sv-SE')}
-        </td>
+        <td className="px-6 py-4 text-white">{new Date(logItem.logDate ?? '').toLocaleDateString('sv-SE')}</td>
 
         <td className="px-6 py-4 text-white">{logItem.weight} kg</td>
 
@@ -55,13 +63,7 @@ export default function LogHistory({ logItem }: PageProps) {
           <div className="flex gap-4">
             <Button type="button" text="Redigera" variant="secondary" size="sm" />
 
-            <Button
-              type="button"
-              text="Ta bort"
-              variant="delete"
-              size="sm"
-              onClick={() => handleDelete(logItem.id)}
-            />
+            <Button type="button" text="Ta bort" variant="delete" size="sm" onClick={() => handleDelete(logItem.id)} />
           </div>
         </td>
       </tr>

@@ -1,5 +1,8 @@
-import { LogWeightDto } from '@/dto/log-weight-dto';
-import { LogWeightResponse } from '@/responses/weight-log-response';
+//Types
+import type { LogWeightDto, LogWeightResponse } from '@/types/log-weight-types';
+
+//Next Redirect
+import { redirect } from 'next/navigation';
 
 export class LogWeightService {
   static async getAll(): Promise<LogWeightResponse | string> {
@@ -14,8 +17,8 @@ export class LogWeightService {
       }
       return result;
     } catch (error) {
-      console.error(error);
-      throw error;
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
@@ -26,8 +29,8 @@ export class LogWeightService {
       });
       return await response.json();
     } catch (error) {
-      console.error(error);
-      throw error;
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
@@ -48,8 +51,8 @@ export class LogWeightService {
       }
       return (await response.json()) as LogWeightResponse;
     } catch (error) {
-      console.error(error);
-      throw error;
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 }

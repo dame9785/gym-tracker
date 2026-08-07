@@ -1,4 +1,6 @@
+//Components
 import RegisterForm from '@/components/forms/exercise/register-exercise-form';
+
 export default function RegisterExercise() {
   return (
     <div className="container">

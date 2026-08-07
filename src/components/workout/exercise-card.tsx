@@ -1,5 +1,7 @@
-import { WorkoutExerciseViewModel } from '@/view-models/workout-view-model';
+//Types
+import type { WorkoutExerciseViewModel } from '@/types/exercise-types';
 
+//Props
 interface ExerciseCardProps {
   exercise: WorkoutExerciseViewModel;
 }

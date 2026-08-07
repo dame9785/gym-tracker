@@ -1,14 +1,20 @@
-import { RegisterWorkoutDto } from '@/dto/register-workout-dto';
-import { EditWorkoutDto } from '@/dto/edit-workout-dto';
+//Types
+import type { WorkoutValidationResult, WorkoutDto } from '@/types/workout-types';
 
-interface ValidationResult {
-  message: string;
-  success: boolean;
-}
-
-type WorkoutDto = RegisterWorkoutDto | EditWorkoutDto;
-
-export function validateWorkoutHelper(formData: WorkoutDto): ValidationResult {
+/**
+ * Validates a workout before it is created or updated.
+ *
+ * Ensures that:
+ * - The workout name is provided.
+ * - The workout description is provided.
+ * - At least one exercise has been added.
+ * - No duplicate exercises exist.
+ * - Each exercise has a valid exercise, sets, reps, and weight.
+ *
+ * @param formData The workout data to validate.
+ * @returns A validation result indicating whether the workout is valid.
+ */
+export function validateWorkoutHelper(formData: WorkoutDto): WorkoutValidationResult {
   if (formData.name.trim() === '') {
     return {
       message: 'Workout namn måste fyllas i.',

@@ -1,7 +1,11 @@
+//Next Request & Next Response
 import { NextRequest, NextResponse } from 'next/server';
+
+//Services
 import { WorkoutService } from '@/services-server/workout-service';
-import { EditWorkoutDto } from '@/dto/edit-workout-dto';
-import { EditWorkoutResponse } from '@/services/workout-service';
+
+//Types
+import type { EditWorkoutDto } from '@/types/workout-types';
 
 const workoutService = new WorkoutService();
 
@@ -60,10 +64,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 //DELETE
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 

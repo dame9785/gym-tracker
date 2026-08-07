@@ -1,10 +1,8 @@
 'use client';
 
-// React
-import { useEffect, useState } from 'react';
-
-// Next
+// Next & Hooks
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 // Styles
 import FormStyles from '@/components/forms/form.module.css';
@@ -19,12 +17,11 @@ import WorkoutService from '@/services/workout-service';
 import { hasDuplicateExercises } from '@/helpers/check-dupplicate-exericse-helper';
 import { validateWorkoutHelper } from '@/helpers/validation-workout-helper';
 
-// DTOs
-import type { RegisterWorkoutDto, RegisterWorkoutExerciseDto } from '@/dto/register-workout-dto';
+//Types
+import type { RegisterWorkoutDto } from '@/types/workout-types';
+import type { ExerciseViewModel, RegisterWorkoutExerciseDto } from '@/types/exercise-types';
 
-// ViewModels
-import type ExerciseViewModel from '@/view-models/excercise-view-model';
-
+//Toast alert sonner
 import { toast } from 'sonner';
 
 export default function AddWorkoutForm() {
@@ -99,11 +96,7 @@ export default function AddWorkoutForm() {
     }));
   };
 
-  const updateExercise = (
-    index: number,
-    field: keyof RegisterWorkoutExerciseDto,
-    value: number | string,
-  ) => {
+  const updateExercise = (index: number, field: keyof RegisterWorkoutExerciseDto, value: number | string) => {
     setFormData((prev) => {
       const updatedExercises = [...prev.workoutExercises];
 
@@ -175,14 +168,7 @@ export default function AddWorkoutForm() {
           <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
           {formData.workoutExercises.map((exercise, index) => (
-            <WorkoutExerciseCard
-              key={index}
-              index={index}
-              exercise={exercise}
-              exercises={exercises}
-              onUpdate={updateExercise}
-              onRemove={removeExercise}
-            />
+            <WorkoutExerciseCard key={index} index={index} exercise={exercise} exercises={exercises} onUpdate={updateExercise} onRemove={removeExercise} />
           ))}
 
           <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>

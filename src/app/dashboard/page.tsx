@@ -1,10 +1,12 @@
+//Services
+import { DashboardService } from '@/services-server/dashboard-service';
+
+//Components
+import DashboardStats from '@/components/dashboard/dashboard-stats';
 import DashboardHeader from '@/components/dashboard/dashboard-header';
 import WeeklyOverview from '@/components/dashboard/weekly-overview';
 import TodayWorkout from '@/components/dashboard/today-workout';
 import WeeklySummary from '@/components/dashboard/weekly-summary';
-import { DashboardService } from '@/services-server/dashboard-service';
-import DashboardStats from '@/components/dashboard/dashboard-stats';
-import DashboardStatCard from '@/components/dashboard/dashboard-stat-card';
 
 export default async function DashboardPage() {
   const dashboardService = new DashboardService();

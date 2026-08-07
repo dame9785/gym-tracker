@@ -1,7 +1,9 @@
 'use client';
 
-import { WorkoutSessionExerciseViewModel } from '@/view-models/workout-session-exercise-view-model';
-import { useState } from 'react';
+//Types
+import type { WorkoutSessionExerciseViewModel } from '@/types/exercise-types';
+
+//Components
 import WorkoutSessionSetCard from './workout-session-set-card';
 
 interface WorkoutSessionExerciseCardProps {
@@ -9,8 +11,6 @@ interface WorkoutSessionExerciseCardProps {
 }
 
 export default function WorkoutSessionExerciseCard({ exercise }: WorkoutSessionExerciseCardProps) {
-  const [completedSets, setCompletedSets] = useState<number[]>([]);
-
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
       <h2 className="text-2xl font-bold">

@@ -1,4 +1,7 @@
-import { RegisterWorkoutScheduleDto } from '@/dto/register-workout-schedule-dto';
+//Types
+import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
+
+//Repository
 import { WorkoutScheduleRepository } from '@/repositories/workout-schedule-repository';
 
 export class WorkoutScheduleService {

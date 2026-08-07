@@ -7,7 +7,9 @@ import styles from '@/components/forms/form.module.css';
 import Button from '@/components/button/button';
 
 //Types
-import { UpdateUserFormProps, User, GoalType, UserFormData, UpdateResult } from '@/types/types';
+import type { User } from '@/types/user-types';
+import type { GoalType } from '@/types/goal-types';
+import type { UpdateUserDto } from '@/schemas/auth-schemas';
 
 //React Routing
 import { useState, useEffect } from 'react';
@@ -29,13 +31,21 @@ import {
   FaSignature,
   FaBullseye,
 } from 'react-icons/fa6';
+import { toast } from 'sonner';
 
-export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
-  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+//Validation Schemas
+
+//Props
+type Props = {
+  userId: string;
+};
+
+export default function UpdateUserForm({ userId }: Props) {
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [user, setUserData] = useState<User | null>(null);
   const [goals, setGoals] = useState<GoalType[]>([]);
 
-  const [formData, setFormData] = useState<UserFormData>({
+  const [formData, setFormData] = useState<UpdateUserDto>({
     email: '',
     username: '',
     firstName: '',
@@ -47,20 +57,29 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
     goalWeight: 0,
     goalDate: '',
     goalTypeId: 0,
+    gender: 'MALE',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
+    const numericFields = ['bodyWeight', 'bodyLenght', 'goalWeight', 'goalTypeId'];
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: numericFields.includes(name) ? Number(value) : value,
     }));
+
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
   };
 
-  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const userData: UserFormData = {
+    const userData: UpdateUserDto = {
       email: formData.email,
       username: formData.username,
       firstName: formData.firstName,
@@ -72,15 +91,26 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
       goalWeight: Number(formData.goalWeight),
       goalDate: formData.goalDate,
       goalTypeId: formData.goalTypeId,
-    };
+      gender: formData.gender,
+    } satisfies UpdateUserDto;
 
-    const result: UpdateResult = await UserService.update(userData, Number(userId));
+    const result = await UserService.update(userData, Number(userId));
+
     if (!result.success) {
-      setErrorMessages(result.errors);
+      setErrors(result.fieldErrors ?? {});
+
+      if (!result.fieldErrors) {
+        toast.error(result.message);
+      }
+
+      return;
     }
 
-    //Tömmer fel meddelandet
-    setErrorMessages([]);
+    //Show alert message
+    toast.success('Användare uppdaterad');
+
+    //Empty error messages
+    setErrors({});
   };
 
   //Get all goals
@@ -101,7 +131,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
   useEffect(() => {
     const fetchUser = async () => {
       const fetchedUser: User = await UserService.getUserById(Number(userId));
-      console.log(fetchedUser);
+
       setUserData(fetchedUser);
       setFormData({
         email: fetchedUser.email,
@@ -115,6 +145,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
         goalWeight: fetchedUser.goalWeight,
         goalDate: fetchedUser.goalDate?.split('T')[0] ?? '',
         goalTypeId: fetchedUser.goalTypeId,
+        gender: fetchedUser.gender,
       });
     };
 
@@ -126,24 +157,12 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
   }
 
   return (
-    <form className={styles.form} onSubmit={handleSumbit}>
+    <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.formWrapper}>
         <h1 className={styles.formTitle}>
           Ändra konto
           <span> Inställningar</span>
         </h1>
-        {errorMessages.length > 0 && (
-          <div className={styles.formErrorMessage}>
-            <ul>
-              {errorMessages.map((error) => (
-                <li key={error}>
-                  {'-'}
-                  {error}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
       <div className={styles.formGrid}>
         <div className="form-left">
@@ -165,6 +184,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               value={formData.email}
               onChange={handleChange}
             />
+            {errors.email && <p className={styles.fieldErrorMessage}>{errors.email}</p>}
           </div>
 
           {/* USERNAME */}
@@ -186,6 +206,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               value={formData.username}
               onChange={handleChange}
             />
+            {errors.username && <p className={styles.fieldErrorMessage}>{errors.username}</p>}
           </div>
 
           {/* NAME */}
@@ -207,6 +228,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               value={formData.firstName}
               onChange={handleChange}
             />
+            {errors.firstName && <p className={styles.fieldErrorMessage}>{errors.firstName}</p>}
           </div>
 
           {/* LAST NAME */}
@@ -228,6 +250,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               value={formData.lastName}
               onChange={handleChange}
             />
+            {errors.lastName && <p className={styles.fieldErrorMessage}>{errors.lastName}</p>}
           </div>
 
           {/* PHONE */}
@@ -249,6 +272,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               value={formData.phoneNumber}
               onChange={handleChange}
             />
+            {errors.phoneNumber && <p className={styles.fieldErrorMessage}>{errors.phoneNumber}</p>}
           </div>
           {/* Goal Date */}
           <div className={styles.formGroup}>
@@ -266,6 +290,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               value={formData.goalDate?.split('T')[0] ?? ''}
               onChange={handleChange}
             />
+            {errors.goalDate && <p className={styles.fieldErrorMessage}>{errors.goalDate}</p>}
           </div>
         </div>
 
@@ -274,41 +299,43 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
           <div className={styles.formGroup}>
             <div className={styles.labelWrapper}>
               <FaWeightScale className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="weight">
+              <label className={styles.formLabel} htmlFor="bodyWeight">
                 Kroppsvikt (kg)
               </label>
             </div>
             <input
               className={styles.formInput}
-              name="weight"
+              name="bodyWeight"
               type="number"
               step="0.1"
-              id="weight"
+              id="bodyWeight"
               required
               placeholder="Ex (40.2kg)"
               value={formData.bodyWeight}
               onChange={handleChange}
             />
+            {errors.bodyWeight && <p className={styles.fieldErrorMessage}>{errors.bodyWeight}</p>}
           </div>
           {/* Body lenght */}
           <div className={styles.formGroup}>
             <div className={styles.labelWrapper}>
               <FaRulerVertical className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="lenght">
+              <label className={styles.formLabel} htmlFor="bodyLenght">
                 Längd (cm)
               </label>
             </div>
             <input
               className={styles.formInput}
-              name="lenght"
+              name="bodyLenght"
               type="number"
               step="0.1"
-              id="lenght"
+              id="bodyLenght"
               required
               placeholder="Ex (150.5cm)"
               value={formData.bodyLenght}
               onChange={handleChange}
             />
+            {errors.bodyLenght && <p className={styles.fieldErrorMessage}>{errors.bodyLenght}</p>}
           </div>
 
           {/* Birth */}
@@ -328,17 +355,18 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               value={formData.birthDate?.split('T')[0] ?? ''}
               onChange={handleChange}
             />
+            {errors.birthDate && <p className={styles.fieldErrorMessage}>{errors.birthDate}</p>}
           </div>
 
           {/* Goal */}
           <div className={styles.formGroup}>
             <div className={styles.labelWrapper}>
               <FaBullseye className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="goal">
+              <label className={styles.formLabel} htmlFor="goalType">
                 Mål
               </label>
             </div>
-            <select className={styles.formSelect} name="goalTypeId" value={user.goalTypeId} onChange={handleChange}>
+            <select className={styles.formSelect} name="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
               <option value="">Välj mål</option>
 
               {goals.map((goal) => (
@@ -347,6 +375,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
                 </option>
               ))}
             </select>
+            {errors.goalTypeId && <p className={styles.fieldErrorMessage}>{errors.goalTypeId}</p>}
           </div>
 
           {/* Goal weight*/}
@@ -367,6 +396,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
               value={formData.goalWeight}
               onChange={handleChange}
             />
+            {errors.goalWeight && <p className={styles.fieldErrorMessage}>{errors.goalWeight}</p>}
           </div>
         </div>
       </div>

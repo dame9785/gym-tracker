@@ -1,20 +1,24 @@
 'use client';
 
-//Next Link
+//Next Link & Hooks
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-//React hooks
 import { useState } from 'react';
+
+//Alert
+import { toast } from 'sonner';
+
+//Services
+import { LogWeightService } from '@/services/log-weight-service';
 
 //Modules
 import FormStyles from '@/components/forms/form.module.css';
 
 //Components
 import Button from '@/components/button/button';
-import { LogWeightDto } from '@/dto/log-weight-dto';
-import { LogWeightService } from '@/services/log-weight-service';
-import { toast } from 'sonner';
+
+//Types
+import type { LogWeightDto } from '@/types/log-weight-types';
 
 export default function LogWeightForm() {
   const router = useRouter();
@@ -77,14 +81,7 @@ export default function LogWeightForm() {
           <label className={FormStyles.formLabel} htmlFor="note">
             Notering
           </label>
-          <textarea
-            className={FormStyles.formInput}
-            id="note"
-            name="note"
-            required
-            placeholder="T.ex. morgonen"
-            onChange={handleChange}
-          ></textarea>
+          <textarea className={FormStyles.formInput} id="note" name="note" required placeholder="T.ex. morgonen" onChange={handleChange}></textarea>
         </div>
 
         <div className="flex gap-2">

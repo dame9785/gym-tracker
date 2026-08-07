@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 //FA-Icons
 import { CalendarDays, Clock3, Dumbbell, History } from 'lucide-react';
 
-//View-models
-import { HistoryViewModel } from '@/view-models/history-view-models';
+//Types
+import type { HistoryViewModel } from '@/types/history-types';
 
 //Services
 import HistoryService from '@/services/history-service';
@@ -37,6 +37,7 @@ export default function HistoryPage() {
     const loadHistory = async () => {
       try {
         const result = await HistoryService.getHistory();
+
         if (result.success) {
           setHistory(result.history);
           setSummary(result.summary);
@@ -149,17 +150,13 @@ export default function HistoryPage() {
                   <div className="mt-2 flex items-center gap-2">
                     <Clock3 className="h-5 w-5 text-orange-500" />
 
-                    <span className="text-2xl font-bold text-white">
-                      {formatDuration(workout.durationInMinutes)}
-                    </span>
+                    <span className="text-2xl font-bold text-white">{formatDuration(workout.durationInMinutes)}</span>
                   </div>
                 </div>
               </div>
 
               <div className="mt-5 flex justify-end">
-                <button className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-600">
-                  View Workout →
-                </button>
+                <button className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-600">View Workout →</button>
               </div>
             </div>
           ))}

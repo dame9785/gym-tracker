@@ -1,10 +1,12 @@
-import { WeeklyWorkoutViewModel } from '@/view-models/dashboard-view-model';
+//Types
+import { SelectedWorkoutProps } from '@/types/dashboard-types';
+
+//Next
 import Link from 'next/link';
+
+//Components
 import StartWorkoutButton from '@/components/workout/start-workout-button';
 import ButtonStyle from '@/components/button/button.module.css';
-interface SelectedWorkoutProps {
-  workout: WeeklyWorkoutViewModel;
-}
 
 export default function SelectedWorkout({ workout }: SelectedWorkoutProps) {
   return (
@@ -19,10 +21,7 @@ export default function SelectedWorkout({ workout }: SelectedWorkoutProps) {
 
         <ul className="space-y-3">
           {workout.exercises.map((exercise, index) => (
-            <li
-              key={`${exercise.id}-${index}`}
-              className="flex items-center justify-between rounded-xl border border-zinc-700 bg-zinc-800 p-4"
-            >
+            <li key={`${exercise.id}-${index}`} className="flex items-center justify-between rounded-xl border border-zinc-700 bg-zinc-800 p-4">
               <div>
                 <h5 className="font-semibold text-white">
                   {exercise.order}. {exercise.name}
@@ -33,11 +32,7 @@ export default function SelectedWorkout({ workout }: SelectedWorkoutProps) {
                 </p>
               </div>
 
-              {exercise.weight && (
-                <div className="rounded-lg bg-orange-500/20 px-3 py-2 text-sm font-semibold text-orange-400">
-                  {exercise.weight} kg
-                </div>
-              )}
+              {exercise.weight && <div className="rounded-lg bg-orange-500/20 px-3 py-2 text-sm font-semibold text-orange-400">{exercise.weight} kg</div>}
             </li>
           ))}
         </ul>
@@ -45,10 +40,7 @@ export default function SelectedWorkout({ workout }: SelectedWorkoutProps) {
 
       <div className="mt-6 flex justify-end gap-5">
         <StartWorkoutButton workoutId={workout.id}></StartWorkoutButton>
-        <Link
-          href={`/workout/${workout.id}`}
-          className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}
-        >
+        <Link href={`/workout/${workout.id}`} className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}>
           View Workout →
         </Link>
       </div>

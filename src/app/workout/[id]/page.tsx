@@ -1,4 +1,7 @@
+//Components
 import WorkoutDetails from '@/components/workout/workout-details';
+
+//Services
 import { WorkoutService } from '@/services-server/workout-service';
 
 const workoutService = new WorkoutService();

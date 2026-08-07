@@ -1,10 +1,11 @@
 'use client';
 
-//React Routing
+//React Routing & Hooks
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { LoginDto } from '@/dto/user-dtos';
+//Types
+import { LoginDto } from '@/schemas/auth-schemas';
 
 //FONTAWSOME ICONS
 import { FaEnvelope, FaLock, FaDumbbell } from 'react-icons/fa6';
@@ -15,7 +16,7 @@ import Link from 'next/link';
 //Providers
 import { useAuth } from '@/provider/auth-provider';
 
-//CSS
+//CSS Modules & Styling
 import styles from '@/components/forms/form.module.css';
 import buttonStyles from '@/components/button/button.module.css';
 
@@ -29,6 +30,8 @@ import AuthService from '@/services/auth-service';
 import { toast } from 'sonner';
 
 export default function LoginForm() {
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const router = useRouter();
   const { refreshUser } = useAuth();
   const [email, setEmail] = useState('');
@@ -37,25 +40,23 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const LoginData: LoginDto = {
-      email: email,
-      password: password,
-    };
+    const loginData = {
+      email,
+      password,
+    } satisfies LoginDto;
 
-    const data = await AuthService.login(LoginData);
+    const result = await AuthService.login(loginData);
+    console.log(result);
+    if (!result.success) {
+      setErrors(result.fieldErrors ?? {});
 
-    if (!data.response.success) {
-      const errorMessages: string[] = data.response.errors;
-
-      errorMessages.forEach((message: string) => {
-        toast.error(message);
-      });
-
+      toast.error('Något gick fel, gick inte logga in');
       return;
     }
 
-    localStorage.setItem('token', data.response.userToken);
-    refreshUser();
+    localStorage.setItem('token', result.userToken ?? '');
+    await refreshUser();
+
     router.refresh();
     router.push('/');
   };
@@ -76,14 +77,8 @@ export default function LoginForm() {
             E-mail
           </label>
         </div>
-        <input
-          className={styles.formInput}
-          required
-          type="text"
-          placeholder="E-mail.."
-          id="email"
-          onChange={(e) => setEmail(e.target.value)}
-        ></input>
+        <input className={styles.formInput} required type="text" placeholder="E-mail.." id="email" onChange={(e) => setEmail(e.target.value)}></input>
+        {errors.email && <p className={styles.fieldErrorMessage}>{errors.email}</p>}
       </div>
       <div className={styles.formGroup}>
         <div className="flex items-center gap-4">
@@ -100,12 +95,16 @@ export default function LoginForm() {
           placeholder="Lösenord.."
           onChange={(e) => setPassword(e.target.value)}
         ></input>
+        {errors.password && <p className={styles.fieldErrorMessage}>{errors.password}</p>}
       </div>
       <div className="grid grid-2">
         <Button type="submit" text="Logga in" variant="primary"></Button>
         <Link href="/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
           Gå tillbaks
         </Link>
+      </div>
+      <div className="mt-5">
+        <Link href="/account/register">Registera konto</Link>
       </div>
     </form>
   );

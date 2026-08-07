@@ -1,7 +1,8 @@
-import {
-  WeeklyWorkoutViewModel,
-  WorkoutExerciseViewModel,
-} from '@/view-models/dashboard-view-model';
+//Types
+import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
+import type { WorkoutExerciseViewModel } from '@/types/exercise-types';
+
+//Prisma
 import { Prisma } from '@prisma/client';
 
 type WeeklyOverview = Prisma.WorkoutScheduleGetPayload<{
@@ -21,16 +22,14 @@ type WeeklyOverview = Prisma.WorkoutScheduleGetPayload<{
 
 export function mapWeeklyOverview(workouts: WeeklyOverview[]): WeeklyWorkoutViewModel[] {
   return workouts.map((workout) => {
-    const exercises: WorkoutExerciseViewModel[] = workout.workout.exercises.map(
-      (workoutExercise) => ({
-        id: workoutExercise.exercise.id,
-        name: workoutExercise.exercise.name,
-        sets: workoutExercise.sets,
-        reps: workoutExercise.reps,
-        weight: workoutExercise.weight,
-        order: workoutExercise.order,
-      }),
-    );
+    const exercises: WorkoutExerciseViewModel[] = workout.workout.exercises.map((workoutExercise) => ({
+      exerciseId: workoutExercise.exercise.id,
+      name: workoutExercise.exercise.name,
+      sets: workoutExercise.sets,
+      reps: workoutExercise.reps,
+      weight: workoutExercise.weight,
+      order: workoutExercise.order,
+    }));
 
     const latestSession = workout.workout.sessions[0];
 

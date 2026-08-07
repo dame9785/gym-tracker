@@ -4,27 +4,18 @@ import FormStyles from '@/components/forms/form.module.css';
 //Components
 import Button from '@/components/button/button';
 
-// DTOs
-import type { EditWorkoutExerciseDto } from '@/dto/edit-workout-dto';
+//Types
+import type { EditWorkoutExerciseDto, ExerciseViewModel } from '@/types/exercise-types';
 
-// ViewModels
-import type ExerciseViewModel from '@/view-models/excercise-view-model';
-
-interface WorkoutExerciseCardProps {
+type Props = {
   index: number;
   exercise: EditWorkoutExerciseDto;
   exercises: ExerciseViewModel[];
   onUpdate: (index: number, field: keyof EditWorkoutExerciseDto, value: number | string) => void;
   onRemove: (index: number) => void;
-}
+};
 
-export default function WorkoutExerciseCard({
-  index,
-  exercise,
-  exercises,
-  onUpdate,
-  onRemove,
-}: WorkoutExerciseCardProps) {
+export default function WorkoutExerciseCard({ index, exercise, exercises, onUpdate, onRemove }: Props) {
   return (
     <div className={FormStyles.exerciseCard}>
       {/* Övning */}
@@ -114,12 +105,7 @@ export default function WorkoutExerciseCard({
           onChange={(e) => onUpdate(index, 'note', e.target.value)}
         />
       </div>
-      <Button
-        type="button"
-        text="Ta bort övning"
-        variant="delete"
-        onClick={() => onRemove(index)}
-      ></Button>
+      <Button type="button" text="Ta bort övning" variant="delete" onClick={() => onRemove(index)}></Button>
     </div>
   );
 }

@@ -1,19 +1,48 @@
-import { AuthService } from '@/services-server/auth-service';
-import type { RegisterUserDto } from '@/dto/user-dtos';
+//Next Server Response
 import { NextResponse } from 'next/server';
+
+//Services
+import { AuthService } from '@/services-server/auth-service';
+
+//Types
+import type { AuthApiResponse } from '@/types/user-types';
+
+//Schemas
+import { registerSchema } from '@/schemas/auth-schemas';
 
 const authService = new AuthService();
 
-export async function POST(request: Request): Promise<NextResponse> {
+export async function POST(request: Request) {
   try {
-    const body: RegisterUserDto = await request.json();
+    const body = await request.json();
 
-    const result = await authService.register(body);
+    const validation = registerSchema.safeParse(body);
 
-    return NextResponse.json(result, {
-      status: result.success ? 201 : 400,
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Validation failed.',
+          errors: validation.error.issues.map((x) => x.message),
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    const response = await authService.register(validation.data);
+    return NextResponse.json(response, {
+      status: response.success ? 201 : 400,
     });
-  } catch {
-    return NextResponse.json({ message: 'Något fel inträffade' }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: error instanceof Error ? error.message : 'Something went wrong.',
+        errors: [],
+      } satisfies AuthApiResponse,
+      { status: 500 },
+    );
   }
 }

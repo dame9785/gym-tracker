@@ -1,4 +1,7 @@
+//Next Response
 import { NextResponse } from 'next/server';
+
+//Services
 import { HistoryService } from '@/services-server/history-service';
 
 const historyService = new HistoryService();

@@ -1,5 +1,7 @@
-import { WeeklyWorkoutViewModel } from '@/view-models/dashboard-view-model';
+//Types
+import { WeeklyWorkoutViewModel } from '@/types/dashboard-types';
 
+//Props
 interface WorkoutDayCardProps {
   day: string;
   workout?: WeeklyWorkoutViewModel;
@@ -30,11 +32,7 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-zinc-400">{day}</p>
 
-        {workout?.status == 'COMPLETED' && (
-          <span className="rounded-full bg-green-500/20 px-2 py-1 text-xs font-semibold text-green-400">
-            ✓ Done
-          </span>
-        )}
+        {workout?.status == 'COMPLETED' && <span className="rounded-full bg-green-500/20 px-2 py-1 text-xs font-semibold text-green-400">✓ Done</span>}
       </div>
 
       <div className="mt-6">

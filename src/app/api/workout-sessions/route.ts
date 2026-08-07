@@ -1,4 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+//Next Response & Request
+import { NextResponse, NextRequest } from 'next/server';
+
+//Services
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
 import { AuthService } from '@/services-server/auth-service';
 
@@ -22,6 +25,11 @@ export async function POST(request: NextRequest) {
     const token = authHeader.replace('Bearer ', '');
 
     const user = await authService.getCurrentUser(token);
+    if (user == null) {
+      return NextResponse.json({
+        status: 404,
+      });
+    }
 
     const dto = await request.json();
 

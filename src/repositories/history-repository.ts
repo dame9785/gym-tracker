@@ -1,3 +1,4 @@
+//Prisma
 import { prisma } from '@/lib/prisma';
 
 export class HistoryRepository {

@@ -1,7 +1,12 @@
 'use client';
 
-import { WorkoutSessionSetViewModel } from '@/view-models/workout-session-set-view-model';
+//Types
+import { WorkoutSessionSetViewModel } from '@/types/workout-types';
+
+//Hooks
 import { useState } from 'react';
+
+//Services
 import { WorkoutSessionService } from '@/services/workout-session-service';
 
 interface WorkoutSessionSetCardProps {

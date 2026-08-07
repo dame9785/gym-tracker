@@ -1,4 +1,8 @@
+//Components
 import DashboardStatCard from './dashboard-stat-card';
+
+//Types
+import { WeeklySummaryViewModel } from '@/types/dashboard-types';
 
 type Props = {
   summary: WeeklySummaryViewModel;

@@ -1,6 +1,8 @@
+//Prisma
 import { prisma } from '@/lib/prisma';
-import RegisterExerciseDto from '@/dto/register-exercise.dto';
-import { id } from 'zod/locales';
+
+//Types
+import type { RegisterExerciseDto } from '@/types/exercise-types';
 
 export class ExerciseRepository {
   async getAll() {

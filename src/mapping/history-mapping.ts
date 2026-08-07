@@ -1,33 +1,17 @@
-import { HistoryViewModel } from '@/view-models/history-view-model';
-import { Prisma } from '@prisma/client';
+//Types
+import type { HistoryViewModel, WorkoutSessionWithRelations } from '@/types/history-types';
 
-type WorkoutSessionWithRelations = Prisma.WorkoutSessionGetPayload<{
-  include: {
-    workout: true;
-    exercises: {
-      include: {
-        workoutExercise: {
-          include: {
-            exercise: true;
-          };
-        };
-        sets: true;
-      };
+export class HistoryMapper {
+  static mapHistoryDtoToViewModel(session: WorkoutSessionWithRelations): HistoryViewModel {
+    const durationInMinutes = session.finishedAt ? Math.round((session.finishedAt.getTime() - session.startedAt.getTime()) / 60000) : 0;
+
+    return {
+      id: session.id,
+      workoutName: session.workout.name,
+      startedAt: session.startedAt.toString(),
+      finishedAt: session.finishedAt?.toString() ?? '',
+      durationInMinutes,
+      exerciseCount: session.exercises.length,
     };
-  };
-}>;
-
-export function mapToHistoryViewModel(session: WorkoutSessionWithRelations): HistoryViewModel {
-  const durationInMinutes = session.finishedAt
-    ? Math.round((session.finishedAt.getTime() - session.startedAt.getTime()) / 60000)
-    : 0;
-
-  return {
-    id: session.id,
-    workoutName: session.workout.name,
-    startedAt: session.startedAt,
-    finishedAt: session.finishedAt,
-    durationInMinutes,
-    exerciseCount: session.exercises.length,
-  };
+  }
 }

@@ -1,7 +1,12 @@
 'use client';
+
+//Routing
 import { useRouter } from 'next/navigation';
+
+//Service
 import { WorkoutSessionService } from '@/services/workout-session-service';
 
+//Props
 interface StartWorkoutButtonProps {
   workoutId: number;
 }

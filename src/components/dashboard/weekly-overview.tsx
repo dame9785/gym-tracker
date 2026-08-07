@@ -1,10 +1,15 @@
 'use client';
 
+//NEXT & React
 import { useState } from 'react';
-import WorkoutDayCard from './workout-day-card';
-import { WeeklyWorkoutViewModel } from '@/view-models/dashboard-view-model';
+
+//Types
+import type { WeeklyWorkoutViewModel } from '@/types/dashboard-types';
+
+//Components
 import SelectedWorkout from './selected-workout';
 import Modal from '@/components/modal/modal';
+import WorkoutDayCard from './workout-day-card';
 
 interface WeeklyOverviewProps {
   workouts: WeeklyWorkoutViewModel[];
@@ -28,22 +33,11 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
               }) === day.toLowerCase(),
           );
 
-          return (
-            <WorkoutDayCard
-              key={day}
-              day={day}
-              workout={workout}
-              onClick={() => setSelectedWorkout(workout)}
-            />
-          );
+          return <WorkoutDayCard key={day} day={day} workout={workout} onClick={() => setSelectedWorkout(workout)} />;
         })}
       </div>
 
-      <Modal
-        isOpen={!!selectedWorkout}
-        onClose={() => setSelectedWorkout(undefined)}
-        title={selectedWorkout?.workoutName}
-      >
+      <Modal isOpen={!!selectedWorkout} onClose={() => setSelectedWorkout(undefined)} title={selectedWorkout?.workoutName}>
         {selectedWorkout && <SelectedWorkout workout={selectedWorkout} />}
       </Modal>
     </section>

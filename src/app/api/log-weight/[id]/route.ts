@@ -1,12 +1,12 @@
+//Next Request & Next Response
 import { NextRequest, NextResponse } from 'next/server';
+
+//Services
 import { WeightLogService } from '@/services-server/weight-log-service';
 
 const weightLogService = new WeightLogService();
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 

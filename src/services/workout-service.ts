@@ -1,54 +1,53 @@
-import type { WorkoutViewModel } from '@/view-models/workout-view-model';
-import type ExerciseViewModel from '@/view-models/excercise-view-model';
-import type { RegisterWorkoutDto } from '@/dto/register-workout-dto';
-import { EditWorkoutViewModel } from '@/view-models/workout-edit-view-model';
-import type { EditWorkoutDto } from '@/dto/edit-workout-dto';
+//Types
+import type { ExerciseViewModel } from '@/types/exercise-types';
+import type { DeleteWorkoutResponse, GetWorkoutResponse, EditWorkoutResponse, EditWorkoutDto, RegisterWorkoutDto } from '@/types/workout-types';
 
-export interface DeleteWorkoutResponse {
-  success: boolean;
-  message: string;
-}
-
-export interface GetWorkoutResponse {
-  success: boolean;
-  message: string;
-  workout: EditWorkoutViewModel;
-}
-
-export interface EditWorkoutResponse {
-  success: boolean;
-  message: string;
-  workout: WorkoutViewModel[];
-}
+//Next Redirect
+import { redirect } from 'next/navigation';
 
 export default class WorkoutService {
   static async get(): Promise<ExerciseViewModel[]> {
-    const response = await fetch('/api/exercises', {
-      method: 'GET',
-    });
+    try {
+      const response = await fetch('/api/exercises', {
+        method: 'GET',
+      });
 
-    const exerices = response.json();
-    return exerices;
+      const exerices = response.json();
+      return exerices;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
+    }
   }
 
   static async create(dto: RegisterWorkoutDto) {
-    const response = await fetch('/api/workouts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dto),
-    });
+    try {
+      const response = await fetch('/api/workouts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dto),
+      });
 
-    return await response.json();
+      return await response.json();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
+    }
   }
 
   static async getAll() {
-    const response = await fetch('/api/workouts', {
-      method: 'GET',
-    });
+    try {
+      const response = await fetch('/api/workouts', {
+        method: 'GET',
+      });
 
-    return await response.json();
+      return await response.json();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
+    }
   }
 
   //Update Workout
@@ -73,11 +72,8 @@ export default class WorkoutService {
 
       return result as EditWorkoutResponse;
     } catch (error) {
-      return {
-        message: 'Något gick fel, gick inte hämta träningspass',
-        success: false,
-        workout: [],
-      };
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
@@ -97,11 +93,8 @@ export default class WorkoutService {
       }
       return (await response.json()) as GetWorkoutResponse;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Något gick fel, gick inte hämta träningspass',
-        workout: null as never, // eller gör workout valfri, se nedan
-      };
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
@@ -121,10 +114,8 @@ export default class WorkoutService {
 
       return (await response.json()) as DeleteWorkoutResponse;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Något gick fel, träningspass blev ej borttagen',
-      };
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 }

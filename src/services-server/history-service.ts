@@ -1,5 +1,8 @@
-import { mapToHistoryViewModel } from '@/mapping/history-mapping';
+//Repository
 import { HistoryRepository } from '@/repositories/history-repository';
+
+//Types
+import { HistoryMapper } from '@/mapping/history-mapping';
 
 export class HistoryService {
   private historyRepository = new HistoryRepository();
@@ -10,7 +13,7 @@ export class HistoryService {
 
       const summary = await this.historyRepository.getWorkoutSummary();
 
-      const history = sessions.map(mapToHistoryViewModel);
+      const history = sessions.map((s) => HistoryMapper.mapHistoryDtoToViewModel(s));
 
       return {
         success: true,
@@ -18,8 +21,6 @@ export class HistoryService {
         summary,
       };
     } catch (error) {
-      console.error(error);
-
       return {
         success: false,
         message: 'Could not load workout history.',

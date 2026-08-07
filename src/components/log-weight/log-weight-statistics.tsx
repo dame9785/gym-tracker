@@ -26,9 +26,7 @@ export default function Statistic({ currentWeight, startWeight }: StatisticProps
       {/* Current Different */}
       <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
         <p className="text-sm text-orange-400">Förändring</p>
-        <h2
-          className={`mt-2 text-3xl font-bold ${isWeightGain ? 'text-green-400' : 'text-red-400'}`}
-        >
+        <h2 className={`mt-2 text-3xl font-bold ${isWeightGain ? 'text-green-400' : 'text-red-400'}`}>
           {difference > 0 ? '+' : ''}
           {difference.toFixed(1)} kg
         </h2>

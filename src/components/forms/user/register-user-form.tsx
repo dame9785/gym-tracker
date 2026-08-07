@@ -25,14 +25,13 @@ import { toast } from 'sonner';
 //Components
 import Button from '@/components/button/button';
 
-//CSS
+//Styling
 import FormStyles from '@/components/forms/form.module.css';
 import buttonStyles from '@/components/button/button.module.css';
 
-//Link
+//NEXT & Hooks
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
 import { useState, useEffect } from 'react';
 
 //Services
@@ -42,18 +41,15 @@ import GoalService from '@/services/goal-service';
 //Providers
 import { useAuth } from '@/provider/auth-provider';
 
-//Dtos
-import type { RegisterUserDto } from '@/dto/user-dtos';
+//Types
+import type { RegisterUserDto } from '@/schemas/auth-schemas';
+import type { GoalType } from '@/types/goal-types';
 
 export default function RegisterForm() {
-  interface GoalType {
-    id: number;
-    title: string;
-  }
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const router = useRouter();
   const [goals, setGoals] = useState<GoalType[]>([]);
-  const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const { refreshUser } = useAuth();
 
   //Get all goals
@@ -82,23 +78,38 @@ export default function RegisterForm() {
     bodyWeight: 0,
     bodyLenght: 0,
     gender: Gender.MALE,
-    birthDate: new Date(),
+    birthDate: new Date().toString(),
     goalTypeId: 0,
     goalWeight: 0,
     goalDate: '',
     password: '',
-    passwordhash: null,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
+    let parsedValue: string | number | Date = value;
+
+    switch (name) {
+      case 'bodyWeight':
+      case 'bodyLenght':
+      case 'goalWeight':
+      case 'goalTypeId':
+        parsedValue = Number(value);
+        break;
+
+      case 'birthDate':
+        parsedValue = new Date(value);
+        break;
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: parsedValue,
     }));
   };
 
-  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (goals.length === 0) {
@@ -106,7 +117,7 @@ export default function RegisterForm() {
       return;
     }
 
-    const userData: RegisterUserDto = {
+    const userData = {
       email: formData.email,
       username: formData.username,
       firstName: formData.firstName,
@@ -120,14 +131,14 @@ export default function RegisterForm() {
       goalWeight: Number(formData.goalWeight),
       goalDate: formData.goalDate,
       password: formData.password,
-      passwordhash: null,
-    };
+    } satisfies RegisterUserDto;
 
     try {
       const result = await AuthService.register(userData);
 
       if (!result.success) {
-        setErrorMessages(result.errors);
+        setErrors(result.fieldErrors ?? {});
+
         toast.error('Användaren skapades inte!');
         return;
       }
@@ -138,36 +149,26 @@ export default function RegisterForm() {
       }
 
       localStorage.setItem('token', result.userToken);
-      toast.success('Användaren registrerades!');
-      refreshUser();
 
-      setTimeout(() => {
-        router.push('/account/settings');
-      }, 1000);
-    } catch (error: unknown) {
-      toast.error('Något gick fel, kontot kunde inte registreras');
+      setErrors({});
+      toast.success('Användaren registrerades!');
+
+      await refreshUser();
+
+      router.push('/account/settings');
+    } catch (error) {
+      console.error(error);
+      toast.error('Något gick fel, kontot kunde inte registreras.');
     }
   };
 
   return (
-    <form className={FormStyles.form} onSubmit={handleSumbit}>
+    <form className={FormStyles.form} onSubmit={handleSubmit}>
       <div className={FormStyles.formWrapper}>
         <h1 className={FormStyles.formTitle}>
           Registera
           <span> Konto</span>
         </h1>
-        {errorMessages.length > 0 && (
-          <div className={FormStyles.formErrorMessage}>
-            <ul>
-              {errorMessages.map((error) => (
-                <li key={error}>
-                  {'-'}
-                  {error}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
       <div className={FormStyles.formGrid}>
         <div className="form-left">
@@ -185,9 +186,11 @@ export default function RegisterForm() {
               type="email"
               id="email"
               required
+              value={formData.email}
               placeholder="E-post..."
               onChange={handleChange}
             />
+            {errors.email && <p className={FormStyles.fieldError}>{errors.email}</p>}
           </div>
 
           {/* USERNAME */}
@@ -202,12 +205,14 @@ export default function RegisterForm() {
               className={FormStyles.formInput}
               name="username"
               type="text"
+              value={formData.username}
               id="username"
               maxLength={20}
               required
               placeholder="Användarnamn..."
               onChange={handleChange}
             />
+            {errors.username && <p className={FormStyles.fieldError}>{errors.username}</p>}
           </div>
 
           {/* NAME */}
@@ -222,12 +227,14 @@ export default function RegisterForm() {
               className={FormStyles.formInput}
               name="firstName"
               type="text"
+              value={formData.firstName}
               id="firstName"
               maxLength={20}
               required
               placeholder="Namn..."
               onChange={handleChange}
             />
+            {errors.firstName && <p className={FormStyles.fieldError}>{errors.firstName}</p>}
           </div>
 
           {/* LAST NAME */}
@@ -242,12 +249,14 @@ export default function RegisterForm() {
               className={FormStyles.formInput}
               name="lastName"
               type="text"
+              value={formData.lastName}
               maxLength={50}
               id="lastName"
               required
               placeholder="Efternamn..."
               onChange={handleChange}
             />
+            {errors.lastName && <p className={FormStyles.fieldError}>{errors.lastName}</p>}
           </div>
 
           {/* PHONE */}
@@ -263,31 +272,35 @@ export default function RegisterForm() {
               name="phoneNumber"
               type="tel"
               id="phoneNumber"
+              value={formData.phoneNumber}
               maxLength={15}
               required
               placeholder="Telefonnummer..."
               onChange={handleChange}
             />
+            {errors.phoneNumber && <p className={FormStyles.fieldError}>{errors.phoneNumber}</p>}
           </div>
 
           {/* Body Weight */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaWeightScale className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="weight">
+              <label className={FormStyles.formLabel} htmlFor="bodyWeight">
                 Kroppsvikt (kg)
               </label>
             </div>
             <input
               className={FormStyles.formInput}
-              name="weight"
+              name="bodyWeight"
               type="number"
               step="0.1"
-              id="weight"
+              id="bodyWeight"
+              value={formData.bodyWeight}
               required
               placeholder="Ex (40.2kg)"
               onChange={handleChange}
             />
+            {errors.bodyWeight && <p className={FormStyles.fieldError}>{errors.bodyWeight}</p>}
           </div>
           {/* PASSWORD */}
           <div className={FormStyles.formGroup}>
@@ -297,15 +310,8 @@ export default function RegisterForm() {
                 Lösenord
               </label>
             </div>
-            <input
-              className={FormStyles.formInput}
-              name="password"
-              type="password"
-              id="password"
-              required
-              placeholder="Lösenord..."
-              onChange={handleChange}
-            />
+            <input className={FormStyles.formInput} name="password" type="password" id="password" required placeholder="Lösenord..." onChange={handleChange} />
+            {errors.password && <p className={FormStyles.fieldError}>{errors.password}</p>}
           </div>
         </div>
 
@@ -314,20 +320,22 @@ export default function RegisterForm() {
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaRulerVertical className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="lenght">
+              <label className={FormStyles.formLabel} htmlFor="bodyLength">
                 Längd (cm)
               </label>
             </div>
             <input
               className={FormStyles.formInput}
-              name="lenght"
+              name="bodyLength"
               type="number"
               step="0.1"
-              id="lenght"
+              id="bodyLength"
+              value={formData.bodyLenght}
               required
               placeholder="Ex (150.5cm)"
               onChange={handleChange}
             />
+            {errors.bodyLength && <p className={FormStyles.fieldError}>{errors.bodyLength}</p>}
           </div>
 
           {/* GENDER */}
@@ -338,12 +346,7 @@ export default function RegisterForm() {
                 Kön
               </label>
             </div>
-            <select
-              className={FormStyles.formSelect}
-              id="gender"
-              name="gender"
-              onChange={handleChange}
-            >
+            <select className={FormStyles.formSelect} id="gender" name="gender" value={formData.gender} onChange={handleChange}>
               <option value="">Välj kön</option>
               <option value={Gender.MALE}>Man</option>
               <option value={Gender.FEMALE}>Kvinna</option>
@@ -359,14 +362,8 @@ export default function RegisterForm() {
                 Född
               </label>
             </div>
-            <input
-              className={FormStyles.formInput}
-              name="birthDate"
-              type="date"
-              id="birthDate"
-              placeholder="1997-09-26"
-              onChange={handleChange}
-            />
+            <input className={FormStyles.formInput} name="birthDate" type="date" id="birthDate" placeholder="1997-09-26" onChange={handleChange} />
+            {errors.gender && <p className={FormStyles.fieldError}>{errors.gender}</p>}
           </div>
 
           {/* Goal */}
@@ -377,12 +374,7 @@ export default function RegisterForm() {
                 Mål
               </label>
             </div>
-            <select
-              className={FormStyles.formSelect}
-              name="goalTypeId"
-              value={formData.goalTypeId}
-              onChange={handleChange}
-            >
+            <select className={FormStyles.formSelect} name="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
               <option value="">Välj mål</option>
 
               {goals.map((goal) => (
@@ -401,15 +393,7 @@ export default function RegisterForm() {
                 Mål vikt (kg)
               </label>
             </div>
-            <input
-              className={FormStyles.formInput}
-              name="goalWeight"
-              type="number"
-              step="0.1"
-              placeholder="Ex: 75"
-              id="goalWeight"
-              onChange={handleChange}
-            />
+            <input className={FormStyles.formInput} name="goalWeight" type="number" step="0.1" placeholder="Ex: 75" id="goalWeight" onChange={handleChange} />
           </div>
 
           {/* Goal Date */}
@@ -420,13 +404,7 @@ export default function RegisterForm() {
                 Måldatum
               </label>
             </div>
-            <input
-              className={FormStyles.formInput}
-              name="goalDate"
-              type="date"
-              id="goalDate"
-              onChange={handleChange}
-            />
+            <input className={FormStyles.formInput} name="goalDate" type="date" id="goalDate" onChange={handleChange} />
           </div>
         </div>
       </div>

@@ -1,4 +1,7 @@
+//Next Response & Request
 import { NextRequest, NextResponse } from 'next/server';
+
+//Services
 import { WorkoutService } from '@/services-server/workout-service';
 
 const workoutService = new WorkoutService();

@@ -1,4 +1,7 @@
+//Next Request & Next Response
 import { NextRequest, NextResponse } from 'next/server';
+
+//Services
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
 
 const workoutSessionService = new WorkoutSessionService();
@@ -14,11 +17,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const dto = await request.json();
 
-    const result = await workoutSessionService.updateSet(
-      Number(id),
-      dto.actualReps,
-      dto.actualWeight,
-    );
+    const result = await workoutSessionService.updateSet(Number(id), dto.actualReps, dto.actualWeight);
 
     return NextResponse.json(result);
   } catch (error) {

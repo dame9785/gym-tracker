@@ -1,16 +1,16 @@
 'use client';
 
+//React hooks & Context
 import { createContext, useContext, useEffect, useState } from 'react';
+
+//Services
 import AuthService from '@/services/auth-service';
+
+//Routing
 import { useRouter } from 'next/navigation';
 
-type User = {
-  id: number;
-  username: string;
-  email: string;
-  firstName: string | null;
-  lastName: string | null;
-};
+//
+import { User } from '@/types/user-types';
 
 type AuthContextType = {
   user: User | null;
@@ -34,21 +34,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (!token) {
       setUser(null);
-      router.push('account/login');
+      // router.push('account/login');
       return;
     }
 
-    const response = await AuthService.me(token);
-    if (response.ok) {
-      const user = await response.json();
-      setUser(user);
-      return;
-    } else {
-      setUser(null);
-      router.push('account/login');
-    }
+    try {
+      const response = await AuthService.me(token);
+      if (response.ok) {
+        const user = await response.json();
+        setUser(user);
+        return;
+      } else {
+        setUser(null);
+        // router.push('account/login');
+      }
 
-    setLoading(false);
+      setLoading(false);
+    } catch (error) {}
   };
 
   useEffect(() => {

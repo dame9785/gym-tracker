@@ -3,32 +3,37 @@
 //React hooks
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+
 //Styles
 import FormStyles from '@/components/forms/form.module.css';
 
-import type ExerciseViewModel from '@/view-models/excercise-view-model';
+//Types
+import type { ExerciseViewModel, EditWorkoutExerciseDto } from '@/types/exercise-types';
+import type { EditWorkoutDto, EditWorkoutViewModel } from '@/types/workout-types';
 
+//Services
 import ExerciseService from '@/services/exercise-service';
 
 //Helpers
 import { hasDuplicateExercises } from '@/helpers/check-dupplicate-exericse-helper';
 import { validateWorkoutHelper } from '@/helpers/validation-workout-helper';
 
-//DTO:S
-import type { EditWorkoutDto, EditWorkoutExerciseDto } from '@/dto/edit-workout-dto';
-
 //Services
 import WorkoutService from '@/services/workout-service';
 import { toast } from 'sonner';
-import { EditWorkoutViewModel } from '@/view-models/workout-edit-view-model';
 
+//Components
 import EditWorkoutExericeCard from '@/components/forms/workout/edit-workout-exericse-card';
 
-type pageProps = {
+//NEXT Redirect
+import { redirect } from 'next/navigation';
+
+//Props
+type props = {
   workoutId: string;
 };
 
-export default function EditWorkoutForm({ workoutId }: pageProps) {
+export default function EditWorkoutForm({ workoutId }: props) {
   const router = useRouter();
   const [exercises, setExercises] = useState<ExerciseViewModel[]>([]);
   const [formData, setFormData] = useState<EditWorkoutDto>({
@@ -51,12 +56,13 @@ export default function EditWorkoutForm({ workoutId }: pageProps) {
       name: workout.name,
       description: workout.description ?? '',
       workoutExercises: workout.workoutExercises.map((x) => ({
-        name: x.name,
         exerciseId: x.exerciseId,
-        sets: x.sets ?? 0,
-        reps: x.reps ?? 0,
-        weight: x.weight ?? 0,
-        note: x.note ?? '',
+        name: x.name,
+        sets: x.sets,
+        reps: x.reps,
+        order: x.order,
+        weight: x.weight,
+        note: '',
       })),
     });
   };
@@ -67,10 +73,11 @@ export default function EditWorkoutForm({ workoutId }: pageProps) {
       workoutExercises: [
         ...prev.workoutExercises,
         {
-          name: '',
           exerciseId: 0,
+          name: '',
           sets: 0,
           reps: 0,
+          order: 0,
           weight: 0,
           note: '',
         },
@@ -78,11 +85,7 @@ export default function EditWorkoutForm({ workoutId }: pageProps) {
     }));
   };
 
-  const updateExercise = (
-    index: number,
-    field: keyof EditWorkoutExerciseDto,
-    value: number | string,
-  ) => {
+  const updateExercise = (index: number, field: keyof EditWorkoutExerciseDto, value: number | string) => {
     setFormData((prev) => {
       const updated = [...prev.workoutExercises];
 
@@ -108,12 +111,18 @@ export default function EditWorkoutForm({ workoutId }: pageProps) {
   //GET: Workout/{ID}
   useEffect(() => {
     const fetchWorkout = async () => {
-      const result = await WorkoutService.getById(Number(workoutId));
-      if (!result.success) {
-        toast('Något gick fel, gick inte hämta träningspass');
+      try {
+        const result = await WorkoutService.getById(Number(workoutId));
+        if (!result.success) {
+          toast('Något gick fel, gick inte hämta träningspass');
+        }
+        handleWorkoutData(result.workout);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+        redirect(`/error?message=${encodeURIComponent(message)}`);
       }
-      handleWorkoutData(result.workout);
     };
+
     fetchWorkout();
   }, [workoutId]);
 
@@ -145,7 +154,8 @@ export default function EditWorkoutForm({ workoutId }: pageProps) {
       toast.success('Träningspass tillagt');
       router.push('/workout');
     } catch (error) {
-      toast.error('Något är fel, övning ej skapad');
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   };
 
@@ -205,14 +215,7 @@ export default function EditWorkoutForm({ workoutId }: pageProps) {
           <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
           {formData.workoutExercises.map((exercise, index) => (
-            <EditWorkoutExericeCard
-              key={index}
-              index={index}
-              exercise={exercise}
-              exercises={exercises}
-              onUpdate={updateExercise}
-              onRemove={removeExercise}
-            />
+            <EditWorkoutExericeCard key={index} index={index} exercise={exercise} exercises={exercises} onUpdate={updateExercise} onRemove={removeExercise} />
           ))}
 
           <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>

@@ -1,22 +1,24 @@
 'use client';
 
-//Hooks
-import { useState } from 'react';
-
-//Link
-import { useRouter } from 'next/navigation';
-
 //Styles
 import FormStyles from '@/components/forms/form.module.css';
-import Button from '@/components/button/button';
 
 //Services
 import ExerciseService from '@/services/exercise-service';
 
-//DTO:s
-import RegisterExerciseDto from '@/dto/register-exercise.dto';
+//Types
+import type { RegisterExerciseDto } from '@/types/exercise-types';
+
+//Alert
 import { toast } from 'sonner';
+
+//Next Link & Routing
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+//Components
+import Button from '@/components/button/button';
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -69,15 +71,7 @@ export default function RegisterForm() {
           <label className={FormStyles.formLabel} htmlFor="name">
             Namn
           </label>
-          <input
-            className={FormStyles.formInput}
-            id="name"
-            name="name"
-            type="text"
-            required
-            placeholder="T.ex. knäböj"
-            onChange={handleChange}
-          ></input>
+          <input className={FormStyles.formInput} id="name" name="name" type="text" required placeholder="T.ex. knäböj" onChange={handleChange}></input>
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="muscleGroup">

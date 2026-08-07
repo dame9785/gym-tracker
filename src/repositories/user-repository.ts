@@ -1,6 +1,6 @@
+//Prisma
 import { Prisma, User } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import { id } from 'zod/locales';
 
 export class UserRepository {
   async findByEmail(email: string) {
@@ -46,32 +46,24 @@ export class UserRepository {
   }
 
   async emailExists(email: string, ignoreUserId?: number): Promise<boolean> {
-    return (
-      (await prisma.user.findFirst({
-        where: {
-          email,
-          NOT: ignoreUserId
-            ? {
-                id: ignoreUserId,
-              }
-            : undefined,
-        },
-      })) !== null
-    );
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+        NOT: ignoreUserId ? { id: ignoreUserId } : undefined,
+      },
+    });
+
+    return user !== null;
   }
 
-  async userNameAlreadyExist(username: string, ignoreUserId?: number): Promise<boolean> {
-    return (
-      (await prisma.user.findFirst({
-        where: {
-          username,
-          NOT: ignoreUserId
-            ? {
-                id: ignoreUserId,
-              }
-            : undefined,
-        },
-      })) !== null
-    );
+  async usernameExists(username: string, ignoreUserId?: number): Promise<boolean> {
+    const user = await prisma.user.findFirst({
+      where: {
+        username,
+        NOT: ignoreUserId ? { id: ignoreUserId } : undefined,
+      },
+    });
+
+    return user !== null;
   }
 }

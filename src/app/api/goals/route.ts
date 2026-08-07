@@ -1,4 +1,7 @@
+//Next Response
 import { NextResponse } from 'next/server';
+
+//Prisma
 import { prisma } from '@/lib/prisma';
 
 //GET All goals

@@ -1,7 +1,11 @@
+//Next Response
 import { NextResponse } from 'next/server';
+
+//Services
 import { ExerciseService } from '@/services-server/exercise-service';
-import RegisterResponse from '@/responses/exercise-response';
-import RegisterExerciseDto from '@/dto/register-exercise.dto';
+
+//Types
+import type { RegisterExerciseDto } from '@/types/exercise-types';
 
 const exerciseService = new ExerciseService();
 

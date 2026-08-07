@@ -1,3 +1,6 @@
+//Next Redirect
+import { redirect } from 'next/navigation';
+
 export default class HistoryService {
   static async getHistory() {
     try {
@@ -9,10 +12,8 @@ export default class HistoryService {
         summary: data.summary,
       };
     } catch (error) {
-      return {
-        success: false,
-        message: 'Något gick fel.',
-      };
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 }

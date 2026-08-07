@@ -1,10 +1,11 @@
-//DTOS
-import type { LoginDto, RegisterUserDto } from '@/dto/user-dtos';
+//NEXT Redirect
+import { redirect } from 'next/navigation';
 
 //Types
-import type { RegisterUserResponse, LoginUserResponse } from '@/responses/user-responses';
-import type { UserFormData, UpdateResult, User } from '@/types/types';
+import type { User, AuthApiResponse } from '@/types/user-types';
+import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
 
+//API URL
 const API_URL = '/api/auth';
 
 export default class AuthService {
@@ -19,13 +20,13 @@ export default class AuthService {
       });
       return response;
     } catch (error) {
-      console.log(error);
-      throw new Error();
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
   //Login
-  static async login(dto: LoginDto): Promise<LoginUserResponse> {
+  static async login(dto: LoginDto): Promise<AuthApiResponse> {
     try {
       const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
@@ -35,15 +36,16 @@ export default class AuthService {
         body: JSON.stringify(dto),
       });
 
-      const data: LoginUserResponse = await response.json();
+      const data: AuthApiResponse = await response.json();
       return data;
     } catch (error) {
-      throw new Error();
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
   //Register
-  static async register(dto: RegisterUserDto): Promise<RegisterUserResponse> {
+  static async register(dto: RegisterUserDto): Promise<AuthApiResponse> {
     try {
       const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
@@ -52,15 +54,17 @@ export default class AuthService {
         },
         body: JSON.stringify(dto),
       });
-      const data = (await response.json()) as RegisterUserResponse;
+
+      const data: AuthApiResponse = await response.json();
       return data;
     } catch (error) {
-      throw new Error();
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
   //Update User
-  static async update(userData: UserFormData, userId: number): Promise<UpdateResult> {
+  static async update(userData: UpdateUserDto, userId: number): Promise<AuthApiResponse> {
     try {
       const response = await fetch(`${API_URL}/update/${userId}`, {
         method: 'PUT',
@@ -69,13 +73,15 @@ export default class AuthService {
         },
         body: JSON.stringify(userData),
       });
-      const result = response.json() as Promise<UpdateResult>;
-      return result;
+      const data: AuthApiResponse = await response.json();
+      return data;
     } catch (error) {
-      throw new Error();
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
+  //GET: User By Id
   static async getUserById(userId: number) {
     try {
       const response = await fetch(`${API_URL}/setting/${userId}`, {
@@ -84,7 +90,27 @@ export default class AuthService {
       const result = (await response.json()) as User;
       return result;
     } catch (error) {
-      throw new Error();
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
+    }
+  }
+
+  //Logout
+  static async logout(): Promise<AuthApiResponse> {
+    try {
+      const response = await fetch(`${API_URL}/logout`, {
+        method: 'POST',
+      });
+
+      const result: AuthApiResponse = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message);
+      }
+
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 }

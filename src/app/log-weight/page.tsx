@@ -1,10 +1,11 @@
+//Next Link
 import Link from 'next/link';
-import Button from '@/components/button/button';
 
 //Components
 import Statistic from '@/components/log-weight/log-weight-statistics';
 import LogHistoryList from '@/components/log-weight/log-history-list';
 import WeightChart from '@/components/log-weight/weight-chart';
+import Button from '@/components/button/button';
 
 //Services
 import { WeightLogService } from '@/services-server/weight-log-service';

@@ -1,5 +1,8 @@
+//Prisma
 import { prisma } from '@/lib/prisma';
-import type { LogWeightDto } from '@/dto/log-weight-dto';
+
+//Types
+import type { LogWeightDto } from '@/types/log-weight-types';
 
 export class WeightLogRepository {
   async getAll(userId: number) {

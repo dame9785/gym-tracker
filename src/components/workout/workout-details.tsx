@@ -1,9 +1,12 @@
-import { WorkoutViewModel } from '@/view-models/workout-view-model';
+//Typees
+import type { EditWorkoutViewModel } from '@/types/workout-types';
+
+//Components
 import ExerciseCard from './exercise-card';
 import StartWorkoutButton from './start-workout-button';
 
 interface WorkoutDetailsProps {
-  workout: WorkoutViewModel;
+  workout: EditWorkoutViewModel;
 }
 
 export default function WorkoutDetails({ workout }: WorkoutDetailsProps) {
@@ -14,8 +17,8 @@ export default function WorkoutDetails({ workout }: WorkoutDetailsProps) {
       {workout.description && <p className="mt-2 text-zinc-400">{workout.description}</p>}
 
       <div className="mt-8 space-y-4">
-        {workout.exercise.map((exercise, index) => (
-          <ExerciseCard key={`${exercise.id}-${index}`} exercise={exercise} />
+        {workout.workoutExercises.map((exercise, index) => (
+          <ExerciseCard key={`${exercise.exerciseId}-${index}`} exercise={exercise} />
         ))}
       </div>
 

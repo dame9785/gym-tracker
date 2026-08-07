@@ -1,7 +1,14 @@
+//Mapping
 import { mapWeeklyOverview } from '@/mapping/dashboard-mapping';
-import { DashboardRepository } from '@/repositories/dashboard-repository';
-import { DashboardResponse } from '@/responses/dashboard-response';
 
+//Repository
+import { DashboardRepository } from '@/repositories/dashboard-repository';
+
+//Types
+import type { DashboardResponse } from '@/types/dashboard-types';
+
+//NEXT Redirect
+import { redirect } from 'next/navigation';
 export class DashboardService {
   private dashboardRepository = new DashboardRepository();
 
@@ -15,11 +22,7 @@ export class DashboardService {
       const todayWorkout = weeklyOverviewViewModel.find((workout) => {
         const workoutDate = new Date(workout.date);
 
-        return (
-          workoutDate.getFullYear() === today.getFullYear() &&
-          workoutDate.getMonth() === today.getMonth() &&
-          workoutDate.getDate() === today.getDate()
-        );
+        return workoutDate.getFullYear() === today.getFullYear() && workoutDate.getMonth() === today.getMonth() && workoutDate.getDate() === today.getDate();
       });
 
       const weeklySummary = {
@@ -37,12 +40,8 @@ export class DashboardService {
         },
       };
     } catch (error) {
-      console.error(error);
-
-      return {
-        success: false,
-        message: 'Något gick fel.',
-      };
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 }

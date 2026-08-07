@@ -1,12 +1,14 @@
+//Services
 import { ExerciseService } from '@/services-server/exercise-service';
+
+//Next Request & Next Response
 import { NextRequest, NextResponse } from 'next/server';
-import RegisterExerciseDto from '@/dto/register-exercise.dto';
+
+//Types
+import type { RegisterExerciseDto } from '@/types/exercise-types';
 
 const exerciseService = new ExerciseService();
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 

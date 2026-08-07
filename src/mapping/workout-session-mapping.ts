@@ -1,5 +1,8 @@
+//Prisma
 import { Prisma } from '@prisma/client';
-import { WorkoutSessionViewModel } from '@/view-models/workout-session-view-model';
+
+//Types
+import type { WorkoutSessionViewModel } from '@/types/workout-types';
 
 type WorkoutSessionWithExercises = Prisma.WorkoutSessionGetPayload<{
   include: {
@@ -16,9 +19,7 @@ type WorkoutSessionWithExercises = Prisma.WorkoutSessionGetPayload<{
   };
 }>;
 
-export function mapWorkoutSession(
-  workoutSession: WorkoutSessionWithExercises,
-): WorkoutSessionViewModel {
+export function mapWorkoutSession(workoutSession: WorkoutSessionWithExercises): WorkoutSessionViewModel {
   const viewModel: WorkoutSessionViewModel = {
     id: workoutSession.id,
     workoutId: workoutSession.workoutId,

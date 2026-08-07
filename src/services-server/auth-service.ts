@@ -1,44 +1,47 @@
+//Prisma
+import { Prisma } from '@prisma/client';
+
+//Repository
+import { UserRepository } from '@/repositories/user-repository';
+
+//JWT Libary
+import { generateToken, verifyToken } from '../lib/jwt';
 import bcrypt from 'bcryptjs';
 
-import { Prisma } from '@prisma/client';
-import { UserRepository } from '@/repositories/user-repository';
-import { generateToken, verifyToken } from '../lib/jwt';
-
-import { UserSettingsViewModel } from '@/view-models/user-settings-view-model';
+//Mapping
 import { UserMapper } from '../mapping/user-mapping';
 
 //Types
-import type { RegisterUserDto, UpdateUserDto } from '@/dto/user-dtos';
-import type { RegisterUserResponse, LoginUserResponse } from '@/responses/user-responses';
+import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
+import type { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
 
 export class AuthService {
   private userRepository = new UserRepository();
 
   //Register
-  async register(dto: RegisterUserDto): Promise<RegisterUserResponse> {
-    const response: RegisterUserResponse = {
-      success: true,
-      message: '',
-      errors: [],
-    };
+  async register(dto: RegisterUserDto): Promise<AuthApiResponse> {
+    const errors: string[] = [];
+    const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
 
-    const [existingEmail, existingUsername] = await Promise.all([
-      this.userRepository.findByEmail(dto.email),
-      this.userRepository.findByUsername(dto.username),
-    ]);
+    const [existingEmail, existingUsername] = await Promise.all([this.userRepository.emailExists(dto.email), this.userRepository.usernameExists(dto.username)]);
 
     if (existingEmail) {
-      response.errors.push('E-postadressen existerar redan.');
+      errors.push('E-postadressen används redan.');
+      fieldErrors.email = 'E-postadressen används redan.';
     }
 
     if (existingUsername) {
-      response.errors.push('Användarnamnet existerar redan.');
+      errors.push('Användarnamnet används redan.');
+      fieldErrors.username = 'Användarnamnet används redan.';
     }
 
-    if (response.errors.length > 0) {
-      response.success = false;
-      response.message = 'Valideringen misslyckades.';
-      return response;
+    if (errors.length > 0) {
+      return {
+        success: false,
+        message: 'Valideringen misslyckades.',
+        errors,
+        fieldErrors,
+      };
     }
 
     try {
@@ -47,65 +50,86 @@ export class AuthService {
 
       const user = await this.userRepository.create(userData);
 
-      response.userToken = generateToken(user.id);
-      response.message = 'Användaren registrerades.';
-
-      return response;
+      return {
+        success: true,
+        message: 'Användaren registrerades.',
+        errors: [],
+        userToken: generateToken(user.id),
+      };
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          const target = error.meta?.target;
-          if (Array.isArray(target) && target.includes('email')) {
-            response.errors.push('E-postadressen används redan.');
-          }
-          if (Array.isArray(target) && target.includes('username')) {
-            response.errors.push('Användarnamnet används redan.');
-          }
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const errors: string[] = [];
+        const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
+        const target = error.meta?.target;
 
-          response.success = false;
-          response.message = 'Valideringen misslyckades.';
-          return response;
+        if (Array.isArray(target) && target.includes('email')) {
+          errors.push('E-postadressen används redan.');
+          fieldErrors.email = 'E-postadressen används redan.';
         }
+
+        if (Array.isArray(target) && target.includes('username')) {
+          errors.push('Användarnamnet används redan.');
+          fieldErrors.username = 'Användarnamnet används redan.';
+        }
+
+        return {
+          success: false,
+          message: 'Valideringen misslyckades.',
+          errors,
+          fieldErrors,
+        };
       }
 
-      response.success = false;
-      response.message = 'Kunde inte skapa användaren.';
-
-      console.error(error);
-
-      return response;
+      return {
+        success: false,
+        message: 'Kunde inte skapa användaren.',
+        errors: [],
+      };
     }
   }
 
   //Login
-  async login(email: string, password: string): Promise<LoginUserResponse> {
-    const validationResponse: LoginUserResponse = {
-      success: true,
-      message: '',
-      errors: [],
-      userToken: '',
-    };
+  async login(dto: LoginDto): Promise<AuthApiResponse> {
+    try {
+      const user = await this.userRepository.findByEmail(dto.email);
 
-    const user = await this.userRepository.findByEmail(email);
+      if (!user) {
+        return {
+          success: false,
+          message: 'Valideringen misslyckades.',
+          errors: ['Finns ingen användare med den angivna e-postadressen.'],
+          fieldErrors: {
+            email: 'E-postadressen existerar inte.',
+          },
+        };
+      }
 
-    if (!user) {
-      validationResponse.success = false;
-      validationResponse.message = 'Valideringen misslyckades.';
-      validationResponse.errors.push('E-postadressen existerar inte.');
-      return validationResponse;
+      //Check if password match with password
+      const passwordMatch = await bcrypt.compare(dto.password, user.passwordHash);
+      if (!passwordMatch) {
+        return {
+          success: false,
+          message: 'Valideringen misslyckades.',
+          errors: ['Lösenordet är fel.'],
+          fieldErrors: {
+            password: 'Lösenordet är fel.',
+          },
+        };
+      }
+
+      return {
+        success: true,
+        message: 'Login successful.',
+        errors: [],
+        userToken: generateToken(user.id),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Kunde inte logga in.',
+        errors: [],
+      };
     }
-
-    const passwordMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!passwordMatch) {
-      validationResponse.success = false;
-      validationResponse.message = 'Valideringen misslyckades.';
-      validationResponse.errors.push('Lösenordet är fel.');
-      return validationResponse;
-    }
-
-    const token = generateToken(user.id);
-    validationResponse.userToken = token;
-    return validationResponse;
   }
 
   //Get Current User
@@ -137,58 +161,86 @@ export class AuthService {
   }
 
   //Update User
-  async updateUser(dto: UpdateUserDto, userId: number): Promise<UserValidationResponse> {
-    const validationResponse: UserValidationResponse = {
-      success: true,
-      message: '',
-      errors: [],
-    };
+  async updateUser(dto: UpdateUserDto, userId: number): Promise<AuthApiResponse> {
+    const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
 
-    const existingEmail = await this.userRepository.emailExists(dto.email, userId);
+    //Check if email & username already existing
+    const [existingEmail, existingUsername] = await Promise.all([
+      this.userRepository.emailExists(dto.email, userId),
+      this.userRepository.usernameExists(dto.username, userId),
+    ]);
+
     if (existingEmail) {
-      validationResponse.success = false;
-      validationResponse.message = 'Validation failed';
-      validationResponse.errors.push('E-postadressen finns redan registrerad');
+      fieldErrors.email = 'E-postadressen är upptagen.';
     }
 
-    const usernameExists = await this.userRepository.userNameAlreadyExist(dto.username, userId);
-    if (usernameExists) {
-      validationResponse.success = false;
-      validationResponse.message = 'Validation failed';
-      validationResponse.errors.push('Användarnamnet finns redan registrerad');
+    if (existingUsername) {
+      fieldErrors.username = 'Användarnamnet är upptagen.';
     }
 
-    if (!validationResponse.success) {
-      return validationResponse;
+    if (existingEmail || existingUsername) {
+      return {
+        success: false,
+        message: 'Valideringen misslyckades.',
+        errors: [],
+        fieldErrors,
+      };
     }
-
-    const updateData = {
-      email: dto.email,
-      username: dto.username,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-      phoneNumber: dto.phoneNumber,
-      bodyWeight: dto.bodyWeight,
-      bodyLenght: dto.bodyLenght,
-      birthDate: new Date(dto.birthDate),
-      goalWeight: dto.goalWeight,
-      goalDate: new Date(dto.goalDate),
-      goalType: {
-        connect: {
-          id: dto.goalTypeId,
-        },
-      },
-    };
 
     try {
+      const updateData = {
+        email: dto.email,
+        username: dto.username,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        phoneNumber: dto.phoneNumber,
+        bodyWeight: dto.bodyWeight,
+        bodyLength: dto.bodyLenght,
+        birthDate: new Date(dto.birthDate),
+        goalWeight: dto.goalWeight,
+        goalDate: new Date(dto.goalDate),
+        goalType: {
+          connect: {
+            id: dto.goalTypeId,
+          },
+        },
+      };
       await this.userRepository.update(userId, updateData);
+      return {
+        success: true,
+        message: 'Användaren uppdaterades.',
+        errors: [],
+      };
     } catch (error) {
-      console.error(error);
-      validationResponse.success = false;
-      validationResponse.message = 'Update failed';
-      validationResponse.errors.push('Något gick fel.');
-    }
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const errors: string[] = [];
+        const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
 
-    return validationResponse;
+        const target = error.meta?.target;
+
+        if (Array.isArray(target) && target.includes('email')) {
+          errors.push('E-postadressen används redan.');
+          fieldErrors.email = 'E-postadressen används redan.';
+        }
+
+        if (Array.isArray(target) && target.includes('username')) {
+          errors.push('Användarnamnet används redan.');
+          fieldErrors.username = 'Användarnamnet används redan.';
+        }
+
+        return {
+          success: false,
+          message: 'Valideringen misslyckades.',
+          errors,
+          fieldErrors,
+        };
+      }
+
+      return {
+        success: false,
+        message: 'Kunde inte uppdatera användaren.',
+        errors: [],
+      };
+    }
   }
 }

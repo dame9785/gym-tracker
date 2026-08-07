@@ -1,6 +1,8 @@
+//Types
+import { EditWorkoutDto, RegisterWorkoutDto } from '@/types/workout-types';
+
+//Prisma
 import { prisma } from '@/lib/prisma';
-import { EditWorkoutDto, RegisterWorkoutDto } from '@/dto/register-workout-dto';
-import { Prisma } from '@prisma/client';
 
 export class WorkoutRepository {
   async create(dto: RegisterWorkoutDto) {

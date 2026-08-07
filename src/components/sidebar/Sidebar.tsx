@@ -1,5 +1,6 @@
 'use client';
 
+//NEXT & Routing
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -114,12 +115,7 @@ function Sidebar() {
             </p>
           </div>
           <div className="logout-wrapper flex justify-center mt-5">
-            <Button
-              type="button"
-              text="Logga ut"
-              variant="secondary"
-              onClick={handleLogout}
-            ></Button>
+            <Button type="button" text="Logga ut" variant="secondary" onClick={handleLogout}></Button>
           </div>
         </div>
       </aside>

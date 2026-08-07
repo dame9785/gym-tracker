@@ -1,15 +1,12 @@
 'use client';
-import { LogItemViewModel } from '@/view-models/log-weight-view-moodel';
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from 'recharts';
 
+//Types
+import type { LogItemViewModel } from '@/types/log-weight-types';
+
+//Recharts
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+
+//Props
 type WeightChartProps = {
   logList: LogItemViewModel[];
 };

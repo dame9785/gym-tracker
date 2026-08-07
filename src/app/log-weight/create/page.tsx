@@ -1,4 +1,6 @@
+//Components
 import LogWeightForm from '@/components/forms/log-weight/log-weight-form';
+
 export default function create() {
   return (
     <div className="container">

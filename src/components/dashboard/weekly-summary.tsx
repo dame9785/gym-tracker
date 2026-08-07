@@ -1,5 +1,7 @@
-import { WeeklySummaryViewModel } from '@/view-models/dashboard-view-model';
+//Types
+import type { WeeklySummaryViewModel } from '@/types/dashboard-types';
 
+//Props
 interface WeeklySummaryProps {
   summary: WeeklySummaryViewModel;
 }

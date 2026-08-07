@@ -149,16 +149,29 @@
   background: rgba(239, 68, 68, 0.12);
   color: #ef4444;
   font-size: 0.95rem;
+  margin-bottom: 3em;
 }
 
-.formSuccessMessage {
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
+.formErrorMessage {
+  background: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+  padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #22c55e;
-  background: rgba(34, 197, 94, 0.12);
-  color: #22c55e;
-  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.formErrorMessage h3 {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.formErrorMessage ul {
+  padding-left: 1.2rem;
+}
+
+.fieldErrorMessage {
+  color: #ef4444;
 }
 
 /* ===========================

@@ -1,12 +1,11 @@
-import { LogViewModel } from '@/view-models/log-weight-view-moodel';
+//Types
+import type { LogViewModel } from '@/types/log-weight-types';
+
+//Prisma
 import { WeightLog } from '@prisma/client';
 
 export class LogWeightMapper {
-  static mapLogViewModel(
-    logs: WeightLog[],
-    firstLog: WeightLog | null,
-    lastLog: WeightLog | null,
-  ): LogViewModel {
+  static mapLogViewModel(logs: WeightLog[], firstLog: WeightLog | null, lastLog: WeightLog | null): LogViewModel {
     return {
       currentWeight: lastLog?.weight.toString() ?? '',
       startWeight: firstLog?.weight.toString() ?? '',

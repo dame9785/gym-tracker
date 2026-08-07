@@ -1,12 +1,11 @@
 //Repositories
 import { WorkoutRepository } from '@/repositories/workout-repository';
 
-import { Prisma } from '@prisma/client';
+//Types
+import type { RegisterWorkoutDto, EditWorkoutDto } from '@/types/workout-types';
 
-// DTO:S
-import { RegisterWorkoutDto } from '@/dto/register-workout-dto';
+//Mapping
 import { WorkoutMapper } from '@/mapping/workout-mapping';
-import { EditWorkoutDto } from '@/dto/edit-workout-dto';
 
 export class WorkoutService {
   private workoutRepository = new WorkoutRepository();
