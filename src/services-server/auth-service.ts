@@ -14,6 +14,7 @@ import { UserMapper } from '../mapping/user-mapping';
 //Types
 import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
 import type { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
+import { LogViewModel } from '@/types/log-weight-types';
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -149,11 +150,8 @@ export class AuthService {
   }
 
   //Get User By Id
-  async getUserById(id: number) {
+  async getUserById(id: number): Promise<UserSettingsViewModel> {
     const user = await this.userRepository.findById(id);
-    if (!user) {
-      throw new Error('User not found.');
-    }
 
     // User -> ViewModel
     const viewModel: UserSettingsViewModel = UserMapper.userModelToViewModel(user);

@@ -5,6 +5,7 @@ import styles from '@/components/forms/form.module.css';
 
 //Components
 import Button from '@/components/button/button';
+import LoadingSpinner from '@/components/loading-spinner';
 
 //Types
 import type { User } from '@/types/user-types';
@@ -33,8 +34,6 @@ import {
 } from 'react-icons/fa6';
 import { toast } from 'sonner';
 
-//Validation Schemas
-
 //Props
 type Props = {
   userId: string;
@@ -44,6 +43,7 @@ export default function UpdateUserForm({ userId }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [user, setUserData] = useState<User | null>(null);
   const [goals, setGoals] = useState<GoalType[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState<UpdateUserDto>({
     email: '',
@@ -78,7 +78,7 @@ export default function UpdateUserForm({ userId }: Props) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setIsLoading(true);
     const userData: UpdateUserDto = {
       email: formData.email,
       username: formData.username,
@@ -94,23 +94,28 @@ export default function UpdateUserForm({ userId }: Props) {
       gender: formData.gender,
     } satisfies UpdateUserDto;
 
-    const result = await UserService.update(userData, Number(userId));
+    try {
+      const result = await UserService.update(userData, Number(userId));
+      if (!result.success) {
+        setErrors(result.fieldErrors ?? {});
 
-    if (!result.success) {
-      setErrors(result.fieldErrors ?? {});
+        if (!result.fieldErrors) {
+          toast.error(result.message);
+        }
 
-      if (!result.fieldErrors) {
-        toast.error(result.message);
+        return;
       }
+      //Show alert message
+      toast.success('Användare uppdaterad');
 
+      //Empty error messages
+      setErrors({});
       return;
+    } catch (error) {
+      toast.error('Något gick fel, användare ej uppdaterad.');
+    } finally {
+      setIsLoading(false);
     }
-
-    //Show alert message
-    toast.success('Användare uppdaterad');
-
-    //Empty error messages
-    setErrors({});
   };
 
   //Get all goals
@@ -152,8 +157,9 @@ export default function UpdateUserForm({ userId }: Props) {
     fetchUser();
   }, [userId]);
 
-  if (!user) {
-    return <p>Laddar...</p>;
+  //Show Loading spinner if loading is true or user is null
+  if (!user || isLoading) {
+    return <LoadingSpinner />;
   }
 
   return (
@@ -401,7 +407,7 @@ export default function UpdateUserForm({ userId }: Props) {
         </div>
       </div>
       <div className="grid grid-2">
-        <Button type="submit" text="Uppdatera konto" variant="primary"></Button>
+        <Button type="submit" text={isLoading ? 'Sparar...' : 'Spara'} variant="primary"></Button>
       </div>
     </form>
   );

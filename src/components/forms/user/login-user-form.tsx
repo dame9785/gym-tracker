@@ -22,6 +22,7 @@ import buttonStyles from '@/components/button/button.module.css';
 
 //Components
 import Button from '@/components/button/button';
+import LoadingSpinner from '@/components/loading-spinner';
 
 //Services
 import AuthService from '@/services/auth-service';
@@ -36,30 +37,45 @@ export default function LoginForm() {
   const { refreshUser } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    //Show loading spinner
+    setIsLoading(true);
 
     const loginData = {
       email,
       password,
     } satisfies LoginDto;
 
-    const result = await AuthService.login(loginData);
-    console.log(result);
-    if (!result.success) {
-      setErrors(result.fieldErrors ?? {});
+    try {
+      const result = await AuthService.login(loginData);
 
-      toast.error('Något gick fel, gick inte logga in');
-      return;
+      if (!result.success) {
+        setErrors(result.fieldErrors ?? {});
+
+        toast.error('Något gick fel, gick inte logga in');
+        return;
+      }
+
+      localStorage.setItem('token', result.userToken ?? '');
+      await refreshUser();
+
+      router.refresh();
+      router.push('/');
+    } catch (error) {
+      toast.error('Något gick fel, kontot kunde ej loggas in');
+    } finally {
+      setIsLoading(false);
     }
-
-    localStorage.setItem('token', result.userToken ?? '');
-    await refreshUser();
-
-    router.refresh();
-    router.push('/');
   };
+
+  //Show Loading spinner if loading is true or user is null
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <form onSubmit={handleSubmit} className={`${styles.form} mx-auto`}>

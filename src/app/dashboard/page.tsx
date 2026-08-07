@@ -11,6 +11,7 @@ import WeeklySummary from '@/components/dashboard/weekly-summary';
 export default async function DashboardPage() {
   const dashboardService = new DashboardService();
   const result = await dashboardService.getDashboard();
+  console.log(result);
 
   if (!result.success || !result.dashboard) {
     return <p>Kunde inte hämta dashboard.</p>;
