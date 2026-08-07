@@ -1,5 +1,9 @@
+//DTOS
 import type { LoginDto, RegisterUserDto } from '@/dto/user-dtos';
+
+//Types
 import type { RegisterUserResponse, LoginUserResponse } from '@/responses/user-responses';
+import type { UserFormData, UpdateResult, User } from '@/types/types';
 
 const API_URL = '/api/auth';
 
@@ -50,6 +54,35 @@ export default class AuthService {
       });
       const data = (await response.json()) as RegisterUserResponse;
       return data;
+    } catch (error) {
+      throw new Error();
+    }
+  }
+
+  //Update User
+  static async update(userData: UserFormData, userId: number): Promise<UpdateResult> {
+    try {
+      const response = await fetch(`${API_URL}/update/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      const result = response.json() as Promise<UpdateResult>;
+      return result;
+    } catch (error) {
+      throw new Error();
+    }
+  }
+
+  static async getUserById(userId: number) {
+    try {
+      const response = await fetch(`${API_URL}/setting/${userId}`, {
+        method: 'GET',
+      });
+      const result = (await response.json()) as User;
+      return result;
     } catch (error) {
       throw new Error();
     }

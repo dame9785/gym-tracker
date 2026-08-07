@@ -1,20 +1,20 @@
 'use client';
 
 //CSS
-import styles from '@/components/form.module.css';
+import styles from '@/components/forms/form.module.css';
 
 //Components
 import Button from '@/components/button/button';
 
-//Services
-// import UserService from '@/services/user.service';
-// import { getGoals } from '@/services/goal.service';
+//Types
+import { UpdateUserFormProps, User, GoalType, UserFormData, UpdateResult } from '@/types/types';
 
 //React Routing
 import { useState, useEffect } from 'react';
 
-//Gender Enum
-import { Gender } from '@prisma/client';
+//Services
+import UserService from '@/services/auth-service';
+import GoalService from '@/services/goal-service';
 
 //FONTAWSOME ICONS
 import {
@@ -29,51 +29,6 @@ import {
   FaSignature,
   FaBullseye,
 } from 'react-icons/fa6';
-
-interface UpdateUserFormProps {
-  userId: string;
-}
-
-interface GoalType {
-  id: number;
-  title: string;
-}
-
-interface User {
-  id: number;
-  email: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  bodyWeight: number;
-  bodyLenght: number;
-  goalTypeId: number;
-  gender: Gender;
-  birthDate: string;
-  goalWeight: number;
-  goalDate: string;
-}
-
-interface UserFormData {
-  email: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  bodyWeight: number;
-  bodyLenght: number;
-  birthDate: string;
-  goalWeight: number;
-  goalDate: string;
-  goalTypeId: number;
-}
-
-interface UpdateResult {
-  errors: string[];
-  message: string;
-  success: boolean;
-}
 
 export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
@@ -119,7 +74,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
       goalTypeId: formData.goalTypeId,
     };
 
-    const result: UpdateResult = await UserService.updateUser(userData, userId);
+    const result: UpdateResult = await UserService.update(userData, Number(userId));
     if (!result.success) {
       setErrorMessages(result.errors);
     }
@@ -132,7 +87,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
   useEffect(() => {
     async function loadGoals() {
       try {
-        const data = await getGoals();
+        const data = await GoalService.getAll();
 
         setGoals(data);
       } catch (error) {
@@ -145,8 +100,8 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const fetchedUser: User = await UserService.getUserById(userId);
-
+      const fetchedUser: User = await UserService.getUserById(Number(userId));
+      console.log(fetchedUser);
       setUserData(fetchedUser);
       setFormData({
         email: fetchedUser.email,
@@ -383,12 +338,7 @@ export default function UpdateUserForm({ userId }: UpdateUserFormProps) {
                 Mål
               </label>
             </div>
-            <select
-              className={styles.formSelect}
-              name="goalTypeId"
-              value={user.goalTypeId}
-              onChange={handleChange}
-            >
+            <select className={styles.formSelect} name="goalTypeId" value={user.goalTypeId} onChange={handleChange}>
               <option value="">Välj mål</option>
 
               {goals.map((goal) => (

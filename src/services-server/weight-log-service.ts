@@ -14,9 +14,9 @@ export class WeightLogService {
       //   this.weightLogRepository.getAll(1),
       // ]);
 
-      const lastLog = await this.weightLogRepository.lastLog(2);
-      const firstLog = await this.weightLogRepository.firstLog(2);
-      const allLogs = await this.weightLogRepository.getAll(2);
+      const lastLog = await this.weightLogRepository.lastLog(1);
+      const firstLog = await this.weightLogRepository.firstLog(1);
+      const allLogs = await this.weightLogRepository.getAll(1);
 
       const viewModel = LogWeightMapper.mapLogViewModel(allLogs, firstLog, lastLog);
       return {
@@ -73,7 +73,7 @@ export class WeightLogService {
       };
     }
     try {
-      await this.weightLogRepository.create(2, dto);
+      await this.weightLogRepository.create(1, dto);
       return {
         success: true,
         message: 'Vikt loggad',
