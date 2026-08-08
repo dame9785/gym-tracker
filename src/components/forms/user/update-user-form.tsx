@@ -53,7 +53,10 @@ const numericFields = [
 
 type FormErrors = Partial<Record<keyof UpdateUserDto,
 
-export default function UpdateUserForm({ userId }: Props) {
+export default function UpdateUserForm({
+  user,
+  goals,
+}: Props) {
    string>>;
  const [errors, setErrors] = useState<FormErrors>({});
   const [goals, setGoals] = useState<GoalType[]>([]);
