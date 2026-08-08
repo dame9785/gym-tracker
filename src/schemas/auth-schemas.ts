@@ -91,8 +91,8 @@ export const registerSchema = z.object({
 export const updateSchema = registerSchema
   .omit({
     password: true,
-  })
-  .partial();
+  });
+  
 
 export const loginSchema = registerSchema.pick({
   email: true,
