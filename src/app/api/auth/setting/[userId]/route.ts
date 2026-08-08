@@ -1,14 +1,17 @@
-//Next Response
 import { NextRequest, NextResponse } from 'next/server';
 
-//Services
+// Services
 import { AuthService } from '@/services-server/auth-service';
+
+// Types
+import type { User } from '@/types/user-types';
+import type { ApiResponse } from '@/types/api-types';
 
 const authService = new AuthService();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     const { userId } = await params;
@@ -16,19 +19,31 @@ export async function GET(
     const user = await authService.getUserById(Number(userId));
 
     if (!user) {
-      return NextResponse.json(
-        { message: 'Användaren hittades inte.' },
-        { status: 404 }
-      );
+      const response: ApiResponse<User> = {
+        success: false,
+        message: 'Användaren hittades inte.',
+      };
+
+      return NextResponse.json(response, { status: 404 });
     }
 
-    return NextResponse.json(user);
-  } catch (error) {
-    console.error('GET /api/setting/[userId] failed:', error);
+    const response: ApiResponse<User> = {
+      success: true,
+      data: user,
+    };
 
-    return NextResponse.json(
-      { message: 'Kunde inte hämta användaren.' },
-      { status: 500 }
+    return NextResponse.json(response, { status: 200 });
+  } catch (error) {
+    console.error(
+      'GET /api/auth/setting/[userId] failed:',
+      error,
     );
+
+    const response: ApiResponse<User> = {
+      success: false,
+      message: 'Kunde inte hämta användaren.',
+    };
+
+    return NextResponse.json(response, { status: 500 });
   }
 }
