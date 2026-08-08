@@ -43,7 +43,7 @@ export interface UserSettingsViewModel {
 
   goalTypeId: number;
 
-  gender: string;
+  gender: Gender;
 }
 
 export interface AuthApiResponse {
