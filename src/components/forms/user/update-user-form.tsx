@@ -132,7 +132,7 @@ export default function UpdateUserForm({
     setIsSaving(true);
 
     try {
-      const result = await UserService.update(formData, Number(userId));
+      const result = await UserService.update(formData, user.userId);
       if (!result.success) {
         setErrors(result.fieldErrors ?? {});
 
