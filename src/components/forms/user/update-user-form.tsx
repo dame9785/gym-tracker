@@ -139,10 +139,11 @@ useEffect(() => {
       gender: formData.gender,
     } satisfies UpdateUserDto;
 
-    
+    //zod validation 
     const validation = updateSchema.safeParse(userData);
 
-    //zod validation
+    //Show fields validation error meddages
+    //If Validation is not success
     if (!validation.success) {
       const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [issue.path[0], issue.message]));
       const errorValidationMessages = fieldErrors.error.issues.map((x) => x.message),
