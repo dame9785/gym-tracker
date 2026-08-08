@@ -1,6 +1,7 @@
 import RegisterForm from '@/components/forms/user/register-user-form';
 
 export default function Register() {
+ const goals = await GoalService.getAll();
   return (
     <div className="container">
       <div className="form-wrapper flex justify-center items-center m-[5em]">
