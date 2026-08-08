@@ -37,6 +37,22 @@ if (!Number.isInteger(id) || id <= 0) {
   );
 }
 
+
+let payload;
+
+try {
+  payload = verifyToken(token);
+} catch {
+  return NextResponse.json(
+    {
+      success: false,
+      message: 'Ogiltig eller utgången token.',
+      errors: [],
+    } satisfies AuthApiResponse,
+    { status: 401 }
+  );
+}
+
     const body = await request.json();
 
     const validation = updateSchema.safeParse(body);
