@@ -138,7 +138,7 @@ const numericFields = [
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSaving(true);
+    
     
 
     //zod validation 
@@ -156,7 +156,8 @@ const numericFields = [
       
     }
 
-
+    //show loading
+    setIsSaving(true);
 
     try {
       const result = await UserService.update(formData, Number(userId));
