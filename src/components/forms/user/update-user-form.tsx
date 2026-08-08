@@ -52,13 +52,40 @@ export default function UpdateUserForm({ userId }: Props) {
     lastName: '',
     phoneNumber: '',
     bodyWeight: 0,
-    bodyLenght: 0,
+    height: 0,
     birthDate: '',
     goalWeight: 0,
     goalDate: '',
     goalTypeId: 0,
     gender: 'MALE',
   });
+
+
+useEffect(() => {
+    const fetchUser = async () => {
+      const fetchedUser: User = await UserService.getUserById(Number(userId));
+if(user == null){
+//Redirect to dashboard page.
+}
+      setUserData(fetchedUser);
+      setFormData({
+        email: fetchedUser.email,
+        username: fetchedUser.username,
+        firstName: fetchedUser.firstName,
+        lastName: fetchedUser.lastName,
+        phoneNumber: fetchedUser.phoneNumber,
+        bodyWeight: fetchedUser.bodyWeight,
+        height: fetchedUser.bodyLenght,
+        birthDate: fetchedUser.birthDate.split('T')[0],
+        goalWeight: fetchedUser.goalWeight,
+        goalDate: fetchedUser.goalDate?.split('T')[0] ?? '',
+        goalTypeId: fetchedUser.goalTypeId,
+        gender: fetchedUser.gender,
+      });
+    };
+
+    fetchUser();
+  }, [userId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -133,29 +160,7 @@ export default function UpdateUserForm({ userId }: Props) {
     loadGoals();
   }, []);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const fetchedUser: User = await UserService.getUserById(Number(userId));
-
-      setUserData(fetchedUser);
-      setFormData({
-        email: fetchedUser.email,
-        username: fetchedUser.username,
-        firstName: fetchedUser.firstName,
-        lastName: fetchedUser.lastName,
-        phoneNumber: fetchedUser.phoneNumber,
-        bodyWeight: fetchedUser.bodyWeight,
-        bodyLenght: fetchedUser.bodyLenght,
-        birthDate: fetchedUser.birthDate.split('T')[0],
-        goalWeight: fetchedUser.goalWeight,
-        goalDate: fetchedUser.goalDate?.split('T')[0] ?? '',
-        goalTypeId: fetchedUser.goalTypeId,
-        gender: fetchedUser.gender,
-      });
-    };
-
-    fetchUser();
-  }, [userId]);
+  
 
   //Show Loading spinner if loading is true or user is null
   if (!user || isLoading) {
