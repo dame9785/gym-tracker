@@ -39,7 +39,8 @@ export interface UserSettingsViewModel {
 export interface AuthApiResponse {
   message: string;
   success: boolean;
-  errors: string[];
+  errors?: string[];
   userToken?: string;
   fieldErrors?: Record<string, string>;
+  UserSettingsViewModel?: UserSettingsViewModel;
 }

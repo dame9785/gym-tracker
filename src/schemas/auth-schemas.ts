@@ -46,7 +46,7 @@ export const registerSchema = z.object({
   bodyWeight: z.number().min(20, 'Ogiltig kroppsvikt.').max(400, 'Ogiltig kroppsvikt.'),
 
   //Check if body-length is max 300 and min 50
-  bodyLenght: z.number().min(50, 'Ogiltig längd.').max(300, 'Ogiltig längd.'),
+  bodyLenght: z.number().min(30, 'Ogiltig längd.').max(300, 'Ogiltig längd.'),
 
   //Check if goal-weight is max 300 and min
   goalWeight: z.number().min(20, 'Ogiltig målvikt.').max(400, 'Ogiltig målvikt.'),

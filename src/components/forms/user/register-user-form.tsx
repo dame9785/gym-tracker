@@ -141,7 +141,7 @@ export default function RegisterForm() {
 
       if (!result.success) {
         setErrors(result.fieldErrors ?? {});
-
+        console.log(result);
         toast.error('Användaren skapades inte!');
         return;
       }
@@ -163,7 +163,6 @@ export default function RegisterForm() {
       toast.error('Något gick fel, kontot kunde inte registreras.');
     } finally {
       setIsLoading(false);
-      router.push('/Dahboard');
     }
   };
 

@@ -14,7 +14,6 @@ import { UserMapper } from '../mapping/user-mapping';
 //Types
 import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
 import type { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
-import { LogViewModel } from '@/types/log-weight-types';
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -150,12 +149,23 @@ export class AuthService {
   }
 
   //Get User By Id
-  async getUserById(id: number): Promise<UserSettingsViewModel> {
+  async getUserById(id: number): Promise<AuthApiResponse> {
     const user = await this.userRepository.findById(id);
+    if (user === null) {
+      return {
+        success: false,
+        message: 'Kunde inte hitta användare',
+        errors: ['Kunde inte hitta användare.'],
+      };
+    }
 
     // User -> ViewModel
     const viewModel: UserSettingsViewModel = UserMapper.userModelToViewModel(user);
-    return viewModel;
+    return {
+      success: true,
+      message: 'Lyckades hämta användare',
+      UserSettingsViewModel: viewModel,
+    };
   }
 
   //Update User
@@ -210,6 +220,7 @@ export class AuthService {
         errors: [],
       };
     } catch (error) {
+      console.log(error);
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const errors: string[] = [];
         const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};

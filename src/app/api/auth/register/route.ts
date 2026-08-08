@@ -17,13 +17,15 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     const validation = registerSchema.safeParse(body);
-
+    console.log(validation);
     if (!validation.success) {
+      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [issue.path[0], issue.message]));
       return NextResponse.json(
         {
           success: false,
           message: 'Validation failed.',
           errors: validation.error.issues.map((x) => x.message),
+          fieldErrors,
         },
         {
           status: 400,
