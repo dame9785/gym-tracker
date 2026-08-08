@@ -16,8 +16,7 @@ import {
   FaLock,
 } from 'react-icons/fa6';
 
-//Gender Enum
-import { Gender } from '@prisma/client';
+
 
 //Toast Alert
 import { toast } from 'sonner';
@@ -33,7 +32,7 @@ import buttonStyles from '@/components/button/button.module.css';
 //NEXT & Hooks
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState,Suspense } from 'react';
+import { useState } from 'react';
 
 //Services
 import AuthService from '@/services/auth-service';
@@ -67,7 +66,7 @@ export default function RegisterForm({goals}:Props) {
     lastName: '',
     phoneNumber: '',
     bodyWeight: 0,
-    bodyLenght: 0,
+    height: 0,
     gender: Gender.MALE,
     birthDate: new Date().toISOString().split('T')[0],
     goalTypeId: 0,
@@ -83,7 +82,7 @@ export default function RegisterForm({goals}:Props) {
 
     switch (name) {
       case 'bodyWeight':
-      case 'bodyLenght':
+      case 'height':
       case 'goalWeight':
       case 'goalTypeId':
         parsedValue = Number(value);
@@ -99,7 +98,7 @@ export default function RegisterForm({goals}:Props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setIsLoading(true);
+  
 
     if (goals.length === 0) {
       toast.warning('Något är fel, inga mål finns.');
@@ -114,7 +113,7 @@ export default function RegisterForm({goals}:Props) {
       phoneNumber: formData.phoneNumber,
       bodyWeight: Number(formData.bodyWeight),
       gender: formData.gender,
-      bodyLenght: Number(formData.bodyLenght),
+      height: Number(formData.height),
       birthDate: formData.birthDate,
       goalTypeId: Number(formData.goalTypeId),
       goalWeight: Number(formData.goalWeight),
@@ -148,7 +147,7 @@ export default function RegisterForm({goals}:Props) {
       console.error(error);
       toast.error('Något gick fel, kontot kunde inte registreras.');
     } finally {
-      setIsLoading(false);
+    
     }
   };
 
@@ -176,7 +175,6 @@ export default function RegisterForm({goals}:Props) {
               name="email"
               type="email"
               id="email"
-              required
               value={formData.email}
               placeholder="E-post..."
               onChange={handleChange}
@@ -199,7 +197,7 @@ export default function RegisterForm({goals}:Props) {
               value={formData.username}
               id="username"
               maxLength={20}
-              required
+              
               placeholder="Användarnamn..."
               onChange={handleChange}
             />
@@ -221,7 +219,7 @@ export default function RegisterForm({goals}:Props) {
               value={formData.firstName}
               id="firstName"
               maxLength={20}
-              required
+              
               placeholder="Namn..."
               onChange={handleChange}
             />
@@ -243,7 +241,7 @@ export default function RegisterForm({goals}:Props) {
               value={formData.lastName}
               maxLength={50}
               id="lastName"
-              required
+              
               placeholder="Efternamn..."
               onChange={handleChange}
             />
@@ -265,7 +263,7 @@ export default function RegisterForm({goals}:Props) {
               id="phoneNumber"
               value={formData.phoneNumber}
               maxLength={15}
-              required
+              
               placeholder="Telefonnummer..."
               onChange={handleChange}
             />
@@ -287,7 +285,7 @@ export default function RegisterForm({goals}:Props) {
               step="0.1"
               id="bodyWeight"
               value={formData.bodyWeight}
-              required
+              
               placeholder="Ex (40.2kg)"
               onChange={handleChange}
             />
@@ -307,7 +305,7 @@ export default function RegisterForm({goals}:Props) {
               name="password"
               type="password"
               id="password"
-              required
+              
               placeholder="Lösenord..."
               onChange={handleChange}
             />
@@ -316,26 +314,26 @@ export default function RegisterForm({goals}:Props) {
         </div>
 
         <div className="form-right">
-          {/* Body lenght */}
+          {/* Height */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaRulerVertical className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="bodyLenght">
+              <label className={FormStyles.formLabel} htmlFor="height">
                 Längd (cm)
               </label>
             </div>
             <input
               className={FormStyles.formInput}
-              name="bodyLenght"
+              name="height"
               type="number"
               step="0.1"
-              id="bodyLenght"
-              value={formData.bodyLenght}
-              required
+              id="height"
+              value={formData.height}
+              
               placeholder="Ex (150.5cm)"
               onChange={handleChange}
             />
-            {errors.bodyLenght && <p className={FormStyles.fieldErrorMessage}>{errors.bodyLenght}</p>}
+            {errors.height && <p className={FormStyles.fieldErrorMessage}>{errors.height}</p>}
           </div>
 
           {/* GENDER */}
