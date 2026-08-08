@@ -62,7 +62,24 @@ export default function UpdateUserForm({ userId }: Props) {
 
 
 useEffect(() => {
-    const fetchUser = async () => {
+
+ //Get all goals
+  useEffect(() => {
+    async function loadGoals() {
+      try {
+        const data = await GoalService.getAll();
+
+        setGoals(data);
+      } catch (error) {
+        //TDO Redirect 
+        console.error(error);
+      }
+    }
+
+    loadGoals();
+  }, []);
+
+    const fetchUser = isync () => {
    const fetchedUser: UserSettingsViewModel = await UserService.getUserById(Number(userId));
     
    if(fetchedUser == null){
@@ -146,20 +163,7 @@ useEffect(() => {
     }
   };
 
-  //Get all goals
-  useEffect(() => {
-    async function loadGoals() {
-      try {
-        const data = await GoalService.getAll();
-
-        setGoals(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    loadGoals();
-  }, []);
+ 
 
   
 
