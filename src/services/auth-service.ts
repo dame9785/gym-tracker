@@ -94,17 +94,31 @@ export default class AuthService {
   }
 
   //GET: User By Id
-  static async getUserById(userId: number): Promise<ApiResponse<user>> {
-    
-      const response = await fetch(`http://localhost:3000/api/auth/setting/${userId}`, {
+  static async getUserById(
+  userId: number,
+): Promise<ApiResponse<User>> {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/auth/setting/${userId}`,
+      {
         method: 'GET',
-      });
+      },
+    );
 
-      
-      const data: ApiResponse<User> = await response.json();
-      return data;
-    
+    const data: ApiResponse<User> = await response.json();
+
+    return data;
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Ett oväntat fel inträffade.',
+    };
   }
+}
+ 
   //Logout
   static async logout(): Promise<AuthApiResponse> {
     try {
