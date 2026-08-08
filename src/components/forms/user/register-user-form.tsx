@@ -37,7 +37,7 @@ import { useState, useEffect, Suspense } from 'react';
 
 //Services
 import AuthService from '@/services/auth-service';
-import GoalService from '@/services/goal-service';
+
 
 //Providers
 import { useAuth } from '@/provider/auth-provider';
@@ -45,6 +45,10 @@ import { useAuth } from '@/provider/auth-provider';
 //Types
 import type { RegisterUserDto } from '@/schemas/auth-schemas';
 import type { GoalType } from '@/types/goal-types';
+
+interface Props = {
+  goals: 
+}
 
 export default function RegisterForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
