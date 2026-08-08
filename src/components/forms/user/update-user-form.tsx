@@ -38,8 +38,10 @@ import {
 import { toast } from 'sonner';
 
 //Props
-type Props = {
-  userId: string;
+
+  type Props = {
+  user: UserSettingsViewModel;
+  goals: GoalType[];
 };
 
 const numericFields = [
