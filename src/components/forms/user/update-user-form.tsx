@@ -140,7 +140,7 @@ useEffect(() => {
     } satisfies UpdateUserDto;
 
     
-const validation = updateSchema.safeParse(body);
+    const validation = updateSchema.safeParse(userData);
 
     //zod validation
     if (!validation.success) {
