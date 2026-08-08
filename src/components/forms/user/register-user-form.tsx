@@ -54,25 +54,8 @@ export default function RegisterForm() {
   const [goals, setGoals] = useState<GoalType[]>([]);
   const { refreshUser } = useAuth();
 
-  //Get all goals
-  useEffect(() => {
-    async function loadGoals() {
-      setIsLoading(true);
-      try {
-        const goals = await GoalService.getAll();
-        if (goals.length === 0) {
-          toast.warning('Det finns inga mål ännu.');
-        }
-        setGoals(goals);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
 
-    loadGoals();
-  }, []);
+  
 
   const [formData, setFormData] = useState<RegisterUserDto>({
     email: '',
