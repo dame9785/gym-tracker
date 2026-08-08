@@ -219,7 +219,7 @@ useEffect(() => {
               name="email"
               type="email"
               id="email"
-              required
+              
               placeholder="E-post..."
               value={formData.email}
               onChange={handleChange}
@@ -241,7 +241,7 @@ useEffect(() => {
               type="text"
               id="username"
               maxLength={20}
-              required
+              
               placeholder="Användarnamn..."
               value={formData.username}
               onChange={handleChange}
@@ -263,7 +263,7 @@ useEffect(() => {
               type="text"
               id="firstName"
               maxLength={20}
-              required
+              
               placeholder="Namn..."
               value={formData.firstName}
               onChange={handleChange}
@@ -285,7 +285,7 @@ useEffect(() => {
               type="text"
               maxLength={50}
               id="lastName"
-              required
+              
               placeholder="Efternamn..."
               value={formData.lastName}
               onChange={handleChange}
@@ -307,7 +307,7 @@ useEffect(() => {
               type="tel"
               id="phoneNumber"
               maxLength={15}
-              required
+              
               placeholder="Telefonnummer..."
               value={formData.phoneNumber}
               onChange={handleChange}
@@ -349,7 +349,7 @@ useEffect(() => {
               type="number"
               step="0.1"
               id="bodyWeight"
-              required
+              
               placeholder="Ex (40.2kg)"
               value={formData.bodyWeight}
               onChange={handleChange}
@@ -370,7 +370,7 @@ useEffect(() => {
               type="number"
               step="0.1"
               id="height"
-              required
+              
               placeholder="Ex (150.5cm)"
               value={formData.height}
               onChange={handleChange}
