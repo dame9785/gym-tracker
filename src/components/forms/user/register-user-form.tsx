@@ -55,7 +55,6 @@ export default function RegisterForm({goals}:Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-  const [goals, setGoals] = useState<GoalType[]>([]);
   const { refreshUser } = useAuth();
 
 
