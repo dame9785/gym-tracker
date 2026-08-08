@@ -25,7 +25,17 @@ export class WorkoutMapper {
       description: workout.description,
       createdAt: workout.createdAt,
       updatedAt: workout.updatedAt,
-      exercise: workout.exercises.map((we) => ExerciseMapper.exerciseModelToViewModel(we.exercise)),
+
+      exercises: workout.exercises.map((we) => ({
+        id: we.exercise.id,
+        name: we.exercise.name,
+        muscleGroup: we.exercise.muscleGroup,
+        equipment: we.exercise.equipment,
+        order: we.order,
+        sets: we.sets,
+        reps: we.reps,
+        weight: we.weight,
+      })),
     };
   }
 

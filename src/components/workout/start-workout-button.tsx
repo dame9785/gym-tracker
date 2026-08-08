@@ -1,29 +1,52 @@
 'use client';
 
-//Routing
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-//Service
-import { WorkoutSessionService } from '@/services/workout-session-service';
-
-//Props
 interface StartWorkoutButtonProps {
   workoutId: number;
 }
 
 export default function StartWorkoutButton({ workoutId }: StartWorkoutButtonProps) {
   const router = useRouter();
-  const workoutSessionService = new WorkoutSessionService();
-  async function handleStartWorkout() {
-    const result = await workoutSessionService.create(workoutId);
-    router.push(`/workout-sessions/${result.workoutSession.id}`);
-  }
+  const [isStarting, setIsStarting] = useState(false);
+
+  const handleStartWorkout = async () => {
+    setIsStarting(true);
+
+    try {
+      const response = await fetch('/api/workout-sessions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workoutId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message);
+      }
+
+      router.push(`/workout-sessions/${result.session.id}`);
+    } catch (error) {
+      console.error('Kunde inte starta workout:', error);
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
   return (
     <button
+      type="button"
       onClick={handleStartWorkout}
-      className="mt-8 inline-block rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600"
+      disabled={isStarting}
+      className="mt-6 rounded-lg bg-orange-500 px-6 py-3 font-semibold text-black transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      Start Workout
+      {isStarting ? 'Startar...' : 'Starta workout'}
     </button>
   );
 }

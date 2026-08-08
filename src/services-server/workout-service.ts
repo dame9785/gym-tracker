@@ -92,8 +92,7 @@ export class WorkoutService {
         };
       }
 
-      const viewModel = WorkoutMapper.workoutDtoToEditViewModel(workout);
-
+      const viewModel = WorkoutMapper.workoutDtoToViewModel(workout);
       return {
         success: true,
         workout: viewModel,

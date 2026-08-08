@@ -1,5 +1,6 @@
 //Types
 import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
+import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 
 //Repository
 import { WorkoutScheduleRepository } from '@/repositories/workout-schedule-repository';
@@ -24,5 +25,16 @@ export class WorkoutScheduleService {
         message: error instanceof Error ? error.message : 'Något gick fel.',
       };
     }
+  }
+
+  async getByMonth(userId: number, year: number, month: number): Promise<CalendarWorkoutViewModel[]> {
+    const workoutSchedules = await this.workoutScheduleRepository.getByMonth(userId, year, month);
+
+    return workoutSchedules.map((schedule) => ({
+      id: schedule.id,
+      date: schedule.date.toISOString(),
+      workoutId: schedule.workoutId,
+      workoutName: schedule.workout.name,
+    }));
   }
 }

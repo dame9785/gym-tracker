@@ -30,7 +30,7 @@ import { redirect } from 'next/navigation';
 
 //Props
 type props = {
-  workoutId: string;
+  workoutId: number;
 };
 
 export default function EditWorkoutForm({ workoutId }: props) {
@@ -215,7 +215,14 @@ export default function EditWorkoutForm({ workoutId }: props) {
           <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
           {formData.workoutExercises.map((exercise, index) => (
-            <EditWorkoutExericeCard key={index} index={index} exercise={exercise} exercises={exercises} onUpdate={updateExercise} onRemove={removeExercise} />
+            <EditWorkoutExericeCard
+              key={index}
+              index={index}
+              exercise={exercise}
+              exercises={exercises}
+              onUpdate={updateExercise}
+              onRemove={removeExercise}
+            />
           ))}
 
           <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>

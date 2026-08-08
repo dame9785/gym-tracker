@@ -35,7 +35,7 @@ export interface WorkoutViewModel {
   description: string | null;
   createdAt: Date;
   updatedAt: Date;
-  exercise: ExerciseViewModel[];
+  exercises: ExerciseViewModel[];
 }
 
 export interface EditWorkoutDto {

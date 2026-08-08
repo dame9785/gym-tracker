@@ -10,6 +10,7 @@ import DashboardHeader from '@/components/dashboard/dashboard-header';
 import WeeklyOverview from '@/components/dashboard/weekly-overview';
 import TodayWorkout from '@/components/dashboard/today-workout';
 import WeeklySummary from '@/components/dashboard/weekly-summary';
+import WorkoutCalendar from '@/components/calendar/workout-calendar';
 
 export default async function DashboardPage() {
   const token = await getTokenFromCookieStore();
@@ -42,6 +43,7 @@ export default async function DashboardPage() {
 
       <WeeklyOverview workouts={dashboard.weeklyOverview} />
 
+      <WorkoutCalendar userId={1} />
       <div className="grid gap-6 lg:grid-cols-2">
         <TodayWorkout workout={dashboard.todayWorkout} />
 

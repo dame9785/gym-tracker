@@ -12,7 +12,7 @@ export interface ExerciseViewModel {
   order: number;
   sets: number;
   reps: number;
-  weigth: number;
+  weight: number | null;
 }
 
 export interface RegisterExerciseDto {

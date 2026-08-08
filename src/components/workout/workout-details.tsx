@@ -1,28 +1,32 @@
-//Typees
-import type { EditWorkoutViewModel } from '@/types/workout-types';
-
-//Components
-import ExerciseCard from './exercise-card';
-import StartWorkoutButton from './start-workout-button';
-
-interface WorkoutDetailsProps {
-  workout: EditWorkoutViewModel;
+import StartWorkoutButton from '@/components/workout/start-workout-button';
+import { WorkoutViewModel } from '@/types/workout-types';
+interface Props {
+  workout: WorkoutViewModel;
 }
-
-export default function WorkoutDetails({ workout }: WorkoutDetailsProps) {
+export default function WorkoutDetails({ workout }: Props) {
   return (
-    <div>
-      <h1 className="text-4xl font-bold">{workout.name}</h1>
+    <section>
+      <header>
+        <h1 className="text-3xl font-bold text-white">{workout.name}</h1>
 
-      {workout.description && <p className="mt-2 text-zinc-400">{workout.description}</p>}
+        {workout.description && <p className="mt-2 text-gray-400">{workout.description}</p>}
+      </header>
 
       <div className="mt-8 space-y-4">
-        {workout.workoutExercises.map((exercise, index) => (
-          <ExerciseCard key={`${exercise.exerciseId}-${index}`} exercise={exercise} />
+        {workout.exercises.map((exercise) => (
+          <article key={exercise.id} className="rounded-lg border border-white/10 bg-white/5 p-4">
+            <h2 className="text-lg font-semibold text-white">{exercise.name}</h2>
+
+            <p className="mt-1 text-sm text-gray-400">
+              {exercise.sets} set × {exercise.reps} reps
+            </p>
+
+            {exercise.weight !== null && <p className="mt-1 text-sm text-gray-400">Vikt: {exercise.weight} kg</p>}
+          </article>
         ))}
       </div>
 
       <StartWorkoutButton workoutId={workout.id} />
-    </div>
+    </section>
   );
 }
