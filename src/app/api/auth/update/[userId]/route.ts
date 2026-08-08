@@ -37,14 +37,14 @@ export async function PUT(
      
     const authenticatedUser = getAuthenticatedUser(request);
 
-if (!authenticatedUser) {
+if (authenticatedUser.userId !== id) {
   return NextResponse.json(
     {
       success: false,
-      message: 'Ogiltig eller utgången token.',
+      message: 'Du har inte behörighet.',
       errors: [],
     } satisfies AuthApiResponse,
-    { status: 401 }
+    { status: 403 }
   );
 }
 
