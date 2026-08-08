@@ -33,7 +33,7 @@ import buttonStyles from '@/components/button/button.module.css';
 //NEXT & Hooks
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, Suspense } from 'react';
+import { useState,Suspense } from 'react';
 
 //Services
 import AuthService from '@/services/auth-service';
