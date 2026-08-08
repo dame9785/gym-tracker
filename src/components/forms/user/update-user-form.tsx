@@ -13,7 +13,8 @@ import type { GoalType } from '@/types/goal-types';
 import type { UpdateUserDto } from '@/schemas/auth-schemas';
 
 
-import type { updateSchema } from '@/schemas
+//Schemas
+import { updateSchema } from '@/schemas/auth-schemas';
 
 //React Routing
 import { useState, useEffect } from 'react';
