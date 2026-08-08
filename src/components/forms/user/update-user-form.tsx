@@ -5,7 +5,7 @@ import styles from '@/components/forms/form.module.css';
 
 //Components
 import Button from '@/components/button/button';
-import LoadingSpinner from '@/components/loading-spinner';
+
 
 //Types
 import type { GoalType } from '@/types/goal-types';
@@ -20,7 +20,7 @@ import { useState } from 'react';
 
 //Services
 import UserService from '@/services/auth-service';
-import GoalService from '@/services/goal-service';
+
 
 //FONTAWSOME ICONS
 import {
@@ -65,7 +65,7 @@ export default function UpdateUserForm({
    string>>;
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const [isLoading, setIsLoading] = useState(false);
+  
   const [isSaving, setIsSaving] = useState(false);
   
   
@@ -159,10 +159,7 @@ export default function UpdateUserForm({
 
   
 
-  //Show Loading spinner if loading is true or user is null
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
