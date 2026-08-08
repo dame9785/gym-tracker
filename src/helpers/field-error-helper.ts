@@ -24,3 +24,14 @@ export default class FieldErrorsMessagesHelper {
     return fieldErrors;
   }
 }
+
+static getFormErrorsFromApi<T>(
+  errors: Record<string, string[]>,
+): Partial<Record<keyof T, string>> {
+  return Object.fromEntries(
+    Object.entries(errors).map(([field, messages]) => [
+      field,
+      messages[0],
+    ]),
+  ) as Partial<Record<keyof T, string>>;
+}
