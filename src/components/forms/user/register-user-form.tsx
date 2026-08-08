@@ -47,10 +47,10 @@ import type { RegisterUserDto } from '@/schemas/auth-schemas';
 import type { GoalType } from '@/types/goal-types';
 
 interface Props = {
-  goals: 
+  goals: GoalType[];
 }
 
-export default function RegisterForm() {
+export default function RegisterForm({goals}:Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
