@@ -131,23 +131,10 @@ useEffect(() => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSaving(true);
-    const userData: UpdateUserDto = {
-      email: formData.email,
-      username: formData.username,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phoneNumber: formData.phoneNumber,
-      bodyWeight: Number(formData.bodyWeight),
-      bodyLenght: Number(formData.bodyLenght),
-      birthDate: formData.birthDate,
-      goalWeight: Number(formData.goalWeight),
-      goalDate: formData.goalDate,
-      goalTypeId: formData.goalTypeId,
-      gender: formData.gender,
-    } satisfies UpdateUserDto;
+    
 
     //zod validation 
-    const validation = updateSchema.safeParse(userData);
+    const validation = updateSchema.safeParse(formData);
 
     //Show fields validation error meddages
     //If Validation is not success
@@ -164,7 +151,7 @@ useEffect(() => {
 
 
     try {
-      const result = await UserService.update(userData, Number(userId));
+      const result = await UserService.update(formData, Number(userId));
       if (!result.success) {
         setErrors(result.fieldErrors ?? {});
 
