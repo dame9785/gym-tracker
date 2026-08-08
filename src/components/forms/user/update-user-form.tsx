@@ -16,7 +16,7 @@ import type { UserSettingsViewModel } from '@/types/user-types';
 import { updateSchema } from '@/schemas/auth-schemas';
 
 //React Routing
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 //Services
 import UserService from '@/services/auth-service';
