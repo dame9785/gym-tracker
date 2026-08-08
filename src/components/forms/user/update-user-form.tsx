@@ -63,7 +63,7 @@ export default function UpdateUserForm({ userId }: Props) {
 
 useEffect(() => {
     const fetchUser = async () => {
-   const fetchedUser: User = await UserService.getUserById(Number(userId));
+   const fetchedUser: EditUserViewmodel = await UserService.getUserById(Number(userId));
     
    if(fetchedUser == null){
     //TODO: Redirect to dashboard page.
