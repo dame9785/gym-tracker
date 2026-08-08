@@ -19,6 +19,8 @@ import FieldErrorsMessagesHelper from '@/helpers/field-error-helper';
 //Types
 import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
 import type { LoginDto, RegisterUserDto, UpdateUserDto } from '@/schemas/auth-schemas';
+import type { ApiResponse } from '@/types/api-types';
+import type { User } from '@/types/user-types';
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -138,7 +140,7 @@ export class AuthService {
   }
 
   //Get User By Id
-  async getUserById(id: number): Promise<AuthApiResponse> {
+  async getUserById(id: number):promise<AuthApiResponse<user>>   {
     const user = await this.userRepository.findById(id);
     if (user === null) {
       return {
