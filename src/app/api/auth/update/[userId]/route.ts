@@ -23,7 +23,20 @@ if (!Number.isInteger(id) || id <= 0) {
   );
 }
 
-  try {
+  try{
+    
+    const token = request.cookies.get('token')?.value;
+    if (!token) {
+  return NextResponse.json(
+    {
+      success: false,
+      message: 'Du måste vara inloggad.',
+      errors: [],
+    } satisfies AuthApiResponse,
+    { status: 401 }
+  );
+}
+
     const body = await request.json();
 
     const validation = updateSchema.safeParse(body);
