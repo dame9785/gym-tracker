@@ -5,7 +5,14 @@ const goalTypesService = new GoalTypesService();
 
 export default async function Register() {
   const goals = await goalTypesService.getAllGoals();
+  const result = await AuthService.getUserById(userId);
 
+  if (!result.success) {
+  console.error(result.message);
+  return;
+}
+
+console.log(result.data);
   return (
     <div className="container">
       <div className="form-wrapper flex justify-center items-center m-[5em]">
