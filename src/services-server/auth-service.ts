@@ -228,4 +228,22 @@ export class AuthService {
       };
     }
   }
+
+  //Get current logged in user
+  async getCurrentUser(userId: number): Promise<AuthApiResponse> {
+    const user = await this.userRepository.findById(userId);
+    if (user === null) {
+      return {
+        success: false,
+        message: 'Gick inte hitta användaren',
+      };
+    }
+
+    const viewModel: UserSettingsViewModel = UserMapper.userModelToViewModel(user);
+    return {
+      success: true,
+      message: 'Lyckades hämta användare',
+      UserSettingsViewModel: viewModel,
+    };
+  }
 }

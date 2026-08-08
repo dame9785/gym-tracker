@@ -2,7 +2,7 @@
 import { redirect } from 'next/navigation';
 
 //Types
-import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
+import type { AuthApiResponse } from '@/types/user-types';
 import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
 
 //API URL
@@ -10,18 +10,24 @@ const API_URL = 'http://localhost:3000/api/auth';
 
 export default class AuthService {
   //Me
-  static async me(token: string) {
+  static async me(token: string): Promise<AuthApiResponse> {
     try {
       const response = await fetch(`${API_URL}/me`, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${token}`,
+          Cookie: `token=${token}`,
         },
+        cache: 'no-store',
       });
-      return response;
+
+      const apiResponse: AuthApiResponse = await response.json();
+      return apiResponse;
     } catch (error) {
-      // const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      // redirect(`/error?message=${encodeURIComponent(message)}`);
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      return {
+        message,
+        success: false,
+      };
     }
   }
 

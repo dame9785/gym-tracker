@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 import './globals.css';
-import Sidebar from '@/components/sidebar/Sidebar';
+
 import { Toaster } from 'sonner';
 const roboto = Roboto({
   variable: '--font-geist-sans',
@@ -21,7 +21,6 @@ export default function RootLayout({
   return (
     <html lang="sv" className={`${roboto.variable} ${roboto.variable} min-h-full antialiased`}>
       <body className="min-h-screen">
-        <Sidebar />
         <main className="ml-64 min-h-screen p-8">{children}</main>
         <Toaster richColors position="top-right" />
       </body>

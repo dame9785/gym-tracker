@@ -7,11 +7,25 @@ import DashboardHeader from '@/components/dashboard/dashboard-header';
 import WeeklyOverview from '@/components/dashboard/weekly-overview';
 import TodayWorkout from '@/components/dashboard/today-workout';
 import WeeklySummary from '@/components/dashboard/weekly-summary';
+import AuthService from '@/services/auth-service';
+
+import { redirect } from 'next/navigation';
+
+import { getTokenFromCookieStore } from '@/lib/auth';
 
 export default async function DashboardPage() {
   const dashboardService = new DashboardService();
   const result = await dashboardService.getDashboard();
-  console.log(result);
+
+  const token = await getTokenFromCookieStore();
+  if (!token) {
+    redirect('/account/login');
+  }
+  const apiResponse = await AuthService.me(token);
+  console.log(apiResponse);
+  if (!apiResponse.success) {
+    redirect('/account/login');
+  }
 
   if (!result.success || !result.dashboard) {
     return <p>Kunde inte hämta dashboard.</p>;

@@ -20,12 +20,29 @@ import { IoIosSettings } from 'react-icons/io';
 import { BsPersonCircle } from 'react-icons/bs';
 import { FaHome } from 'react-icons/fa';
 
-function Sidebar() {
+//Services
+import AuthService from '@/services/auth-service';
+
+//Types
+import type { UserSettingsViewModel } from '@/types/user-types';
+
+interface Props {
+  user: UserSettingsViewModel | null;
+}
+
+function Sidebar({ user }: Props) {
   const router = useRouter();
 
-  const handleLogout = async () => {
-    localStorage.removeItem('token');
+  if (user === null) {
     router.push('/account/login');
+    return;
+  }
+
+  const handleLogout = async () => {
+    const apiResponse = await AuthService.logout();
+    if (apiResponse.success) {
+      router.push('/account/login');
+    }
   };
 
   return (
@@ -92,9 +109,9 @@ function Sidebar() {
 
               <li className="li flex items-center">
                 <IoIosSettings className="fa-icon" />
-                {/* <Link href={`/account/settings/${user.id}`} className="grid">
+                <Link href={`/account/settings/${user?.id}`} className="grid">
                   Settings
-                </Link> */}
+                </Link>
               </li>
             </ul>
           </nav>
@@ -104,7 +121,7 @@ function Sidebar() {
             <BsPersonCircle />
             <p>
               Welcome,
-              <span>--</span>
+              <span>{user?.username}</span>
             </p>
           </div>
           <div className="logout-wrapper flex justify-center mt-5">

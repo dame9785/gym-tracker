@@ -110,7 +110,7 @@ export default function LoginForm() {
             setErrors((prev) => ({ ...prev, email: '' }));
           }}
         ></input>
-        {errors.email && <span className={styles.error}>{errors.email}</span>}
+        {errors.email && <span className={styles.fieldErrorMessage}>{errors.email}</span>}
       </div>
       <div className={styles.formGroup}>
         <div className="flex items-center gap-4">
@@ -132,7 +132,7 @@ export default function LoginForm() {
             setErrors((prev) => ({ ...prev, password: '' }));
           }}
         ></input>
-        {errors.password && <span className={styles.error}>{errors.password}</span>}
+        {errors.password && <span className={styles.fieldErrorMessage}>{errors.password}</span>}
       </div>
       <div className="grid grid-2">
         <Button type="submit" disabled={isLoading}>

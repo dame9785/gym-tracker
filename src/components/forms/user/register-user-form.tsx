@@ -112,7 +112,7 @@ export default function RegisterForm({ goals }: Props) {
 
       setErrors({});
       toast.success('Användaren registrerades!');
-      router.push(`/account/settings/${result.userId}`);
+      router.push('/dashboard');
     } catch (error) {
       console.error('Register failed:', error);
       toast.error('Något gick fel, kontot kunde inte registreras.');
@@ -413,7 +413,9 @@ export default function RegisterForm({ goals }: Props) {
         </div>
       </div>
       <div className="grid grid-2">
-        <Button type="submit" text="Skapa konto" variant="primary" disabled={isSaving}></Button>
+        <Button type="submit" variant="primary" disabled={isSaving}>
+          Skapa konto
+        </Button>
         <Link href="/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
           Gå tillbaks
         </Link>

@@ -1,11 +1,15 @@
 .sidebar {
-  gap: var(--gap-20);
-  padding: 1em;
-  width: fit-content;
+  width: 250px;
+  min-width: 250px;
   height: 100vh;
+  padding: 1em;
   position: fixed;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
   background-color: var(--dark-900-clr);
   animation: sidebarIn 0.4s ease;
+  z-index: 100;
 }
 
 @keyframes sidebarIn {

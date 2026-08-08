@@ -1,37 +1,65 @@
 //Next Request & Response
 import { NextRequest, NextResponse } from 'next/server';
 
-//Services
+import { getAuthenticatedUser } from '@/lib/auth';
+import { AuthApiResponse } from '@/types/user-types';
+
+// Services
 import { AuthService } from '@/services-server/auth-service';
 
 const authService = new AuthService();
 
 export async function GET(request: NextRequest) {
+  const token = request.cookies.get('token')?.value;
+  if (!token) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Unauthorized',
+        errors: [],
+      } satisfies AuthApiResponse,
+      { status: 401 },
+    );
+  }
+
+  const tokenPayLoad = await getAuthenticatedUser(request);
+  if (tokenPayLoad === null) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Unauthorized',
+        errors: [],
+      } satisfies AuthApiResponse,
+      { status: 401 },
+    );
+  }
+
   try {
-    const authHeader = request.headers.get('authorization');
+    const apiResponse = await authService.getCurrentUser(tokenPayLoad.userId);
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    if (apiResponse.UserSettingsViewModel == null) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Unauthorized',
+          errors: [],
+        } satisfies AuthApiResponse,
+        { status: 401 },
+      );
     }
 
-    const token = authHeader.replace('Bearer ', '');
-    const user = await authService.getCurrentUser(token);
-    if (user == null) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-    }
-
-    return NextResponse.json({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      bodyWeight: user.bodyWeight,
-      height: user.bodyLength,
-      gender: user.gender,
-      birthDate: user.birthDate,
+    return NextResponse.json(apiResponse, {
+      status: apiResponse.success ? 200 : 401,
     });
-  } catch {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Something went wrong, server error',
+        errors: [],
+      } satisfies AuthApiResponse,
+      { status: 500 },
+    );
   }
 }
