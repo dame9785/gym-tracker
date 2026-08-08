@@ -139,6 +139,13 @@ useEffect(() => {
       gender: formData.gender,
     } satisfies UpdateUserDto;
 
+    const isValidatedSuccess(userData);
+    if(!isValidatedSuccess){
+
+    }
+
+
+
     try {
       const result = await UserService.update(userData, Number(userId));
       if (!result.success) {
