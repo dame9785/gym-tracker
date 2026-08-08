@@ -21,16 +21,16 @@ export async function PUT(
     // 2. Hämta JWT
     const token = request.cookies.get('token')?.value;
 
-    if (!token) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Du måste vara inloggad.',
-          errors: [],
-        } satisfies AuthApiResponse,
-        { status: 401 }
-      );
-    }
+if (!token) {
+  return NextResponse.json(
+    {
+      success: false,
+      message: 'Du måste vara inloggad.',
+      errors: [],
+    } satisfies AuthApiResponse,
+    { status: 401 }
+  );
+}
 
     // 3. Verifiera JWT
     let payload;
