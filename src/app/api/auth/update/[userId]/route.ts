@@ -47,7 +47,7 @@ if (!Number.isInteger(id) || id <= 0) {
     const response = await authService.updateUser(validation.data, userId);
 
     return NextResponse.json(response, {
-      status: response.success ? 200 : 400,
+      status: response.success ? 200 : 404,
     });
   } catch (error) {
     return NextResponse.json(
