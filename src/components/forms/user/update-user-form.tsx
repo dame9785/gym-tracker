@@ -81,39 +81,7 @@ export default function UpdateUserForm({
 
 
 
-useEffect(() => {
-  async function loadUser() {
-    try {
-      const fetchedUser = await UserService.getUserById(Number(userId));
 
-      if (!fetchedUser) {
-        // hantera användaren saknas
-        return;
-      }
-
-      
-
-      setFormData({
-        email: fetchedUser.email,
-        username: fetchedUser.username,
-        firstName: fetchedUser.firstName,
-        lastName: fetchedUser.lastName,
-        phoneNumber: fetchedUser.phoneNumber,
-        bodyWeight: fetchedUser.bodyWeight,
-        height: fetchedUser.height,
-        birthDate: fetchedUser.birthDate.split('T')[0],
-        goalWeight: fetchedUser.goalWeight,
-        goalDate: fetchedUser.goalDate?.split('T')[0] ?? '',
-        goalTypeId: fetchedUser.goalTypeId,
-        gender: fetchedUser.gender,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  loadUser();
-}, [userId]);
 
 
 
