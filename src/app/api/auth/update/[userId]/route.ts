@@ -33,19 +33,19 @@ if (!token) {
 }
 
     // 3. Verifiera JWT
-    let payload;
+    
 
     try {
-      payload = verifyToken(token);
+      const payload = verifyToken(token);
     } catch {
       return NextResponse.json(
-        {
-          success: false,
-          message: 'Ogiltig eller utgången token.',
-          errors: [],
-        } satisfies AuthApiResponse,
-        { status: 401 }
-      );
+  {
+    success: false,
+    message: 'Ogiltig eller utgången token.',
+    errors: [],
+  } satisfies AuthApiResponse,
+  { status: 401 }
+);
     }
 
     // 4. Authorization
