@@ -82,29 +82,20 @@ export default class AuthService {
   }
 
   //GET: User By Id
-  static async getUserById(
+ static async getUserById(
   userId: number
 ): Promise<UserSettingsViewModel> {
-  try {
-    const response = await fetch(`${API_URL}/setting/${userId}`, {
-      method: 'GET',
-    });
+  const response = await fetch(`${API_URL}/setting/${userId}`, {
+    method: 'GET',
+  });
 
-    if (!response.ok) {
-      throw new Error('Kunde inte hämta användaren.');
-    }
-
-    const result: UserSettingsViewModel = await response.json();
-
-    return result;
-  } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : 'Ett oväntat fel inträffade';
-
-    throw new Error(message);
+  if (!response.ok) {
+    throw new Error('Kunde inte hämta användaren.');
   }
+
+  const result: UserSettingsViewModel = await response.json();
+
+  return result;
 }
   //Logout
   static async logout(): Promise<AuthApiResponse> {
