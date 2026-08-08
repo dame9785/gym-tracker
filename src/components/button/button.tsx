@@ -1,18 +1,31 @@
 import styles from './button.module.css';
+import { ReactNode } from 'react';
 
 type ButtonProps = {
-  text: string;
+  children: ReactNode;
   type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'delete';
-  size?: 'sm' | 'md' | 'lg';
-  onClick?: () => void | Promise<void>;
+  variant?: 'primary' | 'secondary';
+  size?: 'small' | 'medium' | 'large';
+  onClick?: () => void;
   disabled?: boolean;
 };
 
-export default function Button({ text, type = 'button', variant = 'primary', size = 'md', onClick, disabled = false }: ButtonProps) {
+export default function Button({
+  children,
+  type = 'button',
+  variant = 'primary',
+  size = 'medium',
+  onClick,
+  disabled = false,
+}: ButtonProps) {
   return (
-    <button disabled={disabled} onClick={onClick} type={type} className={`${styles.button} ${styles[variant]} ${styles[size]}`}>
-      {text}
+    <button
+      disabled={disabled}
+      onClick={onClick}
+      type={type}
+      className={`${styles.button} ${styles[variant]} ${styles[size]}`}
+    >
+      {children}
     </button>
   );
 }

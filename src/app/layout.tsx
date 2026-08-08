@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 import './globals.css';
-import { AuthProvider } from '../provider/auth-provider';
 import Sidebar from '@/components/sidebar/Sidebar';
 import { Toaster } from 'sonner';
 const roboto = Roboto({
@@ -22,13 +21,9 @@ export default function RootLayout({
   return (
     <html lang="sv" className={`${roboto.variable} ${roboto.variable} min-h-full antialiased`}>
       <body className="min-h-screen">
-        <AuthProvider>
-          <Sidebar />
-
-          <main className="ml-64 min-h-screen p-8">{children}</main>
-
-          <Toaster richColors position="top-right" />
-        </AuthProvider>
+        <Sidebar />
+        <main className="ml-64 min-h-screen p-8">{children}</main>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

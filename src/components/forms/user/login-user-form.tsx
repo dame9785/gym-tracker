@@ -13,9 +13,6 @@ import { FaEnvelope, FaLock, FaDumbbell } from 'react-icons/fa6';
 //Link
 import Link from 'next/link';
 
-//Providers
-import { useAuth } from '@/provider/auth-provider';
-
 //CSS Modules & Styling
 import styles from '@/components/forms/form.module.css';
 import buttonStyles from '@/components/button/button.module.css';
@@ -30,11 +27,13 @@ import AuthService from '@/services/auth-service';
 //Toast Alert
 import { toast } from 'sonner';
 
+//Auth schema zod validation
+import { loginSchema } from '@/schemas/auth-schemas';
+
 export default function LoginForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const router = useRouter();
-  const { refreshUser } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -42,31 +41,37 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //Show loading spinner
     setIsLoading(true);
+    setErrors({});
 
     const loginData = {
       email,
       password,
     } satisfies LoginDto;
 
+    const validation = loginSchema.safeParse(loginData);
+    if (!validation.success) {
+      const fieldErrors = Object.fromEntries(
+        validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]),
+      );
+
+      setErrors(fieldErrors);
+      return;
+    }
+
     try {
-      const result = await AuthService.login(loginData);
+      const result = await AuthService.login(validation.data);
 
       if (!result.success) {
         setErrors(result.fieldErrors ?? {});
-
-        toast.error('Något gick fel, gick inte logga in');
+        toast.error(result.message || 'Kunde inte logga in.');
         return;
       }
-
-      localStorage.setItem('token', result.userToken ?? '');
-      await refreshUser();
-
-      router.refresh();
-      router.push('/');
+      toast.success('Inloggning lyckades');
+      router.push('/dashboard');
     } catch (error) {
-      toast.error('Något gick fel, kontot kunde ej loggas in');
+      console.error('Login failed:', error);
+      toast.error('Ett oväntat fel inträffade vid inloggningen.');
     } finally {
       setIsLoading(false);
     }
@@ -93,8 +98,19 @@ export default function LoginForm() {
             E-mail
           </label>
         </div>
-        <input className={styles.formInput} required type="text" placeholder="E-mail.." id="email" onChange={(e) => setEmail(e.target.value)}></input>
-        {errors.email && <p className={styles.fieldErrorMessage}>{errors.email}</p>}
+        <input
+          className={styles.formInput}
+          type="email"
+          name="email"
+          placeholder="E-mail.."
+          autoComplete="email"
+          id="email"
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setErrors((prev) => ({ ...prev, email: '' }));
+          }}
+        ></input>
+        {errors.email && <span className={styles.error}>{errors.email}</span>}
       </div>
       <div className={styles.formGroup}>
         <div className="flex items-center gap-4">
@@ -105,16 +121,23 @@ export default function LoginForm() {
         </div>
         <input
           className={styles.formInput}
-          required
           type="password"
+          name="password"
           id="password"
+          autoComplete="current-password"
           placeholder="Lösenord.."
-          onChange={(e) => setPassword(e.target.value)}
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setErrors((prev) => ({ ...prev, password: '' }));
+          }}
         ></input>
-        {errors.password && <p className={styles.fieldErrorMessage}>{errors.password}</p>}
+        {errors.password && <span className={styles.error}>{errors.password}</span>}
       </div>
       <div className="grid grid-2">
-        <Button type="submit" text="Logga in" variant="primary"></Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? <LoadingSpinner /> : 'Logga in'}
+        </Button>
         <Link href="/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
           Gå tillbaks
         </Link>

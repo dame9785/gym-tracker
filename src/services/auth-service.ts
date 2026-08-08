@@ -6,7 +6,7 @@ import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types'
 import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
 
 //API URL
-const API_URL = '/api/auth';
+const API_URL = 'http://localhost:3000/api/auth';
 
 export default class AuthService {
   //Me
@@ -77,9 +77,13 @@ export default class AuthService {
       const data: AuthApiResponse = await response.json();
       return data;
     } catch (error) {
-      console.log(error);
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      console.error('AuthService.update failed:', error);
+
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Ett oväntat fel inträffade.',
+        errors: [],
+      };
     }
   }
 

@@ -23,6 +23,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Authentication
     const authenticatedUser = getAuthenticatedUser(request);
+    console.log('logged in user', authenticatedUser);
 
     if (!authenticatedUser) {
       return NextResponse.json(
@@ -82,7 +83,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json(
       {
         success: false,
-        message: 'Something went wrong.',
+        message: 'Something went wrong, server error',
         errors: [],
       } satisfies AuthApiResponse,
       { status: 500 },

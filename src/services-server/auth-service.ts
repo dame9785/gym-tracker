@@ -18,10 +18,65 @@ import FieldErrorsMessagesHelper from '@/helpers/field-error-helper';
 
 //Types
 import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
-import type { RegisterUserDto, UpdateUserDto } from '@/schemas/auth-schemas';
+import type { LoginDto, RegisterUserDto, UpdateUserDto } from '@/schemas/auth-schemas';
 
 export class AuthService {
   private userRepository = new UserRepository();
+
+  //Login User
+  async login(dto: LoginDto): Promise<AuthApiResponse> {
+    const fieldErrors: Partial<Record<keyof LoginDto, string>> = {};
+
+    if (!dto) {
+      return {
+        success: false,
+        message: 'Ogiltig login-data.',
+        errors: [],
+      };
+    }
+
+    try {
+      const user = await this.userRepository.findByEmail(dto.email);
+
+      if (!user) {
+        fieldErrors.email = 'E-postadressen eller lösenordet är felaktigt.';
+
+        return {
+          success: false,
+          message: 'Inloggningen misslyckades.',
+          errors: Object.values(fieldErrors),
+          fieldErrors,
+        };
+      }
+
+      const passwordValid = await bcrypt.compare(dto.password, user.passwordHash);
+      if (!passwordValid) {
+        fieldErrors.password = 'E-postadressen eller lösenordet är felaktigt.';
+
+        return {
+          success: false,
+          message: 'Inloggningen misslyckades.',
+          errors: Object.values(fieldErrors),
+          fieldErrors,
+        };
+      }
+
+      return {
+        success: true,
+        message: 'Användaren är inloggad.',
+        errors: [],
+        userId: user.id,
+      };
+    } catch (error) {
+      console.error('AuthService.login failed:', error);
+
+      return {
+        success: false,
+        message: 'Ett internt serverfel inträffade.',
+        errors: [],
+      };
+    }
+  }
 
   // Register User
   async register(dto: RegisterUserDto): Promise<AuthApiResponse> {
@@ -62,7 +117,6 @@ export class AuthService {
         userId: user.id,
       };
     } catch (error) {
-      console.log(error);
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const fieldErrors = FieldErrorsMessagesHelper.getUniqueConstraintFieldErrors<RegisterUserDto>(error);
 
@@ -74,6 +128,7 @@ export class AuthService {
         };
       }
 
+      console.log('Error', error);
       return {
         success: false,
         message: 'Kunde inte skapa användaren.',

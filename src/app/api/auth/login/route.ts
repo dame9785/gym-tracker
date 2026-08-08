@@ -17,7 +17,9 @@ export async function POST(request: Request) {
     const validation = loginSchema.safeParse(body);
 
     if (!validation.success) {
-      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [issue.path[0], issue.message])) as Partial<Record<keyof LoginDto, string>>;
+      const fieldErrors = Object.fromEntries(
+        validation.error.issues.map((issue) => [issue.path[0], issue.message]),
+      ) as Partial<Record<keyof LoginDto, string>>;
       return NextResponse.json(
         {
           success: false,
@@ -32,6 +34,7 @@ export async function POST(request: Request) {
     }
 
     const response = await authService.login(validation.data);
+    console.log(response);
     return NextResponse.json(response, {
       status: response.success ? 200 : 401,
     });

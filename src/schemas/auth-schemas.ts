@@ -64,9 +64,9 @@ export const updateSchema = registerSchema.omit({
   password: true,
 });
 
-export const loginSchema = registerSchema.pick({
-  email: true,
-  password: true,
+export const loginSchema = z.object({
+  email: z.string().trim().email('Ogiltig e-postadress.'),
+  password: z.string().min(1, 'Lösenord krävs.'),
 });
 
 export type RegisterUserDto = z.infer<typeof registerSchema>;

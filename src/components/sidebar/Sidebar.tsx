@@ -4,9 +4,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-//Auth
-import { useAuth } from '@/provider/auth-provider';
-
 //CSS
 import './sidebar.css';
 
@@ -24,15 +21,11 @@ import { BsPersonCircle } from 'react-icons/bs';
 import { FaHome } from 'react-icons/fa';
 
 function Sidebar() {
-  const { user, refreshUser } = useAuth();
   const router = useRouter();
-
-  if (user == null) return null;
 
   const handleLogout = async () => {
     localStorage.removeItem('token');
     router.push('/account/login');
-    refreshUser();
   };
 
   return (
@@ -99,9 +92,9 @@ function Sidebar() {
 
               <li className="li flex items-center">
                 <IoIosSettings className="fa-icon" />
-                <Link href={`/account/settings/${user.id}`} className="grid">
+                {/* <Link href={`/account/settings/${user.id}`} className="grid">
                   Settings
-                </Link>
+                </Link> */}
               </li>
             </ul>
           </nav>
@@ -111,11 +104,13 @@ function Sidebar() {
             <BsPersonCircle />
             <p>
               Welcome,
-              <span> {user?.username == null ? 'Kompis' : user?.username}</span>
+              <span>--</span>
             </p>
           </div>
           <div className="logout-wrapper flex justify-center mt-5">
-            <Button type="button" text="Logga ut" variant="secondary" onClick={handleLogout}></Button>
+            <Button type="button" variant="secondary" onClick={handleLogout}>
+              Logga ut
+            </Button>
           </div>
         </div>
       </aside>
