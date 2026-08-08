@@ -130,7 +130,7 @@ useEffect(() => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsSaving(true);
     const userData: UpdateUserDto = {
       email: formData.email,
       username: formData.username,
@@ -183,7 +183,7 @@ useEffect(() => {
     } catch (error) {
       toast.error('Något gick fel, användare ej uppdaterad.');
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
