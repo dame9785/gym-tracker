@@ -14,7 +14,7 @@ import { UserMapper } from '../mapping/user-mapping';
 //Types
 import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
 import type { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
-import { LogViewModel } from '@/types/log-weight-types';
+
 
 export class AuthService {
   private userRepository = new UserRepository();
