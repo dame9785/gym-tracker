@@ -63,20 +63,21 @@ export default function UpdateUserForm({
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
+  
   const [formData, setFormData] = useState<UpdateUserDto>({
-    email: '',
-    username: '',
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    bodyWeight: 0,
-    height: 0,
-    birthDate: '',
-    goalWeight: 0,
-    goalDate: '',
-    goalTypeId: 0,
-    gender: 'MALE',
-  });
+  email: user.email,
+  username: user.username,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  phoneNumber: user.phoneNumber,
+  bodyWeight: user.bodyWeight,
+  height: user.height,
+  birthDate: user.birthDate.split('T')[0],
+  goalWeight: user.goalWeight,
+  goalDate: user.goalDate?.split('T')[0] ?? '',
+  goalTypeId: user.goalTypeId,
+  gender: user.gender,
+});
 
 
 
