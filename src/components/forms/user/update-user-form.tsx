@@ -441,7 +441,11 @@ useEffect(() => {
         </div>
       </div>
       <div className="grid grid-2">
-        <Button type="submit" text={isLoading ? 'Sparar...' : 'Spara'} variant="primary"></Button>
+      <Button
+  type="submit"
+  text={isSaving ? 'Sparar...' : 'Spara'}
+  variant="primary"
+/>
       </div>
     </form>
   );
