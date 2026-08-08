@@ -10,7 +10,7 @@ import LoadingSpinner from '@/components/loading-spinner';
 //Types
 import type { GoalType } from '@/types/goal-types';
 import type { UpdateUserDto } from '@/schemas/auth-schemas';
-
+import type { UserSettingsViewModel } from '@/types/user-types';
 
 //Schemas
 import { updateSchema } from '@/schemas/auth-schemas';
