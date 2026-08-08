@@ -6,6 +6,8 @@ export async function PUT(
     const { userId } = await params;
     const id = Number(userId);
 
+
+
     // 1. Kontrollera userId
     if (!Number.isInteger(id) || id <= 0) {
       return NextResponse.json(
