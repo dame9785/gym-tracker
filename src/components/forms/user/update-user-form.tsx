@@ -47,7 +47,8 @@ export default function UpdateUserForm({ userId }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [goals, setGoals] = useState<GoalType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isSaving, setIsSaving] = useState(false);
+  
   const [formData, setFormData] = useState<UpdateUserDto>({
     email: '',
     username: '',
