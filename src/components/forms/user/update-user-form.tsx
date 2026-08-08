@@ -12,6 +12,9 @@ import type { User } from '@/types/user-types';
 import type { GoalType } from '@/types/goal-types';
 import type { UpdateUserDto } from '@/schemas/auth-schemas';
 
+
+import type { updateSchema } from '@/schemas
+
 //React Routing
 import { useState, useEffect } from 'react';
 
