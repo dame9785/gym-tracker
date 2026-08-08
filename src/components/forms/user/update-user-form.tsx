@@ -5,19 +5,22 @@ import styles from '@/components/forms/form.module.css';
 
 //Components
 import Button from '@/components/button/button';
-import LoadingSpinner from '@/components/loading-spinner';
+
 
 //Types
-import type { User } from '@/types/user-types';
 import type { GoalType } from '@/types/goal-types';
 import type { UpdateUserDto } from '@/schemas/auth-schemas';
+import type { UserSettingsViewModel } from '@/types/user-types';
+
+//Schemas
+import { updateSchema } from '@/schemas/auth-schemas';
 
 //React Routing
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 //Services
 import UserService from '@/services/auth-service';
-import GoalService from '@/services/goal-service';
+
 
 //FONTAWSOME ICONS
 import {
@@ -35,35 +38,64 @@ import {
 import { toast } from 'sonner';
 
 //Props
-type Props = {
-  userId: string;
+
+  type Props = {
+  user: UserSettingsViewModel;
+  goals: GoalType[];
 };
 
-export default function UpdateUserForm({ userId }: Props) {
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [user, setUserData] = useState<User | null>(null);
-  const [goals, setGoals] = useState<GoalType[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+const numericFields = [
+  'bodyWeight',
+  'height',
+  'goalWeight',
+  'goalTypeId',
+];
 
+type FormErrors = Partial<Record<keyof UpdateUserDto, string>>;
+
+export default function UpdateUserForm({
+  user,
+  goals,
+}: Props) {
+
+export default function UpdateUserForm({
+  user,
+  goals,
+}: Props) {
+   string>>;
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  
+  const [isSaving, setIsSaving] = useState(false);
+  
+  
   const [formData, setFormData] = useState<UpdateUserDto>({
-    email: '',
-    username: '',
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    bodyWeight: 0,
-    bodyLenght: 0,
-    birthDate: '',
-    goalWeight: 0,
-    goalDate: '',
-    goalTypeId: 0,
-    gender: 'MALE',
-  });
+  email: user.email,
+  username: user.username,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  phoneNumber: user.phoneNumber,
+  bodyWeight: user.bodyWeight,
+  height: user.height,
+  birthDate: user.birthDate.split('T')[0],
+  goalWeight: user.goalWeight,
+  goalDate: user.goalDate?.split('T')[0] ?? '',
+  goalTypeId: user.goalTypeId,
+  gender: user.gender,
+});
+
+
+
+
+
+
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    const numericFields = ['bodyWeight', 'bodyLenght', 'goalWeight', 'goalTypeId'];
+    
     setFormData((prev) => ({
       ...prev,
       [name]: numericFields.includes(name) ? Number(value) : value,
@@ -78,24 +110,29 @@ export default function UpdateUserForm({ userId }: Props) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
-    const userData: UpdateUserDto = {
-      email: formData.email,
-      username: formData.username,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phoneNumber: formData.phoneNumber,
-      bodyWeight: Number(formData.bodyWeight),
-      bodyLenght: Number(formData.bodyLenght),
-      birthDate: formData.birthDate,
-      goalWeight: Number(formData.goalWeight),
-      goalDate: formData.goalDate,
-      goalTypeId: formData.goalTypeId,
-      gender: formData.gender,
-    } satisfies UpdateUserDto;
+    
+    
+
+    //zod validation 
+    const validation = updateSchema.safeParse(formData);
+
+    //Show fields validation error meddages
+    //If Validation is not success
+    if (!validation.success) {
+      const fieldErrors = Object.fromEntries(
+      validation.error.issues.map((issue) => [String(issue.path[0]),issue.message,])
+      );
+
+        setErrors(fieldErrors);
+        return;
+      
+    }
+
+    //show loading
+    setIsSaving(true);
 
     try {
-      const result = await UserService.update(userData, Number(userId));
+      const result = await UserService.update(formData, user.userId);
       if (!result.success) {
         setErrors(result.fieldErrors ?? {});
 
@@ -114,53 +151,15 @@ export default function UpdateUserForm({ userId }: Props) {
     } catch (error) {
       toast.error('Något gick fel, användare ej uppdaterad.');
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
-  //Get all goals
-  useEffect(() => {
-    async function loadGoals() {
-      try {
-        const data = await GoalService.getAll();
+ 
 
-        setGoals(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
+  
 
-    loadGoals();
-  }, []);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const fetchedUser: User = await UserService.getUserById(Number(userId));
-
-      setUserData(fetchedUser);
-      setFormData({
-        email: fetchedUser.email,
-        username: fetchedUser.username,
-        firstName: fetchedUser.firstName,
-        lastName: fetchedUser.lastName,
-        phoneNumber: fetchedUser.phoneNumber,
-        bodyWeight: fetchedUser.bodyWeight,
-        bodyLenght: fetchedUser.bodyLenght,
-        birthDate: fetchedUser.birthDate.split('T')[0],
-        goalWeight: fetchedUser.goalWeight,
-        goalDate: fetchedUser.goalDate?.split('T')[0] ?? '',
-        goalTypeId: fetchedUser.goalTypeId,
-        gender: fetchedUser.gender,
-      });
-    };
-
-    fetchUser();
-  }, [userId]);
-
-  //Show Loading spinner if loading is true or user is null
-  if (!user || isLoading) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -185,7 +184,7 @@ export default function UpdateUserForm({ userId }: Props) {
               name="email"
               type="email"
               id="email"
-              required
+              
               placeholder="E-post..."
               value={formData.email}
               onChange={handleChange}
@@ -207,7 +206,7 @@ export default function UpdateUserForm({ userId }: Props) {
               type="text"
               id="username"
               maxLength={20}
-              required
+              
               placeholder="Användarnamn..."
               value={formData.username}
               onChange={handleChange}
@@ -229,7 +228,7 @@ export default function UpdateUserForm({ userId }: Props) {
               type="text"
               id="firstName"
               maxLength={20}
-              required
+              
               placeholder="Namn..."
               value={formData.firstName}
               onChange={handleChange}
@@ -251,7 +250,7 @@ export default function UpdateUserForm({ userId }: Props) {
               type="text"
               maxLength={50}
               id="lastName"
-              required
+              
               placeholder="Efternamn..."
               value={formData.lastName}
               onChange={handleChange}
@@ -273,7 +272,7 @@ export default function UpdateUserForm({ userId }: Props) {
               type="tel"
               id="phoneNumber"
               maxLength={15}
-              required
+              
               placeholder="Telefonnummer..."
               value={formData.phoneNumber}
               onChange={handleChange}
@@ -315,33 +314,33 @@ export default function UpdateUserForm({ userId }: Props) {
               type="number"
               step="0.1"
               id="bodyWeight"
-              required
+              
               placeholder="Ex (40.2kg)"
               value={formData.bodyWeight}
               onChange={handleChange}
             />
             {errors.bodyWeight && <p className={styles.fieldErrorMessage}>{errors.bodyWeight}</p>}
           </div>
-          {/* Body lenght */}
+          {/* Height */}
           <div className={styles.formGroup}>
             <div className={styles.labelWrapper}>
               <FaRulerVertical className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="bodyLenght">
+              <label className={styles.formLabel} htmlFor="height">
                 Längd (cm)
               </label>
             </div>
             <input
               className={styles.formInput}
-              name="bodyLenght"
+              name="height"
               type="number"
               step="0.1"
-              id="bodyLenght"
-              required
+              id="height"
+              
               placeholder="Ex (150.5cm)"
-              value={formData.bodyLenght}
+              value={formData.height}
               onChange={handleChange}
             />
-            {errors.bodyLenght && <p className={styles.fieldErrorMessage}>{errors.bodyLenght}</p>}
+            {errors.height && <p className={styles.fieldErrorMessage}>{errors.height}</p>}
           </div>
 
           {/* Birth */}
@@ -407,7 +406,12 @@ export default function UpdateUserForm({ userId }: Props) {
         </div>
       </div>
       <div className="grid grid-2">
-        <Button type="submit" text={isLoading ? 'Sparar...' : 'Spara'} variant="primary"></Button>
+    <Button
+  type="submit"
+  text={isSaving ? 'Sparar...' : 'Spara'}
+  variant="primary"
+  disabled={isSaving}
+/>
       </div>
     </form>
   );
