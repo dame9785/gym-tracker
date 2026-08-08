@@ -114,7 +114,7 @@ useEffect(() => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    const numericFields = ['bodyWeight', 'bodyLenght', 'goalWeight', 'goalTypeId'];
+    const numericFields = ['bodyWeight', 'height', 'goalWeight', 'goalTypeId'];
     setFormData((prev) => ({
       ...prev,
       [name]: numericFields.includes(name) ? Number(value) : value,
@@ -353,26 +353,26 @@ useEffect(() => {
             />
             {errors.bodyWeight && <p className={styles.fieldErrorMessage}>{errors.bodyWeight}</p>}
           </div>
-          {/* Body lenght */}
+          {/* Height */}
           <div className={styles.formGroup}>
             <div className={styles.labelWrapper}>
               <FaRulerVertical className={styles.formIcon} />
-              <label className={styles.formLabel} htmlFor="bodyLenght">
+              <label className={styles.formLabel} htmlFor="height">
                 Längd (cm)
               </label>
             </div>
             <input
               className={styles.formInput}
-              name="bodyLenght"
+              name="height"
               type="number"
               step="0.1"
-              id="bodyLenght"
+              id="height"
               required
               placeholder="Ex (150.5cm)"
-              value={formData.bodyLenght}
+              value={formData.height}
               onChange={handleChange}
             />
-            {errors.bodyLenght && <p className={styles.fieldErrorMessage}>{errors.bodyLenght}</p>}
+            {errors.height && <p className={styles.fieldErrorMessage}>{errors.height}</p>}
           </div>
 
           {/* Birth */}
