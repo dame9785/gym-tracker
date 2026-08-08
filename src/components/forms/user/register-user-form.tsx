@@ -52,7 +52,7 @@ interface Props = {
 
 export default function RegisterForm({goals}:Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
+
 
   const router = useRouter();
   const { refreshUser } = useAuth();
