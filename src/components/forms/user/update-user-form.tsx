@@ -63,10 +63,11 @@ export default function UpdateUserForm({ userId }: Props) {
 
 useEffect(() => {
     const fetchUser = async () => {
-      const fetchedUser: User = await UserService.getUserById(Number(userId));
-if(user == null){
-//Redirect to dashboard page.
-}
+   const fetchedUser: User = await UserService.getUserById(Number(userId));
+    
+   if(fetchedUser == null){
+    //TODO: Redirect to dashboard page.
+    }
       setUserData(fetchedUser);
       setFormData({
         email: fetchedUser.email,
@@ -75,7 +76,7 @@ if(user == null){
         lastName: fetchedUser.lastName,
         phoneNumber: fetchedUser.phoneNumber,
         bodyWeight: fetchedUser.bodyWeight,
-        height: fetchedUser.bodyLenght,
+        height: fetchedUser.height,
         birthDate: fetchedUser.birthDate.split('T')[0],
         goalWeight: fetchedUser.goalWeight,
         goalDate: fetchedUser.goalDate?.split('T')[0] ?? '',
