@@ -82,12 +82,12 @@ export default class AuthService {
   }
 
   //GET: User By Id
-  static async getUserById(userId: number) {
+  static async getUserById(userId: number):promise<AuthApiResponse> {
     try {
       const response = await fetch(`${API_URL}/setting/${userId}`, {
         method: 'GET',
       });
-      const result = (await response.json()) as User;
+      const result: AuthApiResponse = await response.json();
       return result;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
