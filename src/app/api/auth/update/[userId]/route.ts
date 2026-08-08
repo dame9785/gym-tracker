@@ -6,9 +6,7 @@ export async function PUT(
     const { userId } = await params;
     const id = Number(userId);
 
-
-
-    // 1. Kontrollera userId
+    // Validate user ID
     if (!Number.isInteger(id) || id <= 0) {
       return NextResponse.json(
         {
@@ -20,38 +18,36 @@ export async function PUT(
       );
     }
 
-    // 2. Hämta JWT
-    const token = request.cookies.get('token')?.value;
+    // Authentication
+    const authenticatedUser = getAuthenticatedUser(request);
 
-    if (!token) {
+    if (!authenticatedUser) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Du måste vara inloggad.',
+          message: 'Ogiltig eller utgången token.',
           errors: [],
         } satisfies AuthApiResponse,
         { status: 401 }
       );
     }
 
-     
-    const authenticatedUser = getAuthenticatedUser(request);
+    // Authorization
+    if (authenticatedUser.userId !== id) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Du har inte behörighet.',
+          errors: [],
+        } satisfies AuthApiResponse,
+        { status: 403 }
+      );
+    }
 
-if (authenticatedUser.userId !== id) {
-  return NextResponse.json(
-    {
-      success: false,
-      message: 'Du har inte behörighet.',
-      errors: [],
-    } satisfies AuthApiResponse,
-    { status: 403 }
-  );
-}
-
-    // 5. Hämta body
+    // Request body
     const body = await request.json();
 
-    // 6. Zod validation
+    // Validation
     const validation = updateSchema.safeParse(body);
 
     if (!validation.success) {
@@ -75,7 +71,7 @@ if (authenticatedUser.userId !== id) {
       );
     }
 
-    // 7. Business logic
+    // Business logic
     const response = await authService.updateUser(
       validation.data,
       id
