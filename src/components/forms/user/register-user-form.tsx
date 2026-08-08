@@ -34,9 +34,6 @@ import { useState } from 'react';
 //Services
 import AuthService from '@/services/auth-service';
 
-//Providers
-import { useAuth } from '@/provider/auth-provider';
-
 //Types
 import { registerSchema, type RegisterUserDto } from '@/schemas/auth-schemas';
 import type { GoalTypeViewModel } from '@/types/goal-types';
@@ -50,9 +47,8 @@ type Props = {
 
 export default function RegisterForm({ goals }: Props) {
   const [errors, setErrors] = useState<FormErrors>({});
-
   const router = useRouter();
-  const { refreshUser } = useAuth();
+  const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState<RegisterUserDto>({
     email: '',
@@ -96,37 +92,32 @@ export default function RegisterForm({ goals }: Props) {
     //zod validation
     const validation = registerSchema.safeParse(formData);
     if (!validation.success) {
-      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
+      const fieldErrors = Object.fromEntries(
+        validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]),
+      );
 
       setErrors(fieldErrors);
       return;
     }
 
     try {
-      const result = await AuthService.register(formData);
-      console.log(result);
+      setIsSaving(true);
+
+      const result = await AuthService.register(validation.data);
       if (!result.success) {
         setErrors(result.fieldErrors ?? {});
-        toast.error('Användaren skapades inte!');
+        toast.error(result.message);
         return;
       }
-
-      if (!result.userToken) {
-        toast.error('Ingen token returnerades.');
-        return;
-      }
-
-      localStorage.setItem('token', result.userToken);
 
       setErrors({});
       toast.success('Användaren registrerades!');
-
-      await refreshUser();
-      router.push('/account/settings');
+      router.push(`/account/settings/${result.userId}`);
     } catch (error) {
-      console.error(error);
+      console.error('Register failed:', error);
       toast.error('Något gick fel, kontot kunde inte registreras.');
     } finally {
+      setIsSaving(false);
     }
   };
 
@@ -153,6 +144,7 @@ export default function RegisterForm({ goals }: Props) {
               name="email"
               type="email"
               id="email"
+              autoComplete="email"
               value={formData.email}
               placeholder="E-post..."
               onChange={handleChange}
@@ -174,6 +166,7 @@ export default function RegisterForm({ goals }: Props) {
               type="text"
               value={formData.username}
               id="username"
+              autoComplete="username"
               maxLength={20}
               placeholder="Användarnamn..."
               onChange={handleChange}
@@ -195,6 +188,7 @@ export default function RegisterForm({ goals }: Props) {
               type="text"
               value={formData.firstName}
               id="firstName"
+              autoComplete="given-name"
               maxLength={20}
               placeholder="Namn..."
               onChange={handleChange}
@@ -217,6 +211,7 @@ export default function RegisterForm({ goals }: Props) {
               value={formData.lastName}
               maxLength={50}
               id="lastName"
+              autoComplete="family-name"
               placeholder="Efternamn..."
               onChange={handleChange}
             />
@@ -236,6 +231,7 @@ export default function RegisterForm({ goals }: Props) {
               name="phoneNumber"
               type="tel"
               id="phoneNumber"
+              autoComplete="tel"
               value={formData.phoneNumber}
               maxLength={15}
               placeholder="Telefonnummer..."
@@ -278,6 +274,7 @@ export default function RegisterForm({ goals }: Props) {
               name="password"
               type="password"
               id="password"
+              autoComplete="new-password"
               placeholder="Lösenord..."
               onChange={handleChange}
             />
@@ -315,7 +312,13 @@ export default function RegisterForm({ goals }: Props) {
                 Kön
               </label>
             </div>
-            <select className={FormStyles.formSelect} id="gender" name="gender" value={formData.gender} onChange={handleChange}>
+            <select
+              className={FormStyles.formSelect}
+              id="gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+            >
               <option value="">Välj kön</option>
               <option value={Gender.MALE}>Man</option>
               <option value={Gender.FEMALE}>Kvinna</option>
@@ -351,7 +354,12 @@ export default function RegisterForm({ goals }: Props) {
                 Mål
               </label>
             </div>
-            <select className={FormStyles.formSelect} name="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
+            <select
+              className={FormStyles.formSelect}
+              name="goalTypeId"
+              value={formData.goalTypeId}
+              onChange={handleChange}
+            >
               <option value="">Välj mål</option>
 
               {goals.map((goal) => (
@@ -392,13 +400,20 @@ export default function RegisterForm({ goals }: Props) {
                 Måldatum
               </label>
             </div>
-            <input className={FormStyles.formInput} value={formData.goalDate} name="goalDate" type="date" id="goalDate" onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              value={formData.goalDate}
+              name="goalDate"
+              type="date"
+              id="goalDate"
+              onChange={handleChange}
+            />
             {errors.goalDate && <p className={FormStyles.fieldErrorMessage}>{errors.goalDate}</p>}
           </div>
         </div>
       </div>
       <div className="grid grid-2">
-        <Button type="submit" text="Skapa konto" variant="primary"></Button>
+        <Button type="submit" text="Skapa konto" variant="primary" disabled={isSaving}></Button>
         <Link href="/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
           Gå tillbaks
         </Link>

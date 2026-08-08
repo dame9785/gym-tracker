@@ -59,6 +59,7 @@ export class AuthService {
         message: 'Användaren registrerades.',
         errors: [],
         userToken: generateToken(user.id),
+        userId: user.id,
       };
     } catch (error) {
       console.log(error);

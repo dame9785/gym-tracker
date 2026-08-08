@@ -2,7 +2,7 @@
 import { redirect } from 'next/navigation';
 
 //Types
-import type { User, AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
+import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
 import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
 
 //API URL
@@ -65,32 +65,41 @@ export default class AuthService {
 
   //Update User
   static async update(userData: UpdateUserDto, userId: number): Promise<AuthApiResponse> {
-    const response = await fetch(`${API_URL}/update/${userId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
+    try {
+      const response = await fetch(`${API_URL}/update/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
 
-    const data: AuthApiResponse = await response.json();
-
-    return data;
+      const data: AuthApiResponse = await response.json();
+      return data;
+    } catch (error) {
+      console.log(error);
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
+    }
   }
 
   //GET: User By Id
-  static async getUserById(userId: number): Promise<UserSettingsViewModel> {
-    const response = await fetch(`${API_URL}/setting/${userId}`, {
-      method: 'GET',
-    });
+  static async getUserById(userId: number): Promise<AuthApiResponse> {
+    try {
+      const response = await fetch(`http://localhost:3000/api/auth/setting/${userId}`, {
+        method: 'GET',
+      });
 
-    if (!response.ok) {
-      throw new Error('Kunde inte hämta användaren.');
+      if (!response.ok) {
+        throw new Error('Kunde inte hämta användaren.');
+      }
+      const data: AuthApiResponse = await response.json();
+      console.log(data);
+      return data;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      redirect(`/error?message=${encodeURIComponent(message)}`);
     }
-
-    const result: UserSettingsViewModel = await response.json();
-
-    return result;
   }
   //Logout
   static async logout(): Promise<AuthApiResponse> {

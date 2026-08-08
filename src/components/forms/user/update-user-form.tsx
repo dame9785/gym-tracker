@@ -7,7 +7,7 @@ import styles from '@/components/forms/form.module.css';
 import Button from '@/components/button/button';
 
 //Types
-import type { GoalType } from '@/types/goal-types';
+import type { GoalTypeViewModel } from '@/types/goal-types';
 import type { UpdateUserDto } from '@/schemas/auth-schemas';
 import type { UserSettingsViewModel } from '@/types/user-types';
 
@@ -16,9 +16,14 @@ import { updateSchema } from '@/schemas/auth-schemas';
 
 //React Routing
 import { useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useRouter } from 'next/navigation';
 
 //Services
 import UserService from '@/services/auth-service';
+
+//Dtos:
+import { ErrorsHelper } from '@/helpers/get-forms-error-helper';
 
 //FONTAWSOME ICONS
 import {
@@ -36,49 +41,72 @@ import {
 import { toast } from 'sonner';
 
 //Props
-
 type Props = {
   user: UserSettingsViewModel;
-  goals: GoalType[];
+  goals: GoalTypeViewModel[];
 };
-
-const numericFields = ['bodyWeight', 'height', 'goalWeight', 'goalTypeId'];
 
 type FormErrors = Partial<Record<keyof UpdateUserDto, string>>;
 
+type UpdateUserFormData = Omit<UpdateUserDto, 'goalTypeId'> & {
+  goalTypeId: number | '';
+};
+
 export default function UpdateUserForm({ user, goals }: Props) {
   const [errors, setErrors] = useState<FormErrors>({});
-
   const [isSaving, setIsSaving] = useState(false);
 
-  const [formData, setFormData] = useState<UpdateUserDto>({
-    email: user.email,
-    username: user.username,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    phoneNumber: user.phoneNumber,
+  const router = useRouter();
+
+  const formatDateForInput = (date: string): string => {
+    if (!date) {
+      return '';
+    }
+
+    return date.split('T')[0];
+  };
+
+  const [formData, setFormData] = useState<UpdateUserFormData>({
+    email: user.email ?? '',
+    username: user.username ?? '',
+    firstName: user.firstName ?? '',
+    lastName: user.lastName ?? '',
+    phoneNumber: user.phoneNumber ?? '',
     bodyWeight: user.bodyWeight,
     height: user.height,
-    birthDate: user.birthDate.split('T')[0],
     goalWeight: user.goalWeight,
-    goalDate: user.goalDate?.split('T')[0] ?? '',
-    goalTypeId: user.goalTypeId,
+    birthDate: formatDateForInput(user.birthDate) ?? '',
+    goalDate: formatDateForInput(user.goalDate) ?? '',
+    goalTypeId: user.goalTypeId ?? '',
     gender: user.gender,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
+    let parsedValue: string | number = value;
+
+    switch (name) {
+      case 'bodyWeight':
+      case 'height':
+      case 'goalWeight':
+        parsedValue = Number(value);
+        break;
+
+      case 'goalTypeId':
+        parsedValue = value === '' ? '' : Number(value);
+        break;
+    }
 
     setFormData((prev) => ({
       ...prev,
-      [name]: numericFields.includes(name) ? Number(value) : value,
+      [name]: parsedValue,
     }));
 
-    setErrors((prev) => {
-      const next = { ...prev };
-      delete next[name];
-      return next;
-    });
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -87,12 +115,9 @@ export default function UpdateUserForm({ user, goals }: Props) {
     //zod validation
     const validation = updateSchema.safeParse(formData);
 
-    //Show fields validation error meddages
-    //If Validation is not success
+    //Set Error validations messsage.
     if (!validation.success) {
-      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
-
-      setErrors(fieldErrors);
+      setErrors(ErrorsHelper.getFormErrors<UpdateUserDto>(validation.error.issues));
       return;
     }
 
@@ -100,8 +125,16 @@ export default function UpdateUserForm({ user, goals }: Props) {
     setIsSaving(true);
 
     try {
-      const result = await UserService.update(formData, user.userId);
+      const validatedData = validation.data;
+      const result = await UserService.update(validatedData, user.id);
+
+      if (result.isTokenExperied) {
+        toast.error('Du har blivit utloggad');
+        router.push(`/account/login`);
+      }
+
       if (!result.success) {
+        console.log(result);
         setErrors(result.fieldErrors ?? {});
 
         if (!result.fieldErrors) {
@@ -110,6 +143,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
 
         return;
       }
+
       //Show alert message
       toast.success('Användare uppdaterad');
 
@@ -117,6 +151,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
       setErrors({});
       return;
     } catch (error) {
+      console.log(error);
       toast.error('Något gick fel, användare ej uppdaterad.');
     } finally {
       setIsSaving(false);
@@ -141,7 +176,15 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Email
               </label>
             </div>
-            <input className={styles.formInput} name="email" type="email" id="email" placeholder="E-post..." value={formData.email} onChange={handleChange} />
+            <input
+              className={styles.formInput}
+              name="email"
+              type="email"
+              id="email"
+              placeholder="E-post..."
+              value={formData.email}
+              onChange={handleChange}
+            />
             {errors.email && <p className={styles.fieldErrorMessage}>{errors.email}</p>}
           </div>
 
@@ -241,7 +284,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
               name="goalDate"
               type="date"
               id="goalDate"
-              value={formData.goalDate?.split('T')[0] ?? ''}
+              value={formData.goalDate}
               onChange={handleChange}
             />
             {errors.goalDate && <p className={styles.fieldErrorMessage}>{errors.goalDate}</p>}
@@ -304,7 +347,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
               type="date"
               id="birthDate"
               placeholder="1997-09-26"
-              value={formData.birthDate?.split('T')[0] ?? ''}
+              value={formData.birthDate}
               onChange={handleChange}
             />
             {errors.birthDate && <p className={styles.fieldErrorMessage}>{errors.birthDate}</p>}
@@ -318,7 +361,13 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Mål
               </label>
             </div>
-            <select className={styles.formSelect} name="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
+            <select
+              className={styles.formSelect}
+              name="goalType"
+              id="goalType"
+              value={formData.goalTypeId}
+              onChange={handleChange}
+            >
               <option value="">Välj mål</option>
 
               {goals.map((goal) => (

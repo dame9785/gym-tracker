@@ -27,7 +27,7 @@ export const registerSchema = z.object({
 
   password: z
     .string()
-    .min(8, 'Lösenordet måste vara minst 8 tecken.')
+    .min(2, 'Lösenordet måste vara minst 2 tecken.')
     .regex(/[A-Z]/, 'Minst en stor bokstav krävs.')
     .regex(/[a-z]/, 'Minst en liten bokstav krävs.')
     .regex(/[0-9]/, 'Minst en siffra krävs.')

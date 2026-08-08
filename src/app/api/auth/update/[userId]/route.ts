@@ -1,4 +1,8 @@
 import { NextResponse, NextRequest } from 'next/server';
+import { AuthApiResponse } from '@/types/user-types';
+import { getAuthenticatedUser } from '@/lib/auth';
+import { updateSchema } from '@/schemas/auth-schemas';
+import authService from '@/services/auth-service';
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   try {
@@ -26,6 +30,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           success: false,
           message: 'Ogiltig eller utgången token.',
           errors: [],
+          isTokenExperied: true,
         } satisfies AuthApiResponse,
         { status: 401 },
       );
@@ -50,7 +55,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const validation = updateSchema.safeParse(body);
 
     if (!validation.success) {
-      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
+      const fieldErrors = Object.fromEntries(
+        validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]),
+      );
 
       return NextResponse.json(
         {
@@ -64,7 +71,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Business logic
-    const response = await authService.updateUser(validation.data, authenticatedUser.userId);
+    const response = await authService.update(validation.data, authenticatedUser.userId);
 
     return NextResponse.json(response, {
       status: response.success ? 200 : 400,

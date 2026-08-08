@@ -25,13 +25,13 @@ export interface UserSettingsViewModel {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  bodyWeight: Decimal;
-  height: Decimal;
-  birthDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  goalWeight: Decimal;
-  goalDate: Date;
+  bodyWeight: number;
+  height: number;
+  birthDate: string;
+  createdAt: string;
+  updatedAt: string;
+  goalWeight: number;
+  goalDate: string;
   goalTypeId: number | null;
   gender: Gender;
 }
@@ -43,4 +43,6 @@ export interface AuthApiResponse {
   userToken?: string;
   fieldErrors?: Record<string, string>;
   UserSettingsViewModel?: UserSettingsViewModel;
+  userId?: number;
+  isTokenExperied?: boolean;
 }

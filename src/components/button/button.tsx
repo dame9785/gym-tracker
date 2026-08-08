@@ -6,21 +6,12 @@ type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'delete';
   size?: 'sm' | 'md' | 'lg';
   onClick?: () => void | Promise<void>;
+  disabled?: boolean;
 };
 
-export default function Button({
-  text,
-  type = 'button',
-  variant = 'primary',
-  size = 'md',
-  onClick,
-}: ButtonProps) {
+export default function Button({ text, type = 'button', variant = 'primary', size = 'md', onClick, disabled = false }: ButtonProps) {
   return (
-    <button
-      onClick={onClick}
-      type={type}
-      className={`${styles.button} ${styles[variant]} ${styles[size]}`}
-    >
+    <button disabled={disabled} onClick={onClick} type={type} className={`${styles.button} ${styles[variant]} ${styles[size]}`}>
       {text}
     </button>
   );

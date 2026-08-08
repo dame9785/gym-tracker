@@ -1,13 +1,12 @@
-//Next Server Response
 import { NextResponse } from 'next/server';
 
-//Services
+// Services
 import { AuthService } from '@/services-server/auth-service';
 
-//Types
+// Types
 import type { AuthApiResponse } from '@/types/user-types';
 
-//Schemas
+// Schemas
 import { registerSchema } from '@/schemas/auth-schemas';
 
 const authService = new AuthService();
@@ -15,10 +14,13 @@ const authService = new AuthService();
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+
     const validation = registerSchema.safeParse(body);
 
     if (!validation.success) {
-      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
+      const fieldErrors = Object.fromEntries(
+        validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]),
+      );
 
       return NextResponse.json(
         {
@@ -31,13 +33,26 @@ export async function POST(request: Request) {
       );
     }
 
-    const response = await authService.register(validation.data);
+    const result = await authService.register(validation.data);
 
-    return NextResponse.json(response, {
-      status: response.success ? 201 : 400,
+    const response = NextResponse.json(result, {
+      status: result.success ? 201 : 400,
     });
+
+    if (result.success && result.userToken) {
+      response.cookies.set('token', result.userToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7,
+      });
+    }
+
+    return response;
   } catch (error) {
-    console.log(error);
+    console.error(error);
+
     return NextResponse.json(
       {
         success: false,

@@ -16,15 +16,15 @@ export class UserMapper {
       firstName: user.firstName,
       lastName: user.lastName,
       phoneNumber: user.phoneNumber,
-      bodyWeight: user.bodyWeight,
-      goalWeight: user.goalWeight,
-      height: user.height,
+      bodyWeight: user.bodyWeight.toNumber(),
+      height: user.height.toNumber(),
+      goalWeight: user.goalWeight.toNumber(),
+      birthDate: user.birthDate.toISOString(),
+      goalDate: user.goalDate.toISOString(),
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
+      goalTypeId: user.goalTypeId ?? null,
       gender: user.gender,
-      birthDate: user.birthDate,
-      goalDate: user.goalDate,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-      goalTypeId: user.goalTypeId,
     };
   }
 
@@ -57,10 +57,10 @@ export class UserMapper {
       firstName: dto.firstName,
       lastName: dto.lastName,
       phoneNumber: dto.phoneNumber,
-      bodyWeight: dto.bodyWeight,
-      height: dto.height,
+      bodyWeight: new Prisma.Decimal(dto.bodyWeight),
+      height: new Prisma.Decimal(dto.height),
       birthDate: new Date(dto.birthDate),
-      goalWeight: dto.goalWeight,
+      goalWeight: new Prisma.Decimal(dto.goalWeight),
       goalDate: new Date(dto.goalDate),
       goalType: {
         connect: {
