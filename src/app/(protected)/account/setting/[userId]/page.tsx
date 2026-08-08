@@ -11,23 +11,29 @@ interface PageProps {
   }>;
 }
 
-export default async function UserSettings({ params }: PageProps) {
+export default async function UserSettings({
+  params,
+}: PageProps) {
   const { userId } = await params;
 
-  const [userApiResponse, goals] = await Promise.all([
+  const [userResult, goals] = await Promise.all([
     UserService.getUserById(Number(userId)),
     goalTypesService.getAllGoals(),
   ]);
 
-  const user = userApiResponse.UserSettingsViewModel;
-  if (!user || !goals) {
+  if (!userResult.success) {
+    console.error(userResult.message);
+
     notFound();
   }
 
   return (
     <div className="container">
-      <div className="form-wrapper flex justify-center items-center m-[5em]">
-        <UpdateUserForm user={user} goals={goals} />
+      <div className="form-wrapper m-[5em] flex items-center justify-center">
+        <UpdateUserForm
+          user={userResult.data}
+          goals={goals}
+        />
       </div>
     </div>
   );
