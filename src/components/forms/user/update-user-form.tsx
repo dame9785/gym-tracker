@@ -87,7 +87,7 @@ useEffect(() => {
         return;
       }
 
-      setUserData(fetchedUser);
+      
 
       setFormData({
         email: fetchedUser.email,
