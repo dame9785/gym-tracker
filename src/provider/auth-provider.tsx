@@ -34,6 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (!token) {
       setUser(null);
+      //TDO: redirect to account/login
       // router.push('account/login');
       return;
     }
