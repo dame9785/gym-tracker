@@ -20,29 +20,19 @@ export interface User {
 
 export interface UserSettingsViewModel {
   id: number;
-
   email: string;
-
   username: string;
-
   firstName: string;
-
   lastName: string;
-
   phoneNumber: string;
-
-  bodyWeight: number;
-
-  height: number;
-
-  birthDate: string;
-
-  goalWeight: number;
-
-  goalDate: string | null;
-
-  goalTypeId: number;
-
+  bodyWeight: Decimal;
+  height: Decimal;
+  birthDate: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  goalWeight: Decimal;
+  goalDate: Date;
+  goalTypeId: number | null;
   gender: Gender;
 }
 

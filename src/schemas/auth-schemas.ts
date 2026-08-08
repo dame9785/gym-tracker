@@ -39,7 +39,7 @@ export const registerSchema = z.object({
 
   bodyWeight: z.number().min(20, 'Ogiltig kroppsvikt.').max(400, 'Ogiltig kroppsvikt.'),
 
-  height: z.number().min(50, 'Ogiltig längd.').max(300, 'Ogiltig längd.'),
+  height: z.number().min(50, 'Otilåten längd').max(250, 'Otilåten längd'),
 
   goalWeight: z.number().min(20, 'Ogiltig målvikt.').max(400, 'Ogiltig målvikt.'),
 

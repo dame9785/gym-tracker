@@ -1,14 +1,20 @@
 // Prisma
 import { Prisma } from '@prisma/client';
+
 // Repository
 import { UserRepository } from '@/repositories/user-repository';
+
 // JWT Library
-import { generateToken, verifyToken } from '@/lib/jwt';
+import { generateToken } from '@/lib/jwt';
+
 // Password hashing
 import bcrypt from 'bcryptjs';
 
 //Mapping
 import { UserMapper } from '../mapping/user-mapping';
+
+//Helpers
+import FieldErrorsMessagesHelper from '@/helpers/field-error-helper';
 
 //Types
 import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
@@ -16,9 +22,8 @@ import type { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-sc
 
 export class AuthService {
   private userRepository = new UserRepository();
-  // --------------------------------------------------
-  // Register
-  // --------------------------------------------------
+
+  // Register User
   async register(dto: RegisterUserDto): Promise<AuthApiResponse> {
     const errors: string[] = [];
     const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
@@ -41,7 +46,7 @@ export class AuthService {
     }
     try {
       const passwordHash = await bcrypt.hash(dto.password, 10);
-      const userData = UserMapper.userDtoToDbModel(dto, passwordHash);
+      const userData = UserMapper.createUserDtoToModel(dto, passwordHash);
       const user = await this.userRepository.create(userData);
       return {
         success: true,
@@ -51,8 +56,10 @@ export class AuthService {
       };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        const fieldErrors = this.getUniqueConstraintFieldErrors<RegisterUserDto>(error);
+        //Get Field errors messages (helper)
+        const fieldErrors = FieldErrorsMessagesHelper.getUniqueConstraintFieldErrors<RegisterUserDto>(error);
         const errors = Object.values(fieldErrors);
+
         return {
           success: false,
           message: 'Valideringen misslyckades.',
@@ -67,9 +74,7 @@ export class AuthService {
       };
     }
   }
-  // --------------------------------------------------
-  // Login
-  // --------------------------------------------------
+  // Login User
   async login(dto: LoginDto): Promise<AuthApiResponse> {
     try {
       const user = await this.userRepository.findByEmail(dto.email);
@@ -110,24 +115,6 @@ export class AuthService {
       };
     }
   }
-  // --------------------------------------------------
-  // Get Current User
-  // --------------------------------------------------
-  async getCurrentUser(token: string): Promise<Prisma.UserGetPayload<{}> | null> {
-    try {
-      const payload = verifyToken(token) as {
-        userId: number;
-      };
-      const user = await this.userRepository.findById(payload.userId);
-      if (!user) {
-        return null;
-      }
-      return user;
-    } catch {
-      // Invalid or expired token
-      return null;
-    }
-  }
 
   //Get User By Id
   async getUserById(id: number): Promise<AuthApiResponse> {
@@ -148,20 +135,24 @@ export class AuthService {
       UserSettingsViewModel: viewModel,
     };
   }
-  // --------------------------------------------------
+
   // Update User
-  // --------------------------------------------------
   async updateUser(dto: UpdateUserDto, userId: number): Promise<AuthApiResponse> {
     const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
+
     // Check whether email or username already belongs
     // to another user.
     const [existingEmail, existingUsername] = await Promise.all([
       this.userRepository.emailExists(dto.email, userId),
       this.userRepository.usernameExists(dto.username, userId),
     ]);
+
+    //Check if Email Already existing
     if (existingEmail) {
       fieldErrors.email = 'E-postadressen är upptagen.';
     }
+
+    //Check if UserName Already existing
     if (existingUsername) {
       fieldErrors.username = 'Användarnamnet är upptaget.';
     }
@@ -173,24 +164,10 @@ export class AuthService {
         fieldErrors,
       };
     }
+
     try {
-      const updateData: Prisma.UserUpdateInput = {
-        email: dto.email,
-        username: dto.username,
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        phoneNumber: dto.phoneNumber,
-        bodyWeight: dto.bodyWeight,
-        bodyLength: dto.bodyLength,
-        birthDate: new Date(dto.birthDate),
-        goalWeight: dto.goalWeight,
-        goalDate: new Date(dto.goalDate),
-        goalType: {
-          connect: {
-            id: dto.goalTypeId,
-          },
-        },
-      };
+      //Mapping DTO To DB-Model
+      const updateData = UserMapper.userDtoToDbModel(dto);
       await this.userRepository.update(userId, updateData);
       return {
         success: true,
@@ -198,7 +175,6 @@ export class AuthService {
         errors: [],
       };
     } catch (error) {
-      console.log(error);
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const errors: string[] = [];
         const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
@@ -217,32 +193,18 @@ export class AuthService {
 
         return {
           success: false,
-          message: 'Valideringen misslyckades.',
-          errors,
+          message: 'Användare lyckades inte uppdateras.',
+          errors: Object.values(fieldErrors),
           fieldErrors,
         };
       }
+
       return {
         success: false,
-        message: 'Kunde inte uppdatera användaren.',
-        errors: [],
+        message: 'Användare lyckades inte uppdateras.',
+        errors: Object.values(fieldErrors),
+        fieldErrors,
       };
     }
-  }
-  // --------------------------------------------------
-  // Private Helpers
-  // --------------------------------------------------
-  private getUniqueConstraintFieldErrors<T extends RegisterUserDto | UpdateUserDto>(
-    error: Prisma.PrismaClientKnownRequestError,
-  ): Partial<Record<keyof T, string>> {
-    const fieldErrors: Partial<Record<keyof T, string>> = {};
-    const target = error.meta?.target;
-    if (Array.isArray(target) && target.includes('email')) {
-      fieldErrors.email = 'E-postadressen används redan.';
-    }
-    if (Array.isArray(target) && target.includes('username')) {
-      fieldErrors.username = 'Användarnamnet används redan.';
-    }
-    return fieldErrors;
   }
 }

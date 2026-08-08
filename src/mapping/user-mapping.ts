@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 
 //Types
 import type { UserSettingsViewModel } from '@/types/user-types';
-import type { RegisterUserDto } from '@/schemas/auth-schemas';
+import type { UpdateUserDto } from '@/schemas/auth-schemas';
 
 import type { User } from '@prisma/client';
 
@@ -12,9 +12,9 @@ export class UserMapper {
     return {
       id: user.id,
       email: user.email,
-      username: user.username ?? '',
-      firstName: user.firstName ?? '',
-      lastName: user.lastName ?? '',
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
       phoneNumber: user.phoneNumber,
       bodyWeight: user.bodyWeight,
       goalWeight: user.goalWeight,
@@ -27,17 +27,38 @@ export class UserMapper {
       goalTypeId: user.goalTypeId,
     };
   }
-  static userDtoToDbModel(dto: RegisterUserDto, passwordHash: string): Prisma.UserCreateInput {
+
+  static createUserDtoToModel(dto: RegisterUserDto, passwordHash: string) {
     return {
-      username: dto.username,
       email: dto.email,
-      passwordHash,
+      username: dto.username,
       firstName: dto.firstName,
       lastName: dto.lastName,
+      phoneNumber: dto.phoneNumber,
       bodyWeight: dto.bodyWeight,
       height: dto.height,
-      gender: dto.gender,
       birthDate: new Date(dto.birthDate),
+      goalWeight: dto.goalWeight,
+      goalDate: new Date(dto.goalDate),
+      goalType: {
+        connect: {
+          id: dto.goalTypeId,
+        },
+      },
+    };
+  }
+
+  static userDtoToDbModel(dto: UpdateUserDto): Prisma.UserUpdateInput {
+    return {
+      email: dto.email,
+      username: dto.username,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      phoneNumber: dto.phoneNumber,
+      bodyWeight: dto.bodyWeight,
+      height: dto.height,
+      birthDate: new Date(dto.birthDate),
+      goalWeight: dto.goalWeight,
       goalDate: new Date(dto.goalDate),
       goalType: {
         connect: {
