@@ -70,28 +70,36 @@ export default class AuthService {
   }
 
   //Update User
-  static async update(userData: UpdateUserDto, userId: number): Promise<AuthApiResponse> {
-    try {
-      const response = await fetch(`${API_URL}/update/${userId}`, {
+  static async update(
+  userData: UpdateUserDto,
+  userId: number,
+): Promise<ApiResponse<UserSettingsViewModel>> {
+  try {
+    const response = await fetch(
+      `/api/auth/update/${userId}`,
+      {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
-      });
+      },
+    );
 
-      const data: AuthApiResponse = await response.json();
-      return data;
-    } catch (error) {
-      console.error('AuthService.update failed:', error);
+    const data: ApiResponse<UserSettingsViewModel> =
+      await response.json();
 
-      return {
-        success: false,
-        message: error instanceof Error ? error.message : 'Ett oväntat fel inträffade.',
-        errors: [],
-      };
-    }
+    return data;
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Ett oväntat fel inträffade.',
+    };
   }
+}
 
   //GET: User By Id
   static async getUserById(
