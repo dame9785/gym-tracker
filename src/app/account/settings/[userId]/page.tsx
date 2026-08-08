@@ -16,11 +16,6 @@ export default async function UserSettings({ params }: PageProps) {
     GoalService.getAll(),
   ]);
 
-  if (!user) {
-    // Detta tar vi senare
-    return <div>Användaren kunde inte hittas.</div>;
-  }
-
   return (
     <div className="container">
       <div className="form-wrapper flex justify-center items-center m-[5em]">
