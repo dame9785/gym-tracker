@@ -441,10 +441,11 @@ useEffect(() => {
         </div>
       </div>
       <div className="grid grid-2">
-      <Button
+    <Button
   type="submit"
   text={isSaving ? 'Sparar...' : 'Spara'}
   variant="primary"
+  disabled={isSaving}
 />
       </div>
     </form>
