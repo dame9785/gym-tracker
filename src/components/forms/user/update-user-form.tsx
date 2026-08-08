@@ -189,7 +189,7 @@ useEffect(() => {
   
 
   //Show Loading spinner if loading is true or user is null
-  if (!user || isLoading) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 
