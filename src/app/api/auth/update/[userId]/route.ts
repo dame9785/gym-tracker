@@ -10,7 +10,18 @@ import { AuthApiResponse } from '@/types/user-types';
 
 const authService = new AuthService();
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
-  const { userId } = await params;
+  const id = Number(userId);
+
+if (!Number.isInteger(id) || id <= 0) {
+  return NextResponse.json(
+    {
+      success: false,
+      message: 'Ogiltigt användar-ID.',
+      errors: [],
+    } satisfies AuthApiResponse,
+    { status: 400 },
+  );
+}
 
   try {
     const body = await request.json();
@@ -33,7 +44,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       );
     }
 
-    const response = await authService.updateUser(validation.data, Number(userId));
+    const response = await authService.updateUser(validation.data, userId);
 
     return NextResponse.json(response, {
       status: response.success ? 200 : 400,
