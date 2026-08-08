@@ -34,33 +34,19 @@ export async function PUT(
       );
     }
 
-    // 3. Verifiera JWT
-    let payload;
+     
+    const authenticatedUser = getAuthenticatedUser(request);
 
-    try {
-      payload = verifyToken(token);
-    } catch {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Ogiltig eller utgången token.',
-          errors: [],
-        } satisfies AuthApiResponse,
-        { status: 401 }
-      );
-    }
-
-    // 4. Authorization
-    if (payload.userId !== id) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Du har inte behörighet.',
-          errors: [],
-        } satisfies AuthApiResponse,
-        { status: 403 }
-      );
-    }
+if (!authenticatedUser) {
+  return NextResponse.json(
+    {
+      success: false,
+      message: 'Ogiltig eller utgången token.',
+      errors: [],
+    } satisfies AuthApiResponse,
+    { status: 401 }
+  );
+}
 
     // 5. Hämta body
     const body = await request.json();
