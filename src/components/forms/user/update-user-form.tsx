@@ -109,55 +109,53 @@ export default function UpdateUserForm({ user, goals }: Props) {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (
+  e: React.FormEvent<HTMLFormElement>,
+) => {
+  e.preventDefault();
 
-    //zod validation
-    const validation = updateSchema.safeParse(formData);
+  const validation = updateSchema.safeParse(formData);
 
-    //Set Error validations messsage.
-    if (!validation.success) {
-      setErrors(ErrorsHelper.getFormErrors<UpdateUserDto>(validation.error.issues));
+  if (!validation.success) {
+    setErrors(
+      ErrorsHelper.getFormErrors<UpdateUserDto>(
+        validation.error.issues,
+      ),
+    );
+
+    return;
+  }
+
+  setIsSaving(true);
+
+  try {
+    const result = await UserService.update(
+      validation.data,
+      user.id,
+    );
+
+    if (!result.success) {
+      setErrors(result.errors ?? {});
+
+      if (!result.errors) {
+        toast.error(result.message);
+      }
+
       return;
     }
 
-    //show loading
-    setIsSaving(true);
+    setErrors({});
+    toast.success('Användare uppdaterad');
+  } catch (error) {
+    console.error('UpdateUserForm failed:', error);
 
-    try {
-      const validatedData = validation.data;
-      const result = await UserService.update(validatedData, user.id);
-
-      if (result.isTokenExperied) {
-        toast.error('Du har blivit utloggad');
-        router.push(`/account/login`);
-      }
-
-      if (!result.success) {
-        console.log(result);
-        setErrors(result.fieldErrors ?? {});
-
-        if (!result.fieldErrors) {
-          toast.error(result.message);
-        }
-
-        return;
-      }
-
-      //Show alert message
-      toast.success('Användare uppdaterad');
-
-      //Empty error messages
-      setErrors({});
-      return;
-    } catch (error) {
-      console.log(error);
-      toast.error('Något gick fel, användare ej uppdaterad.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
+    toast.error(
+      'Något gick fel, användaren kunde inte uppdateras.',
+    );
+  } finally {
+    setIsSaving(false);
+  }
+};
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.formWrapper}>
