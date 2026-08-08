@@ -139,9 +139,11 @@ useEffect(() => {
       gender: formData.gender,
     } satisfies UpdateUserDto;
 
-    const isValidatedSuccess(userData);
-    if(!isValidatedSuccess){
+    const validation = updateSchema.safeParse(body);
 
+    if (!validation.success) {
+      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [issue.path[0], issue.message]));
+      setErrors(fieldErrors ?? {});
     }
 
 
