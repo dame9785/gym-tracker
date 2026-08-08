@@ -66,30 +66,30 @@ export default function UpdateUserForm({ userId }: Props) {
 
 
 useEffect(() => {
+  async function loadGoals() {
+    try {
+      const data = await GoalService.getAll();
+      setGoals(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
- //Get all goals
-  useEffect(() => {
-    async function loadGoals() {
-      try {
-        const data = await GoalService.getAll();
+  loadGoals();
+}, []);
 
-        setGoals(data);
-      } catch (error) {
-        //TDO Redirect 
-        console.error(error);
+useEffect(() => {
+  async function loadUser() {
+    try {
+      const fetchedUser = await UserService.getUserById(Number(userId));
+
+      if (!fetchedUser) {
+        // hantera användaren saknas
+        return;
       }
-    }
 
-    loadGoals();
-  }, []);
-
-    const fetchUser = isync () => {
-   const fetchedUser: UserSettingsViewModel = await UserService.getUserById(Number(userId));
-    
-   if(fetchedUser == null){
-    //TODO: Redirect to dashboard page.
-    }
       setUserData(fetchedUser);
+
       setFormData({
         email: fetchedUser.email,
         username: fetchedUser.username,
@@ -104,10 +104,13 @@ useEffect(() => {
         goalTypeId: fetchedUser.goalTypeId,
         gender: fetchedUser.gender,
       });
-    };
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
-    fetchUser();
-  }, [userId]);
+  loadUser();
+}, [userId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
