@@ -152,10 +152,6 @@ export default function RegisterForm({goals}:Props) {
     }
   };
 
-  //Show Loading spinner if loading is true or user is null
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <form className={FormStyles.form} onSubmit={handleSubmit}>
