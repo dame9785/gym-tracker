@@ -2,7 +2,7 @@
 import { redirect } from 'next/navigation';
 
 //Types
-import type { User, AuthApiResponse,  UserSettingsViewModel} from '@/types/user-types';
+import type { User, AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
 import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
 
 //API URL
@@ -20,8 +20,8 @@ export default class AuthService {
       });
       return response;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      // const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
+      // redirect(`/error?message=${encodeURIComponent(message)}`);
     }
   }
 
@@ -64,39 +64,34 @@ export default class AuthService {
   }
 
   //Update User
-  static async update(
-  userData: UpdateUserDto,
-  userId: number
-): Promise<AuthApiResponse> {
-  const response = await fetch(`${API_URL}/update/${userId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userData),
-  });
+  static async update(userData: UpdateUserDto, userId: number): Promise<AuthApiResponse> {
+    const response = await fetch(`${API_URL}/update/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
 
-  const data: AuthApiResponse = await response.json();
+    const data: AuthApiResponse = await response.json();
 
-  return data;
-}
-
-  //GET: User By Id
- static async getUserById(
-  userId: number
-): Promise<UserSettingsViewModel> {
-  const response = await fetch(`${API_URL}/setting/${userId}`, {
-    method: 'GET',
-  });
-
-  if (!response.ok) {
-    throw new Error('Kunde inte hämta användaren.');
+    return data;
   }
 
-  const result: UserSettingsViewModel = await response.json();
+  //GET: User By Id
+  static async getUserById(userId: number): Promise<UserSettingsViewModel> {
+    const response = await fetch(`${API_URL}/setting/${userId}`, {
+      method: 'GET',
+    });
 
-  return result;
-}
+    if (!response.ok) {
+      throw new Error('Kunde inte hämta användaren.');
+    }
+
+    const result: UserSettingsViewModel = await response.json();
+
+    return result;
+  }
   //Logout
   static async logout(): Promise<AuthApiResponse> {
     try {

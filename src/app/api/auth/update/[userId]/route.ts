@@ -1,7 +1,6 @@
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
-) {
+import { NextResponse, NextRequest } from 'next/server';
+
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   try {
     const { userId } = await params;
     const id = Number(userId);
@@ -11,10 +10,10 @@ export async function PUT(
       return NextResponse.json(
         {
           success: false,
-          message: 'Ogiltigt användar-ID.',
+          message: 'Hämting av måltyper lyckades!',
           errors: [],
         } satisfies AuthApiResponse,
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -28,7 +27,7 @@ export async function PUT(
           message: 'Ogiltig eller utgången token.',
           errors: [],
         } satisfies AuthApiResponse,
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -40,7 +39,7 @@ export async function PUT(
           message: 'Du har inte behörighet.',
           errors: [],
         } satisfies AuthApiResponse,
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -51,31 +50,21 @@ export async function PUT(
     const validation = updateSchema.safeParse(body);
 
     if (!validation.success) {
-      const fieldErrors = Object.fromEntries(
-        validation.error.issues.map((issue) => [
-          String(issue.path[0]),
-          issue.message,
-        ])
-      );
+      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
 
       return NextResponse.json(
         {
           success: false,
           message: 'Validation failed.',
-          errors: validation.error.issues.map(
-            (issue) => issue.message
-          ),
+          errors: validation.error.issues.map((issue) => issue.message),
           fieldErrors,
         } satisfies AuthApiResponse,
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Business logic
-    const response = await authService.updateUser(
-  validation.data,
-  authenticatedUser.userId
-);
+    const response = await authService.updateUser(validation.data, authenticatedUser.userId);
 
     return NextResponse.json(response, {
       status: response.success ? 200 : 400,
@@ -89,7 +78,7 @@ export async function PUT(
         message: 'Something went wrong.',
         errors: [],
       } satisfies AuthApiResponse,
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

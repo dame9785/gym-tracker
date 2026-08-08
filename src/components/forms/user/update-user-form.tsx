@@ -6,7 +6,6 @@ import styles from '@/components/forms/form.module.css';
 //Components
 import Button from '@/components/button/button';
 
-
 //Types
 import type { GoalType } from '@/types/goal-types';
 import type { UpdateUserDto } from '@/schemas/auth-schemas';
@@ -20,7 +19,6 @@ import { useState } from 'react';
 
 //Services
 import UserService from '@/services/auth-service';
-
 
 //FONTAWSOME ICONS
 import {
@@ -39,63 +37,38 @@ import { toast } from 'sonner';
 
 //Props
 
-  type Props = {
+type Props = {
   user: UserSettingsViewModel;
   goals: GoalType[];
 };
 
-const numericFields = [
-  'bodyWeight',
-  'height',
-  'goalWeight',
-  'goalTypeId',
-];
+const numericFields = ['bodyWeight', 'height', 'goalWeight', 'goalTypeId'];
 
 type FormErrors = Partial<Record<keyof UpdateUserDto, string>>;
 
-export default function UpdateUserForm({
-  user,
-  goals,
-}: Props) {
-
-export default function UpdateUserForm({
-  user,
-  goals,
-}: Props) {
-   string>>;
+export default function UpdateUserForm({ user, goals }: Props) {
   const [errors, setErrors] = useState<FormErrors>({});
 
-  
   const [isSaving, setIsSaving] = useState(false);
-  
-  
+
   const [formData, setFormData] = useState<UpdateUserDto>({
-  email: user.email,
-  username: user.username,
-  firstName: user.firstName,
-  lastName: user.lastName,
-  phoneNumber: user.phoneNumber,
-  bodyWeight: user.bodyWeight,
-  height: user.height,
-  birthDate: user.birthDate.split('T')[0],
-  goalWeight: user.goalWeight,
-  goalDate: user.goalDate?.split('T')[0] ?? '',
-  goalTypeId: user.goalTypeId,
-  gender: user.gender,
-});
-
-
-
-
-
-
-
-
+    email: user.email,
+    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phoneNumber: user.phoneNumber,
+    bodyWeight: user.bodyWeight,
+    height: user.height,
+    birthDate: user.birthDate.split('T')[0],
+    goalWeight: user.goalWeight,
+    goalDate: user.goalDate?.split('T')[0] ?? '',
+    goalTypeId: user.goalTypeId,
+    gender: user.gender,
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    
     setFormData((prev) => ({
       ...prev,
       [name]: numericFields.includes(name) ? Number(value) : value,
@@ -110,22 +83,17 @@ export default function UpdateUserForm({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    
 
-    //zod validation 
+    //zod validation
     const validation = updateSchema.safeParse(formData);
 
     //Show fields validation error meddages
     //If Validation is not success
     if (!validation.success) {
-      const fieldErrors = Object.fromEntries(
-      validation.error.issues.map((issue) => [String(issue.path[0]),issue.message,])
-      );
+      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
 
-        setErrors(fieldErrors);
-        return;
-      
+      setErrors(fieldErrors);
+      return;
     }
 
     //show loading
@@ -155,12 +123,6 @@ export default function UpdateUserForm({
     }
   };
 
- 
-
-  
-
-
-
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.formWrapper}>
@@ -179,16 +141,7 @@ export default function UpdateUserForm({
                 Email
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="email"
-              type="email"
-              id="email"
-              
-              placeholder="E-post..."
-              value={formData.email}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="email" type="email" id="email" placeholder="E-post..." value={formData.email} onChange={handleChange} />
             {errors.email && <p className={styles.fieldErrorMessage}>{errors.email}</p>}
           </div>
 
@@ -206,7 +159,6 @@ export default function UpdateUserForm({
               type="text"
               id="username"
               maxLength={20}
-              
               placeholder="Användarnamn..."
               value={formData.username}
               onChange={handleChange}
@@ -228,7 +180,6 @@ export default function UpdateUserForm({
               type="text"
               id="firstName"
               maxLength={20}
-              
               placeholder="Namn..."
               value={formData.firstName}
               onChange={handleChange}
@@ -250,7 +201,6 @@ export default function UpdateUserForm({
               type="text"
               maxLength={50}
               id="lastName"
-              
               placeholder="Efternamn..."
               value={formData.lastName}
               onChange={handleChange}
@@ -272,7 +222,6 @@ export default function UpdateUserForm({
               type="tel"
               id="phoneNumber"
               maxLength={15}
-              
               placeholder="Telefonnummer..."
               value={formData.phoneNumber}
               onChange={handleChange}
@@ -314,7 +263,6 @@ export default function UpdateUserForm({
               type="number"
               step="0.1"
               id="bodyWeight"
-              
               placeholder="Ex (40.2kg)"
               value={formData.bodyWeight}
               onChange={handleChange}
@@ -335,7 +283,6 @@ export default function UpdateUserForm({
               type="number"
               step="0.1"
               id="height"
-              
               placeholder="Ex (150.5cm)"
               value={formData.height}
               onChange={handleChange}
@@ -406,12 +353,7 @@ export default function UpdateUserForm({
         </div>
       </div>
       <div className="grid grid-2">
-    <Button
-  type="submit"
-  text={isSaving ? 'Sparar...' : 'Spara'}
-  variant="primary"
-  disabled={isSaving}
-/>
+        <Button type="submit" text={isSaving ? 'Sparar...' : 'Spara'} variant="primary" disabled={isSaving} />
       </div>
     </form>
   );

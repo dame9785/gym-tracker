@@ -1,15 +1,32 @@
-//Next Response
 import { NextResponse } from 'next/server';
+import { GoalTypesService } from '@/services-server/goal-service';
+import type { GoalTypeApiResponse } from '@/types/goal-types';
 
-//Prisma
-import { prisma } from '@/lib/prisma';
+const goalService = new GoalTypesService();
 
-//GET All goals
+// GET all goal types
 export async function GET() {
   try {
-    const goals = await prisma.goalType.findMany();
-    return NextResponse.json(goals, { status: 200 });
+    const goalTypes = await goalService.getAllGoals();
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Måltyper hämtades.',
+        goalTypes,
+      } satisfies GoalTypeApiResponse,
+      { status: 200 },
+    );
   } catch (error) {
-    return NextResponse.json({ message: 'Kunde inte hämta mål.' }, { status: 500 });
+    console.error('Failed to fetch goal types:', error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Kunde inte hämta måltyper.',
+        goalTypes: [],
+      } satisfies GoalTypeApiResponse,
+      { status: 500 },
+    );
   }
 }

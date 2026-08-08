@@ -1,27 +1,23 @@
 import { z } from 'zod';
 
-const nameSchema = z
-  .string()
-  .trim()
-  .min(1, 'Namnet måste anges.')
-  .regex(/^[\p{L}\s-]+$/u, 'Namnet får endast innehålla bokstäver.');
+//Goal Birth Date Schema
+const birtDateSchema = z.iso.date('Ogiltigt födelsedatum.').refine((date) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-const passwordSchema = z
-  .string()
-  .min(8, 'Lösenordet måste vara minst 8 tecken.')
-  .regex(/[A-Z]/, 'Minst en stor bokstav krävs.')
-  .regex(/[a-z]/, 'Minst en liten bokstav krävs.')
-  .regex(/[0-9]/, 'Minst en siffra krävs.')
-  .regex(/[^A-Za-z0-9]/, 'Minst ett specialtecken krävs.');
+  return new Date(date) <= today;
+}, 'Födelsedatum kan inte ligga i framtiden.');
 
-const phoneNumberSchema = z
-  .string()
-  .trim()
-  .regex(/^(?:\+46|0)7\d{8}$/, 'Ogiltigt svenskt telefonnummer.');
+//Goal Date Schema
+const goalDateSchema = z.iso.date('Ogiltigt datum.').refine((date) => {
+  const tomorrow = new Date();
+  tomorrow.setHours(0, 0, 0, 0);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  return new Date(date) >= tomorrow;
+}, 'Måldatum måste ligga i framtiden.');
 
 export const registerSchema = z.object({
-  email: z.string().trim().email('Ogiltig e-postadress.').toLowerCase(),
-
   username: z
     .string()
     .trim()
@@ -29,37 +25,38 @@ export const registerSchema = z.object({
     .max(20, 'Användarnamnet får vara högst 20 tecken.')
     .regex(/^[a-zA-Z0-9_-]+$/, 'Användarnamnet får endast innehålla bokstäver, siffror, - och _.'),
 
-  password: passwordSchema,
+  password: z
+    .string()
+    .min(8, 'Lösenordet måste vara minst 8 tecken.')
+    .regex(/[A-Z]/, 'Minst en stor bokstav krävs.')
+    .regex(/[a-z]/, 'Minst en liten bokstav krävs.')
+    .regex(/[0-9]/, 'Minst en siffra krävs.')
+    .regex(/[^A-Za-z0-9]/, 'Minst ett specialtecken krävs.'),
 
-  firstName: nameSchema,
+  firstName: z
+    .string()
+    .trim()
+    .min(1, 'Namnet måste anges.')
+    .regex(/^[\p{L}\s-]+$/u, 'Namnet får endast innehålla bokstäver.'),
 
-  lastName: nameSchema,
+  lastName: z
+    .string()
+    .trim()
+    .min(1, 'Efternamnet måste anges.')
+    .regex(/^[\p{L}\s-]+$/u, 'Efternamnet får endast innehålla bokstäver.'),
 
-  phoneNumber: phoneNumberSchema,
+  phoneNumber: z
+    .string()
+    .trim()
+    .regex(/^(?:\+46|0)7\d{8}$/, 'Ogiltigt svenskt telefonnummer.'),
 
+  email: z.string().trim().email('Ogiltig e-postadress.').toLowerCase(),
   bodyWeight: z.number().min(20, 'Ogiltig kroppsvikt.').max(400, 'Ogiltig kroppsvikt.'),
-
-  height: z.number().min(50, 'Otilåten längd').max(250, 'Otilåten längd'),
-
+  height: z.number().min(20, 'Otilåten längd').max(400, 'Otilåten längd'),
   goalWeight: z.number().min(20, 'Ogiltig målvikt.').max(400, 'Ogiltig målvikt.'),
-
   goalTypeId: z.number().min(1, 'Du måste välja ett mål.'),
-
-  birthDate: z.iso.date('Ogiltigt födelsedatum.').refine((date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return new Date(date) <= today;
-  }, 'Födelsedatum kan inte ligga i framtiden.'),
-
-  goalDate: z.iso.date('Ogiltigt datum.').refine((date) => {
-    const tomorrow = new Date();
-    tomorrow.setHours(0, 0, 0, 0);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    return new Date(date) >= tomorrow;
-  }, 'Måldatum måste ligga i framtiden.'),
-
+  birthDate: birtDateSchema,
+  goalDate: goalDateSchema,
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
 });
 

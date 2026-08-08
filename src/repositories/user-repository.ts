@@ -51,6 +51,9 @@ export class UserRepository {
         email,
         NOT: ignoreUserId ? { id: ignoreUserId } : undefined,
       },
+      select: {
+        id: true,
+      },
     });
 
     return user !== null;
@@ -61,6 +64,9 @@ export class UserRepository {
       where: {
         username,
         NOT: ignoreUserId ? { id: ignoreUserId } : undefined,
+      },
+      select: {
+        id: true,
       },
     });
 

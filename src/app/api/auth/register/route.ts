@@ -15,29 +15,29 @@ const authService = new AuthService();
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-
     const validation = registerSchema.safeParse(body);
-    console.log(validation);
+
     if (!validation.success) {
-      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [issue.path[0], issue.message]));
+      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
+
       return NextResponse.json(
         {
           success: false,
           message: 'Validation failed.',
-          errors: validation.error.issues.map((x) => x.message),
+          errors: validation.error.issues.map((issue) => issue.message),
           fieldErrors,
         },
-        {
-          status: 400,
-        },
+        { status: 400 },
       );
     }
 
     const response = await authService.register(validation.data);
+
     return NextResponse.json(response, {
       status: response.success ? 201 : 400,
     });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       {
         success: false,

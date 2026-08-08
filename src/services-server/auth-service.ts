@@ -18,36 +18,42 @@ import FieldErrorsMessagesHelper from '@/helpers/field-error-helper';
 
 //Types
 import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
-import type { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
+import type { RegisterUserDto, UpdateUserDto } from '@/schemas/auth-schemas';
 
 export class AuthService {
   private userRepository = new UserRepository();
 
   // Register User
   async register(dto: RegisterUserDto): Promise<AuthApiResponse> {
-    const errors: string[] = [];
     const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
-    const [existingEmail, existingUsername] = await Promise.all([this.userRepository.emailExists(dto.email), this.userRepository.usernameExists(dto.username)]);
+
+    const [existingEmail, existingUsername] = await Promise.all([
+      this.userRepository.emailExists(dto.email),
+      this.userRepository.usernameExists(dto.username),
+    ]);
+
     if (existingEmail) {
-      errors.push('E-postadressen används redan.');
       fieldErrors.email = 'E-postadressen används redan.';
     }
+
     if (existingUsername) {
-      errors.push('Användarnamnet används redan.');
       fieldErrors.username = 'Användarnamnet används redan.';
     }
-    if (errors.length > 0) {
+
+    if (Object.keys(fieldErrors).length > 0) {
       return {
         success: false,
         message: 'Valideringen misslyckades.',
-        errors,
+        errors: Object.values(fieldErrors),
         fieldErrors,
       };
     }
+
     try {
       const passwordHash = await bcrypt.hash(dto.password, 10);
-      const userData = UserMapper.createUserDtoToModel(dto, passwordHash);
+      const userData = UserMapper.createUserDtoToDbModel(dto, passwordHash);
       const user = await this.userRepository.create(userData);
+
       return {
         success: true,
         message: 'Användaren registrerades.',
@@ -55,62 +61,21 @@ export class AuthService {
         userToken: generateToken(user.id),
       };
     } catch (error) {
+      console.log(error);
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        //Get Field errors messages (helper)
         const fieldErrors = FieldErrorsMessagesHelper.getUniqueConstraintFieldErrors<RegisterUserDto>(error);
-        const errors = Object.values(fieldErrors);
 
         return {
           success: false,
           message: 'Valideringen misslyckades.',
-          errors,
+          errors: Object.values(fieldErrors),
           fieldErrors,
         };
       }
+
       return {
         success: false,
         message: 'Kunde inte skapa användaren.',
-        errors: [],
-      };
-    }
-  }
-  // Login User
-  async login(dto: LoginDto): Promise<AuthApiResponse> {
-    try {
-      const user = await this.userRepository.findByEmail(dto.email);
-      // Use the same error for both cases so we don't reveal
-      // whether an email address exists in the database.
-      if (!user) {
-        return {
-          success: false,
-          message: 'Valideringen misslyckades.',
-          errors: ['Felaktig e-postadress eller lösenord.'],
-          fieldErrors: {
-            email: 'Felaktig e-postadress eller lösenord.',
-          },
-        };
-      }
-      const passwordMatch = await bcrypt.compare(dto.password, user.passwordHash);
-      if (!passwordMatch) {
-        return {
-          success: false,
-          message: 'Valideringen misslyckades.',
-          errors: ['Felaktig e-postadress eller lösenord.'],
-          fieldErrors: {
-            password: 'Felaktig e-postadress eller lösenord.',
-          },
-        };
-      }
-      return {
-        success: true,
-        message: 'Inloggningen lyckades.',
-        errors: [],
-        userToken: generateToken(user.id),
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: error instanceof Error ? error.message : 'Kunde inte logga in.',
         errors: [],
       };
     }

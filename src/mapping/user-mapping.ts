@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 
 //Types
 import type { UserSettingsViewModel } from '@/types/user-types';
-import type { UpdateUserDto } from '@/schemas/auth-schemas';
+import type { UpdateUserDto, RegisterUserDto } from '@/schemas/auth-schemas';
 
 import type { User } from '@prisma/client';
 
@@ -28,18 +28,20 @@ export class UserMapper {
     };
   }
 
-  static createUserDtoToModel(dto: RegisterUserDto, passwordHash: string) {
+  static createUserDtoToDbModel(dto: RegisterUserDto, passwordHash: string): Prisma.UserCreateInput {
     return {
       email: dto.email,
       username: dto.username,
       firstName: dto.firstName,
       lastName: dto.lastName,
       phoneNumber: dto.phoneNumber,
-      bodyWeight: dto.bodyWeight,
-      height: dto.height,
+      bodyWeight: new Prisma.Decimal(dto.bodyWeight),
+      height: new Prisma.Decimal(dto.height),
+      goalWeight: new Prisma.Decimal(dto.goalWeight),
+      gender: dto.gender,
       birthDate: new Date(dto.birthDate),
-      goalWeight: dto.goalWeight,
       goalDate: new Date(dto.goalDate),
+      passwordHash,
       goalType: {
         connect: {
           id: dto.goalTypeId,

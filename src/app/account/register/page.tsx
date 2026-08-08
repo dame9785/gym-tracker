@@ -1,14 +1,15 @@
+import { GoalTypesService } from '@/services-server/goal-service';
 import RegisterForm from '@/components/forms/user/register-user-form';
-import GoalService from '@/services/goal-service.ts';
-export default function Register() {
- const goals = await GoalService.getAll();
-if(!goals){
-//DTO: Do something here
-}
+
+const goalTypesService = new GoalTypesService();
+
+export default async function Register() {
+  const goals = await goalTypesService.getAllGoals();
+
   return (
     <div className="container">
       <div className="form-wrapper flex justify-center items-center m-[5em]">
-        <RegisterForm goals={goals}/>
+        <RegisterForm goals={goals} />
       </div>
     </div>
   );

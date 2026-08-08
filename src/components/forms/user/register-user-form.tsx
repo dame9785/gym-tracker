@@ -16,14 +16,11 @@ import {
   FaLock,
 } from 'react-icons/fa6';
 
-
-
 //Toast Alert
 import { toast } from 'sonner';
 
 //Components
 import Button from '@/components/button/button';
-import LoadingSpinner from '@/components/loading-spinner';
 
 //Styling
 import FormStyles from '@/components/forms/form.module.css';
@@ -37,27 +34,25 @@ import { useState } from 'react';
 //Services
 import AuthService from '@/services/auth-service';
 
-
 //Providers
 import { useAuth } from '@/provider/auth-provider';
 
 //Types
-import type { RegisterUserDto } from '@/schemas/auth-schemas';
-import type { GoalType } from '@/types/goal-types';
+import { registerSchema, type RegisterUserDto } from '@/schemas/auth-schemas';
+import type { GoalTypeViewModel } from '@/types/goal-types';
+import { Gender } from '@prisma/client';
 
-interface Props = {
-  goals: GoalType[];
-}
+type FormErrors = Partial<Record<keyof RegisterUserDto, string>>;
 
-export default function RegisterForm({goals}:Props) {
-  const [errors, setErrors] = useState<Record<string, string>>({});
+type Props = {
+  goals: GoalTypeViewModel[];
+};
 
+export default function RegisterForm({ goals }: Props) {
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const router = useRouter();
   const { refreshUser } = useAuth();
-
-
-  
 
   const [formData, setFormData] = useState<RegisterUserDto>({
     email: '',
@@ -67,7 +62,7 @@ export default function RegisterForm({goals}:Props) {
     phoneNumber: '',
     bodyWeight: 0,
     height: 0,
-    gender: Gender.MALE,
+    gender: 'MALE',
     birthDate: new Date().toISOString().split('T')[0],
     goalTypeId: 0,
     goalWeight: 0,
@@ -98,35 +93,20 @@ export default function RegisterForm({goals}:Props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-  
+    //zod validation
+    const validation = registerSchema.safeParse(formData);
+    if (!validation.success) {
+      const fieldErrors = Object.fromEntries(validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
 
-    if (goals.length === 0) {
-      toast.warning('Något är fel, inga mål finns.');
+      setErrors(fieldErrors);
       return;
     }
 
-    const userData = {
-      email: formData.email,
-      username: formData.username,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phoneNumber: formData.phoneNumber,
-      bodyWeight: Number(formData.bodyWeight),
-      gender: formData.gender,
-      height: Number(formData.height),
-      birthDate: formData.birthDate,
-      goalTypeId: Number(formData.goalTypeId),
-      goalWeight: Number(formData.goalWeight),
-      goalDate: formData.goalDate,
-      password: formData.password,
-    } satisfies RegisterUserDto;
-
     try {
-      const result = await AuthService.register(userData);
-
+      const result = await AuthService.register(formData);
+      console.log(result);
       if (!result.success) {
         setErrors(result.fieldErrors ?? {});
-        console.log(result);
         toast.error('Användaren skapades inte!');
         return;
       }
@@ -147,10 +127,8 @@ export default function RegisterForm({goals}:Props) {
       console.error(error);
       toast.error('Något gick fel, kontot kunde inte registreras.');
     } finally {
-    
     }
   };
-
 
   return (
     <form className={FormStyles.form} onSubmit={handleSubmit}>
@@ -197,7 +175,6 @@ export default function RegisterForm({goals}:Props) {
               value={formData.username}
               id="username"
               maxLength={20}
-              
               placeholder="Användarnamn..."
               onChange={handleChange}
             />
@@ -219,7 +196,6 @@ export default function RegisterForm({goals}:Props) {
               value={formData.firstName}
               id="firstName"
               maxLength={20}
-              
               placeholder="Namn..."
               onChange={handleChange}
             />
@@ -241,7 +217,6 @@ export default function RegisterForm({goals}:Props) {
               value={formData.lastName}
               maxLength={50}
               id="lastName"
-              
               placeholder="Efternamn..."
               onChange={handleChange}
             />
@@ -263,7 +238,6 @@ export default function RegisterForm({goals}:Props) {
               id="phoneNumber"
               value={formData.phoneNumber}
               maxLength={15}
-              
               placeholder="Telefonnummer..."
               onChange={handleChange}
             />
@@ -285,7 +259,6 @@ export default function RegisterForm({goals}:Props) {
               step="0.1"
               id="bodyWeight"
               value={formData.bodyWeight}
-              
               placeholder="Ex (40.2kg)"
               onChange={handleChange}
             />
@@ -305,7 +278,6 @@ export default function RegisterForm({goals}:Props) {
               name="password"
               type="password"
               id="password"
-              
               placeholder="Lösenord..."
               onChange={handleChange}
             />
@@ -329,7 +301,6 @@ export default function RegisterForm({goals}:Props) {
               step="0.1"
               id="height"
               value={formData.height}
-              
               placeholder="Ex (150.5cm)"
               onChange={handleChange}
             />
