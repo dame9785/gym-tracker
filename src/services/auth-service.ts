@@ -99,13 +99,14 @@ export default class AuthService {
 ): Promise<ApiResponse<User>> {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/auth/setting/${userId}`,
+      `/api/auth/setting/${userId}`,
       {
         method: 'GET',
       },
     );
 
-    const data: ApiResponse<User> = await response.json();
+    const data: ApiResponse<User> =
+      await response.json();
 
     return data;
   } catch (error) {
@@ -118,7 +119,6 @@ export default class AuthService {
     };
   }
 }
- 
   //Logout
   static async logout(): Promise<AuthApiResponse> {
     try {
