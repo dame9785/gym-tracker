@@ -127,25 +127,65 @@ export default function UpdateUserForm({ user, goals }: Props) {
   }
 
   setIsSaving(true);
-
 try {
-  const result = await UserService.update(
-    validation.data,
-    user.id,
-  );
 
-  if (!result.success) {
-    // API-fel
-    return;
-  }
+    const result = await UserService.update(
 
-  // success
-} catch {
-  // oväntat fel
-} finally {
-  setIsSaving(false);
+      validation.data,
+
+      user.id,
+
+    );
+
+    // API error
+
+    if (!result.success) {
+
+      if (result.errors) {
+
+        setErrors(
+
+          ErrorsHelper.getFormErrorsFromApi<UpdateUserDto>(
+
+            result.errors,
+
+          ),
+
+        );
+
+      } else {
+
+        toast.error(result.message);
+
+      }
+
+      return;
+
+    }
+
+    // Success
+
+    setErrors({});
+
+    toast.success('Användare uppdaterad');
+
+  } catch (error) {
+
+    // Unexpected error
+
+    console.error('UpdateUserForm failed:', error);
+
+    toast.error(
+
+      'Något gick fel, användaren kunde inte uppdateras.',
+
+    );
+
+  } finally {
+
+    setIsSaving(false);
 }
-};
+
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.formWrapper}>
