@@ -135,14 +135,18 @@ export default function UpdateUserForm({ user, goals }: Props) {
     );
 
     if (!result.success) {
-      setErrors(result.errors ?? {});
+  if (result.errors) {
+    setErrors(
+      ErrorsHelper.getFormErrorsFromApi<UpdateUserDto>(
+        result.errors,
+      ),
+    );
+  } else {
+    toast.error(result.message);
+  }
 
-      if (!result.errors) {
-        toast.error(result.message);
-      }
-
-      return;
-    }
+  return;
+}
 
     setErrors({});
     toast.success('Användare uppdaterad');
@@ -360,11 +364,17 @@ export default function UpdateUserForm({ user, goals }: Props) {
               </label>
             </div>
             <select
-              className={styles.formSelect}
-              name="goalType"
-              id="goalType"
-              value={formData.goalTypeId}
-              onChange={handleChange}
+              
+
+  className={styles.formSelect}
+
+  name="goalTypeId"
+
+  id="goalTypeId"
+
+  value={formData.goalTypeId}
+
+  onChange={handleChange}
             >
               <option value="">Välj mål</option>
 
