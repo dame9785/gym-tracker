@@ -20,20 +20,30 @@ export interface User {
 
 export interface UserSettingsViewModel {
   id: number;
-  firstName: string | null;
-  lastName: string | null;
-  username: string;
+
   email: string;
-  bodyWeight: Decimal | null;
-  height: Decimal | null;
-  goalWeight: Decimal | null;
-  phoneNumber: string | null;
-  gender: Gender | null;
-  birthDate: Date | null;
-  goalDate: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-  goalTypeId: number | null;
+
+  username: string;
+
+  firstName: string;
+
+  lastName: string;
+
+  phoneNumber: string;
+
+  bodyWeight: number;
+
+  height: number;
+
+  birthDate: string;
+
+  goalWeight: number;
+
+  goalDate: string | null;
+
+  goalTypeId: number;
+
+  gender: string;
 }
 
 export interface AuthApiResponse {
