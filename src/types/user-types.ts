@@ -10,7 +10,7 @@ export interface User {
   lastName: string;
   phoneNumber: string;
   bodyWeight: number;
-  bodyLenght: number;
+  height: number;
   goalTypeId: number;
   gender: Gender;
   birthDate: string;
@@ -25,7 +25,7 @@ export interface UserSettingsViewModel {
   username: string;
   email: string;
   bodyWeight: Decimal | null;
-  bodyLenght: Decimal | null;
+  height: Decimal | null;
   goalWeight: Decimal | null;
   phoneNumber: string | null;
   gender: Gender | null;
