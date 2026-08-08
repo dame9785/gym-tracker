@@ -8,7 +8,6 @@ import Button from '@/components/button/button';
 import LoadingSpinner from '@/components/loading-spinner';
 
 //Types
-import type { User } from '@/types/user-types';
 import type { GoalType } from '@/types/goal-types';
 import type { UpdateUserDto } from '@/schemas/auth-schemas';
 
