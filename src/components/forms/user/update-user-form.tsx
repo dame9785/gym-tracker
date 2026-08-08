@@ -14,7 +14,7 @@ import type { UpdateUserDto } from '@/schemas/auth-schemas';
 
 
 //Schemas
-import type { updateSchema } from '@/schemas/auth-schemas';
+import { updateSchema } from '@/schemas/auth-schemas';
 
 //React Routing
 import { useState, useEffect } from 'react';
