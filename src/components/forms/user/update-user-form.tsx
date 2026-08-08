@@ -112,10 +112,18 @@ useEffect(() => {
   loadUser();
 }, [userId]);
 
+
+
+const numericFields = [
+  'bodyWeight',
+  'height',
+  'goalWeight',
+  'goalTypeId',
+];
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    const numericFields = ['bodyWeight', 'height', 'goalWeight', 'goalTypeId'];
+    
     setFormData((prev) => ({
       ...prev,
       [name]: numericFields.includes(name) ? Number(value) : value,
