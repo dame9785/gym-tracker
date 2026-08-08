@@ -45,7 +45,6 @@ type Props = {
 
 export default function UpdateUserForm({ userId }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [user, setUserData] = useState<User | null>(null);
   const [goals, setGoals] = useState<GoalType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
