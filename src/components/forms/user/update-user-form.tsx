@@ -58,8 +58,8 @@ export default function UpdateUserForm({
   goals,
 }: Props) {
    string>>;
- const [errors, setErrors] = useState<FormErrors>({});
-  const [goals, setGoals] = useState<GoalType[]>([]);
+  const [errors, setErrors] = useState<FormErrors>({});
+
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
@@ -79,18 +79,7 @@ export default function UpdateUserForm({
   });
 
 
-useEffect(() => {
-  async function loadGoals() {
-    try {
-      const data = await GoalService.getAll();
-      setGoals(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
-  loadGoals();
-}, []);
 
 useEffect(() => {
   async function loadUser() {
