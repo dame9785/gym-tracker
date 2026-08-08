@@ -2,7 +2,8 @@
 import { redirect } from 'next/navigation';
 
 //Types
-import type { User, AuthApiResponse } from '@/types/user-types';
+import type {  } from '@/types/user-types';
+import type { User, AuthApiResponse,  UserSettingsViewModel} from '@/types/user-types';
 import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
 
 //API URL
