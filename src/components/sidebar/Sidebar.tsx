@@ -120,8 +120,7 @@ function Sidebar({ user }: Props) {
           <div className="sidebar-bottom-wrapper flex align-center">
             <BsPersonCircle />
             <p>
-              Welcome,
-              <span>{user?.username}</span>
+              <small>{user?.username}</small>
             </p>
           </div>
           <div className="logout-wrapper flex justify-center mt-5">
