@@ -43,6 +43,13 @@ type Props = {
   userId: string;
 };
 
+const numericFields = [
+  'bodyWeight',
+  'height',
+  'goalWeight',
+  'goalTypeId',
+];
+
 export default function UpdateUserForm({ userId }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [goals, setGoals] = useState<GoalType[]>([]);
@@ -114,12 +121,7 @@ useEffect(() => {
 
 
 
-const numericFields = [
-  'bodyWeight',
-  'height',
-  'goalWeight',
-  'goalTypeId',
-];
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
