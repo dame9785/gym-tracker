@@ -73,9 +73,9 @@ export async function PUT(
 
     // Business logic
     const response = await authService.updateUser(
-      validation.data,
-      id
-    );
+  validation.data,
+  authenticatedUser.userId
+);
 
     return NextResponse.json(response, {
       status: response.success ? 200 : 400,
