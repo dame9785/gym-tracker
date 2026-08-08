@@ -1,5 +1,5 @@
 import RegisterForm from '@/components/forms/user/register-user-form';
-
+import GoalService from '@/services/goal
 export default function Register() {
  const goals = await GoalService.getAll();
   return (
