@@ -35,9 +35,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const apiResponse = await authService.getCurrentUser(tokenPayLoad.userId);
-
-    if (apiResponse.UserSettingsViewModel == null) {
+    const result = await authService.getUserById(tokenPayLoad.userId);
+    console.log(result);
+    if (result == null) {
       return NextResponse.json(
         {
           success: false,
@@ -48,8 +48,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(apiResponse, {
-      status: apiResponse.success ? 200 : 401,
+    return NextResponse.json(result, {
+      status: result.success ? 200 : 401,
     });
   } catch (error) {
     console.error(error);

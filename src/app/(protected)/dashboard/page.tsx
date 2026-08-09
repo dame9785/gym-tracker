@@ -20,7 +20,6 @@ export default async function DashboardPage() {
   }
 
   const apiResponse = await AuthService.me(token);
-
   if (!apiResponse.success) {
     redirect('/account/login');
   }

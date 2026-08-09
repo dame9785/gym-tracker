@@ -22,8 +22,8 @@ import { useRouter } from 'next/navigation';
 //Services
 import UserService from '@/services/auth-service';
 
-//Dtos:
-import { ErrorsHelper } from '@/helpers/get-forms-error-helper';
+//Helpers
+import { ErrorApiMessagesHelper } from '@/helpers/error-helper';
 
 //FONTAWSOME ICONS
 import {
@@ -109,82 +109,35 @@ export default function UpdateUserForm({ user, goals }: Props) {
     }));
   };
 
-  const handleSubmit = async (
-  e: React.FormEvent<HTMLFormElement>,
-) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const validation = updateSchema.safeParse(formData);
 
-  const validation = updateSchema.safeParse(formData);
-
-  if (!validation.success) {
-    setErrors(
-      ErrorsHelper.getFormErrors<UpdateUserDto>(
-        validation.error.issues,
-      ),
-    );
-
-    return;
-  }
-
-  setIsSaving(true);
-try {
-
-    const result = await UserService.update(
-
-      validation.data,
-
-      user.id,
-
-    );
-
-    // API error
-
-    if (!result.success) {
-
-      if (result.errors) {
-
-        setErrors(
-
-          ErrorsHelper.getFormErrorsFromApi<UpdateUserDto>(
-
-            result.errors,
-
-          ),
-
-        );
-
-      } else {
-
-        toast.error(result.message);
-
-      }
+    if (!validation.success) {
+      setErrors(ErrorApiMessagesHelper.getFormErrors<UpdateUserDto>(validation.error.issues));
 
       return;
-
     }
 
-    // Success
+    setIsSaving(true);
 
-    setErrors({});
-
-    toast.success('Användare uppdaterad');
-
-  } catch (error) {
-
-    // Unexpected error
-
-    console.error('UpdateUserForm failed:', error);
-
-    toast.error(
-
-      'Något gick fel, användaren kunde inte uppdateras.',
-
-    );
-
-  } finally {
-
-    setIsSaving(false);
-}
+    try {
+      const result = await UserService.update(validation.data, user.id);
+      if (!result.success) {
+        if (result.errors) {
+          setErrors(ErrorApiMessagesHelper.getFormErrorsFromApi<UpdateUserDto>(result.errors));
+        }
+      } else {
+        toast.error(result.message);
+      }
+      return;
+    } catch (error) {
+      console.error('Failed to update user:', error);
+      toast.error('Ett oväntat fel inträffade. Försök igen senare.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -390,17 +343,11 @@ try {
               </label>
             </div>
             <select
-              
-
-  className={styles.formSelect}
-
-  name="goalTypeId"
-
-  id="goalTypeId"
-
-  value={formData.goalTypeId}
-
-  onChange={handleChange}
+              className={styles.formSelect}
+              name="goalTypeId"
+              id="goalTypeId"
+              value={formData.goalTypeId}
+              onChange={handleChange}
             >
               <option value="">Välj mål</option>
 
@@ -436,7 +383,9 @@ try {
         </div>
       </div>
       <div className="grid grid-2">
-        <Button type="submit" text={isSaving ? 'Sparar...' : 'Spara'} variant="primary" disabled={isSaving} />
+        <Button type="submit" variant="primary" disabled={isSaving}>
+          {isSaving ? 'Sparar...' : 'Spara'}
+        </Button>
       </div>
     </form>
   );

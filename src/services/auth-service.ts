@@ -2,8 +2,10 @@
 import { redirect } from 'next/navigation';
 
 //Types
-import type { AuthApiResponse } from '@/types/user-types';
+import type { AuthApiResponse, User } from '@/types/user-types';
 import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
+import { ApiResponse, LoginResponse } from '@/types/api-types';
+import { UserSettingsViewModel } from '@/types/user-types';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/auth';
@@ -32,9 +34,9 @@ export default class AuthService {
   }
 
   //Login
-  static async login(dto: LoginDto): Promise<AuthApiResponse> {
+  static async login(dto: LoginDto): Promise<ApiResponse<LoginResponse>> {
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,11 +44,13 @@ export default class AuthService {
         body: JSON.stringify(dto),
       });
 
-      const data: AuthApiResponse = await response.json();
+      const data: ApiResponse<LoginResponse> = await response.json();
       return data;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte kontakta servern.',
+      };
     }
   }
 
@@ -69,64 +73,43 @@ export default class AuthService {
     }
   }
 
-  //Update User
-  static async update(
-  userData: UpdateUserDto,
-  userId: number,
-): Promise<ApiResponse<UserSettingsViewModel>> {
-  try {
-    const response = await fetch(
-      `/api/auth/update/${userId}`,
-      {
+  static async update(userData: UpdateUserDto, userId: number): Promise<ApiResponse<UserSettingsViewModel>> {
+    try {
+      const response = await fetch(`/api/auth/update/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
-      },
-    );
+      });
 
-    const data: ApiResponse<UserSettingsViewModel> =
-      await response.json();
+      const data: ApiResponse<UserSettingsViewModel> = await response.json();
 
-    return data;
-  } catch (error) {
-    return {
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Ett oväntat fel inträffade.',
-    };
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Ett oväntat fel inträffade.',
+      };
+    }
   }
-}
 
   //GET: User By Id
-  static async getUserById(
-  userId: number,
-): Promise<ApiResponse<User>> {
-  try {
-    const response = await fetch(
-      `/api/auth/setting/${userId}`,
-      {
+  static async getUserById(userId: number): Promise<ApiResponse<UserSettingsViewModel>> {
+    try {
+      const response = await fetch(`/api/auth/setting/${userId}`, {
         method: 'GET',
-      },
-    );
+      });
 
-    const data: ApiResponse<User> =
-      await response.json();
-
-    return data;
-  } catch (error) {
-    return {
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Ett oväntat fel inträffade.',
-    };
+      const data: ApiResponse<UserSettingsViewModel> = await response.json();
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Ett oväntat fel inträffade.',
+      };
+    }
   }
-}
   //Logout
   static async logout(): Promise<AuthApiResponse> {
     try {

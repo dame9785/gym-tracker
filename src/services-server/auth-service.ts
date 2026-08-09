@@ -4,70 +4,55 @@ import { Prisma } from '@prisma/client';
 // Repository
 import { UserRepository } from '@/repositories/user-repository';
 
-// JWT Library
+// JWT
 import { generateToken } from '@/lib/jwt';
 
 // Password hashing
 import bcrypt from 'bcryptjs';
 
-//Mapping
+// Mapping
 import { UserMapper } from '../mapping/user-mapping';
 
-//Helpers
-import FieldErrorsMessagesHelper from '@/helpers/field-error-helper';
+// Helpers
+import { ErrorsHelper } from '@/helpers/error-helper';
 
-//Types
-import type { AuthApiResponse, UserSettingsViewModel } from '@/types/user-types';
+// Types
+import type { ApiResponse, LoginResponse, RegisterResponse } from '@/types/api-types';
 import type { LoginDto, RegisterUserDto, UpdateUserDto } from '@/schemas/auth-schemas';
-import type { ApiResponse } from '@/types/api-types';
-import type { User } from '@/types/user-types';
+import { UserSettingsViewModel } from '@/types/user-types';
+import { UpdateUserResult } from '@/types/service-result-types';
 
 export class AuthService {
   private userRepository = new UserRepository();
 
   //Login User
-  async login(dto: LoginDto): Promise<AuthApiResponse> {
-    const fieldErrors: Partial<Record<keyof LoginDto, string>> = {};
-
-    if (!dto) {
-      return {
-        success: false,
-        message: 'Ogiltig login-data.',
-        errors: [],
-      };
-    }
-
+  async login(dto: LoginDto): Promise<ApiResponse<LoginResponse>> {
     try {
       const user = await this.userRepository.findByEmail(dto.email);
 
       if (!user) {
-        fieldErrors.email = 'E-postadressen eller lösenordet är felaktigt.';
-
         return {
           success: false,
-          message: 'Inloggningen misslyckades.',
-          errors: Object.values(fieldErrors),
-          fieldErrors,
+          message: 'E-postadressen eller lösenordet är felaktigt.',
         };
       }
 
       const passwordValid = await bcrypt.compare(dto.password, user.passwordHash);
-      if (!passwordValid) {
-        fieldErrors.password = 'E-postadressen eller lösenordet är felaktigt.';
 
+      if (!passwordValid) {
         return {
           success: false,
-          message: 'Inloggningen misslyckades.',
-          errors: Object.values(fieldErrors),
-          fieldErrors,
+          message: 'E-postadressen eller lösenordet är felaktigt.',
         };
       }
 
       return {
         success: true,
         message: 'Användaren är inloggad.',
-        errors: [],
-        userId: user.id,
+        data: {
+          userId: user.id,
+          token: generateToken(user.id),
+        },
       };
     } catch (error) {
       console.error('AuthService.login failed:', error);
@@ -75,13 +60,12 @@ export class AuthService {
       return {
         success: false,
         message: 'Ett internt serverfel inträffade.',
-        errors: [],
       };
     }
   }
 
   // Register User
-  async register(dto: RegisterUserDto): Promise<AuthApiResponse> {
+  async register(dto: RegisterUserDto): Promise<ApiResponse<RegisterResponse>> {
     const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
 
     const [existingEmail, existingUsername] = await Promise.all([
@@ -101,151 +85,125 @@ export class AuthService {
       return {
         success: false,
         message: 'Valideringen misslyckades.',
-        errors: Object.values(fieldErrors),
-        fieldErrors,
+        errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
       };
     }
 
     try {
       const passwordHash = await bcrypt.hash(dto.password, 10);
+
       const userData = UserMapper.createUserDtoToDbModel(dto, passwordHash);
+
       const user = await this.userRepository.create(userData);
 
       return {
         success: true,
         message: 'Användaren registrerades.',
-        errors: [],
-        userToken: generateToken(user.id),
-        userId: user.id,
+        data: {
+          userId: user.id,
+          token: generateToken(user.id),
+        },
       };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        const fieldErrors = FieldErrorsMessagesHelper.getUniqueConstraintFieldErrors<RegisterUserDto>(error);
+        const fieldErrors = ErrorsHelper.getUniqueConstraintFieldErrors<RegisterUserDto>(error);
 
         return {
           success: false,
           message: 'Valideringen misslyckades.',
-          errors: Object.values(fieldErrors),
-          fieldErrors,
+          errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
         };
       }
 
-      console.log('Error', error);
+      console.error('AuthService.register failed:', error);
+
       return {
         success: false,
         message: 'Kunde inte skapa användaren.',
-        errors: [],
       };
     }
   }
 
   //Get User By Id
-  async getUserById(id: number):promise<AuthApiResponse<user>>   {
+  async getUserById(id: number): Promise<ApiResponse<UserSettingsViewModel>> {
     const user = await this.userRepository.findById(id);
-    if (user === null) {
+
+    if (!user) {
       return {
         success: false,
-        message: 'Kunde inte hitta användare',
-        errors: ['Kunde inte hitta användare.'],
+        message: 'Användaren hittades inte.',
       };
     }
 
-    // User -> ViewModel
-    const viewModel: UserSettingsViewModel = UserMapper.userModelToViewModel(user);
+    const viewModel = UserMapper.userModelToViewModel(user);
+
     return {
       success: true,
-      message: 'Lyckades hämta användare',
-      UserSettingsViewModel: viewModel,
+      data: viewModel,
     };
   }
 
   // Update User
-  async updateUser(dto: UpdateUserDto, userId: number): Promise<AuthApiResponse> {
+  async updateUser(dto: UpdateUserDto, userId: number): Promise<ApiResponse<UserSettingsViewModel>> {
     const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
 
-    // Check whether email or username already belongs
-    // to another user.
     const [existingEmail, existingUsername] = await Promise.all([
       this.userRepository.emailExists(dto.email, userId),
       this.userRepository.usernameExists(dto.username, userId),
     ]);
 
-    //Check if Email Already existing
     if (existingEmail) {
       fieldErrors.email = 'E-postadressen är upptagen.';
     }
 
-    //Check if UserName Already existing
     if (existingUsername) {
       fieldErrors.username = 'Användarnamnet är upptaget.';
     }
-    if (existingEmail || existingUsername) {
+
+    if (Object.keys(fieldErrors).length > 0) {
       return {
         success: false,
         message: 'Valideringen misslyckades.',
-        errors: Object.values(fieldErrors),
-        fieldErrors,
+        errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
       };
     }
 
     try {
-      //Mapping DTO To DB-Model
       const updateData = UserMapper.userDtoToDbModel(dto);
+
       await this.userRepository.update(userId, updateData);
-      return {
-        success: true,
-        message: 'Användaren uppdaterades.',
-        errors: [],
-      };
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        const errors: string[] = [];
-        const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
 
-        const target = error.meta?.target;
+      const updatedUser = await this.userRepository.findById(userId);
 
-        if (Array.isArray(target) && target.includes('email')) {
-          errors.push('E-postadressen används redan.');
-          fieldErrors.email = 'E-postadressen används redan.';
-        }
-
-        if (Array.isArray(target) && target.includes('username')) {
-          errors.push('Användarnamnet används redan.');
-          fieldErrors.username = 'Användarnamnet används redan.';
-        }
-
+      if (!updatedUser) {
         return {
           success: false,
-          message: 'Användare lyckades inte uppdateras.',
-          errors: Object.values(fieldErrors),
-          fieldErrors,
+          message: 'Användaren hittades inte.',
         };
       }
 
       return {
-        success: false,
-        message: 'Användare lyckades inte uppdateras.',
-        errors: Object.values(fieldErrors),
-        fieldErrors,
+        success: true,
+        data: UserMapper.userModelToViewModel(updatedUser),
+        message: 'Användaren uppdaterades.',
       };
-    }
-  }
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const fieldErrors = ErrorsHelper.getUniqueConstraintFieldErrors<UpdateUserDto>(error);
 
-  //Get current logged in user
-  async getCurrentUser(userId: number): Promise<AuthApiResponse> {
-    const user = await this.userRepository.findById(userId);
-    if (user === null) {
+        return {
+          success: false,
+          message: 'Användaren kunde inte uppdateras.',
+          errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
+        };
+      }
+
+      console.error('AuthService.updateUser failed:', error);
+
       return {
         success: false,
-        message: 'Gick inte hitta användaren',
+        message: 'Användaren kunde inte uppdateras.',
       };
     }
-
-    const viewModel: UserSettingsViewModel = UserMapper.userModelToViewModel(user);
-    return {
-      success: true,
-      message: 'Lyckades hämta användare',
-      UserSettingsViewModel: viewModel,
-    };
   }
 }

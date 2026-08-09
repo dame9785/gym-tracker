@@ -20,9 +20,9 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      disabled={disabled}
-      onClick={onClick}
       type={type}
+      onClick={onClick}
+      disabled={disabled}
       className={`${styles.button} ${styles[variant]} ${styles[size]}`}
     >
       {children}
