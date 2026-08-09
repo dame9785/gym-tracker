@@ -17,10 +17,16 @@ import { UserMapper } from '../mapping/user-mapping';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
 // Types
-import type { ApiResponse, LoginResponse, RegisterResponse } from '@/types/api-types';
-import type { LoginDto, RegisterUserDto, UpdateUserDto } from '@/schemas/auth-schemas';
+import type {
+  ApiErrorResponse,
+  ApiResponse,
+  ApiSuccessResponse,
+  LoginResponse,
+  RegisterResponse,
+  UserResponse,
+} from '@/types/api-types';
+import { loginSchema, type LoginDto, type RegisterUserDto, type UpdateUserDto } from '@/schemas/auth-schemas';
 import { UserSettingsViewModel } from '@/types/user-types';
-import { UpdateUserResult } from '@/types/service-result-types';
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -29,31 +35,60 @@ export class AuthService {
   async login(dto: LoginDto): Promise<ApiResponse<LoginResponse>> {
     try {
       const user = await this.userRepository.findByEmail(dto.email);
+      const errors: Record<string, string[]> = {};
+
+      //ZOD Validation
+      const validation = loginSchema.safeParse(dto);
+
+      if (!validation.success) {
+        const fieldErrors = ErrorsHelper.getFormErrors<LoginDto>(validation.error.issues);
+        const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
+
+        return {
+          success: false,
+          message: 'Validerings fel',
+          errors: errors,
+        } satisfies ApiErrorResponse;
+      }
 
       if (!user) {
         return {
           success: false,
-          message: 'E-postadressen eller lösenordet är felaktigt.',
-        };
+          message: 'Felaktig email eller lösenord.',
+        } satisfies ApiErrorResponse;
       }
 
+      //Check if password match
       const passwordValid = await bcrypt.compare(dto.password, user.passwordHash);
-
       if (!passwordValid) {
         return {
           success: false,
-          message: 'E-postadressen eller lösenordet är felaktigt.',
-        };
+          message: 'Felaktig email eller lösenord.',
+        } satisfies ApiErrorResponse;
       }
+
+      //If errors existing
+      if (Object.keys(errors).length > 0) {
+        const validationResult: ApiErrorResponse = {
+          success: false,
+          message: 'Kontrollera formuläret.',
+          errors,
+        };
+
+        return validationResult;
+      }
+
+      //Generate token
+      const token = generateToken(user.id);
 
       return {
         success: true,
-        message: 'Användaren är inloggad.',
+        message: 'Inloggning lyckades',
         data: {
+          token: token,
           userId: user.id,
-          token: generateToken(user.id),
         },
-      };
+      } satisfies ApiSuccessResponse<LoginResponse>;
     } catch (error) {
       console.error('AuthService.login failed:', error);
 
@@ -125,22 +160,20 @@ export class AuthService {
   }
 
   //Get User By Id
-  async getUserById(id: number): Promise<ApiResponse<UserSettingsViewModel>> {
+  async getUserById(id: number): Promise<ApiResponse<UserResponse>> {
     const user = await this.userRepository.findById(id);
 
     if (!user) {
-      return {
-        success: false,
-        message: 'Användaren hittades inte.',
-      };
+      return { success: false, message: 'Gick inte hämta användaren' } satisfies ApiErrorResponse;
     }
 
-    const viewModel = UserMapper.userModelToViewModel(user);
-
+    const userViewModel = UserMapper.userDbToViewModel(user);
     return {
       success: true,
-      data: viewModel,
-    };
+      data: {
+        user: userViewModel,
+      },
+    } satisfies ApiSuccessResponse<UserResponse>;
   }
 
   // Update User
@@ -184,7 +217,7 @@ export class AuthService {
 
       return {
         success: true,
-        data: UserMapper.userModelToViewModel(updatedUser),
+        data: UserMapper.userModelToUserSettingsViewModel(updatedUser),
         message: 'Användaren uppdaterades.',
       };
     } catch (error) {

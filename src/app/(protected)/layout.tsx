@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import Sidebar from '@/components/sidebar/Sidebar';
 import { getTokenFromCookieStore } from '@/lib/auth';
 import AuthService from '@/services/auth-service';
+import { UserViewModel } from '@/types/user-types';
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const token = await getTokenFromCookieStore();
@@ -11,15 +12,16 @@ export default async function ProtectedLayout({ children }: { children: React.Re
     redirect('/account/login');
   }
 
-  const apiResponse = await AuthService.me(token);
-  console.log(apiResponse);
-  if (!apiResponse.success) {
+  const response = await AuthService.me(token);
+  console.log(response);
+  if (!response.success || response.data == null) {
     redirect('/account/login');
   }
 
+  const user: UserViewModel = response.data.user;
   return (
     <div className="app-layout">
-      <Sidebar user={apiResponse.UserSettingsViewModel ?? null} />
+      <Sidebar user={user} />
       <main>{children}</main>
     </div>
   );

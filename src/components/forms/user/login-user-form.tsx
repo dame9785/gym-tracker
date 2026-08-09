@@ -19,7 +19,6 @@ import buttonStyles from '@/components/button/button.module.css';
 
 // Components
 import Button from '@/components/button/button';
-import LoadingSpinner from '@/components/loading-spinner';
 
 // Services
 import AuthService from '@/services/auth-service';
@@ -34,12 +33,12 @@ import { loginSchema } from '@/schemas/auth-schemas';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
 export default function LoginForm() {
-  const [errors, setErrors] = useState<Partial<Record<keyof LoginDto, string>>>({});
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Partial<Record<keyof LoginDto, string>>>({});
 
+  //Routing
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -50,7 +49,7 @@ export default function LoginForm() {
       password,
     } satisfies LoginDto;
 
-    // Frontend validation
+    // ZOD Validation
     const validation = loginSchema.safeParse(loginData);
 
     if (!validation.success) {
@@ -75,11 +74,8 @@ export default function LoginForm() {
       }
 
       toast.success('Inloggning lyckades');
-
       router.replace('/dashboard');
     } catch (error) {
-      console.error('Login failed:', error);
-
       toast.error('Ett oväntat fel inträffade vid inloggningen.');
     } finally {
       setIsLoading(false);
@@ -90,10 +86,10 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit} className={`${styles.form} mx-auto`}>
       <div className={styles.formWrapper}>
         <h1 className={styles.formTitle}>
-          <FaDumbbell className={styles.formIcon} />
           Gym
           <span>Tracker</span>
         </h1>
+        <FaDumbbell className={styles.formIcon} />
       </div>
 
       {/* Email */}
@@ -116,14 +112,12 @@ export default function LoginForm() {
           value={email}
           onChange={(e) => {
             setEmail(e.target.value);
-
             setErrors((prev) => ({
               ...prev,
               email: undefined,
             }));
           }}
         />
-
         {errors.email && <p className={styles.fieldErrorMessage}>{errors.email}</p>}
       </div>
 
@@ -131,7 +125,6 @@ export default function LoginForm() {
       <div className={styles.formGroup}>
         <div className={styles.labelWrapper}>
           <FaLock className={styles.formIcon} />
-
           <label className={styles.formLabel} htmlFor="password">
             Lösenord
           </label>
@@ -147,14 +140,12 @@ export default function LoginForm() {
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
-
             setErrors((prev) => ({
               ...prev,
               password: undefined,
             }));
           }}
         />
-
         {errors.password && <p className={styles.fieldErrorMessage}>{errors.password}</p>}
       </div>
 
@@ -171,7 +162,9 @@ export default function LoginForm() {
 
       {/* Register */}
       <div className="flex justify-center mt-10">
-        <Link href="/account/register">Registrera konto</Link>
+        <Link href="/account/register" className="border-b border-solid p-2 border-amber-500 hover:text-amber-600">
+          Registrera konto
+        </Link>
       </div>
     </form>
   );

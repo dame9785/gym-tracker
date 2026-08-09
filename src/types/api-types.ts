@@ -1,3 +1,5 @@
+import { UserViewModel } from './user-types';
+
 export interface ApiSuccessResponse<T> {
   success: true;
   data: T;
@@ -18,8 +20,17 @@ export interface LoginResponse {
   token: string;
 }
 
+export interface UserResponse {
+  user: UserViewModel;
+}
+
 // Register
 export interface RegisterResponse {
   userId: number;
   token: string;
+}
+
+export interface LogoutResponse {
+  success: boolean;
+  message: string;
 }

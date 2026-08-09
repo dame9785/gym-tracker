@@ -1,46 +1,20 @@
+//NEXT.JS Response
 import { NextResponse } from 'next/server';
 
 // Services
 import { AuthService } from '@/services-server/auth-service';
 
 // Types
-import type { ApiErrorResponse } from '@/types/api-types';
-
-// Schemas
-import { loginSchema } from '@/schemas/auth-schemas';
+import type { ApiErrorResponse, ApiSuccessResponse } from '@/types/api-types';
 import type { LoginDto } from '@/schemas/auth-schemas';
-
-// Helpers
-import { ErrorsHelper } from '@/helpers/error-helper';
-import { generateToken } from '@/lib/jwt';
 
 const authService = new AuthService();
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body: LoginDto = await request.json();
 
-    const validation = loginSchema.safeParse(body);
-
-    // Request validation
-    if (!validation.success) {
-      const fieldErrors = ErrorsHelper.getFormErrors<LoginDto>(validation.error.issues);
-
-      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
-
-      const response: ApiErrorResponse = {
-        success: false,
-        message: 'Kontrollera formuläret.',
-        errors,
-      };
-
-      return NextResponse.json(response, {
-        status: 400,
-      });
-    }
-
-    // Login
-    const result = await authService.login(validation.data);
+    const result = await authService.login(body);
     if (!result.success) {
       return NextResponse.json(result, { status: 401 });
     }
@@ -63,13 +37,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('POST /api/auth/login failed:', error);
 
-    const response: ApiErrorResponse = {
+    return {
       success: false,
-      message: error instanceof Error ? error.message : 'Ett oväntat fel inträffade.',
-    };
-
-    return NextResponse.json(response, {
-      status: 500,
-    });
+      message: 'Server error',
+    } satisfies ApiErrorResponse;
   }
 }

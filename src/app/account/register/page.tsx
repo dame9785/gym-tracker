@@ -8,11 +8,10 @@ export default async function Register() {
   const result = await AuthService.getUserById(userId);
 
   if (!result.success) {
-  console.error(result.message);
-  return;
-}
+    console.error(result.message);
+    return;
+  }
 
-console.log(result.data);
   return (
     <div className="container">
       <div className="form-wrapper flex justify-center items-center m-[5em]">

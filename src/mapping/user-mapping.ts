@@ -2,13 +2,33 @@
 import { Prisma } from '@prisma/client';
 
 //Types
-import type { UserSettingsViewModel } from '@/types/user-types';
+import type { UserSettingsViewModel, UserViewModel } from '@/types/user-types';
 import type { UpdateUserDto, RegisterUserDto } from '@/schemas/auth-schemas';
 
 import type { User } from '@prisma/client';
 
 export class UserMapper {
-  static userModelToViewModel(user: User): UserSettingsViewModel {
+  static userModelToUserSettingsViewModel(user: User): UserSettingsViewModel {
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
+      bodyWeight: user.bodyWeight.toNumber(),
+      height: user.height.toNumber(),
+      goalWeight: user.goalWeight.toNumber(),
+      birthDate: user.birthDate.toISOString(),
+      goalDate: user.goalDate.toISOString(),
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
+      goalTypeId: user.goalTypeId ?? null,
+      gender: user.gender,
+    };
+  }
+
+  static userDbToViewModel(user: User): UserViewModel {
     return {
       id: user.id,
       email: user.email,

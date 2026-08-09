@@ -2,9 +2,15 @@
 import { redirect } from 'next/navigation';
 
 //Types
-import type { AuthApiResponse, User } from '@/types/user-types';
 import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
-import { ApiResponse, LoginResponse } from '@/types/api-types';
+import {
+  ApiErrorResponse,
+  ApiResponse,
+  LogoutResponse,
+  LoginResponse,
+  RegisterResponse,
+  UserResponse,
+} from '@/types/api-types';
 import { UserSettingsViewModel } from '@/types/user-types';
 
 //API URL
@@ -12,7 +18,7 @@ const API_URL = 'http://localhost:3000/api/auth';
 
 export default class AuthService {
   //Me
-  static async me(token: string): Promise<AuthApiResponse> {
+  static async me(token: string): Promise<ApiResponse<UserResponse>> {
     try {
       const response = await fetch(`${API_URL}/me`, {
         method: 'GET',
@@ -22,14 +28,13 @@ export default class AuthService {
         cache: 'no-store',
       });
 
-      const apiResponse: AuthApiResponse = await response.json();
+      const apiResponse: ApiResponse<UserResponse> = await response.json();
       return apiResponse;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
       return {
-        message,
+        message: 'Server fel',
         success: false,
-      };
+      } satisfies ApiErrorResponse;
     }
   }
 
@@ -44,18 +49,18 @@ export default class AuthService {
         body: JSON.stringify(dto),
       });
 
-      const data: ApiResponse<LoginResponse> = await response.json();
-      return data;
+      const result: ApiResponse<LoginResponse> = await response.json();
+      return result;
     } catch (error) {
       return {
         success: false,
-        message: 'Kunde inte kontakta servern.',
-      };
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
   //Register
-  static async register(dto: RegisterUserDto): Promise<AuthApiResponse> {
+  static async register(dto: RegisterUserDto): Promise<ApiResponse<RegisterResponse>> {
     try {
       const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
@@ -65,7 +70,7 @@ export default class AuthService {
         body: JSON.stringify(dto),
       });
 
-      const data: AuthApiResponse = await response.json();
+      const data: ApiResponse<RegisterResponse> = await response.json();
       return data;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
@@ -111,17 +116,13 @@ export default class AuthService {
     }
   }
   //Logout
-  static async logout(): Promise<AuthApiResponse> {
+  static async logout(): Promise<ApiResponse<LogoutResponse>> {
     try {
       const response = await fetch(`${API_URL}/logout`, {
         method: 'POST',
       });
 
-      const result: AuthApiResponse = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message);
-      }
-
+      const result: ApiResponse<LogoutResponse> = await response.json();
       return result;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';

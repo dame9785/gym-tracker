@@ -1,10 +1,4 @@
-import { redirect } from 'next/navigation';
-
 import { DashboardService } from '@/services-server/dashboard-service';
-import AuthService from '@/services/auth-service';
-
-import { getTokenFromCookieStore } from '@/lib/auth';
-
 import DashboardStats from '@/components/dashboard/dashboard-stats';
 import DashboardHeader from '@/components/dashboard/dashboard-header';
 import WeeklyOverview from '@/components/dashboard/weekly-overview';
@@ -13,19 +7,7 @@ import WeeklySummary from '@/components/dashboard/weekly-summary';
 import WorkoutCalendar from '@/components/calendar/workout-calendar';
 
 export default async function DashboardPage() {
-  const token = await getTokenFromCookieStore();
-
-  if (!token) {
-    redirect('/account/login');
-  }
-
-  const apiResponse = await AuthService.me(token);
-  if (!apiResponse.success) {
-    redirect('/account/login');
-  }
-
   const dashboardService = new DashboardService();
-
   const result = await dashboardService.getDashboard();
 
   if (!result.success || !result.dashboard) {

@@ -12,11 +12,10 @@ export class GoalTypesService {
       });
 
       const result = response.json();
-      console.log(result);
+
       return;
       return await response.json();
     } catch (error) {
-      console.log(error);
       const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
       redirect(`/error?message=${encodeURIComponent(message)}`);
     }
