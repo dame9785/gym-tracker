@@ -1,3 +1,4 @@
+import { GoalTypeViewModel } from './goal-types';
 import { UserViewModel } from './user-types';
 
 export interface ApiSuccessResponse<T> {
@@ -30,7 +31,13 @@ export interface RegisterResponse {
   token: string;
 }
 
+//Login
 export interface LogoutResponse {
   success: boolean;
   message: string;
+}
+
+//Goal Type
+export interface GoalResponse {
+  goals: GoalTypeViewModel[];
 }

@@ -1,16 +1,20 @@
-import { GoalTypesService } from '@/services-server/goal-service';
-import RegisterForm from '@/components/forms/user/register-user-form';
+/* Services */
+import GoalTypesService from '@/services/goal-types-service';
 
-const goalTypesService = new GoalTypesService();
+/* Components */
+import RegisterForm from '@/components/forms/user/register-user-form';
+import LoadingSpinner from '@/components/loading-spinner';
 
 export default async function Register() {
-  const goals = await goalTypesService.getAllGoals();
-  const result = await AuthService.getUserById(userId);
+  /* Fetch all goal types */
+  const response = await GoalTypesService.getAll();
 
-  if (!result.success) {
-    console.error(result.message);
-    return;
+  if (!response.success || response.data == null) {
+    return <LoadingSpinner />;
   }
+
+  //Goals Data
+  const goals = response.data.goals;
 
   return (
     <div className="container">

@@ -1,23 +1,20 @@
 //Next Redirect
-import { redirect } from 'next/navigation';
+import { ApiErrorResponse, ApiResponse, GoalResponse } from '@/types/api-types';
 
 //API URL
-const API_URL = '/api/goals';
+const API_URL = 'http://localhost:3000/api/goals';
 
-export class GoalTypesService {
-  static async getAll() {
+export default class GoalTypesService {
+  static async getAll(): Promise<ApiResponse<GoalResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {
         method: 'GET',
       });
 
-      const result = response.json();
-
-      return;
-      return await response.json();
+      const result: ApiResponse<GoalResponse> = await response.json();
+      return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return { success: false, message: 'Server fel gick inte hämta data' } satisfies ApiErrorResponse;
     }
   }
 }

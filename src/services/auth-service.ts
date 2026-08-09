@@ -99,22 +99,6 @@ export default class AuthService {
     }
   }
 
-  //GET: User By Id
-  static async getUserById(userId: number): Promise<ApiResponse<UserSettingsViewModel>> {
-    try {
-      const response = await fetch(`/api/auth/setting/${userId}`, {
-        method: 'GET',
-      });
-
-      const data: ApiResponse<UserSettingsViewModel> = await response.json();
-      return data;
-    } catch (error) {
-      return {
-        success: false,
-        message: error instanceof Error ? error.message : 'Ett oväntat fel inträffade.',
-      };
-    }
-  }
   //Logout
   static async logout(): Promise<ApiResponse<LogoutResponse>> {
     try {

@@ -3,17 +3,19 @@ import UserService from '@/services/auth-service';
 import { GoalTypesService } from '@/services-server/goal-service';
 import { notFound } from 'next/navigation';
 
+//Services
 const goalTypesService = new GoalTypesService();
 
+{
+  /* Page Props */
+}
 interface PageProps {
   params: Promise<{
     userId: string;
   }>;
 }
 
-export default async function UserSettings({
-  params,
-}: PageProps) {
+export default async function UserSettings({ params }: PageProps) {
   const { userId } = await params;
 
   const [userResult, goals] = await Promise.all([
@@ -30,10 +32,7 @@ export default async function UserSettings({
   return (
     <div className="container">
       <div className="form-wrapper m-[5em] flex items-center justify-center">
-        <UpdateUserForm
-          user={userResult.data}
-          goals={goals}
-        />
+        <UpdateUserForm user={userResult.data} goals={goals} />
       </div>
     </div>
   );
