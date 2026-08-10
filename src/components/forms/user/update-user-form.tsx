@@ -47,6 +47,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
   const [errors, setErrors] = useState<Partial<Record<keyof UpdateUserDto, string>>>({});
   const [isSaving, setIsSaving] = useState(false);
 
+  console.log(user);
   const formatDateForInput = (date: string): string => {
     if (!date) {
       return '';

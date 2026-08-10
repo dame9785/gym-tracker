@@ -1,3 +1,4 @@
+import { User } from '@prisma/client';
 import { GoalTypeViewModel } from './goal-types';
 import { UserViewModel } from './user-types';
 
@@ -32,8 +33,7 @@ export interface RegisterResponse {
 }
 
 export interface UpdateUserResponse {
-  success: boolean;
-  message: string;
+  user: UserViewModel;
 }
 
 //Login
