@@ -17,13 +17,9 @@ import { updateSchema } from '@/schemas/auth-schemas';
 //React Routing
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { useRouter } from 'next/navigation';
 
 //Services
 import UserService from '@/services/auth-service';
-
-//Helpers
-import { ErrorApiMessagesHelper } from '@/helpers/error-helper';
 
 //FONTAWSOME ICONS
 import {
@@ -39,24 +35,17 @@ import {
   FaBullseye,
 } from 'react-icons/fa6';
 import { toast } from 'sonner';
+import { ErrorsHelper } from '@/helpers/error-helper';
 
 //Props
-type Props = {
+interface Props {
   user: UserSettingsViewModel;
   goals: GoalTypeViewModel[];
-};
-
-type FormErrors = Partial<Record<keyof UpdateUserDto, string>>;
-
-type UpdateUserFormData = Omit<UpdateUserDto, 'goalTypeId'> & {
-  goalTypeId: number | '';
-};
+}
 
 export default function UpdateUserForm({ user, goals }: Props) {
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof UpdateUserDto, string>>>({});
   const [isSaving, setIsSaving] = useState(false);
-
-  const router = useRouter();
 
   const formatDateForInput = (date: string): string => {
     if (!date) {
@@ -66,7 +55,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
     return date.split('T')[0];
   };
 
-  const [formData, setFormData] = useState<UpdateUserFormData>({
+  const [formData, setFormData] = useState<UpdateUserDto>({
     email: user.email ?? '',
     username: user.username ?? '',
     firstName: user.firstName ?? '',
@@ -77,24 +66,34 @@ export default function UpdateUserForm({ user, goals }: Props) {
     goalWeight: user.goalWeight,
     birthDate: formatDateForInput(user.birthDate) ?? '',
     goalDate: formatDateForInput(user.goalDate) ?? '',
-    goalTypeId: user.goalTypeId ?? '',
+    goalTypeId: user.goalTypeId || 0,
     gender: user.gender,
   });
+
+  const cleanValidationError = (name: string): void => {
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[name as keyof typeof newErrors];
+
+      return newErrors;
+    });
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    let parsedValue: string | number = value;
+    //Remove only the validation error for the specified field
+    cleanValidationError(name);
 
+    let parsedValue: string | number | Date = value;
+
+    // Convert numeric form fields from strings to numbers
     switch (name) {
       case 'bodyWeight':
       case 'height':
       case 'goalWeight':
-        parsedValue = Number(value);
-        break;
-
       case 'goalTypeId':
-        parsedValue = value === '' ? '' : Number(value);
+        parsedValue = Number(value);
         break;
     }
 
@@ -102,38 +101,31 @@ export default function UpdateUserForm({ user, goals }: Props) {
       ...prev,
       [name]: parsedValue,
     }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [name]: undefined,
-    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const validation = updateSchema.safeParse(formData);
-
     if (!validation.success) {
-      setErrors(ErrorApiMessagesHelper.getFormErrors<UpdateUserDto>(validation.error.issues));
-
+      setErrors(ErrorsHelper.getFormErrors<UpdateUserDto>(validation.error.issues));
       return;
     }
 
     setIsSaving(true);
 
+    /*Remove all the validation error*/
+    setErrors({});
+
     try {
       const result = await UserService.update(validation.data, user.id);
       if (!result.success) {
-        if (result.errors) {
-          setErrors(ErrorApiMessagesHelper.getFormErrorsFromApi<UpdateUserDto>(result.errors));
-        }
-      } else {
-        toast.error(result.message);
+        toast.error('Något gick fel, kontot kunde inte registreras.');
+        return;
       }
-      return;
     } catch (error) {
-      console.error('Failed to update user:', error);
-      toast.error('Ett oväntat fel inträffade. Försök igen senare.');
+      console.error('Register failed:', error);
+      toast.error('Något gick fel, kontot kunde inte uppdateras.');
     } finally {
       setIsSaving(false);
     }
@@ -162,6 +154,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
               name="email"
               type="email"
               id="email"
+              autoComplete="email"
               placeholder="E-post..."
               value={formData.email}
               onChange={handleChange}
@@ -182,7 +175,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
               name="username"
               type="text"
               id="username"
-              maxLength={20}
+              autoComplete="username"
               placeholder="Användarnamn..."
               value={formData.username}
               onChange={handleChange}
@@ -203,7 +196,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
               name="firstName"
               type="text"
               id="firstName"
-              maxLength={20}
+              autoComplete="given-name"
               placeholder="Namn..."
               value={formData.firstName}
               onChange={handleChange}
@@ -223,8 +216,8 @@ export default function UpdateUserForm({ user, goals }: Props) {
               className={styles.formInput}
               name="lastName"
               type="text"
-              maxLength={50}
               id="lastName"
+              autoComplete="family-name"
               placeholder="Efternamn..."
               value={formData.lastName}
               onChange={handleChange}
@@ -245,7 +238,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
               name="phoneNumber"
               type="tel"
               id="phoneNumber"
-              maxLength={15}
+              autoComplete="tel"
               placeholder="Telefonnummer..."
               value={formData.phoneNumber}
               onChange={handleChange}

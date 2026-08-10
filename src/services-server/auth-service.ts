@@ -25,7 +25,13 @@ import type {
   RegisterResponse,
   UserResponse,
 } from '@/types/api-types';
-import { loginSchema, type LoginDto, type RegisterUserDto, type UpdateUserDto } from '@/schemas/auth-schemas';
+import {
+  loginSchema,
+  registerSchema,
+  type LoginDto,
+  type RegisterUserDto,
+  type UpdateUserDto,
+} from '@/schemas/auth-schemas';
 import { UserSettingsViewModel } from '@/types/user-types';
 
 export class AuthService {
@@ -116,19 +122,30 @@ export class AuthService {
       fieldErrors.username = 'Användarnamnet används redan.';
     }
 
-    if (Object.keys(fieldErrors).length > 0) {
+    if (existingUsername || existingEmail) {
       return {
         success: false,
-        message: 'Valideringen misslyckades.',
+        message: 'Användare eller e-postadress används redan.',
         errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
-      };
+      } satisfies ApiErrorResponse;
+    }
+
+    //Validation
+    const validation = registerSchema.safeParse(dto);
+    if (!validation.success) {
+      const fieldErrors = ErrorsHelper.getFormErrors<RegisterUserDto>(validation.error.issues);
+      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
+
+      return {
+        success: false,
+        message: 'Felaktig email eller lösenord.',
+        errors: errors,
+      } satisfies ApiErrorResponse;
     }
 
     try {
       const passwordHash = await bcrypt.hash(dto.password, 10);
-
       const userData = UserMapper.createUserDtoToDbModel(dto, passwordHash);
-
       const user = await this.userRepository.create(userData);
 
       return {
@@ -138,8 +155,10 @@ export class AuthService {
           userId: user.id,
           token: generateToken(user.id),
         },
-      };
+      } satisfies ApiSuccessResponse<RegisterResponse>;
     } catch (error) {
+      console.error('AuthService.register failed:', error);
+
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const fieldErrors = ErrorsHelper.getUniqueConstraintFieldErrors<RegisterUserDto>(error);
 
@@ -149,8 +168,6 @@ export class AuthService {
           errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
         };
       }
-
-      console.error('AuthService.register failed:', error);
 
       return {
         success: false,

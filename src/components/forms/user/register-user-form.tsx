@@ -39,17 +39,19 @@ import { registerSchema, type RegisterUserDto } from '@/schemas/auth-schemas';
 import type { GoalTypeViewModel } from '@/types/goal-types';
 import { Gender } from '@prisma/client';
 
-type FormErrors = Partial<Record<keyof RegisterUserDto, string>>;
+/*Helpers*/
+import { ErrorsHelper } from '@/helpers/error-helper';
 
 type Props = {
   goals: GoalTypeViewModel[];
 };
 
 export default function RegisterForm({ goals }: Props) {
-  const [errors, setErrors] = useState<FormErrors>({});
   const router = useRouter();
-  const [isSaving, setIsSaving] = useState(false);
 
+  /*States*/
+  const [errors, setErrors] = useState<Partial<Record<keyof RegisterUserDto, string>>>({});
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<RegisterUserDto>({
     email: '',
     username: '',
@@ -66,11 +68,24 @@ export default function RegisterForm({ goals }: Props) {
     password: '',
   });
 
+  const cleanValidationError = (name: string): void => {
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[name as keyof typeof newErrors];
+
+      return newErrors;
+    });
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
+    //Remove only the validation error for the specified field
+    cleanValidationError(name);
+
     let parsedValue: string | number | Date = value;
 
+    // Convert numeric form fields from strings to numbers
     switch (name) {
       case 'bodyWeight':
       case 'height':
@@ -89,33 +104,30 @@ export default function RegisterForm({ goals }: Props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //zod validation
+    /*zod validation*/
     const validation = registerSchema.safeParse(formData);
     if (!validation.success) {
-      const fieldErrors = Object.fromEntries(
-        validation.error.issues.map((issue) => [String(issue.path[0]), issue.message]),
-      );
-
-      setErrors(fieldErrors);
+      setErrors(ErrorsHelper.getFormErrors<RegisterUserDto>(validation.error.issues));
       return;
     }
 
-    try {
-      setIsSaving(true);
+    setIsSaving(true);
 
+    /*Remove all the validation error*/
+    setErrors({});
+
+    try {
       const result = await AuthService.register(validation.data);
       if (!result.success) {
-        setErrors(result.fieldErrors ?? {});
-        toast.error(result.message);
+        toast.error('Något gick fel, kontot kunde inte registreras.');
         return;
       }
 
-      setErrors({});
       toast.success('Användaren registrerades!');
       router.push('/dashboard');
     } catch (error) {
       console.error('Register failed:', error);
-      toast.error('Något gick fel, kontot kunde inte registreras.');
+      toast.error('Något gick fel, kontot kunde inte skapas.');
     } finally {
       setIsSaving(false);
     }
@@ -167,7 +179,6 @@ export default function RegisterForm({ goals }: Props) {
               value={formData.username}
               id="username"
               autoComplete="username"
-              maxLength={20}
               placeholder="Användarnamn..."
               onChange={handleChange}
             />
@@ -189,7 +200,6 @@ export default function RegisterForm({ goals }: Props) {
               value={formData.firstName}
               id="firstName"
               autoComplete="given-name"
-              maxLength={20}
               placeholder="Namn..."
               onChange={handleChange}
             />
@@ -209,7 +219,6 @@ export default function RegisterForm({ goals }: Props) {
               name="lastName"
               type="text"
               value={formData.lastName}
-              maxLength={50}
               id="lastName"
               autoComplete="family-name"
               placeholder="Efternamn..."
@@ -233,7 +242,6 @@ export default function RegisterForm({ goals }: Props) {
               id="phoneNumber"
               autoComplete="tel"
               value={formData.phoneNumber}
-              maxLength={15}
               placeholder="Telefonnummer..."
               onChange={handleChange}
             />

@@ -109,7 +109,7 @@ function Sidebar({ user }: Props) {
 
               <li className="li flex items-center">
                 <IoIosSettings className="fa-icon" />
-                <Link href={`/account/settings/${user?.id}`} className="grid">
+                <Link href={`/account/setting`} className="grid">
                   Settings
                 </Link>
               </li>

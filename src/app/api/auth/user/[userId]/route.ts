@@ -12,6 +12,7 @@ import { updateSchema } from '@/schemas/auth-schemas';
 
 const authService = new AuthService();
 
+//PUT: UPDATE USER
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   try {
     const { userId } = await params;

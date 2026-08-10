@@ -31,6 +31,11 @@ export interface RegisterResponse {
   token: string;
 }
 
+export interface UpdateUserResponse {
+  success: boolean;
+  message: string;
+}
+
 //Login
 export interface LogoutResponse {
   success: boolean;

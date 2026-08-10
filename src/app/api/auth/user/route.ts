@@ -1,14 +1,18 @@
-//Next Request & Response
+//NEXT JS
 import { NextRequest, NextResponse } from 'next/server';
-
-import { getAuthenticatedUser } from '@/lib/auth';
 
 // Services
 import { AuthService } from '@/services-server/auth-service';
-import { ApiErrorResponse } from '@/types/api-types';
+
+// Types
+import type { ApiErrorResponse } from '@/types/api-types';
+
+//Auth Lib
+import { getAuthenticatedUser } from '@/lib/auth';
 
 const authService = new AuthService();
 
+//GET: Current Logged In User
 export async function GET(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
   if (!token) {
@@ -28,10 +32,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const result = await authService.getUserById(tokenPayLoad.userId);
-    if (!result.success) {
-      return NextResponse.json(result, { status: 404 });
-    }
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

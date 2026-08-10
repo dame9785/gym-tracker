@@ -12,7 +12,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
     redirect('/account/login');
   }
 
-  const response = await AuthService.me(token);
+  const response = await AuthService.getCurrentUser(token);
   console.log(response);
   if (!response.success || response.data == null) {
     redirect('/account/login');

@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 import { AuthService } from '@/services-server/auth-service';
 
 // Types
-import type { ApiErrorResponse, ApiSuccessResponse } from '@/types/api-types';
+import type { ApiErrorResponse } from '@/types/api-types';
 import type { LoginDto } from '@/schemas/auth-schemas';
 
 const authService = new AuthService();

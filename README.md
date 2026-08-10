@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏋️ GymTracker
 
-## Getting Started
+GymTracker is a full-stack fitness tracking application built with Next.js, TypeScript, Prisma and MySQL.
 
-First, run the development server:
+The application allows users to manage their fitness goals, workouts and workout sessions while tracking their progress over time.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ Features
+
+- 🔐 User authentication
+- 👤 User profile and settings
+- 🎯 Fitness goals
+- 🏋️ Workout management
+- 📅 Workout scheduling
+- 📊 Dashboard with weekly overview
+- ✅ Workout session tracking
+- 📈 Progress tracking
+- 🔒 Protected routes with middleware
+- 🗄️ MySQL database with Prisma ORM
+- 🔌 REST API endpoints
+- 🧩 Service and repository architecture
+- 📱 Responsive UI
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- Next.js
+- React
+- TypeScript
+- CSS Modules
+- React Icons
+
+### Backend
+
+- Next.js API Routes
+- TypeScript
+- Prisma ORM
+- MySQL
+- JWT authentication
+
+### Development
+
+- Node.js
+- npm
+- Git
+- GitHub
+
+## 🏗️ Architecture
+
+The project follows a layered architecture separating API routes, services, repositories and data models.
+
+```text
+app/
+├── api/
+│   ├── auth/
+│   ├── workouts/
+│   ├── workout-sessions/
+│   └── ...
+│
+├── dashboard/
+├── login/
+└── register/
+
+services-server/
+├── auth-service.ts
+├── workout-service.ts
+├── workout-session-service.ts
+└── ...
+
+repositories/
+├── auth-repository.ts
+├── workout-repository.ts
+├── workout-session-repository.ts
+└── ...
+
+types/
+├── api-types.ts
+├── user-types.ts
+├── workout-types.ts
+└── ...
+
+schemas/
+├── auth-schemas.ts
+└── ...
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

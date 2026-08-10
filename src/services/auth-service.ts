@@ -10,17 +10,17 @@ import {
   LoginResponse,
   RegisterResponse,
   UserResponse,
+  UpdateUserResponse,
 } from '@/types/api-types';
-import { UserSettingsViewModel } from '@/types/user-types';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/auth';
 
 export default class AuthService {
-  //Me
-  static async me(token: string): Promise<ApiResponse<UserResponse>> {
+  //GET: Current logged in user
+  static async getCurrentUser(token: string): Promise<ApiResponse<UserResponse>> {
     try {
-      const response = await fetch(`${API_URL}/me`, {
+      const response = await fetch(`${API_URL}/user`, {
         method: 'GET',
         headers: {
           Cookie: `token=${token}`,
@@ -62,7 +62,7 @@ export default class AuthService {
   //Register
   static async register(dto: RegisterUserDto): Promise<ApiResponse<RegisterResponse>> {
     try {
-      const response = await fetch(`${API_URL}/register`, {
+      const response = await fetch(`${API_URL}/user/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,12 +73,14 @@ export default class AuthService {
       const data: ApiResponse<RegisterResponse> = await response.json();
       return data;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
-  static async update(userData: UpdateUserDto, userId: number): Promise<ApiResponse<UserSettingsViewModel>> {
+  static async update(userData: UpdateUserDto, userId: number): Promise<ApiResponse<UpdateUserResponse>> {
     try {
       const response = await fetch(`/api/auth/update/${userId}`, {
         method: 'PUT',
@@ -88,14 +90,13 @@ export default class AuthService {
         body: JSON.stringify(userData),
       });
 
-      const data: ApiResponse<UserSettingsViewModel> = await response.json();
-
-      return data;
+      const result: ApiResponse<UpdateUserResponse> = await response.json();
+      return result;
     } catch (error) {
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Ett oväntat fel inträffade.',
-      };
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
