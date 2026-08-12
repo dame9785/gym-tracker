@@ -1,6 +1,3 @@
-//NEXT Redirect
-import { redirect } from 'next/navigation';
-
 //Types
 import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
 import {
@@ -41,7 +38,7 @@ export default class AuthService {
   //Login
   static async login(dto: LoginDto): Promise<ApiResponse<LoginResponse>> {
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,14 +77,14 @@ export default class AuthService {
     }
   }
 
-  static async update(userData: UpdateUserDto, userId: number): Promise<ApiResponse<UpdateUserResponse>> {
+  static async update(dto: UpdateUserDto, userId: number): Promise<ApiResponse<UpdateUserResponse>> {
     try {
-      const response = await fetch(`/api/auth/update/${userId}`, {
+      const response = await fetch(`${API_URL}/user/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(dto),
       });
 
       const result: ApiResponse<UpdateUserResponse> = await response.json();
@@ -110,8 +107,10 @@ export default class AuthService {
       const result: ApiResponse<LogoutResponse> = await response.json();
       return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Server fel',
+      } satisfies ApiErrorResponse;
     }
   }
 }

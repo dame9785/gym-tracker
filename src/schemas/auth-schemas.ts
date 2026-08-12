@@ -52,7 +52,7 @@ export const registerSchema = z.object({
 
   email: z.string().trim().email('Ogiltig e-postadress.').toLowerCase(),
   bodyWeight: z.number().min(20, 'Ogiltig kroppsvikt.').max(400, 'Ogiltig kroppsvikt.'),
-  height: z.number().min(20, 'Otilåten längd').max(400, 'Otilåten längd'),
+  height: z.number().min(20, 'Otilåten längd minsta längd 1.20cm').max(400, 'Otilåten längd'),
   goalWeight: z.number().min(20, 'Ogiltig målvikt.').max(400, 'Ogiltig målvikt.'),
   goalTypeId: z.number().min(1, 'Du måste välja ett mål.'),
   birthDate: birtDateSchema,

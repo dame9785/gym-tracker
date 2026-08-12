@@ -29,6 +29,7 @@ import type {
 import {
   loginSchema,
   registerSchema,
+  updateSchema,
   type LoginDto,
   type RegisterUserDto,
   type UpdateUserDto,
@@ -219,7 +220,7 @@ export class AuthService {
     }
 
     //Validation
-    const validation = registerSchema.safeParse(dto);
+    const validation = updateSchema.safeParse(dto);
     if (!validation.success) {
       const fieldErrors = ErrorsHelper.getFormErrors<RegisterUserDto>(validation.error.issues);
       const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));

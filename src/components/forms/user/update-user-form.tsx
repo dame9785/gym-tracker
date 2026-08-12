@@ -121,9 +121,10 @@ export default function UpdateUserForm({ user, goals }: Props) {
     try {
       const result = await UserService.update(validation.data, user.id);
       if (!result.success) {
-        toast.error('Något gick fel, kontot kunde inte registreras.');
+        toast.error('Något gick fel, kontot kunde inte uppdateras.');
         return;
       }
+      toast.success('Användare uppdaterad');
     } catch (error) {
       console.error('Register failed:', error);
       toast.error('Något gick fel, kontot kunde inte uppdateras.');
