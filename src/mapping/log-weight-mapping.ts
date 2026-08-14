@@ -17,4 +17,13 @@ export class LogWeightMapper {
       })),
     };
   }
+
+  static mapLogItemToViewModel(item: WeightLog) {
+    return {
+      id: item.id,
+      logDate: item.loggedAt.toString(),
+      note: item.note ?? '',
+      weight: item.weight,
+    };
+  }
 }

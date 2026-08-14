@@ -1,42 +1,50 @@
-//Types
-import type { LogWeightDto, LogWeightResponse } from '@/types/log-weight-types';
+// Schemas
+import { AddWeightDto } from '@/schemas/auth-schemas';
+import {
+  ApiErrorResponse,
+  ApiResponse,
+  DeleteLogWeightResponse,
+  LogWeightResponse,
+  UserLogWeightResponse,
+} from '@/types/api-types';
 
-//Next Redirect
-import { redirect } from 'next/navigation';
-
+const API_URL = '/api/log-weight';
 export class LogWeightService {
-  static async getAll(): Promise<LogWeightResponse | string> {
+  static async getAll(userId: number): Promise<ApiResponse<UserLogWeightResponse>> {
     try {
-      const response = await fetch('/api/log-weight', {
+      const response = await fetch(`${API_URL}/${userId}`, {
         method: 'GET',
       });
 
-      const result = await response.json();
-      if (!result) {
-        throw new Error('Nåogit gick fel');
-      }
+      const result: ApiResponse<UserLogWeightResponse> = await response.json();
+      console.log(result);
       return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Server fel',
+      } satisfies ApiErrorResponse;
     }
   }
 
-  static async delete(id: number) {
+  static async delete(id: number): Promise<ApiResponse<DeleteLogWeightResponse>> {
     try {
-      const response = await fetch(`/api/log-weight/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
       });
-      return await response.json();
+      const result: ApiResponse<DeleteLogWeightResponse> = await response.json();
+      return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Server fel',
+      } satisfies ApiErrorResponse;
     }
   }
 
-  static async create(dto: LogWeightDto): Promise<LogWeightResponse | string> {
+  static async create(dto: AddWeightDto, userId: number): Promise<ApiResponse<LogWeightResponse>> {
     try {
-      const response = await fetch('/api/log-weight', {
+      const response = await fetch(`${API_URL}/${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,15 +52,13 @@ export class LogWeightService {
         body: JSON.stringify(dto),
       });
 
-      if (!response.ok) {
-        const error = await response.text();
-        return 'Något gick fel.';
-        throw new Error(error);
-      }
-      return (await response.json()) as LogWeightResponse;
+      const result: ApiResponse<LogWeightResponse> = await response.json();
+      return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Server fel',
+      } satisfies ApiErrorResponse;
     }
   }
 }

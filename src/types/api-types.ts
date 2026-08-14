@@ -1,7 +1,6 @@
-import { User } from '@prisma/client';
 import { GoalTypeViewModel } from './goal-types';
 import { UserViewModel } from './user-types';
-
+import { LogItemViewModel } from './log-weight-types';
 export interface ApiSuccessResponse<T> {
   success: true;
   data: T;
@@ -45,4 +44,18 @@ export interface LogoutResponse {
 //Goal Type
 export interface GoalResponse {
   goals: GoalTypeViewModel[];
+}
+
+export interface UserLogWeightResponse {
+  logList: LogItemViewModel[];
+  currentWeight: string | undefined;
+  startWeight: string | undefined;
+}
+
+export interface LogWeightResponse {
+  log: LogItemViewModel;
+}
+
+export interface DeleteLogWeightResponse {
+  data?: [];
 }

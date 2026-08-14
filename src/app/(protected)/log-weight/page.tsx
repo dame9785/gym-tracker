@@ -9,12 +9,31 @@ import Button from '@/components/button/button';
 
 //Services
 import { WeightLogService } from '@/services-server/weight-log-service';
+import { getTokenFromCookieStore } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import AuthService from '@/services/auth-service';
+import { UserViewModel } from '@/types/user-types';
 
 const weightLogService = new WeightLogService();
 
 export default async function LogWeight() {
-  const data = await weightLogService.getAll();
-  const logList = data.log?.logList;
+  const token = await getTokenFromCookieStore();
+
+  if (!token) {
+    redirect('/account/login');
+  }
+
+  const response = await AuthService.getCurrentUser(token);
+  if (!response.success || response.data == null) {
+    redirect('/account/login');
+  }
+
+  const user: UserViewModel = response.data.user;
+
+  const result = await weightLogService.getAll(user.id);
+  const LogList = result.success ? result.data.logList : [];
+  const currentWeight = result.success ? result.data.currentWeight : 0;
+  const startWeight = result.success ? result.data.startWeight : 0;
 
   return (
     <div className="container max-w-7xl">
@@ -26,19 +45,21 @@ export default async function LogWeight() {
         </div>
 
         <Link href="/log-weight/create">
-          <Button type="button" text="Logga vikt" variant="secondary" />
+          <Button type="submit" variant="primary">
+            Logga vikt
+          </Button>
         </Link>
       </div>
 
       {/* Statistik */}
-      <Statistic currentWeight={data.log?.currentWeight} startWeight={data.log?.startWeight} />
+      <Statistic currentWeight={currentWeight} startWeight={startWeight} />
 
       {/* Graf */}
       <div className="mb-10 rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
         <h2 className="mb-6 text-xl font-semibold text-white">Viktutveckling</h2>
 
         <div className="h-72">
-          <WeightChart logList={logList ?? []} />
+          <WeightChart logList={LogList} />
         </div>
       </div>
 
@@ -59,7 +80,7 @@ export default async function LogWeight() {
           </thead>
 
           <tbody>
-            {logList?.map((item) => {
+            {LogList?.map((item) => {
               return <LogHistoryList key={item.id} logItem={item} />;
             })}
           </tbody>

@@ -69,6 +69,15 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Lösenord krävs.'),
 });
 
+export const addWeightSchema = z.object({
+  weight: z.number('Vikt får enbart ha siffor').min(20, 'Ogiltig vikt').max(400, 'Ogiltig vikt'),
+  note: z.string().trim().min(1, 'Du måste fylla i anteckning'),
+});
+
+/*User Dtos*/
 export type RegisterUserDto = z.infer<typeof registerSchema>;
 export type LoginDto = z.infer<typeof loginSchema>;
 export type UpdateUserDto = z.infer<typeof updateSchema>;
+
+/*Weight Dtos*/
+export type AddWeightDto = z.infer<typeof addWeightSchema>;

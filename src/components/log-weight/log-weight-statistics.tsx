@@ -1,6 +1,6 @@
 type StatisticProps = {
-  currentWeight?: string;
-  startWeight?: string;
+  currentWeight: string | number | undefined;
+  startWeight: string | number | undefined;
 };
 
 export default function Statistic({ currentWeight, startWeight }: StatisticProps) {

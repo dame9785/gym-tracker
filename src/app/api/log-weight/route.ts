@@ -1,44 +1,24 @@
-//Services
 import { WeightLogService } from '@/services-server/weight-log-service';
+import { ApiErrorResponse } from '@/types/api-types';
 
 //Next Response
 import { NextResponse } from 'next/server';
 
 const weightLogService = new WeightLogService();
 
-export async function GET(): Promise<NextResponse> {
+export async function GET({ params }: { params: Promise<{ id: string }> }) {
   try {
-    const response = await weightLogService.getAll();
-    return NextResponse.json(response, {
-      status: response.statusCode,
-    });
+    const { id } = await params;
+    const response = await weightLogService.getAll(Number(id));
+
+    return NextResponse.json(response, { status: response.success ? 200 : 404 });
   } catch (error) {
     return NextResponse.json(
       {
-        message: 'Server error',
-        logList: [],
         success: false,
-      },
-      {
-        status: 500,
-      },
+        message: error instanceof Error ? error.message : 'Something went wrong.',
+      } satisfies ApiErrorResponse,
+      { status: 500 },
     );
-  }
-}
-
-export async function POST(request: Request): Promise<NextResponse> {
-  try {
-    const body = await request.json();
-    if (!body) {
-      return NextResponse.json({ success: false, message: 'Request body saknas.' }, { status: 400 });
-    }
-    const result = await weightLogService.create(body);
-
-    return NextResponse.json(result, {
-      status: result.statusCode,
-    });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ success: false, message: 'Ett serverfel inträffade.' }, { status: 500 });
   }
 }

@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 type ButtonProps = {
   children: ReactNode;
   type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'delete';
   size?: 'small' | 'medium' | 'large';
   onClick?: () => void;
   disabled?: boolean;

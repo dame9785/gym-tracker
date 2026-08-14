@@ -39,31 +39,33 @@ export default function LogHistory({ logItem }: PageProps) {
   };
 
   const removeLogCallAPI = async (id: number): Promise<void> => {
-    const result = await LogWeightService.delete(id);
-
-    if (!result.success) {
+    try {
+      const result = await LogWeightService.delete(id);
+      if (!result.success) {
+        toast.error('Något gick fel');
+        return;
+      }
+      toast.success('Loggen raderades');
+      router.refresh();
+    } catch (error) {
       toast.error('Något gick fel');
-      return;
     }
-
-    toast.success('Loggen raderades');
-    router.refresh();
   };
 
   return (
     <>
       <tr className="border-t border-zinc-800 hover:bg-zinc-800/50">
         <td className="px-6 py-4 text-white">{new Date(logItem.logDate ?? '').toLocaleDateString('sv-SE')}</td>
-
         <td className="px-6 py-4 text-white">{logItem.weight} kg</td>
-
         <td className="px-6 py-4 text-zinc-400">{logItem.note}</td>
-
         <td className="px-6 py-4">
           <div className="flex gap-4">
-            <Button type="button" text="Redigera" variant="secondary" size="sm" />
-
-            <Button type="button" text="Ta bort" variant="delete" size="sm" onClick={() => handleDelete(logItem.id)} />
+            <Button type="submit" size="small" variant="primary">
+              Editera vikt
+            </Button>
+            <Button type="submit" variant="delete" size="small" onClick={() => handleDelete(logItem.id)}>
+              Ta bort vikt
+            </Button>
           </div>
         </td>
       </tr>

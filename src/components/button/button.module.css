@@ -13,17 +13,17 @@
   text-align: center;
 }
 
-.sm {
+.small {
   padding: 6px 12px;
   font-size: 0.875rem;
 }
 
-.md {
+.medium {
   padding: 10px 18px;
   font-size: 1rem;
 }
 
-.lg {
+.large {
   padding: 14px 24px;
   font-size: 1.125rem;
 }

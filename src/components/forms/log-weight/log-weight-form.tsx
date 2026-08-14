@@ -8,21 +8,34 @@ import { useState } from 'react';
 //Alert
 import { toast } from 'sonner';
 
+//CSS Modules
+import buttonStyles from '@/components/button/button.module.css';
+import FormStyles from '@/components/forms/form.module.css';
+
 //Services
 import { LogWeightService } from '@/services/log-weight-service';
-
-//Modules
-import FormStyles from '@/components/forms/form.module.css';
 
 //Components
 import Button from '@/components/button/button';
 
-//Types
-import type { LogWeightDto } from '@/types/log-weight-types';
+// Schemas
+import { addWeightSchema, AddWeightDto } from '@/schemas/auth-schemas';
 
-export default function LogWeightForm() {
+//Helpers
+import { ErrorsHelper } from '@/helpers/error-helper';
+import { UserViewModel } from '@/types/user-types';
+
+//Props
+interface Props {
+  user: UserViewModel;
+}
+
+export default function LogWeightForm({ user }: Props) {
+  console.log(user);
   const router = useRouter();
-  const [formData, setFormData] = useState<LogWeightDto>({
+  const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState<Partial<Record<keyof AddWeightDto, string>>>({});
+  const [formData, setFormData] = useState<AddWeightDto>({
     weight: 0,
     note: '',
   });
@@ -37,20 +50,35 @@ export default function LogWeightForm() {
 
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const LogWeightDto: LogWeightDto = {
-      weight: formData.weight,
+
+    const LogWeightDto = {
+      weight: Number(formData.weight),
       note: formData.note,
     };
 
-    const result = await LogWeightService.create(LogWeightDto);
-    if (typeof result === 'string') {
-      toast.error(result);
+    const validation = addWeightSchema.safeParse(LogWeightDto);
+    if (!validation.success) {
+      setErrors(ErrorsHelper.getFormErrors<AddWeightDto>(validation.error.issues));
       return;
     }
 
-    if (result.success) {
-      toast.success(result.message);
+    setIsSaving(true);
+    setErrors({});
+    try {
+      const result = await LogWeightService.create(LogWeightDto, user.id);
+      if (!result.success) {
+        if (result.errors) {
+          setErrors(ErrorsHelper.getFormErrorsFromApi<AddWeightDto>(result.errors));
+        }
+        toast.error('Något gick fel, vikt blev inte loggad');
+        return;
+      }
+      toast.success('Vikt loggad');
       router.push('/log-weight');
+    } catch (error) {
+      toast.error('Något gick fel, vikt blev inte loggad');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -71,23 +99,31 @@ export default function LogWeightForm() {
             name="weight"
             type="number"
             step="0.1"
-            min="1"
-            required
             placeholder="T.ex. 50"
             onChange={handleChange}
           ></input>
+          {errors.weight && <p className={FormStyles.fieldErrorMessage}>{errors.weight}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="note">
             Notering
           </label>
-          <textarea className={FormStyles.formInput} id="note" name="note" required placeholder="T.ex. morgonen" onChange={handleChange}></textarea>
+          <textarea
+            className={FormStyles.formInput}
+            id="note"
+            name="note"
+            placeholder="T.ex. morgonen"
+            onChange={handleChange}
+          ></textarea>
+          {errors.note && <p className={FormStyles.fieldErrorMessage}>{errors.note}</p>}
         </div>
 
         <div className="flex gap-2">
-          <Button type="submit" text="Logga vikt" variant="primary"></Button>
-          <Link href="/log-weight">
-            <Button type="button" text="Gå tillbaks" variant="secondary" />
+          <Button type="submit" variant="primary" disabled={isSaving}>
+            Logga vikt
+          </Button>
+          <Link href="/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
+            Gå tillbaks
           </Link>
         </div>
       </form>
