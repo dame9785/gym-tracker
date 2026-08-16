@@ -77,3 +77,11 @@ export interface ExerciseApiDeleteResponse {
 export interface ExerciseApiRegisterResponse {
   exercise: ExerciseViewModel;
 }
+
+export interface ExerciseApiGetByIdResponse {
+  exercise: ExerciseViewModel;
+}
+
+export interface ExerciseApiUpdateResponse {
+  exercise: ExerciseViewModel;
+}

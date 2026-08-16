@@ -16,4 +16,7 @@ export const registerExerciseSchema = z.object({
     .max(20, 'Utrustning får vara högst 20 tecken.'),
 });
 
+export const updateExerciseSchema = registerExerciseSchema;
+
 export type RegisterExericseDto = z.infer<typeof registerExerciseSchema>;
+export type UpdateExericseDto = z.infer<typeof updateExerciseSchema>;

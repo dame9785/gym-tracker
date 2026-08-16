@@ -9,10 +9,6 @@ export interface ExerciseViewModel {
   name: string;
   muscleGroup: string;
   equipment: string | null;
-  order: number;
-  sets: number;
-  reps: number;
-  weight: number | null;
 }
 
 export interface RegisterExerciseDto {

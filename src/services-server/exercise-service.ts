@@ -11,8 +11,10 @@ import {
   ApiResponse,
   ApiSuccessResponse,
   ExerciseApiDeleteResponse,
+  ExerciseApiGetByIdResponse,
   ExerciseApiRegisterResponse,
   ExerciseApiResponse,
+  ExerciseApiUpdateResponse,
 } from '@/types/api-types';
 import { registerExerciseSchema, RegisterExericseDto } from '@/schemas/exercise-schema';
 import { ErrorsHelper } from '@/helpers/error-helper';
@@ -89,30 +91,58 @@ export class ExerciseService {
     }
   }
 
-  async getById(id: number): Promise<ExerciseViewModel> {
+  async getById(id: number): Promise<ApiResponse<ExerciseApiGetByIdResponse>> {
     try {
       const exericse = await this.exerciseRepository.getById(id);
       if (!exericse) {
         throw new Error('Övning hittades inte');
       }
-      const viewModel = ExerciseMapper.exerciseModelToViewModel(exericse);
-      return viewModel;
+
+      return {
+        success: true,
+        message: 'Övning lyckades hämta',
+        data: {
+          exercise: ExerciseMapper.exerciseModelToViewModel(exericse),
+        },
+      } satisfies ApiSuccessResponse<ExerciseApiGetByIdResponse>;
     } catch (error) {
-      throw new Error('Något gick fel');
+      console.log(error);
+      return {
+        success: false,
+        message: 'Server fel, gick ej ta bort övning',
+      } satisfies ApiErrorResponse;
     }
   }
 
-  async update(id: number, dto: RegisterExerciseDto): Promise<ExerciseViewModel> {
+  async update(id: number, dto: RegisterExerciseDto): Promise<ApiResponse<ExerciseApiUpdateResponse>> {
+    const validation = registerExerciseSchema.safeParse(dto);
+
+    if (!validation.success) {
+      const fieldErrors = ErrorsHelper.getFormErrors<ExerciseApiRegisterResponse>(validation.error.issues);
+      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
+
+      return {
+        success: false,
+        message: 'Felaktig email eller lösenord.',
+        errors: errors,
+      } satisfies ApiErrorResponse;
+    }
+
     try {
       const updatedExericse = await this.exerciseRepository.update(id, dto);
-      if (!updatedExericse) {
-        throw new Error('Övning ej uppdaterad');
-      }
-
-      const viewModel = ExerciseMapper.exerciseModelToViewModel(updatedExericse);
-      return viewModel;
+      return {
+        success: true,
+        message: 'Övning uppdaterad!',
+        data: {
+          exercise: ExerciseMapper.exerciseModelToViewModel(updatedExericse),
+        },
+      } satisfies ApiSuccessResponse<ExerciseApiUpdateResponse>;
     } catch (error) {
-      throw new Error('Något gick fel');
+      console.log(error);
+      return {
+        success: false,
+        message: 'Server fel, gick ej ta bort övning',
+      } satisfies ApiErrorResponse;
     }
   }
 }

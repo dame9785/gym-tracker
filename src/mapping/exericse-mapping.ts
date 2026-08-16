@@ -7,10 +7,6 @@ export class ExerciseMapper {
       name: exercise.name,
       muscleGroup: exercise.muscleGroup,
       equipment: exercise.equipment,
-      order: 0,
-      sets: 0,
-      reps: 0,
-      weight: 0,
     };
   }
 }

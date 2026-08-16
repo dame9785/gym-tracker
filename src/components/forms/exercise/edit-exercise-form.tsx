@@ -8,7 +8,7 @@ import ExerciseService from '@/services/exercise-service';
 import FormStyles from '@/components/forms/form.module.css';
 
 //Types
-import type { RegisterExerciseDto } from '@/types/exercise-types';
+import type { ExerciseViewModel, RegisterExerciseDto } from '@/types/exercise-types';
 
 //Toast alert
 import { toast } from 'sonner';
@@ -16,40 +16,23 @@ import { toast } from 'sonner';
 //Next &  Routing
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { updateExerciseSchema, UpdateExericseDto } from '@/schemas/exercise-schema';
+import { ErrorsHelper } from '@/helpers/error-helper';
 
 type Props = {
-  exerciseId: string;
+  exericse: ExerciseViewModel;
 };
 
-export default function EditExercise({ exerciseId }: Props) {
+export default function EditExercise({ exericse }: Props) {
   const router = useRouter();
+  const [errors, setErrors] = useState<Partial<Record<keyof UpdateExericseDto, string>>>({});
 
-  const [formData, setFormData] = useState<RegisterExerciseDto>({
-    name: '',
-    muscleGroup: '',
-    equipment: '',
+  const [formData, setFormData] = useState<UpdateExericseDto>({
+    name: exericse.name,
+    muscleGroup: exericse.muscleGroup,
+    equipment: exericse.equipment || '',
   });
-
-  useEffect(() => {
-    const fetchExercise = async () => {
-      const result = await ExerciseService.getById(exerciseId);
-
-      const exericse = result.exericse;
-      if (!exericse) {
-        toast.error('Gick inte att hämta övning');
-        return;
-      }
-
-      setFormData({
-        name: exericse.name,
-        muscleGroup: exericse.muscleGroup,
-        equipment: exericse.equipment,
-      });
-    };
-
-    fetchExercise();
-  }, [exerciseId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -62,22 +45,34 @@ export default function EditExercise({ exerciseId }: Props) {
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const registerDto: RegisterExerciseDto = {
+    const exericseDto = {
       name: formData.name,
       muscleGroup: formData.muscleGroup,
       equipment: formData.equipment,
     };
 
-    if (registerDto.name === '' || registerDto.muscleGroup === '' || registerDto.equipment === '') {
-      toast.error('Alla fält måste fyllas i');
+    const validation = updateExerciseSchema.safeParse(exericseDto);
+    if (!validation.success) {
+      setErrors(ErrorsHelper.getFormErrors<UpdateExericseDto>(validation.error.issues));
       return;
     }
-    const result = await ExerciseService.edit(exerciseId, registerDto);
-    if (!result.success) {
-      toast.error('Uppdateringen misslyckades, försök igen');
+
+    try {
+      const response = await ExerciseService.update(exericse.id, validation.data);
+      if (!response.success) {
+        if (response.errors) {
+          setErrors(ErrorsHelper.getFormErrorsFromApi<RegisterExerciseDto>(response.errors));
+        }
+        toast.error('Något gick fel, övning kunde inte skapas');
+        return;
+      }
+      toast.success('Övning skapad');
+    } catch (error) {
+      toast.error('Något gick fel, vikt blev inte loggad');
+      return;
+    } finally {
+      router.push('/exercise');
     }
-    toast.success('Uppdateringen lyckades');
-    router.push('/exercise');
   };
 
   return (
@@ -101,6 +96,7 @@ export default function EditExercise({ exerciseId }: Props) {
             value={formData.name}
             onChange={handleChange}
           ></input>
+          {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="muscleGroup">
@@ -116,6 +112,7 @@ export default function EditExercise({ exerciseId }: Props) {
             value={formData.muscleGroup}
             onChange={handleChange}
           ></input>
+          {errors.muscleGroup && <p className={FormStyles.fieldErrorMessage}>{errors.muscleGroup}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="equipment">
@@ -131,11 +128,16 @@ export default function EditExercise({ exerciseId }: Props) {
             value={formData.equipment}
             onChange={handleChange}
           ></input>
+          {errors.equipment && <p className={FormStyles.fieldErrorMessage}>{errors.equipment}</p>}
         </div>
         <div className="flex gap-2">
-          <Button type="submit" text="Uppdatera" variant="primary"></Button>
+          <Button type="submit" variant="primary">
+            Uppdatera
+          </Button>
           <Link href="/exercise">
-            <Button type="button" text="Gå tillbaks" variant="secondary" />
+            <Button type="submit" variant="secondary">
+              Gå tillbaks
+            </Button>
           </Link>
         </div>
       </form>

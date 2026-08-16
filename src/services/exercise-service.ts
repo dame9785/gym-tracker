@@ -1,10 +1,13 @@
 //Types
+import { UpdateExericseDto } from '@/schemas/exercise-schema';
 import {
   ApiErrorResponse,
   ApiResponse,
   ExerciseApiDeleteResponse,
+  ExerciseApiGetByIdResponse,
   ExerciseApiRegisterResponse,
   ExerciseApiResponse,
+  ExerciseApiUpdateResponse,
 } from '@/types/api-types';
 import type { RegisterExerciseDto } from '@/types/exercise-types';
 
@@ -69,8 +72,8 @@ export default class ExerciseService {
     }
   }
 
-  //PUT: Edit Exericse
-  static async edit(id: string, dto: RegisterExerciseDto) {
+  //PUT: Update Exericse
+  static async update(id: number, dto: UpdateExericseDto): Promise<ApiResponse<ExerciseApiUpdateResponse>> {
     try {
       const response = await fetch(`/api/exercises/${id}`, {
         method: 'PUT',
@@ -79,26 +82,29 @@ export default class ExerciseService {
         },
         body: JSON.stringify(dto),
       });
-      if (!response.ok) {
-        throw Error('Gick inte uppdatera övning');
-      }
-      return response.json();
+      const result: ApiResponse<ExerciseApiUpdateResponse> = await response.json();
+      return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
   //GET Exericse by Id
-  static async getById(id: string) {
+  static async getById(id: string): Promise<ApiResponse<ExerciseApiGetByIdResponse>> {
     try {
-      const response = await fetch(`/api/exercises/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'GET',
       });
-      return await response.json();
+      const result: ApiResponse<ExerciseApiGetByIdResponse> = await response.json();
+      return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 }
