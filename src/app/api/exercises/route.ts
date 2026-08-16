@@ -5,8 +5,8 @@ import { NextResponse } from 'next/server';
 import { ExerciseService } from '@/services-server/exercise-service';
 
 //Types
-import type { RegisterExerciseDto } from '@/types/exercise-types';
 import { ApiErrorResponse } from '@/types/api-types';
+import { RegisterExerciseDto } from '@/types/exercise-types';
 
 const exerciseService = new ExerciseService();
 
@@ -26,9 +26,17 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body: RegisterExerciseDto = await request.json();
-
-  const response = await exerciseService.registerExercise(body);
-
-  return NextResponse.json(response);
+  const dto: RegisterExerciseDto = await request.json();
+  try {
+    const response = await exerciseService.registerExercise(dto);
+    return NextResponse.json(response, { status: response.success ? 200 : 404 });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Server fel, gick ej skapa övning',
+      } satisfies ApiErrorResponse,
+      { status: 500 },
+    );
+  }
 }

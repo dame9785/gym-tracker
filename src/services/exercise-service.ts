@@ -1,6 +1,12 @@
 //Types
-import { ApiErrorResponse, ApiResponse, ExerciseApiDeleteResponse, ExerciseApiResponse } from '@/types/api-types';
-import type { RegisterExerciseDto, ExerciseResponse } from '@/types/exercise-types';
+import {
+  ApiErrorResponse,
+  ApiResponse,
+  ExerciseApiDeleteResponse,
+  ExerciseApiRegisterResponse,
+  ExerciseApiResponse,
+} from '@/types/api-types';
+import type { RegisterExerciseDto } from '@/types/exercise-types';
 
 //Next Redirect
 import { redirect } from 'next/navigation';
@@ -26,9 +32,9 @@ export default class ExerciseService {
   }
 
   //POST: Register Exericse
-  static async register(dto: RegisterExerciseDto): Promise<ExerciseResponse> {
+  static async register(dto: RegisterExerciseDto): Promise<ApiResponse<ExerciseApiRegisterResponse>> {
     try {
-      const response = await fetch('/api/exercises', {
+      const response = await fetch(`${API_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,18 +42,13 @@ export default class ExerciseService {
         body: JSON.stringify(dto),
       });
 
-      // API:t returnerar alltid ett ExerciseResponse
-      const result: ExerciseResponse = await response.json();
-
-      // Om servern svarade med t.ex. 400 eller 500
-      if (!response.ok) {
-        return result;
-      }
-
+      const result: ApiResponse<ExerciseApiRegisterResponse> = await response.json();
       return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 

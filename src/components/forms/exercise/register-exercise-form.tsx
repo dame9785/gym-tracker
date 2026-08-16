@@ -19,9 +19,12 @@ import { useRouter } from 'next/navigation';
 
 //Components
 import Button from '@/components/button/button';
+import { registerExerciseSchema } from '@/schemas/exercise-schema';
+import { ErrorsHelper } from '@/helpers/error-helper';
 
 export default function RegisterForm() {
   const router = useRouter();
+  const [errors, setErrors] = useState<Partial<Record<keyof RegisterExerciseDto, string>>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -40,24 +43,35 @@ export default function RegisterForm() {
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const registerDto: RegisterExerciseDto = {
+    const exerciseDto = {
       name: formData.name,
       muscleGroup: formData.muscleGroup,
       equipment: formData.equipment,
     };
 
-    if (registerDto.name === '' || registerDto.muscleGroup === '' || registerDto.equipment === '') {
-      toast.error('Alla fält måste fyllas i');
+    const validation = registerExerciseSchema.safeParse(exerciseDto);
+
+    if (!validation.success) {
+      setErrors(ErrorsHelper.getFormErrors<RegisterExerciseDto>(validation.error.issues));
       return;
     }
 
-    const result = await ExerciseService.register(registerDto);
-    if (!result.success) {
-      toast.error('Något gick fel. Övning ej skapad');
+    try {
+      const response = await ExerciseService.register(validation.data);
+      if (!response.success) {
+        if (response.errors) {
+          setErrors(ErrorsHelper.getFormErrorsFromApi<RegisterExerciseDto>(response.errors));
+        }
+        toast.error('Något gick fel, övning kunde inte skapas');
+        return;
+      }
+      toast.success('Övning skapad');
+    } catch (error) {
+      toast.error('Något gick fel, vikt blev inte loggad');
+      return;
+    } finally {
+      router.push('/exercise');
     }
-
-    toast.success('Övning blev skapad');
-    router.push('/exercise');
   };
 
   return (
@@ -71,7 +85,16 @@ export default function RegisterForm() {
           <label className={FormStyles.formLabel} htmlFor="name">
             Namn
           </label>
-          <input className={FormStyles.formInput} id="name" name="name" type="text" required placeholder="T.ex. knäböj" onChange={handleChange}></input>
+          <input
+            className={FormStyles.formInput}
+            id="name"
+            name="name"
+            type="text"
+            required
+            placeholder="T.ex. knäböj"
+            onChange={handleChange}
+          ></input>
+          {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="muscleGroup">
@@ -86,6 +109,7 @@ export default function RegisterForm() {
             placeholder="T.ex. ben"
             onChange={handleChange}
           ></input>
+          {errors.muscleGroup && <p className={FormStyles.fieldErrorMessage}>{errors.muscleGroup}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="equipment">
@@ -100,11 +124,16 @@ export default function RegisterForm() {
             placeholder="T.ex. kettlebell / kroppsvikt"
             onChange={handleChange}
           ></input>
+          {errors.equipment && <p className={FormStyles.fieldErrorMessage}>{errors.equipment}</p>}
         </div>
-        <div className="flex gap-2">
-          <Button type="submit" text="Lägg till övning" variant="primary"></Button>
+        <div className="grid grid-2">
+          <Button type="submit" variant="primary">
+            Lägg till övning
+          </Button>
           <Link href="/exercise">
-            <Button type="button" text="Gå tillbaks" variant="secondary" />
+            <Button type="button" variant="secondary">
+              Gå tillbaks
+            </Button>
           </Link>
         </div>
       </form>

@@ -11,8 +11,11 @@ import {
   ApiResponse,
   ApiSuccessResponse,
   ExerciseApiDeleteResponse,
+  ExerciseApiRegisterResponse,
   ExerciseApiResponse,
 } from '@/types/api-types';
+import { registerExerciseSchema, RegisterExericseDto } from '@/schemas/exercise-schema';
+import { ErrorsHelper } from '@/helpers/error-helper';
 
 export class ExerciseService {
   private exerciseRepository = new ExerciseRepository();
@@ -54,22 +57,35 @@ export class ExerciseService {
     }
   }
 
-  async registerExercise(dto: RegisterExerciseDto): Promise<ExerciseResponse> {
-    const response: ExerciseResponse = {
-      message: '',
-      isSuccess: false,
-    };
+  async registerExercise(dto: RegisterExericseDto): Promise<ApiResponse<ExerciseApiRegisterResponse>> {
+    const validation = registerExerciseSchema.safeParse(dto);
+
+    if (!validation.success) {
+      const fieldErrors = ErrorsHelper.getFormErrors<ExerciseApiRegisterResponse>(validation.error.issues);
+      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
+
+      return {
+        success: false,
+        message: 'Felaktig email eller lösenord.',
+        errors: errors,
+      } satisfies ApiErrorResponse;
+    }
 
     try {
-      await this.exerciseRepository.register(dto);
-
-      response.message = 'Övning sparad';
-      response.isSuccess = true;
-
-      return response;
+      const exericse = await this.exerciseRepository.register(dto);
+      return {
+        success: true,
+        message: 'Övning skapad',
+        data: {
+          exercise: ExerciseMapper.exerciseModelToViewModel(exericse),
+        },
+      } satisfies ApiSuccessResponse<ExerciseApiRegisterResponse>;
     } catch (error) {
-      response.message = 'Något gick fel, övning blev inte skapad';
-      return response;
+      console.log(error);
+      return {
+        success: false,
+        message: 'Server fel, gick ej ta bort övning',
+      } satisfies ApiErrorResponse;
     }
   }
 

@@ -73,3 +73,7 @@ export interface ExerciseApiDeleteResponse {
   success: true;
   message: string;
 }
+
+export interface ExerciseApiRegisterResponse {
+  exercise: ExerciseViewModel;
+}
