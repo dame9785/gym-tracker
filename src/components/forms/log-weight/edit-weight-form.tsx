@@ -2,7 +2,7 @@
 
 import { UserViewModel } from '@/types/user-types';
 import FormStyles from '@/components/forms/form.module.css';
-import { EditWeightDto, editWeightSchema } from '@/schemas/auth-schemas';
+import { EditWeightDto, editWeightSchema } from '@/schemas/weight-log.schemas';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Button from '@/components/button/button';

@@ -19,7 +19,7 @@ import { LogWeightService } from '@/services/log-weight-service';
 import Button from '@/components/button/button';
 
 // Schemas
-import { addWeightSchema, AddWeightDto } from '@/schemas/auth-schemas';
+import { AddWeightDto, addWeightSchema } from '@/schemas/weight-log.schemas';
 
 //Helpers
 import { ErrorsHelper } from '@/helpers/error-helper';

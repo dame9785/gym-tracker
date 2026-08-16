@@ -1,5 +1,5 @@
 // Schemas
-import { AddWeightDto, EditWeightDto } from '@/schemas/auth-schemas';
+import { AddWeightDto, EditWeightDto } from '@/schemas/weight-log.schemas';
 import {
   ApiErrorResponse,
   ApiResponse,

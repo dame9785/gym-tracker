@@ -3,7 +3,7 @@ import { WeightLogRepository } from '@/repositories/weight-log-repository';
 
 //Mapping
 import { LogWeightMapper } from '@/mapping/log-weight-mapping';
-import { AddWeightDto, addWeightSchema, EditWeightDto } from '@/schemas/auth-schemas';
+import { AddWeightDto, addWeightSchema, EditWeightDto } from '@/schemas/weight-log.schemas';
 import {
   ApiErrorResponse,
   ApiResponse,
@@ -13,7 +13,6 @@ import {
   LogWeightResponse,
   UserLogWeightResponse,
 } from '@/types/api-types';
-import { WeightLog } from '@prisma/client';
 
 export class WeightLogService {
   private weightLogRepository = new WeightLogRepository();
