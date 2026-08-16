@@ -70,9 +70,11 @@ export const loginSchema = z.object({
 });
 
 export const addWeightSchema = z.object({
-  weight: z.number('Vikt får enbart ha siffor').min(20, 'Ogiltig vikt').max(400, 'Ogiltig vikt'),
+  weight: z.coerce.number('Vikt får enbart ha siffror').min(20, 'Ogiltig vikt').max(400, 'Ogiltig vikt'),
   note: z.string().trim().min(1, 'Du måste fylla i anteckning'),
 });
+
+export const editWeightSchema = addWeightSchema;
 
 /*User Dtos*/
 export type RegisterUserDto = z.infer<typeof registerSchema>;
@@ -81,3 +83,4 @@ export type UpdateUserDto = z.infer<typeof updateSchema>;
 
 /*Weight Dtos*/
 export type AddWeightDto = z.infer<typeof addWeightSchema>;
+export type EditWeightDto = z.infer<typeof editWeightSchema>;

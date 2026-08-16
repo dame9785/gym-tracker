@@ -3,15 +3,17 @@ import { WeightLogRepository } from '@/repositories/weight-log-repository';
 
 //Mapping
 import { LogWeightMapper } from '@/mapping/log-weight-mapping';
-import { AddWeightDto, addWeightSchema } from '@/schemas/auth-schemas';
+import { AddWeightDto, addWeightSchema, EditWeightDto } from '@/schemas/auth-schemas';
 import {
   ApiErrorResponse,
   ApiResponse,
   ApiSuccessResponse,
   DeleteLogWeightResponse,
+  EditLogWeightResponse,
   LogWeightResponse,
   UserLogWeightResponse,
 } from '@/types/api-types';
+import { WeightLog } from '@prisma/client';
 
 export class WeightLogService {
   private weightLogRepository = new WeightLogRepository();
@@ -98,6 +100,60 @@ export class WeightLogService {
       return {
         success: false,
         message: 'Användaren kunde inte uppdateras.',
+      } satisfies ApiErrorResponse;
+    }
+  }
+
+  async update(weightId: string, dto: EditWeightDto): Promise<ApiResponse<EditLogWeightResponse>> {
+    const fieldErrors: Partial<Record<keyof AddWeightDto, string>> = {};
+    const validation = addWeightSchema.safeParse(dto);
+
+    if (!validation.success) {
+      return {
+        success: false,
+        message: 'Validerings fel',
+        errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
+      } satisfies ApiErrorResponse;
+    }
+
+    try {
+      const updatedData = await this.weightLogRepository.update(Number(weightId), dto);
+      const viewModel = LogWeightMapper.mapLogItemToViewModel(updatedData);
+      return {
+        success: true,
+        data: {
+          data: viewModel,
+        },
+      } satisfies ApiSuccessResponse<EditLogWeightResponse>;
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Något gick fel, server error',
+      } satisfies ApiErrorResponse;
+    }
+  }
+
+  async getById(id: number): Promise<ApiResponse<LogWeightResponse>> {
+    try {
+      const data = await this.weightLogRepository.getById(id);
+      if (!data) {
+        return {
+          success: false,
+          message: 'Viktloggen kunde inte hittas',
+        } satisfies ApiErrorResponse;
+      }
+
+      return {
+        success: true,
+        data: {
+          log: LogWeightMapper.mapLogItemToViewModel(data),
+        },
+      } satisfies ApiSuccessResponse<LogWeightResponse>;
+    } catch (error) {
+      console.error('getById error:', error);
+      return {
+        success: false,
+        message: 'Server fel, gick ej hämta viktloggen',
       } satisfies ApiErrorResponse;
     }
   }

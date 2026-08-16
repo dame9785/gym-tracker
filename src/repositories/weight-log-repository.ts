@@ -1,5 +1,6 @@
 //Prisma
 import { prisma } from '@/lib/prisma';
+import { EditWeightDto } from '@/schemas/auth-schemas';
 
 //Types
 import type { LogWeightDto } from '@/types/log-weight-types';
@@ -61,6 +62,27 @@ export class WeightLogRepository {
           note: dto.note,
         },
       });
+    });
+  }
+
+  async update(logWeightId: number, dto: EditWeightDto) {
+    console.log('logWeightId:', logWeightId);
+    return await prisma.weightLog.update({
+      where: {
+        id: logWeightId,
+      },
+      data: {
+        weight: dto.weight,
+        note: dto.note,
+      },
+    });
+  }
+
+  async getById(id: number) {
+    return await prisma.weightLog.findUnique({
+      where: {
+        id: id,
+      },
     });
   }
 }

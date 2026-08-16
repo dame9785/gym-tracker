@@ -1,5 +1,5 @@
 // Schemas
-import { AddWeightDto } from '@/schemas/auth-schemas';
+import { AddWeightDto, EditWeightDto } from '@/schemas/auth-schemas';
 import {
   ApiErrorResponse,
   ApiResponse,
@@ -8,7 +8,7 @@ import {
   UserLogWeightResponse,
 } from '@/types/api-types';
 
-const API_URL = '/api/log-weight';
+const API_URL = 'http://localhost:3000/api/log-weight';
 export class LogWeightService {
   static async getAll(userId: number): Promise<ApiResponse<UserLogWeightResponse>> {
     try {
@@ -55,6 +55,43 @@ export class LogWeightService {
       const result: ApiResponse<LogWeightResponse> = await response.json();
       return result;
     } catch (error) {
+      return {
+        success: false,
+        message: 'Server fel',
+      } satisfies ApiErrorResponse;
+    }
+  }
+
+  static async update(weightId: string, dto: EditWeightDto) {
+    try {
+      const response = await fetch(`${API_URL}/${weightId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dto),
+      });
+
+      const result: ApiResponse<LogWeightResponse> = await response.json();
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Server fel',
+      } satisfies ApiErrorResponse;
+    }
+  }
+
+  static async getById(id: string): Promise<ApiResponse<LogWeightResponse>> {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'GET',
+      });
+
+      const result: ApiResponse<LogWeightResponse> = await response.json();
+      return result;
+    } catch (error) {
+      console.log(error);
       return {
         success: false,
         message: 'Server fel',

@@ -5,6 +5,7 @@ import type { LogItemViewModel } from '@/types/log-weight-types';
 
 //Components
 import Button from '@/components/button/button';
+import ButtonStyle from '@/components/button/button.module.css';
 
 //Services
 import { LogWeightService } from '@/services/log-weight-service';
@@ -14,6 +15,7 @@ import { toast } from 'sonner';
 
 //Routing
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 //Props
 type PageProps = {
@@ -21,6 +23,7 @@ type PageProps = {
 };
 
 export default function LogHistory({ logItem }: PageProps) {
+  console.log(logItem);
   const router = useRouter();
 
   const handleDelete = async (id: number): Promise<void> => {
@@ -56,13 +59,17 @@ export default function LogHistory({ logItem }: PageProps) {
     <>
       <tr className="border-t border-zinc-800 hover:bg-zinc-800/50">
         <td className="px-6 py-4 text-white">{new Date(logItem.logDate ?? '').toLocaleDateString('sv-SE')}</td>
-        <td className="px-6 py-4 text-white">{logItem.weight} kg</td>
+        <td className="px-6 py-4 text-white">{logItem.weight.toString()} kg</td>
         <td className="px-6 py-4 text-zinc-400">{logItem.note}</td>
         <td className="px-6 py-4">
           <div className="flex gap-4">
-            <Button type="submit" size="small" variant="primary">
+            <Link
+              className={`${ButtonStyle.primary} ${ButtonStyle.button} ${ButtonStyle.small}`}
+              href={`/log-weight/edit/${logItem.id}`}
+              type="submit"
+            >
               Editera vikt
-            </Button>
+            </Link>
             <Button type="submit" variant="delete" size="small" onClick={() => handleDelete(logItem.id)}>
               Ta bort vikt
             </Button>

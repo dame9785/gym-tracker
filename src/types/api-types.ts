@@ -59,3 +59,7 @@ export interface LogWeightResponse {
 export interface DeleteLogWeightResponse {
   data?: [];
 }
+
+export interface EditLogWeightResponse {
+  data: LogItemViewModel;
+}

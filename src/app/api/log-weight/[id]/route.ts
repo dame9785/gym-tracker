@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 //Services
 import { WeightLogService } from '@/services-server/weight-log-service';
-import { AddWeightDto } from '@/schemas/auth-schemas';
+import { AddWeightDto, EditWeightDto } from '@/schemas/auth-schemas';
 import { ApiErrorResponse } from '@/types/api-types';
 
 const weightLogService = new WeightLogService();
@@ -37,6 +37,47 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json(result, { status: result.success ? 200 : 500 });
   } catch (error) {
     console.error(error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: error instanceof Error ? error.message : 'Something went wrong.',
+      } satisfies ApiErrorResponse,
+      { status: 500 },
+    );
+  }
+}
+
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  try {
+    const body: EditWeightDto = await request.json();
+
+    console.log('ID:', id);
+    console.log('DTO:', body);
+    const result = await weightLogService.update(id, body);
+    return NextResponse.json(result, { status: result.success ? 200 : 500 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: error instanceof Error ? error.message : 'Something went wrong.',
+      } satisfies ApiErrorResponse,
+      { status: 500 },
+    );
+  }
+}
+
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
+  try {
+    const result = await weightLogService.getById(Number(id));
+
+    return NextResponse.json(result, {
+      status: result.success ? 200 : 404,
+    });
+  } catch (error) {
     return NextResponse.json(
       {
         success: false,
