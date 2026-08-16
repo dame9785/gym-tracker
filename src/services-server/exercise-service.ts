@@ -6,44 +6,51 @@ import type { ExerciseResponse, ExerciseViewModel, RegisterExerciseDto } from '@
 
 //Mapper
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
+import {
+  ApiErrorResponse,
+  ApiResponse,
+  ApiSuccessResponse,
+  ExerciseApiDeleteResponse,
+  ExerciseApiResponse,
+} from '@/types/api-types';
 
 export class ExerciseService {
   private exerciseRepository = new ExerciseRepository();
 
-  async getAllExersise(): Promise<ExerciseViewModel[]> {
+  async getAllExersise(): Promise<ApiResponse<ExerciseApiResponse>> {
     try {
       const exercises = await this.exerciseRepository.getAll();
-      return exercises.map((exercise) => {
-        return {
-          id: exercise.id,
-          name: exercise.name,
-          muscleGroup: exercise.muscleGroup,
-          equipment: exercise.equipment,
-          order: 0,
-          sets: 0,
-          reps: 0,
-          weigth: 0,
-        };
-      });
+      return {
+        success: true,
+        data: {
+          exercises: exercises.map((x) => ExerciseMapper.exerciseModelToViewModel(x)),
+        },
+      };
     } catch (error) {
-      throw new Error('Något gick fel');
+      return {
+        success: false,
+        message: 'Server fel, gick inte hämta övningar',
+      } satisfies ApiErrorResponse;
     }
   }
 
-  async delete(id: number) {
-    const response: ExerciseResponse = {
-      message: '',
-      isSuccess: false,
-    };
-
+  async delete(id: number): Promise<ApiResponse<ExerciseApiDeleteResponse>> {
     try {
       await this.exerciseRepository.delete(id);
-      response.message = 'Övning sparad';
-      response.isSuccess = true;
-      return response;
+      return {
+        success: true,
+        message: 'Övning borttagen',
+        data: {
+          success: true,
+          message: 'Övning borttagen',
+        },
+      } satisfies ApiSuccessResponse<ExerciseApiDeleteResponse>;
     } catch (error) {
-      response.message = 'Något gick fel, övning blev inte skapad';
-      return response;
+      console.log(error);
+      return {
+        success: false,
+        message: 'Server fel, gick ej ta bort övning',
+      } satisfies ApiErrorResponse;
     }
   }
 

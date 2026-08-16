@@ -9,6 +9,7 @@ import {
 } from '@/types/api-types';
 
 const API_URL = 'http://localhost:3000/api/log-weight';
+
 export class LogWeightService {
   static async getAll(userId: number): Promise<ApiResponse<UserLogWeightResponse>> {
     try {

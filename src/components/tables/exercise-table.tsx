@@ -3,6 +3,9 @@
 //Components
 import Button from '@/components/button/button';
 
+// Next.js
+import { useRouter } from 'next/navigation';
+
 //Modules & Styling
 import ButtonStyle from '@/components/button/button.module.css';
 
@@ -17,26 +20,16 @@ import { toast } from 'sonner';
 
 //NEXT & Hooks
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
-export default function ExerciseTable() {
-  const [exercises, setExercises] = useState<ExerciseViewModel[]>([]);
+type Props = {
+  exercises: ExerciseViewModel[];
+};
 
-  //Get all exericses
-  useEffect(() => {
-    const fetchExercises = async () => {
-      const data = await ExerciseService.getAll();
-      setExercises(data);
-    };
-    fetchExercises();
-  }, []);
+export default function ExerciseTable({ exercises }: Props) {
+  const router = useRouter();
 
   //Handle delete
   const handleDelete = async (id: number) => {
-    const result = await ExerciseService.delete(id);
-    if (!result.success) {
-      toast.error('Gick inte radera övning');
-    }
     verifyDelete(id);
   };
 
@@ -57,19 +50,33 @@ export default function ExerciseTable() {
   };
 
   //Remove Exercise from array
-  const removeExericse = (id: number): void => {
-    setExercises((prev) => prev.filter((f) => f.id !== id));
-    toast.success('Övning raderad');
+  const removeExericse = async (id: number) => {
+    const response = await ExerciseService.delete(id);
+    console.log(response);
+    if (!response.success) {
+      toast.error('Något gick fel, övning kunde inte raderas');
+      return;
+    }
+    toast.success('Önving raderad');
+    router.refresh();
   };
 
   return (
     <table className="w-full border-collapse">
       <thead className="bg-zinc-800">
         <tr>
-          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Övning</th>
-          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Muskelgrupp</th>
-          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Redskap</th>
-          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Redigera</th>
+          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
+            Övning
+          </th>
+          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
+            Muskelgrupp
+          </th>
+          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
+            Redskap
+          </th>
+          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
+            Redigera
+          </th>
         </tr>
       </thead>
 
@@ -82,10 +89,15 @@ export default function ExerciseTable() {
               <td className="border-b border-zinc-800 px-6 py-4 text-zinc-300">{exercise.equipment}</td>
               <td className="border-b border-zinc-800 px-6 py-4 text-zinc-300">
                 <div className="flex gap-4">
-                  <Link className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`} href={`/exercise/${exercise.id}`}>
+                  <Link
+                    className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}
+                    href={`/exercise/${exercise.id}`}
+                  >
                     Redigera
                   </Link>
-                  <Button type="submit" text="Radera övning" variant="delete" size="sm" onClick={() => handleDelete(exercise.id)}></Button>
+                  <Button type="submit" variant="delete" onClick={() => handleDelete(exercise.id)}>
+                    Radera övning
+                  </Button>
                 </div>
               </td>
             </tr>

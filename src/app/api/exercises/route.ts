@@ -6,22 +6,21 @@ import { ExerciseService } from '@/services-server/exercise-service';
 
 //Types
 import type { RegisterExerciseDto } from '@/types/exercise-types';
+import { ApiErrorResponse } from '@/types/api-types';
 
 const exerciseService = new ExerciseService();
 
 export async function GET() {
   try {
-    const exercises = await exerciseService.getAllExersise();
-    return NextResponse.json(exercises, { status: 200 });
+    const result = await exerciseService.getAllExersise();
+    return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        message: 'Något gick fel.',
-      },
-      {
-        status: 500,
-      },
+        message: 'Server fel, gick inte hämta övningar',
+      } satisfies ApiErrorResponse,
+      { status: 500 },
     );
   }
 }

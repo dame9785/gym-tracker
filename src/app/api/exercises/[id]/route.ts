@@ -6,24 +6,22 @@ import { NextRequest, NextResponse } from 'next/server';
 
 //Types
 import type { RegisterExerciseDto } from '@/types/exercise-types';
+import { ApiErrorResponse } from '@/types/api-types';
 
 const exerciseService = new ExerciseService();
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-
-    await exerciseService.delete(Number(id));
-
-    return NextResponse.json({
-      success: true,
-      message: 'Övningen togs bort.',
-    });
+    console.log(id);
+    const result = await exerciseService.delete(Number(id));
+    console.log(result);
+    return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        message: 'Något gick fel.',
-      },
+        message: 'Server fel, gick inte radera övning',
+      } satisfies ApiErrorResponse,
       { status: 500 },
     );
   }

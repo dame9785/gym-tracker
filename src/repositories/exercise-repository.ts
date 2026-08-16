@@ -24,6 +24,12 @@ export class ExerciseRepository {
   }
 
   async delete(id: number) {
+    await prisma.workoutExercise.deleteMany({
+      where: {
+        exerciseId: id,
+      },
+    });
+
     return await prisma.exercise.delete({
       where: {
         id,

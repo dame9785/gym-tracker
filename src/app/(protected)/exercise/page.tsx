@@ -4,8 +4,12 @@ import Link from 'next/link';
 //Components
 import Button from '@/components/button/button';
 import ExerciseTable from '@/components/tables/exercise-table';
+import ExerciseService from '@/services/exercise-service';
 
-export default function Exercise() {
+export default async function Exercise() {
+  const response = await ExerciseService.getAll();
+  const exercises = response.success ? response.data.exercises : [];
+
   return (
     <div className="container">
       <div className="mb-8 p-5">
@@ -13,12 +17,14 @@ export default function Exercise() {
         <p className="mt-2 text-zinc-400">Här syns alla övningar, som du kan redigera eller ta bort</p>
         <div className="mt-5">
           <Link href="/exercise/register">
-            <Button type="button" text="Lägg till ny övning" variant="secondary" />
+            <Button type="submit" variant="primary">
+              Lägg till övning
+            </Button>
           </Link>
         </div>
       </div>
       <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
-        <ExerciseTable />
+        <ExerciseTable exercises={exercises} />
       </div>
     </div>
   );

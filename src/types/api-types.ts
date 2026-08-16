@@ -1,6 +1,7 @@
 import { GoalTypeViewModel } from './goal-types';
 import { UserViewModel } from './user-types';
 import { LogItemViewModel } from './log-weight-types';
+import { ExerciseViewModel } from './exercise-types';
 export interface ApiSuccessResponse<T> {
   success: true;
   data: T;
@@ -62,4 +63,13 @@ export interface DeleteLogWeightResponse {
 
 export interface EditLogWeightResponse {
   data: LogItemViewModel;
+}
+
+export interface ExerciseApiResponse {
+  exercises: ExerciseViewModel[];
+}
+
+export interface ExerciseApiDeleteResponse {
+  success: true;
+  message: string;
 }

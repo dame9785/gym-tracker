@@ -1,21 +1,27 @@
 //Types
-import type { RegisterExerciseDto, ExerciseResponse, ExerciseViewModel } from '@/types/exercise-types';
+import { ApiErrorResponse, ApiResponse, ExerciseApiDeleteResponse, ExerciseApiResponse } from '@/types/api-types';
+import type { RegisterExerciseDto, ExerciseResponse } from '@/types/exercise-types';
 
 //Next Redirect
 import { redirect } from 'next/navigation';
 
+const API_URL = 'http://localhost:3000/api/exercises';
+
 export default class ExerciseService {
   //GET: Exericses
-  static async getAll(): Promise<ExerciseViewModel[]> {
+  static async getAll(): Promise<ApiResponse<ExerciseApiResponse>> {
     try {
-      const response = await fetch('/api/exercises', {
+      const response = await fetch(`${API_URL}`, {
         method: 'GET',
       });
-      const data = await response.json();
-      return data;
+
+      const result: ApiResponse<ExerciseApiResponse> = await response.json();
+      return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
@@ -46,17 +52,19 @@ export default class ExerciseService {
   }
 
   //DELETE: Exericse by id
-  static async delete(id: number) {
+  static async delete(id: number): Promise<ApiResponse<ExerciseApiDeleteResponse>> {
     try {
-      const response = await fetch(`/api/exercises/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'delete',
       });
 
-      const result = await response.json();
+      const result: ApiResponse<ExerciseApiDeleteResponse> = await response.json();
       return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 

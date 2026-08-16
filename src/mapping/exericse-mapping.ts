@@ -10,7 +10,7 @@ export class ExerciseMapper {
       order: 0,
       sets: 0,
       reps: 0,
-      weigth: 0,
+      weight: 0,
     };
   }
 }
