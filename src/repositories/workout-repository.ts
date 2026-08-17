@@ -3,6 +3,7 @@ import { EditWorkoutDto, RegisterWorkoutDto } from '@/types/workout-types';
 
 //Prisma
 import { prisma } from '@/lib/prisma';
+import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
 export class WorkoutRepository {
   async create(dto: RegisterWorkoutDto) {
@@ -58,7 +59,7 @@ export class WorkoutRepository {
     });
   }
 
-  async update(id: number, dto: EditWorkoutDto) {
+  async update(id: number, dto: UpdateWorkoutDto) {
     return await prisma.$transaction(async (tx) => {
       // Uppdatera workout
       await tx.workout.update({

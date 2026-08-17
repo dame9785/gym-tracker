@@ -90,3 +90,17 @@ export interface ExerciseApiUpdateResponse {
 export interface WorkoutApiResponse {
   workouts: WorkoutViewModel[];
 }
+
+export interface WorkoutApiDeleteResponse {
+  success: true;
+  message: string;
+}
+
+export interface WorkoutApiGetByIdResponse {
+  workout: WorkoutViewModel;
+  exericses: ExerciseViewModel[];
+}
+
+export interface WorkoutApiUpdateResponse {
+  workout: WorkoutViewModel;
+}

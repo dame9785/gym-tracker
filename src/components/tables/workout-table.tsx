@@ -18,11 +18,15 @@ import type { WorkoutViewModel } from '@/types/workout-types';
 //Alert toast sooner
 import { toast } from 'sonner';
 
+import { useRouter } from 'next/navigation';
+
 type Props = {
   workouts: WorkoutViewModel[];
 };
 
 export default function WorkoutTable({ workouts }: Props) {
+  const router = useRouter();
+
   //Handle Delete workout
   const handledDelete = async (id: number): Promise<void> => {
     if (!id) {
@@ -50,23 +54,17 @@ export default function WorkoutTable({ workouts }: Props) {
   //Call API To Delete Workout
   const callDeleteApi = async (id: number) => {
     try {
-      const result = await WorkoutService.delete(id);
-
-      if (!result.success) {
+      const response = await WorkoutService.delete(id);
+      if (!response.success) {
         toast.error('Något gick fel, övning ej borttagen');
         return;
       }
-      //Remove workout from list
-      removeWorkoutFromList(id);
     } catch {
       toast.error('Något gick fel, övning ej borttagen');
+    } finally {
+      toast.success('Önving raderad');
+      router.refresh();
     }
-  };
-
-  //Remove Workout from workout-list
-  const removeWorkoutFromList = (id: number): void => {
-    // setWorkouts((prev) => prev.filter((workout) => workout.id !== id));
-    // toast.success('Övning borttagen');
   };
 
   return (
@@ -99,9 +97,9 @@ export default function WorkoutTable({ workouts }: Props) {
               <td className="max-w-sm px-6 py-5 text-zinc-300">{workout.description ?? '-'}</td>
               <td className="px-6 py-5">
                 <div className="flex flex-wrap gap-2">
-                  {workout.exercises.map((exercise) => (
+                  {workout.workoutExercises.map((exercise) => (
                     <span
-                      key={exercise.id}
+                      key={exercise.exerciseId}
                       className="rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-xs font-medium text-orange-300"
                     >
                       {exercise.name}

@@ -5,17 +5,18 @@ import FormStyles from '@/components/forms/form.module.css';
 import Button from '@/components/button/button';
 
 //Types
-import type { EditWorkoutExerciseDto, ExerciseViewModel } from '@/types/exercise-types';
+import type { ExerciseViewModel } from '@/types/exercise-types';
+import { UpdateWorkoutExericseDto } from '@/schemas/workout-schemas';
 
 type Props = {
   index: number;
-  exercise: EditWorkoutExerciseDto;
+  workoutExericse: UpdateWorkoutExericseDto;
   exercises: ExerciseViewModel[];
-  onUpdate: (index: number, field: keyof EditWorkoutExerciseDto, value: number | string) => void;
+  onUpdate: (index: number, field: keyof UpdateWorkoutExericseDto, value: number | string) => void;
   onRemove: (index: number) => void;
 };
 
-export default function WorkoutExerciseCard({ index, exercise, exercises, onUpdate, onRemove }: Props) {
+export default function WorkoutExerciseCard({ index, workoutExericse, exercises, onUpdate, onRemove }: Props) {
   return (
     <div className={FormStyles.exerciseCard}>
       {/* Övning */}
@@ -27,7 +28,7 @@ export default function WorkoutExerciseCard({ index, exercise, exercises, onUpda
         <select
           id={`exercise-${index}`}
           className={FormStyles.formSelect}
-          value={exercise.exerciseId}
+          value={workoutExericse.exerciseId}
           onChange={(e) => onUpdate(index, 'exerciseId', Number(e.target.value))}
         >
           <option value={0} disabled>
@@ -54,7 +55,7 @@ export default function WorkoutExerciseCard({ index, exercise, exercises, onUpda
             type="number"
             min={1}
             className={FormStyles.formInput}
-            value={exercise.sets ?? 0}
+            value={workoutExericse.sets ?? 0}
             onChange={(e) => onUpdate(index, 'sets', Number(e.target.value))}
           />
         </div>
@@ -69,7 +70,7 @@ export default function WorkoutExerciseCard({ index, exercise, exercises, onUpda
             type="number"
             min={1}
             className={FormStyles.formInput}
-            value={exercise.reps}
+            value={workoutExericse.reps}
             onChange={(e) => onUpdate(index, 'reps', Number(e.target.value))}
           />
         </div>
@@ -81,7 +82,7 @@ export default function WorkoutExerciseCard({ index, exercise, exercises, onUpda
 
           <input
             id={`weight-${index}`}
-            value={exercise.weight ?? 0}
+            value={workoutExericse.weight ?? 0}
             type="number"
             min={0}
             step="0.5"
@@ -101,11 +102,14 @@ export default function WorkoutExerciseCard({ index, exercise, exercises, onUpda
           id={`note-${index}`}
           rows={3}
           className={FormStyles.formTextarea}
-          value={exercise.note ?? 0}
+          value={workoutExericse.note}
           onChange={(e) => onUpdate(index, 'note', e.target.value)}
         />
       </div>
-      <Button type="button" text="Ta bort övning" variant="delete" onClick={() => onRemove(index)}></Button>
+
+      <Button type="submit" variant="delete" onClick={() => onRemove(index)}>
+        Ta bort övning
+      </Button>
     </div>
   );
 }

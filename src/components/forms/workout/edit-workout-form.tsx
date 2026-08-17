@@ -1,22 +1,15 @@
 'use client';
 
 //React hooks
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 //Styles
 import FormStyles from '@/components/forms/form.module.css';
 
 //Types
-import type { ExerciseViewModel, EditWorkoutExerciseDto } from '@/types/exercise-types';
-import type { EditWorkoutDto, EditWorkoutViewModel } from '@/types/workout-types';
-
-//Services
-import ExerciseService from '@/services/exercise-service';
-
-//Helpers
-import { hasDuplicateExercises } from '@/helpers/check-dupplicate-exericse-helper';
-import { validateWorkoutHelper } from '@/helpers/validation-workout-helper';
+import type { ExerciseViewModel } from '@/types/exercise-types';
+import type { WorkoutViewModel } from '@/types/workout-types';
 
 //Services
 import WorkoutService from '@/services/workout-service';
@@ -26,46 +19,25 @@ import { toast } from 'sonner';
 import EditWorkoutExericeCard from '@/components/forms/workout/edit-workout-exericse-card';
 
 //NEXT Redirect
-import { redirect } from 'next/navigation';
+
+import { UpdateWorkoutDto, UpdateWorkoutExericseDto, updateWorkoutSchema } from '@/schemas/workout-schemas';
+import { ErrorsHelper } from '@/helpers/error-helper';
 
 //Props
 type props = {
-  workoutId: number;
+  workout: WorkoutViewModel;
+  exericses: ExerciseViewModel[];
 };
 
-export default function EditWorkoutForm({ workoutId }: props) {
+export default function EditWorkoutForm({ workout, exericses }: props) {
+  const [errors, setErrors] = useState<Partial<Record<keyof UpdateWorkoutDto, string>>>({});
   const router = useRouter();
-  const [exercises, setExercises] = useState<ExerciseViewModel[]>([]);
-  const [formData, setFormData] = useState<EditWorkoutDto>({
-    name: '',
-    description: '',
-    workoutExercises: [],
+
+  const [formData, setFormData] = useState<UpdateWorkoutDto>({
+    name: workout.name,
+    description: workout.description ?? '',
+    workoutExercises: workout.workoutExercises,
   });
-
-  useEffect(() => {
-    const fetchExercises = async () => {
-      const data = await ExerciseService.getAll();
-      setExercises(data);
-    };
-
-    fetchExercises();
-  }, []);
-
-  const handleWorkoutData = (workout: EditWorkoutViewModel) => {
-    setFormData({
-      name: workout.name,
-      description: workout.description ?? '',
-      workoutExercises: workout.workoutExercises.map((x) => ({
-        exerciseId: x.exerciseId,
-        name: x.name,
-        sets: x.sets,
-        reps: x.reps,
-        order: x.order,
-        weight: x.weight,
-        note: '',
-      })),
-    });
-  };
 
   const addExercise = () => {
     setFormData((prev) => ({
@@ -85,7 +57,7 @@ export default function EditWorkoutForm({ workoutId }: props) {
     }));
   };
 
-  const updateExercise = (index: number, field: keyof EditWorkoutExerciseDto, value: number | string) => {
+  const updateExercise = (index: number, field: keyof UpdateWorkoutExericseDto, value: number | string) => {
     setFormData((prev) => {
       const updated = [...prev.workoutExercises];
 
@@ -108,61 +80,34 @@ export default function EditWorkoutForm({ workoutId }: props) {
     }));
   };
 
-  //GET: Workout/{ID}
-  useEffect(() => {
-    const fetchWorkout = async () => {
-      try {
-        const result = await WorkoutService.getById(Number(workoutId));
-        if (!result.success) {
-          toast('Något gick fel, gick inte hämta träningspass');
-        }
-        handleWorkoutData(result.workout);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-        redirect(`/error?message=${encodeURIComponent(message)}`);
-      }
-    };
-
-    fetchWorkout();
-  }, [workoutId]);
-
   //Handle Sumbit
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //Validate form data.
-    const validationResult = validateWorkoutHelper(formData);
-
-    if (!validationResult.success) {
-      toast.error(validationResult.message);
+    const validation = updateWorkoutSchema.safeParse(formData);
+    if (!validation.success) {
+      setErrors(ErrorsHelper.getFormErrors<UpdateWorkoutDto>(validation.error.issues));
       return;
     }
 
-    //Check duplicate exericses
-    if (hasDuplicateExercises(formData.workoutExercises)) {
-      toast.error('Du kan inte välja samma övning flera gånger.');
-      return false;
-    }
-
     try {
-      const result = await WorkoutService.update(Number(workoutId), formData);
-      if (!result.success) {
-        toast.error('Något gick fel, kunde inte skapa');
+      const response = await WorkoutService.update(Number(workout.id), validation.data);
+      if (!response.success) {
+        toast.error('Träningspass tillagt');
         return;
       }
-
-      toast.success('Träningspass tillagt');
-      router.push('/workout');
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      toast.error('Något gick fel, gick inte uppdatera träningspasset');
+      return;
+    } finally {
+      router.push('/workout');
     }
   };
 
   return (
     <div className={FormStyles.formContainer}>
       <h1 className={FormStyles.formTitle}>
-        Lägg till <span>träningspass</span>
+        Uppdatera <span>träningspass</span>
       </h1>
 
       <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
@@ -186,6 +131,7 @@ export default function EditWorkoutForm({ workoutId }: props) {
               }))
             }
           />
+          {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
         </div>
 
         {/* Beskrivning */}
@@ -208,18 +154,19 @@ export default function EditWorkoutForm({ workoutId }: props) {
               }))
             }
           />
+          {errors.description && <p className={FormStyles.fieldErrorMessage}>{errors.description}</p>}
         </div>
 
         {/* Övningar */}
         <div className={FormStyles.exerciseSection}>
           <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
-          {formData.workoutExercises.map((exercise, index) => (
+          {formData.workoutExercises.map((workoutExercise, index) => (
             <EditWorkoutExericeCard
               key={index}
               index={index}
-              exercise={exercise}
-              exercises={exercises}
+              workoutExericse={workoutExercise}
+              exercises={exericses}
               onUpdate={updateExercise}
               onRemove={removeExercise}
             />

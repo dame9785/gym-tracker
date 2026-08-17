@@ -5,7 +5,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { WorkoutService } from '@/services-server/workout-service';
 
 //Types
-import type { EditWorkoutDto } from '@/types/workout-types';
+import { ApiErrorResponse } from '@/types/api-types';
+import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
 const workoutService = new WorkoutService();
 
@@ -18,14 +19,9 @@ interface RouteContext {
 export async function GET(request: NextRequest, { params }: RouteContext) {
   try {
     const { id } = await params;
-
     const result = await workoutService.getById(Number(id));
 
-    if (!result.success) {
-      return NextResponse.json(result, { status: 404 });
-    }
-
-    return NextResponse.json(result);
+    return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     console.error(error);
 
@@ -33,7 +29,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
       {
         success: false,
         message: 'Något gick fel.',
-      },
+      } satisfies ApiErrorResponse,
       { status: 500 },
     );
   }
@@ -43,21 +39,16 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const body: EditWorkoutDto = await request.json();
+    const dto: UpdateWorkoutDto = await request.json();
 
-    const result = await workoutService.update(Number(id), body);
-
-    if (!result.success) {
-      return NextResponse.json({ result }, { status: 500 });
-    }
-    return NextResponse.json(result);
+    const result = await workoutService.update(Number(id), dto);
+    return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
         message: 'Något gick fel.',
-        workout: [],
-      },
+      } satisfies ApiErrorResponse,
       { status: 500 },
     );
   }
@@ -67,16 +58,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-
     const result = await workoutService.delete(Number(id));
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
         message: 'Något gick fel.',
-      },
+      } satisfies ApiErrorResponse,
       { status: 500 },
     );
   }

@@ -32,16 +32,26 @@ export interface EditWorkoutResponse {
 export interface WorkoutViewModel {
   id: number;
   name: string;
-  description: string | null;
+  description: string;
   createdAt: Date;
   updatedAt: Date;
-  exercises: ExerciseViewModel[];
+  workoutExercises: WorkoutExercisesViewModel[];
+}
+
+export interface WorkoutExercisesViewModel {
+  exerciseId: number;
+  name: string;
+  sets: number;
+  reps: number;
+  weight: number;
+  note: string;
+  order: number;
 }
 
 export interface EditWorkoutDto {
   name: string;
   description: string;
-  workoutExercises: EditWorkoutExerciseDto[];
+  workoutExericses: WorkoutExerciseViewModel[];
 }
 
 export interface RegisterWorkoutDto {

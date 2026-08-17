@@ -22,19 +22,17 @@ export class WorkoutMapper {
     return {
       id: workout.id,
       name: workout.name,
-      description: workout.description,
+      description: workout.description ?? '',
       createdAt: workout.createdAt,
       updatedAt: workout.updatedAt,
-
-      exercises: workout.exercises.map((we) => ({
-        id: we.exercise.id,
+      workoutExercises: workout.exercises.map((we) => ({
+        exerciseId: we.exerciseId,
         name: we.exercise.name,
-        muscleGroup: we.exercise.muscleGroup,
-        equipment: we.exercise.equipment,
-        order: we.order,
         sets: we.sets,
         reps: we.reps,
-        weight: we.weight,
+        weight: we.weight ?? 0,
+        note: we.note ?? '',
+        order: we.order,
       })),
     };
   }

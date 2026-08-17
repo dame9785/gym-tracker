@@ -7,7 +7,7 @@ export default async function Workouts() {
   const response = await WorkoutService.getAll();
   console.log(response);
   const workouts = response.success ? response.data.workouts : [];
-
+  console.log(workouts);
   return (
     <div className="container">
       <div className="mb-8 p-5">

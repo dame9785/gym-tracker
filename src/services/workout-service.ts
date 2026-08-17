@@ -1,8 +1,15 @@
 //Types
-import { ApiErrorResponse, ApiResponse, WorkoutApiResponse } from '@/types/api-types';
+import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
+import {
+  ApiErrorResponse,
+  ApiResponse,
+  WorkoutApiDeleteResponse,
+  WorkoutApiGetByIdResponse,
+  WorkoutApiResponse,
+  WorkoutApiUpdateResponse,
+} from '@/types/api-types';
 import type { ExerciseViewModel } from '@/types/exercise-types';
 import type {
-  DeleteWorkoutResponse,
   GetWorkoutResponse,
   EditWorkoutResponse,
   EditWorkoutDto,
@@ -53,8 +60,8 @@ export default class WorkoutService {
         method: 'GET',
       });
 
-      const result: ApiResponse<WorkoutApiResponse> = await response.json();
-      return result;
+      const result = await response.json();
+      return result as ApiResponse<WorkoutApiResponse>;
     } catch (error) {
       return {
         success: false,
@@ -64,71 +71,56 @@ export default class WorkoutService {
   }
 
   //Update Workout
-  static async update(id: number, dto: EditWorkoutDto): Promise<EditWorkoutResponse> {
+  static async update(id: number, dto: UpdateWorkoutDto): Promise<ApiResponse<WorkoutApiUpdateResponse>> {
     try {
-      const response = await fetch(`/api/workouts/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(dto),
       });
-
-      const result: EditWorkoutResponse = await response.json();
-      if (!result.success) {
-        return {
-          success: false,
-          message: 'Något gick fel, gick inte hämta träningspass',
-          workout: [],
-        };
-      }
-
-      return result as EditWorkoutResponse;
+      const result = await response.json();
+      console.log(result);
+      return result as ApiResponse<WorkoutApiUpdateResponse>;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
   //GET: Workout/{id}
-  static async getById(id: number): Promise<GetWorkoutResponse> {
+  static async getById(id: number): Promise<ApiResponse<WorkoutApiGetByIdResponse>> {
     try {
-      const response = await fetch(`/api/workouts/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'GET',
       });
 
-      if (!response.ok) {
-        return {
-          success: false,
-          message: 'Något gick fel, gick inte hämta träningspass',
-          workout: null as never, // eller gör workout valfri, se nedan
-        };
-      }
-      return (await response.json()) as GetWorkoutResponse;
+      const result = await response.json();
+      return result as ApiResponse<WorkoutApiGetByIdResponse>;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
   //DELETE: Workout
-  static async delete(id: number) {
+  static async delete(id: number): Promise<ApiResponse<WorkoutApiDeleteResponse>> {
     try {
-      const response = await fetch(`/api/workouts/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
       });
-
-      if (!response.ok) {
-        return {
-          success: false,
-          message: 'Något gick fel, träningspass blev ej borttagen',
-        };
-      }
-
-      return (await response.json()) as DeleteWorkoutResponse;
+      const result = await response.json();
+      return result as ApiResponse<WorkoutApiDeleteResponse>;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 }

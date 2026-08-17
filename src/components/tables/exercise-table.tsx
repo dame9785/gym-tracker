@@ -52,7 +52,7 @@ export default function ExerciseTable({ exercises }: Props) {
   //Remove Exercise from array
   const removeExericse = async (id: number) => {
     const response = await ExerciseService.delete(id);
-    console.log(response);
+
     if (!response.success) {
       toast.error('Något gick fel, övning kunde inte raderas');
       return;
