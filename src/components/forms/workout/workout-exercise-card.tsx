@@ -16,7 +16,13 @@ interface WorkoutExerciseCardProps {
   onRemove: (index: number) => void;
 }
 
-export default function WorkoutExerciseCard({ index, exercise, exercises, onUpdate, onRemove }: WorkoutExerciseCardProps) {
+export default function WorkoutExerciseCard({
+  index,
+  exercise,
+  exercises,
+  onUpdate,
+  onRemove,
+}: WorkoutExerciseCardProps) {
   return (
     <div className={FormStyles.exerciseCard}>
       {/* Övning */}
@@ -106,7 +112,9 @@ export default function WorkoutExerciseCard({ index, exercise, exercises, onUpda
           onChange={(e) => onUpdate(index, 'note', e.target.value)}
         />
       </div>
-      <Button type="button" text="Ta bort övning" variant="delete" onClick={() => onRemove(index)}></Button>
+      <Button type="button" variant="delete" onClick={() => onRemove(index)}>
+        Ta bort
+      </Button>
     </div>
   );
 }

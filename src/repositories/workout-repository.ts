@@ -1,5 +1,5 @@
 //Types
-import { EditWorkoutDto, RegisterWorkoutDto } from '@/types/workout-types';
+import { RegisterWorkoutDto } from '@/types/workout-types';
 
 //Prisma
 import { prisma } from '@/lib/prisma';
@@ -13,6 +13,16 @@ export class WorkoutRepository {
           userId: 1,
           name: dto.name,
           description: dto.description,
+        },
+        include: {
+          exercises: {
+            include: {
+              exercise: true,
+            },
+            orderBy: {
+              order: 'asc',
+            },
+          },
         },
       });
 

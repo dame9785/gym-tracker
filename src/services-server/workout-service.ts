@@ -3,7 +3,7 @@ import { WorkoutRepository } from '@/repositories/workout-repository';
 import { ExerciseRepository } from '@/repositories/exercise-repository';
 
 //Types
-import type { RegisterWorkoutDto, EditWorkoutDto } from '@/types/workout-types';
+import type { RegisterWorkoutDto } from '@/types/workout-types';
 
 //Mapping
 import { WorkoutMapper } from '@/mapping/workout-mapping';
@@ -13,6 +13,7 @@ import {
   ApiSuccessResponse,
   WorkoutApiDeleteResponse,
   WorkoutApiGetByIdResponse,
+  WorkoutApiRegisterResponse,
   WorkoutApiResponse,
   WorkoutApiUpdateResponse,
 } from '@/types/api-types';
@@ -24,37 +25,24 @@ export class WorkoutService {
   private workoutRepository = new WorkoutRepository();
   private exericseRepository = new ExerciseRepository();
 
-  async create(dto: RegisterWorkoutDto) {
+  async create(dto: RegisterWorkoutDto): Promise<ApiResponse<WorkoutApiRegisterResponse>> {
     try {
-      // Validering
-      if (!dto.name.trim()) {
-        return {
-          success: false,
-          message: 'Workout måste ha ett namn.',
-        };
-      }
-
-      if (dto.workoutExercises.length === 0) {
-        return {
-          success: false,
-          message: 'Workout måste innehålla minst en övning.',
-        };
-      }
-
       const workout = await this.workoutRepository.create(dto);
 
       return {
         success: true,
         message: 'Workout skapad.',
-        workout,
-      };
+        data: {
+          workout: WorkoutMapper.workoutDtoToViewModel(workout),
+        },
+      } satisfies ApiResponse<WorkoutApiRegisterResponse>;
     } catch (error) {
       console.error('Kunde inte skapa workout:', error);
 
       return {
         success: false,
-        message: 'Något gick fel när träningspasset skulle sparas.',
-      };
+        message: 'Server fel, kunde inte hämta workouts',
+      } satisfies ApiErrorResponse;
     }
   }
 

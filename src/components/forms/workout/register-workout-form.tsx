@@ -2,7 +2,7 @@
 
 // Next & Hooks
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // Styles
 import FormStyles from '@/components/forms/form.module.css';
@@ -15,7 +15,6 @@ import WorkoutService from '@/services/workout-service';
 
 //Helpers
 import { hasDuplicateExercises } from '@/helpers/check-dupplicate-exericse-helper';
-import { validateWorkoutHelper } from '@/helpers/validation-workout-helper';
 
 //Types
 import type { RegisterWorkoutDto } from '@/types/workout-types';
@@ -23,33 +22,29 @@ import type { ExerciseViewModel, RegisterWorkoutExerciseDto } from '@/types/exer
 
 //Toast alert sonner
 import { toast } from 'sonner';
+import { AddWorkoutDto, registerWorkoutSchema } from '@/schemas/workout-schemas';
+import { ErrorsHelper } from '@/helpers/error-helper';
 
-export default function AddWorkoutForm() {
+type Props = {
+  exericses: ExerciseViewModel[];
+};
+
+export default function AddWorkoutForm({ exericses }: Props) {
   const router = useRouter();
-
-  const [exercises, setExercises] = useState<ExerciseViewModel[]>([]);
+  const [errors, setErrors] = useState<Partial<Record<keyof AddWorkoutDto, string>>>({});
   const [formData, setFormData] = useState<RegisterWorkoutDto>({
     name: '',
     description: '',
     workoutExercises: [],
   });
 
-  useEffect(() => {
-    const fetchExercises = async () => {
-      const data = await WorkoutService.get();
-      setExercises(data);
-    };
-
-    fetchExercises();
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //Validate form data.
-    const validationResult = validateWorkoutHelper(formData);
-    if (!validationResult.success) {
-      toast.error(validationResult.message);
+    const validation = registerWorkoutSchema.safeParse(formData);
+    console.log(validation);
+    if (!validation.success) {
+      setErrors(ErrorsHelper.getFormErrors<AddWorkoutDto>(validation.error.issues));
       return;
     }
 
@@ -65,11 +60,12 @@ export default function AddWorkoutForm() {
         toast.error('Något gick fel, kunde inte skapa');
         return;
       }
-
-      toast.success('Träningspass tillagt');
-      router.push('/workout');
     } catch (error) {
       toast.error('Något är fel, övning ej skapad');
+      return;
+    } finally {
+      toast.success('Träningspass tillagt');
+      router.push('/workout');
     }
   };
 
@@ -126,7 +122,6 @@ export default function AddWorkoutForm() {
           </label>
 
           <input
-            required
             id="name"
             type="text"
             className={FormStyles.formInput}
@@ -139,6 +134,7 @@ export default function AddWorkoutForm() {
               }))
             }
           />
+          {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
         </div>
 
         {/* Beskrivning */}
@@ -148,7 +144,6 @@ export default function AddWorkoutForm() {
           </label>
 
           <textarea
-            required
             id="description"
             rows={4}
             className={FormStyles.formTextarea}
@@ -161,6 +156,7 @@ export default function AddWorkoutForm() {
               }))
             }
           />
+          {errors.description && <p className={FormStyles.fieldErrorMessage}>{errors.description}</p>}
         </div>
 
         {/* Övningar */}
@@ -168,7 +164,14 @@ export default function AddWorkoutForm() {
           <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
           {formData.workoutExercises.map((exercise, index) => (
-            <WorkoutExerciseCard key={index} index={index} exercise={exercise} exercises={exercises} onUpdate={updateExercise} onRemove={removeExercise} />
+            <WorkoutExerciseCard
+              key={index}
+              index={index}
+              exercise={exercise}
+              exercises={exericses}
+              onUpdate={updateExercise}
+              onRemove={removeExercise}
+            />
           ))}
 
           <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>

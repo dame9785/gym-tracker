@@ -104,3 +104,7 @@ export interface WorkoutApiGetByIdResponse {
 export interface WorkoutApiUpdateResponse {
   workout: WorkoutViewModel;
 }
+
+export interface WorkoutApiRegisterResponse {
+  workout: WorkoutViewModel;
+}

@@ -5,39 +5,18 @@ import {
   ApiResponse,
   WorkoutApiDeleteResponse,
   WorkoutApiGetByIdResponse,
+  WorkoutApiRegisterResponse,
   WorkoutApiResponse,
   WorkoutApiUpdateResponse,
 } from '@/types/api-types';
-import type { ExerciseViewModel } from '@/types/exercise-types';
-import type {
-  GetWorkoutResponse,
-  EditWorkoutResponse,
-  EditWorkoutDto,
-  RegisterWorkoutDto,
-} from '@/types/workout-types';
 
-//Next Redirect
-import { redirect } from 'next/navigation';
+import type { RegisterWorkoutDto } from '@/types/workout-types';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/workouts';
 
 export default class WorkoutService {
-  static async get(): Promise<ExerciseViewModel[]> {
-    try {
-      const response = await fetch('/api/exercises', {
-        method: 'GET',
-      });
-
-      const exerices = response.json();
-      return exerices;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
-    }
-  }
-
-  static async create(dto: RegisterWorkoutDto) {
+  static async create(dto: RegisterWorkoutDto): Promise<ApiResponse<WorkoutApiRegisterResponse>> {
     try {
       const response = await fetch('/api/workouts', {
         method: 'POST',
@@ -47,10 +26,13 @@ export default class WorkoutService {
         body: JSON.stringify(dto),
       });
 
-      return await response.json();
+      const result = await response.json();
+      return result as ApiResponse<WorkoutApiRegisterResponse>;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
