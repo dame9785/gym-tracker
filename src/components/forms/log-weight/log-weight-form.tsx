@@ -121,7 +121,7 @@ export default function LogWeightForm({ user }: Props) {
           <Button type="submit" variant="primary" disabled={isSaving}>
             Logga vikt
           </Button>
-          <Link href="/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
+          <Link href="/log-weight" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
             Gå tillbaks
           </Link>
         </div>

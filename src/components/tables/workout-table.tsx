@@ -2,7 +2,6 @@
 
 //NEXT & Hooks
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 //Components
 import Button from '@/components/button/button';
@@ -19,21 +18,11 @@ import type { WorkoutViewModel } from '@/types/workout-types';
 //Alert toast sooner
 import { toast } from 'sonner';
 
-export default function WorkoutTable() {
-  const [workouts, setWorkouts] = useState<WorkoutViewModel[]>([]);
+type Props = {
+  workouts: WorkoutViewModel[];
+};
 
-  //GET: Workouts
-  useEffect(() => {
-    const fetchWorkouts = async () => {
-      const result = await WorkoutService.getAll();
-      if (result.success) {
-        setWorkouts(result.workouts);
-      }
-    };
-
-    fetchWorkouts();
-  }, []);
-
+export default function WorkoutTable({ workouts }: Props) {
   //Handle Delete workout
   const handledDelete = async (id: number): Promise<void> => {
     if (!id) {
@@ -76,8 +65,8 @@ export default function WorkoutTable() {
 
   //Remove Workout from workout-list
   const removeWorkoutFromList = (id: number): void => {
-    setWorkouts((prev) => prev.filter((workout) => workout.id !== id));
-    toast.success('Övning borttagen');
+    // setWorkouts((prev) => prev.filter((workout) => workout.id !== id));
+    // toast.success('Övning borttagen');
   };
 
   return (
@@ -86,12 +75,20 @@ export default function WorkoutTable() {
         <thead className="bg-zinc-800">
           <tr>
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Namn</th>
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Beskrivning</th>
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Övningar</th>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              Beskrivning
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              Övningar
+            </th>
 
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Skapad</th>
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Uppdaterad</th>
-            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-zinc-400">Åtgärder</th>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              Uppdaterad
+            </th>
+            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              Åtgärder
+            </th>
           </tr>
         </thead>
 
@@ -102,8 +99,11 @@ export default function WorkoutTable() {
               <td className="max-w-sm px-6 py-5 text-zinc-300">{workout.description ?? '-'}</td>
               <td className="px-6 py-5">
                 <div className="flex flex-wrap gap-2">
-                  {workout.exercise.map((exercise) => (
-                    <span key={exercise.id} className="rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-xs font-medium text-orange-300">
+                  {workout.exercises.map((exercise) => (
+                    <span
+                      key={exercise.id}
+                      className="rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-xs font-medium text-orange-300"
+                    >
                       {exercise.name}
                     </span>
                   ))}
@@ -114,11 +114,15 @@ export default function WorkoutTable() {
               <td className="px-6 py-5 text-zinc-300">{new Date(workout.updatedAt).toLocaleDateString('sv-SE')}</td>
               <td className="px-6 py-5">
                 <div className="flex flex-col gap-2">
-                  <Link href={`/workout/edit/${workout.id}`} className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}>
+                  <Link
+                    href={`/workout/edit/${workout.id}`}
+                    className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}
+                  >
                     Redigera
                   </Link>
-
-                  <Button type="button" text="Ta bort" variant="delete" size="sm" onClick={() => handledDelete(workout.id)} />
+                  <Button type="button" size="small" variant="delete" onClick={() => handledDelete(workout.id)}>
+                    Radera
+                  </Button>
                 </div>
               </td>
             </tr>

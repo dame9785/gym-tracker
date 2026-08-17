@@ -2,6 +2,7 @@ import { GoalTypeViewModel } from './goal-types';
 import { UserViewModel } from './user-types';
 import { LogItemViewModel } from './log-weight-types';
 import { ExerciseViewModel } from './exercise-types';
+import { WorkoutViewModel } from './workout-types';
 export interface ApiSuccessResponse<T> {
   success: true;
   data: T;
@@ -84,4 +85,8 @@ export interface ExerciseApiGetByIdResponse {
 
 export interface ExerciseApiUpdateResponse {
   exercise: ExerciseViewModel;
+}
+
+export interface WorkoutApiResponse {
+  workouts: WorkoutViewModel[];
 }

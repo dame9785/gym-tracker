@@ -6,6 +6,7 @@ import type { RegisterWorkoutDto, EditWorkoutDto } from '@/types/workout-types';
 
 //Mapping
 import { WorkoutMapper } from '@/mapping/workout-mapping';
+import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, WorkoutApiResponse } from '@/types/api-types';
 
 export class WorkoutService {
   private workoutRepository = new WorkoutRepository();
@@ -61,23 +62,23 @@ export class WorkoutService {
     }
   }
 
-  async getAll() {
+  async getAll(): Promise<ApiResponse<WorkoutApiResponse>> {
     try {
       const workouts = await this.workoutRepository.getAll();
-      const viewModels = WorkoutMapper.workoutDtosToViewModels(workouts);
+
       return {
         success: true,
-        workouts: viewModels,
-        message: 'Träningspass uppdaterad',
-      };
+        data: {
+          workouts: WorkoutMapper.workoutDtosToViewModels(workouts),
+        },
+      } satisfies ApiSuccessResponse<WorkoutApiResponse>;
     } catch (error) {
       console.error('Kunde inte hämta workouts:', error);
 
       return {
         success: false,
-        message: 'Något gick fel när träningspassen skulle hämtas.',
-        workouts: [],
-      };
+        message: 'Server fel, kunde inte hämta workouts',
+      } satisfies ApiErrorResponse;
     }
   }
 

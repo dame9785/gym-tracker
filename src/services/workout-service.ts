@@ -1,9 +1,19 @@
 //Types
+import { ApiErrorResponse, ApiResponse, WorkoutApiResponse } from '@/types/api-types';
 import type { ExerciseViewModel } from '@/types/exercise-types';
-import type { DeleteWorkoutResponse, GetWorkoutResponse, EditWorkoutResponse, EditWorkoutDto, RegisterWorkoutDto } from '@/types/workout-types';
+import type {
+  DeleteWorkoutResponse,
+  GetWorkoutResponse,
+  EditWorkoutResponse,
+  EditWorkoutDto,
+  RegisterWorkoutDto,
+} from '@/types/workout-types';
 
 //Next Redirect
 import { redirect } from 'next/navigation';
+
+//API URL
+const API_URL = 'http://localhost:3000/api/workouts';
 
 export default class WorkoutService {
   static async get(): Promise<ExerciseViewModel[]> {
@@ -37,16 +47,19 @@ export default class WorkoutService {
     }
   }
 
-  static async getAll() {
+  static async getAll(): Promise<ApiResponse<WorkoutApiResponse>> {
     try {
-      const response = await fetch('/api/workouts', {
+      const response = await fetch(`${API_URL}`, {
         method: 'GET',
       });
 
-      return await response.json();
+      const result: ApiResponse<WorkoutApiResponse> = await response.json();
+      return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
