@@ -1,24 +1,33 @@
 import { mapWorkoutSession } from '@/mapping/workout-session-mapping';
 import { WorkoutSessionRepository } from '@/repositories/workout-session-repository';
+import {
+  ApiErrorResponse,
+  ApiResponse,
+  ApiSuccessResponse,
+  WorkoutFinishApiResponse,
+  WorkoutSessionCreateResponse,
+} from '@/types/api-types';
 
 export class WorkoutSessionService {
   private workoutSessionRepository = new WorkoutSessionRepository();
 
-  async create(userId: number, workoutId: number) {
+  async create(userId: number, workoutId: number): Promise<ApiResponse<WorkoutSessionCreateResponse>> {
     try {
       const workoutSession = await this.workoutSessionRepository.create(userId, workoutId);
 
       return {
         success: true,
-        workoutSession,
-      };
+        data: {
+          workoutSessionId: workoutSession.id,
+        },
+      } satisfies ApiSuccessResponse<WorkoutSessionCreateResponse>;
     } catch (error) {
       console.error(error);
 
       return {
         success: false,
         message: 'Kunde inte skapa träningspasset.',
-      };
+      } satisfies ApiErrorResponse;
     }
   }
 
@@ -55,21 +64,22 @@ export class WorkoutSessionService {
     };
   }
 
-  async finish(id: number) {
+  async finish(id: number): Promise<ApiResponse<WorkoutFinishApiResponse>> {
     try {
       const workoutSession = await this.workoutSessionRepository.finish(id);
-
       return {
         success: true,
-        workoutSession,
-      };
+        data: {
+          workoutSession: workoutSession,
+        },
+      } satisfies ApiSuccessResponse<WorkoutFinishApiResponse>;
     } catch (error) {
       console.error(error);
 
       return {
         success: false,
         message: 'Kunde inte avsluta träningspasset.',
-      };
+      } satisfies ApiErrorResponse;
     }
   }
 }

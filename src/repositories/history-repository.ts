@@ -29,6 +29,26 @@ export class HistoryRepository {
     return sessions;
   }
 
+  async getAllWorkoutSessionsCount(userId: number) {
+    const sessionsCount = await prisma.workoutSession.count({
+      where: {
+        userId: userId,
+      },
+    });
+
+    return sessionsCount;
+  }
+
+  async getTotalCompletedWorkout(userId: number) {
+    const totalCompletedCount = await prisma.workoutSession.count({
+      where: {
+        userId: userId,
+        status: 'COMPLETED',
+      },
+    });
+    return totalCompletedCount;
+  }
+
   async getWorkoutSummary() {
     const totalWorkouts = await prisma.workoutSchedule.count({
       where: {

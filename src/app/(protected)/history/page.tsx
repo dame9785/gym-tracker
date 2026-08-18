@@ -1,68 +1,56 @@
-'use client';
-
-//React hooks
-import { useEffect, useState } from 'react';
-
 //FA-Icons
 import { CalendarDays, Clock3, Dumbbell, History } from 'lucide-react';
 
-//Types
-import type { HistoryViewModel } from '@/types/history-types';
-
 //Services
 import HistoryService from '@/services/history-service';
+import { getTokenFromCookieStore } from '@/lib/auth';
+import AuthService from '@/services/auth-service';
+import { notFound, redirect } from 'next/navigation';
+import { UserViewModel } from '@/types/user-types';
 
-function formatDuration(minutes: number) {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
+// function formatDuration(minutes: number) {
+//   const hours = Math.floor(minutes / 60);
+//   const mins = minutes % 60;
 
-  if (hours === 0) {
-    return `${mins} min`;
+//   if (hours === 0) {
+//     return `${mins} min`;
+//   }
+
+//   return `${hours} h ${mins} min`;
+// }
+
+export default async function HistoryPage() {
+  const token = await getTokenFromCookieStore();
+
+  if (!token) {
+    redirect('/account/login');
   }
 
-  return `${hours} h ${mins} min`;
-}
-
-export default function HistoryPage() {
-  const [history, setHistory] = useState<HistoryViewModel[]>([]);
-  const [summary, setSummary] = useState({
-    totalWorkouts: 0,
-    completedWorkouts: 0,
-    remainingWorkouts: 0,
-  });
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadHistory = async () => {
-      try {
-        const result = await HistoryService.getHistory();
-
-        if (result.success) {
-          setHistory(result.history);
-          setSummary(result.summary);
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadHistory();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="mx-auto max-w-7xl p-8">
-        <h1 className="text-4xl font-bold text-white">Workout History</h1>
-
-        <p className="mt-6 text-zinc-400">Loading workout history...</p>
-      </div>
-    );
+  const useResponse = await AuthService.getCurrentUser(token);
+  if (!useResponse.success) {
+    redirect('/account/login');
   }
 
-  const totalMinutes = history.reduce((sum, workout) => sum + workout.durationInMinutes, 0);
-  const totalExercises = history.reduce((sum, workout) => sum + workout.exerciseCount, 0);
+  const user: UserViewModel = useResponse.data.user;
+
+  const response = await HistoryService.getHistory(user.id);
+  if (!response.success) {
+    notFound();
+  }
+
+  const historyData = response.data.history;
+
+  // const [history, setHistory] = useState<HistoryViewModel[]>([]);
+  // const [summary, setSummary] = useState({
+  //   totalWorkouts: 0,
+  //   completedWorkouts: 0,
+  //   remainingWorkouts: 0,
+  // });
+
+  // const [loading, setLoading] = useState(true);
+
+  // const totalMinutes = history.reduce((sum, workout) => sum + workout.durationInMinutes, 0);
+  // const totalExercises = history.reduce((sum, workout) => sum + workout.exerciseCount, 0);
 
   return (
     <div className="mx-auto max-w-7xl p-8">
@@ -81,38 +69,33 @@ export default function HistoryPage() {
       <div className="mb-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-6">
           <p className="text-sm text-zinc-400">Total Workouts</p>
-
-          <p className="mt-3 text-4xl font-bold text-white">{summary.totalWorkouts}</p>
+          <p className="mt-3 text-4xl font-bold text-white">{historyData.totalWorkouts}</p>
         </div>
 
         <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-6">
           <p className="text-sm text-zinc-400">Completed</p>
-
-          <p className="mt-3 text-4xl font-bold text-green-400">{summary.completedWorkouts}</p>
+          <p className="mt-3 text-4xl font-bold text-green-400">{historyData.totalCompletedWorkouts}</p>
         </div>
 
         <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-6">
           <p className="text-sm text-zinc-400">Remaining</p>
-
-          <p className="mt-3 text-4xl font-bold text-orange-400">{summary.remainingWorkouts}</p>
+          {/* <p className="mt-3 text-4xl font-bold text-orange-400">{summary.remainingWorkouts}</p> */}
         </div>
       </div>
 
       <div className="mb-10 grid gap-6 md:grid-cols-2">
         <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-6">
           <p className="text-sm text-zinc-400">Total Training Time</p>
-
-          <p className="mt-3 text-4xl font-bold text-white">{formatDuration(totalMinutes)}</p>
+          {/* <p className="mt-3 text-4xl font-bold text-white">{formatDuration(totalMinutes)}</p> */}
         </div>
 
         <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-6">
           <p className="text-sm text-zinc-400">Exercises Completed</p>
-
-          <p className="mt-3 text-4xl font-bold text-white">{totalExercises}</p>
+          {/* <p className="mt-3 text-4xl font-bold text-white">{totalExercises}</p> */}
         </div>
       </div>
 
-      {history.length === 0 ? (
+      {/* {history.length === 0 ? (
         <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-10 text-center">
           <p className="text-lg text-zinc-400">No completed workouts found.</p>
         </div>
@@ -156,12 +139,14 @@ export default function HistoryPage() {
               </div>
 
               <div className="mt-5 flex justify-end">
-                <button className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-600">View Workout →</button>
+                <button className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-600">
+                  View Workout →
+                </button>
               </div>
             </div>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

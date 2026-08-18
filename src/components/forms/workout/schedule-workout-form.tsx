@@ -26,7 +26,7 @@ export default function ScheduleWorkoutForm() {
       const result = await WorkoutService.getAll();
 
       if (result.success) {
-        setWorkouts(result.workouts);
+        setWorkouts(result.data.workouts);
       }
     }
 

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import WorkoutScheduleService from '@/services/workout-schedule-service';
 
 import type { CalendarWorkoutViewModel } from '@/types/calender-types';
+import { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 interface WorkoutCalendarProps {
   userId: number;
@@ -32,7 +33,6 @@ function getCalendarDays(year: number, month: number) {
 }
 
 export default function WorkoutCalendar({ userId }: WorkoutCalendarProps) {
-  const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const [workouts, setWorkouts] = useState<CalendarWorkoutViewModel[]>([]);
@@ -70,7 +70,7 @@ export default function WorkoutCalendar({ userId }: WorkoutCalendarProps) {
   useEffect(() => {
     const loadWorkouts = async () => {
       const result = await WorkoutScheduleService.getByMonth(userId, currentYear, currentMonth);
-
+      console.log(result);
       setWorkouts(result);
     };
 
@@ -150,7 +150,6 @@ export default function WorkoutCalendar({ userId }: WorkoutCalendarProps) {
                       <button
                         key={workout.id}
                         type="button"
-                        onClick={() => router.push(`/workout/${workout.workoutId}`)}
                         className="w-full rounded-md bg-blue-500/20 px-2 py-1 text-left text-xs text-blue-300 transition hover:bg-blue-500/30"
                       >
                         💪 {workout.workoutName}

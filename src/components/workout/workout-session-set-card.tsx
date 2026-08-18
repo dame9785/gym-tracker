@@ -7,7 +7,7 @@ import { WorkoutSessionSetViewModel } from '@/types/workout-types';
 import { useState } from 'react';
 
 //Services
-import { WorkoutSessionService } from '@/services/workout-session-service';
+import WorkoutSessionService from '@/services/workout-session-service';
 
 interface WorkoutSessionSetCardProps {
   set: WorkoutSessionSetViewModel;
@@ -20,14 +20,12 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(set.completed);
 
-  const workoutSessionService = new WorkoutSessionService();
-
   const handleSave = async () => {
     setIsSaving(true);
     setIsSaved(false);
 
     try {
-      const result = await workoutSessionService.updateSet(set.id, actualReps, actualWeight);
+      const result = await WorkoutSessionService.updateSet(set.id, actualReps, actualWeight);
 
       if (result.success) {
         setIsSaved(true);

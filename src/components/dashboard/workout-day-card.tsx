@@ -1,7 +1,7 @@
-//Types
-import { WeeklyWorkoutViewModel } from '@/types/dashboard-types';
+import { CalendarDays, Clock3, Dumbbell, ListChecks } from 'lucide-react';
 
-//Props
+import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
+
 interface WorkoutDayCardProps {
   day: string;
   workout?: WeeklyWorkoutViewModel;
@@ -11,52 +11,96 @@ interface WorkoutDayCardProps {
 export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCardProps) {
   const hasWorkout = !!workout;
 
-  let borderColor = '';
-  if (workout) {
-    if (workout.status === 'COMPLETED') {
-      borderColor = 'border-green-500';
-    } else if (workout.status === 'ACTIVE') {
-      borderColor = 'border-red-500';
-    } else if (workout.status === 'NOTCOMPLETED') {
-      borderColor = 'border-red-500';
-    }
-  } else {
-    borderColor = 'border-yellow-500';
-  }
+  const statusConfig = {
+    COMPLETED: {
+      border: 'border-green-500/50',
+      badge: 'bg-green-500/10 text-green-400',
+      label: '✓ Completed',
+    },
+    ACTIVE: {
+      border: 'border-orange-500/50',
+      badge: 'bg-orange-500/10 text-orange-400',
+      label: '● Active',
+    },
+    NOTCOMPLETED: {
+      border: 'border-red-500/50',
+      badge: 'bg-red-500/10 text-red-400',
+      label: '✕ Missed',
+    },
+  };
+
+  const status = workout ? statusConfig[workout.status] : null;
 
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer roun= () =>{}d-xl border rounded-xl p-4 transition-all bg-zinc-900 duration-200 hover:scale-[1.02] ${borderColor}`}
+      className={`
+        group min-h-[220px] rounded-2xl border
+        bg-zinc-950/80 p-4
+        transition-all duration-200
+        ${hasWorkout ? status?.border : 'border-zinc-800'}
+        ${onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-zinc-600 hover:bg-zinc-900' : ''}
+      `}
     >
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-zinc-400">{day}</p>
+        <div className="flex items-center gap-2">
+          <CalendarDays className="h-4 w-4 text-zinc-600" />
 
-        {workout?.status == 'COMPLETED' && <span className="rounded-full bg-green-500/20 px-2 py-1 text-xs font-semibold text-green-400">✓ Done</span>}
-      </div>
+          <span className="text-sm font-medium text-zinc-300">{day}</span>
+        </div>
 
-      <div className="mt-6">
-        {hasWorkout ? (
-          <>
-            <span className="text-3xl">🏋️</span>
-
-            <h3 className="mt-3 text-lg font-bold text-white">{workout?.workoutName}</h3>
-
-            <div className="mt-3 space-y-1 text-sm text-zinc-400">
-              <p>📋 {workout?.exerciseCount} exercises</p>
-              <p>⏱️ {workout?.estimatedMinutes} min</p>
-            </div>
-          </>
-        ) : (
-          <>
-            <span className="text-3xl">😴</span>
-
-            <h3 className="mt-3 text-lg font-bold text-zinc-500">Rest Day</h3>
-
-            <p className="mt-3 text-sm text-zinc-600">No workout planned</p>
-          </>
+        {status && (
+          <span
+            className={`
+              rounded-full px-2 py-1
+              text-[10px] font-semibold
+              ${status.badge}
+            `}
+          >
+            {status.label}
+          </span>
         )}
       </div>
+
+      {/* Content */}
+      {hasWorkout ? (
+        <div className="mt-7">
+          {/* Icon */}
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10">
+            <Dumbbell className="h-5 w-5 text-blue-400" />
+          </div>
+
+          {/* Workout name */}
+          <h3 className="mt-4 line-clamp-2 min-h-[48px] text-base font-semibold text-white">{workout.workoutName}</h3>
+
+          {/* Stats */}
+          <div className="mt-5 space-y-2">
+            <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <ListChecks className="h-4 w-4" />
+
+              <span>{workout.exerciseCount} exercises</span>
+            </div>
+
+            <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <Clock3 className="h-4 w-4" />
+
+              <span>{workout.estimatedMinutes} min</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-7">
+          {/* Rest icon */}
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-900">
+            <span className="text-xl">😴</span>
+          </div>
+
+          <h3 className="mt-4 text-base font-semibold text-zinc-400">Rest Day</h3>
+
+          <p className="mt-2 text-sm text-zinc-600">No workout planned</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,7 +2,9 @@ import { GoalTypeViewModel } from './goal-types';
 import { UserViewModel } from './user-types';
 import { LogItemViewModel } from './log-weight-types';
 import { ExerciseViewModel } from './exercise-types';
-import { WorkoutViewModel } from './workout-types';
+import { WeeklyWorkoutViewModel, WorkoutSessionFinishViewModel, WorkoutViewModel } from './workout-types';
+import { WeeklySummaryViewModel } from './dashboard-types';
+import { HistoryViewModel } from './history-types';
 export interface ApiSuccessResponse<T> {
   success: true;
   data: T;
@@ -107,4 +109,22 @@ export interface WorkoutApiUpdateResponse {
 
 export interface WorkoutApiRegisterResponse {
   workout: WorkoutViewModel;
+}
+
+export interface DashboardApiResponse {
+  weeklyOverview: WeeklyWorkoutViewModel[];
+  todayWorkout?: WeeklyWorkoutViewModel;
+  weeklySummary: WeeklySummaryViewModel;
+}
+
+export interface HistoryApiResponse {
+  history: HistoryViewModel;
+}
+
+export interface WorkoutFinishApiResponse {
+  workoutSession: WorkoutSessionFinishViewModel;
+}
+
+export interface WorkoutSessionCreateResponse {
+  workoutSessionId: number;
 }

@@ -4,7 +4,7 @@
 import { useState } from 'react';
 
 //Types
-import type { WeeklyWorkoutViewModel } from '@/types/dashboard-types';
+import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 //Components
 import SelectedWorkout from './selected-workout';
@@ -13,11 +13,12 @@ import WorkoutDayCard from './workout-day-card';
 
 interface WeeklyOverviewProps {
   workouts: WeeklyWorkoutViewModel[];
+  userToken: string;
 }
 
 const week = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag'];
 
-export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
+export default function WeeklyOverview({ workouts, userToken }: WeeklyOverviewProps) {
   const [selectedWorkout, setSelectedWorkout] = useState<WeeklyWorkoutViewModel>();
 
   return (
@@ -37,8 +38,12 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
         })}
       </div>
 
-      <Modal isOpen={!!selectedWorkout} onClose={() => setSelectedWorkout(undefined)} title={selectedWorkout?.workoutName}>
-        {selectedWorkout && <SelectedWorkout workout={selectedWorkout} />}
+      <Modal
+        isOpen={!!selectedWorkout}
+        onClose={() => setSelectedWorkout(undefined)}
+        title={selectedWorkout?.workoutName}
+      >
+        {selectedWorkout && <SelectedWorkout workout={selectedWorkout} userToken={userToken} />}
       </Modal>
     </section>
   );

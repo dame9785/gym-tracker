@@ -1,9 +1,19 @@
 //Next Redirect
+import {
+  ApiErrorResponse,
+  ApiResponse,
+  ApiSuccessResponse,
+  WorkoutFinishApiResponse,
+  WorkoutSessionCreateResponse,
+} from '@/types/api-types';
 import { redirect } from 'next/navigation';
 
-export class WorkoutSessionService {
+//API URL
+const API_URL = 'http://localhost:3000/api/workout-sessions';
+
+export default class WorkoutSessionService {
   //GET Session By Id
-  async getById(id: number) {
+  static async getById(id: number) {
     try {
       const response = await fetch(`/api/workout-sessions/${id}`);
       return await response.json();
@@ -14,30 +24,30 @@ export class WorkoutSessionService {
   }
 
   //POST: Create session
-  async create(workoutId: number) {
-    const token = localStorage.getItem('token');
-
+  static async create(workoutId: number): Promise<ApiResponse<WorkoutSessionCreateResponse>> {
     try {
-      const response = await fetch('/api/workout-sessions', {
+      const response = await fetch(`${API_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           workoutId,
         }),
       });
 
-      return await response.json();
+      const result = await response.json();
+      return result as ApiResponse<WorkoutSessionCreateResponse>;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
   //PUT: Update session
-  async updateSet(id: number, actualReps: number, actualWeight: number) {
+  static async updateSet(id: number, actualReps: number, actualWeight: number) {
     try {
       const response = await fetch(`/api/workout-session-sets/${id}`, {
         method: 'PUT',
@@ -52,27 +62,27 @@ export class WorkoutSessionService {
 
       return await response.json();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
   //PUT: Finish session
-  async finish(id: number) {
-    const token = localStorage.getItem('token');
-
+  static async finish(sessionId: number): Promise<ApiResponse<WorkoutFinishApiResponse>> {
     try {
-      const response = await fetch(`/api/workout-sessions/${id}`, {
+      const response = await fetch(`${API_URL}/${sessionId}`, {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
-      return await response.json();
+      const result = await response.json();
+      return result as ApiSuccessResponse<WorkoutFinishApiResponse>;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 }

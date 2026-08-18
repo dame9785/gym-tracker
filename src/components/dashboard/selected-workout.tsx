@@ -1,14 +1,19 @@
-//Types
-import { SelectedWorkoutProps } from '@/types/dashboard-types';
-
 //Next
 import Link from 'next/link';
+
+// import { getTokenFromCookieStore } from '@/lib/auth';
 
 //Components
 import StartWorkoutButton from '@/components/workout/start-workout-button';
 import ButtonStyle from '@/components/button/button.module.css';
+import { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
-export default function SelectedWorkout({ workout }: SelectedWorkoutProps) {
+type Props = {
+  workout: WeeklyWorkoutViewModel;
+  userToken: string;
+};
+
+export default function SelectedWorkout({ workout, userToken }: Props) {
   return (
     <div className="mt-8 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
       <div className="mb-6 space-y-2 text-zinc-300">
@@ -21,7 +26,10 @@ export default function SelectedWorkout({ workout }: SelectedWorkoutProps) {
 
         <ul className="space-y-3">
           {workout.exercises.map((exercise, index) => (
-            <li key={`${exercise.id}-${index}`} className="flex items-center justify-between rounded-xl border border-zinc-700 bg-zinc-800 p-4">
+            <li
+              key={`${exercise.exerciseId}-${index}`}
+              className="flex items-center justify-between rounded-xl border border-zinc-700 bg-zinc-800 p-4"
+            >
               <div>
                 <h5 className="font-semibold text-white">
                   {exercise.order}. {exercise.name}
@@ -32,15 +40,22 @@ export default function SelectedWorkout({ workout }: SelectedWorkoutProps) {
                 </p>
               </div>
 
-              {exercise.weight && <div className="rounded-lg bg-orange-500/20 px-3 py-2 text-sm font-semibold text-orange-400">{exercise.weight} kg</div>}
+              {exercise.weight && (
+                <div className="rounded-lg bg-orange-500/20 px-3 py-2 text-sm font-semibold text-orange-400">
+                  {exercise.weight} kg
+                </div>
+              )}
             </li>
           ))}
         </ul>
       </div>
 
       <div className="mt-6 flex justify-end gap-5">
-        <StartWorkoutButton workoutId={workout.id}></StartWorkoutButton>
-        <Link href={`/workout/${workout.id}`} className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}>
+        <StartWorkoutButton workoutId={workout.id} userToken={userToken}></StartWorkoutButton>
+        <Link
+          href={`/workout/${workout.id}`}
+          className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}
+        >
           View Workout →
         </Link>
       </div>

@@ -3,37 +3,37 @@ import { NextResponse, NextRequest } from 'next/server';
 
 //Services
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
-import { AuthService } from '@/services-server/auth-service';
+import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
+import { ApiErrorResponse } from '@/types/api-types';
 
 const workoutSessionService = new WorkoutSessionService();
-const authService = new AuthService();
 
 export async function POST(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const token = await getTokenFromCookieStore();
+    if (!token) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Unauthorized',
-        },
+          message: 'Unauthorized ',
+        } satisfies ApiErrorResponse,
         { status: 401 },
       );
     }
 
-    const token = authHeader.replace('Bearer ', '');
-
-    const user = await authService.getCurrentUser(token);
-    if (user == null) {
-      return NextResponse.json({
-        status: 404,
-      });
+    const payLoad = await getUserFromToken(token);
+    if (!payLoad) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Unauthorized ',
+        } satisfies ApiErrorResponse,
+        { status: 401 },
+      );
     }
-
+    const userId = payLoad.userId;
     const dto = await request.json();
-
-    const result = await workoutSessionService.create(user.id, dto.workoutId);
+    const result = await workoutSessionService.create(userId, dto.workoutId);
 
     return NextResponse.json(result, {
       status: result.success ? 201 : 400,

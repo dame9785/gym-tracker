@@ -8,7 +8,7 @@ import type {
 } from '@/types/exercise-types';
 
 //Prisma
-import { WorkoutSessionStatus } from '@prisma/client';
+import { $Enums, WorkoutSessionStatus } from '@prisma/client';
 
 export type WorkoutDto = RegisterWorkoutDto | EditWorkoutDto;
 
@@ -135,4 +135,13 @@ export interface WorkoutResponse {
 export interface WorkoutValidationResult {
   message: string;
   success: boolean;
+}
+
+export interface WorkoutSessionFinishViewModel {
+  id: number;
+  userId: number;
+  workoutId: number;
+  startedAt: Date;
+  finishedAt: Date | null;
+  status: $Enums.WorkoutSessionStatus;
 }

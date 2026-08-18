@@ -4,13 +4,14 @@
 import { useRouter } from 'next/navigation';
 
 //Services
-import { WorkoutSessionService } from '@/services/workout-session-service';
+import WorkoutSessionService from '@/services/workout-session-service';
 
 //Types
 import type { WorkoutSessionViewModel } from '@/types/workout-types';
 
 //Components
 import WorkoutSessionExerciseCard from './workout-session-exercise-card';
+import { toast } from 'sonner';
 
 interface WorkoutSessionProps {
   workoutSession: WorkoutSessionViewModel;
@@ -18,7 +19,6 @@ interface WorkoutSessionProps {
 
 export default function WorkoutSession({ workoutSession }: WorkoutSessionProps) {
   const router = useRouter();
-  const workoutSessionService = new WorkoutSessionService();
 
   const handleFinishWorkout = async () => {
     const confirmed = confirm('Är du säker på att du vill avsluta träningspasset?');
@@ -27,23 +27,28 @@ export default function WorkoutSession({ workoutSession }: WorkoutSessionProps) 
       return;
     }
 
-    const result = await workoutSessionService.finish(workoutSession.id);
-
-    if (result.success) {
-      router.push('/dashboard');
+    const result = await WorkoutSessionService.finish(workoutSession.id);
+    if (!result.success) {
+      toast.error('Något gick fel, gick inte avlusta passet');
+      return;
     }
+
+    toast.success('Träningspasset avslutad');
+    router.push('/dashboard');
   };
   return (
     <div className="container">
       <h1 className="text-4xl font-bold">Workout Session #{workoutSession.id}</h1>
-
       <div className="mt-8 space-y-4">
         {workoutSession.exercises.map((exercise) => (
           <WorkoutSessionExerciseCard key={exercise.id} exercise={exercise} />
         ))}
       </div>
       <div className="mt-8 flex justify-end">
-        <button onClick={handleFinishWorkout} className="rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600">
+        <button
+          onClick={handleFinishWorkout}
+          className="rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600"
+        >
           Finish Workout
         </button>
       </div>

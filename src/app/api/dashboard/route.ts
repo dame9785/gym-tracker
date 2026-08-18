@@ -3,18 +3,14 @@ import { NextResponse } from 'next/server';
 
 //Services
 import { DashboardService } from '@/services-server/dashboard-service';
+import { ApiErrorResponse } from '@/types/api-types';
 
 const dashboardService = new DashboardService();
 
 export async function GET() {
   try {
     const result = await dashboardService.getDashboard();
-
-    if (!result.success) {
-      return NextResponse.json(result, { status: 400 });
-    }
-
-    return NextResponse.json(result);
+    return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     console.error(error);
 
@@ -22,7 +18,7 @@ export async function GET() {
       {
         success: false,
         message: 'Ett oväntat fel inträffade.',
-      },
+      } satisfies ApiErrorResponse,
       { status: 500 },
     );
   }

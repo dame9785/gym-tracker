@@ -1,37 +1,29 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import WorkoutSessionService from '@/services/workout-session-service';
+import { redirect, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface StartWorkoutButtonProps {
   workoutId: number;
+  userToken: string;
 }
 
-export default function StartWorkoutButton({ workoutId }: StartWorkoutButtonProps) {
+export default function StartWorkoutButton({ workoutId, userToken }: StartWorkoutButtonProps) {
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
 
   const handleStartWorkout = async () => {
     setIsStarting(true);
-
     try {
-      const response = await fetch('/api/workout-sessions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          workoutId,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.message);
+      const response = await WorkoutSessionService.create(workoutId);
+      if (!response.success) {
+        toast.error('Något gick fel, gick inte starta träningspasset');
+        return;
       }
-
-      router.push(`/workout-sessions/${result.session.id}`);
+      toast.success('Träningspass startad');
+      router.push(`/workout-sessions/${response.data.workoutSessionId}`);
     } catch (error) {
       console.error('Kunde inte starta workout:', error);
     } finally {

@@ -1,5 +1,5 @@
 //Components
-import DashboardStatCard from './dashboard-stat-card';
+import DashboardStatCard from '@/components/dashboard/dashboard-stat-card';
 
 //Types
 import { WeeklySummaryViewModel } from '@/types/dashboard-types';

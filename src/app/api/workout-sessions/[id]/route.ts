@@ -36,9 +36,8 @@ export async function GET(request: Request, { params }: RouteParams) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-
   const result = await workoutSessionService.finish(Number(id));
 
   return NextResponse.json(result, {
