@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import WorkoutService from '@/services/workout-service';
+import { useState } from 'react';
 import WorkoutScheduleService from '@/services/workout-schedule-service';
 
 //Components
@@ -9,29 +8,18 @@ import Button from '@/components/button/button';
 
 // Styles
 import FormStyles from '@/components/forms/form.module.css';
+import { WorkoutViewModel } from '@/types/workout-types';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
-interface Workout {
-  id: number;
-  name: string;
-  description: string | null;
-}
+type Props = {
+  workouts: WorkoutViewModel[];
+};
 
-export default function ScheduleWorkoutForm() {
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
+export default function ScheduleWorkoutForm({ workouts }: Props) {
   const [selectedWorkoutId, setSelectedWorkoutId] = useState('');
   const [date, setDate] = useState('');
-
-  useEffect(() => {
-    async function loadWorkouts() {
-      const result = await WorkoutService.getAll();
-
-      if (result.success) {
-        setWorkouts(result.data.workouts);
-      }
-    }
-
-    loadWorkouts();
-  }, []);
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,19 +34,14 @@ export default function ScheduleWorkoutForm() {
       return;
     }
 
-    const result = await WorkoutScheduleService.create({
-      workoutId: Number(selectedWorkoutId),
-      date,
-    });
-
-    if (result.success) {
-      alert('Träningspass planerat!');
-
-      setSelectedWorkoutId('');
-      setDate('');
-    } else {
-      alert(result.message);
+    const response = await WorkoutScheduleService.create({ workoutId: Number(selectedWorkoutId), date });
+    if (!response.success) {
+      toast.error('Gick inte schemalägga passet');
+      return;
     }
+
+    toast.success('Passet är nu schemalagd');
+    router.push('/log-weight');
   }
 
   return (
@@ -96,7 +79,9 @@ export default function ScheduleWorkoutForm() {
           />
         </div>
       </div>
-      <Button type="submit" text="Lägg till" variant="primary"></Button>
+      <Button type="submit" variant="primary">
+        Schemalägg passet
+      </Button>
     </form>
   );
 }

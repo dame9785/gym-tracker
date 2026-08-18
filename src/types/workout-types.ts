@@ -145,3 +145,11 @@ export interface WorkoutSessionFinishViewModel {
   finishedAt: Date | null;
   status: $Enums.WorkoutSessionStatus;
 }
+
+export interface WorkoutSchedelueViewModel {
+  userId: number;
+  id: number;
+  createdAt: Date;
+  workoutId: number;
+  date: Date;
+}

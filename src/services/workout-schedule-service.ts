@@ -3,12 +3,14 @@ import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
 import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 
 //Next Redirect
-import { redirect } from 'next/navigation';
+import { ApiErrorResponse, ApiResponse, WorkoutSchedelueCreateResponse } from '@/types/api-types';
+
+const API_URL = 'http://localhost:3000/api/workout-schedules';
 
 export default class WorkoutScheduleService {
-  static async create(dto: RegisterWorkoutScheduleDto) {
+  static async create(dto: RegisterWorkoutScheduleDto): Promise<ApiResponse<WorkoutSchedelueCreateResponse>> {
     try {
-      const response = await fetch('/api/workout-schedules', {
+      const response = await fetch(`${API_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -16,20 +18,13 @@ export default class WorkoutScheduleService {
         body: JSON.stringify(dto),
       });
 
-      if (!response.ok) {
-        const text = await response.text();
-        console.error(text);
-
-        return {
-          success: false,
-          message: 'Något gick fel.',
-        };
-      }
-
-      return await response.json();
+      const result = await response.json();
+      return result as ApiResponse<WorkoutSchedelueCreateResponse>;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 

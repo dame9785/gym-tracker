@@ -1,24 +1,15 @@
 'use client';
 
-//NEXT & Hooks
+import { CalendarDays, Dumbbell, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
-//Components
-import Button from '@/components/button/button';
-
-//Modules & Styling
-import ButtonStyle from '@/components/button/button.module.css';
-
-//Services
+// Services
 import WorkoutService from '@/services/workout-service';
 
-//Types
+// Types
 import type { WorkoutViewModel } from '@/types/workout-types';
-
-//Alert toast sooner
-import { toast } from 'sonner';
-
-import { useRouter } from 'next/navigation';
 
 type Props = {
   workouts: WorkoutViewModel[];
@@ -27,17 +18,19 @@ type Props = {
 export default function WorkoutTable({ workouts }: Props) {
   const router = useRouter();
 
-  //Handle Delete workout
-  const handledDelete = async (id: number): Promise<void> => {
+  // Handle delete
+  const handleDelete = (id: number): void => {
     if (!id) {
-      toast('Kunde inte hitta workout');
+      toast.error('Kunde inte hitta träningspasset.');
+      return;
     }
+
     confirmDelete(id);
   };
 
-  //Confirm delete or not.
-  const confirmDelete = (id: number) => {
-    toast('Är du säker på att du vill radera övningen?', {
+  // Confirm delete
+  const confirmDelete = (id: number): void => {
+    toast('Är du säker på att du vill radera träningspasset?', {
       action: {
         label: 'Radera',
         onClick: async () => {
@@ -51,90 +44,249 @@ export default function WorkoutTable({ workouts }: Props) {
     });
   };
 
-  //Call API To Delete Workout
-  const callDeleteApi = async (id: number) => {
+  // Delete workout
+  const callDeleteApi = async (id: number): Promise<void> => {
     try {
       const response = await WorkoutService.delete(id);
+
       if (!response.success) {
-        toast.error('Något gick fel, övning ej borttagen');
+        toast.error('Något gick fel. Träningspasset kunde inte raderas.');
         return;
       }
-    } catch {
-      toast.error('Något gick fel, övning ej borttagen');
-    } finally {
-      toast.success('Önving raderad');
+
+      toast.success('Träningspasset raderades');
       router.refresh();
+    } catch {
+      toast.error('Något gick fel. Träningspasset kunde inte raderas.');
     }
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 shadow-xl">
-      <table className="w-full border-collapse">
-        <thead className="bg-zinc-800">
-          <tr>
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Namn</th>
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Beskrivning
-            </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Övningar
-            </th>
+    <div className="w-full overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/60 px-6 py-4">
+        <div>
+          <h2 className="text-base font-semibold text-white">Dina träningspass</h2>
 
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Skapad</th>
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Uppdaterad
-            </th>
-            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Åtgärder
-            </th>
-          </tr>
-        </thead>
+          <p className="mt-0.5 text-xs text-zinc-500">
+            {workouts.length} {workouts.length === 1 ? 'träningspass' : 'träningspass'} totalt
+          </p>
+        </div>
 
-        <tbody>
-          {workouts.map((workout) => (
-            <tr key={workout.id} className="border-t border-zinc-800 transition-colors hover:bg-zinc-800/40">
-              <td className="px-6 py-5 font-semibold text-white">{workout.name}</td>
-              <td className="max-w-sm px-6 py-5 text-zinc-300">{workout.description ?? '-'}</td>
-              <td className="px-6 py-5">
-                <div className="flex flex-wrap gap-2">
-                  {workout.workoutExercises.map((exercise) => (
-                    <span
-                      key={exercise.exerciseId}
-                      className="rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-xs font-medium text-orange-300"
-                    >
-                      {exercise.name}
-                    </span>
-                  ))}
-                </div>
-              </td>
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500/10">
+          <Dumbbell className="h-4 w-4 text-orange-400" />
+        </div>
+      </div>
 
-              <td className="px-6 py-5 text-zinc-300">{new Date(workout.createdAt).toLocaleDateString('sv-SE')}</td>
-              <td className="px-6 py-5 text-zinc-300">{new Date(workout.updatedAt).toLocaleDateString('sv-SE')}</td>
-              <td className="px-6 py-5">
-                <div className="flex flex-col gap-2">
-                  <Link
-                    href={`/workout/edit/${workout.id}`}
-                    className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}
-                  >
-                    Redigera
-                  </Link>
-                  <Button type="button" size="small" variant="delete" onClick={() => handledDelete(workout.id)}>
-                    Radera
-                  </Button>
-                </div>
-              </td>
-            </tr>
-          ))}
+      {workouts.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[950px] border-collapse">
+            {/* Table header */}
+            <thead>
+              <tr className="border-b border-zinc-800/80">
+                <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                  Träningspass
+                </th>
 
-          {workouts.length === 0 && (
-            <tr>
-              <td colSpan={7} className="py-12 text-center text-zinc-500">
-                Du har inga träningspass ännu.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+                <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                  Beskrivning
+                </th>
+
+                <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                  Övningar
+                </th>
+
+                <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                  Skapad
+                </th>
+
+                <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                  Uppdaterad
+                </th>
+
+                <th className="px-6 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                  Åtgärder
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {workouts.map((workout) => (
+                <tr
+                  key={workout.id}
+                  className="
+                    group
+                    border-b border-zinc-800/60
+                    last:border-b-0
+                    transition-colors duration-200
+                    hover:bg-zinc-800/30
+                  "
+                >
+                  {/* Workout */}
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="
+                          flex h-11 w-11 shrink-0
+                          items-center justify-center
+                          rounded-xl
+                          border border-orange-500/10
+                          bg-orange-500/10
+                          text-orange-400
+                          transition-all duration-200
+                          group-hover:border-orange-500/20
+                          group-hover:bg-orange-500/15
+                          group-hover:shadow-lg
+                          group-hover:shadow-orange-500/5
+                        "
+                      >
+                        <Dumbbell className="h-5 w-5 transition-transform duration-200 group-hover:scale-110" />
+                      </div>
+
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-zinc-100">{workout.name}</p>
+
+                        <p className="mt-1 text-xs text-zinc-600">Workout #{workout.id}</p>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Description */}
+
+                  <td className="w-[240px] max-w-[240px] px-6 py-5">
+                    <p className="truncate text-sm text-zinc-400" title={workout.description ?? undefined}>
+                      {workout.description || 'Ingen beskrivning'}
+                    </p>
+                  </td>
+
+                  {/* Exercises */}
+                  <td className="px-6 py-5">
+                    <div className="flex max-w-md flex-wrap gap-2">
+                      {workout.workoutExercises.length > 0 ? (
+                        <>
+                          {workout.workoutExercises.slice(0, 3).map((exercise) => (
+                            <span
+                              key={exercise.exerciseId}
+                              className="
+                                inline-flex
+                                items-center
+                                rounded-lg
+                                border border-blue-500/20
+                                bg-blue-500/10
+                                px-2.5 py-1.5
+                                text-xs font-medium
+                                text-blue-400
+                              "
+                            >
+                              {exercise.name}
+                            </span>
+                          ))}
+
+                          {workout.workoutExercises.length > 3 && (
+                            <span
+                              className="
+                                inline-flex
+                                items-center
+                                rounded-lg
+                                border border-zinc-700
+                                bg-zinc-800/60
+                                px-2.5 py-1.5
+                                text-xs font-medium
+                                text-zinc-500
+                              "
+                            >
+                              +{workout.workoutExercises.length - 3} fler
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-sm text-zinc-600">Inga övningar</span>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Created */}
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-2 text-sm text-zinc-400">
+                      <CalendarDays className="h-4 w-4 text-zinc-600" />
+
+                      {new Date(workout.createdAt).toLocaleDateString('sv-SE')}
+                    </div>
+                  </td>
+
+                  {/* Updated */}
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-2 text-sm text-zinc-400">
+                      <CalendarDays className="h-4 w-4 text-zinc-600" />
+
+                      {new Date(workout.updatedAt).toLocaleDateString('sv-SE')}
+                    </div>
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-6 py-5">
+                    <div className="flex justify-end gap-2">
+                      {/* Edit */}
+                      <Link
+                        href={`/workout/edit/${workout.id}`}
+                        aria-label={`Redigera ${workout.name}`}
+                        className="
+                          flex h-9 w-9
+                          items-center justify-center
+                          rounded-lg
+                          border border-zinc-700
+                          bg-zinc-800/60
+                          text-zinc-500
+                          transition-all duration-200
+                          hover:border-blue-500/40
+                          hover:bg-blue-500/10
+                          hover:text-blue-400
+                        "
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Link>
+
+                      {/* Delete */}
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(workout.id)}
+                        aria-label={`Radera ${workout.name}`}
+                        className="
+                          flex h-9 w-9
+                          items-center justify-center
+                          rounded-lg
+                          border border-zinc-700
+                          bg-zinc-800/60
+                          text-zinc-500
+                          transition-all duration-200
+                          hover:border-red-500/40
+                          hover:bg-red-500/10
+                          hover:text-red-400
+                        "
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        /* Empty state */
+        <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-800">
+            <Dumbbell className="h-6 w-6 text-zinc-600" />
+          </div>
+
+          <h3 className="mt-4 text-base font-semibold text-zinc-300">Inga träningspass ännu</h3>
+
+          <p className="mt-1 max-w-sm text-sm text-zinc-600">
+            Skapa ditt första träningspass för att börja bygga ditt träningsbibliotek.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

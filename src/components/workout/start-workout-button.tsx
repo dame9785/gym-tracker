@@ -36,7 +36,24 @@ export default function StartWorkoutButton({ workoutId, userToken }: StartWorkou
       type="button"
       onClick={handleStartWorkout}
       disabled={isStarting}
-      className="mt-6 rounded-lg bg-orange-500 px-6 py-3 font-semibold text-black transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-50"
+      className="      inline-flex
+      h-11
+      min-w-[132px]
+      items-center
+      justify-center
+      rounded-xl
+      border border-zinc-700
+      bg-orange-700
+      cursor-pointer
+      px-5
+      text-sm
+      font-semibold
+      text-zinc-300
+      transition-all duration-200
+      hover:border-zinc-600
+      hover:bg-zinc-800
+      hover:text-white
+    "
     >
       {isStarting ? 'Startar...' : 'Starta workout'}
     </button>

@@ -4,26 +4,29 @@ import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 
 //Repository
 import { WorkoutScheduleRepository } from '@/repositories/workout-schedule-repository';
+import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, WorkoutSchedelueCreateResponse } from '@/types/api-types';
 
 export class WorkoutScheduleService {
   private workoutScheduleRepository = new WorkoutScheduleRepository();
 
-  async create(dto: RegisterWorkoutScheduleDto) {
+  async create(dto: RegisterWorkoutScheduleDto): Promise<ApiResponse<WorkoutSchedelueCreateResponse>> {
     try {
       const workoutSchedule = await this.workoutScheduleRepository.create(dto);
 
       return {
         success: true,
         message: 'Träningspass planerat.',
-        workoutSchedule,
-      };
+        data: {
+          workoutSchedule: workoutSchedule,
+        },
+      } satisfies ApiSuccessResponse<WorkoutSchedelueCreateResponse>;
     } catch (error) {
       console.error('WorkoutScheduleService.create ERROR:', error);
 
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Något gick fel.',
-      };
+        message: 'Något gick fel, server fel',
+      } satisfies ApiErrorResponse;
     }
   }
 
