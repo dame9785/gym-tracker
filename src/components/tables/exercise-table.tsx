@@ -1,25 +1,15 @@
 'use client';
 
-//Components
-import Button from '@/components/button/button';
-
-// Next.js
+import { Dumbbell, Pencil, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-//Modules & Styling
-import ButtonStyle from '@/components/button/button.module.css';
-
-//Services
-import ExerciseService from '@/services/exercise-service';
-
-//Types
-import type { ExerciseViewModel } from '@/types/exercise-types';
-
-//Alert toast sooner
+import Link from 'next/link';
 import { toast } from 'sonner';
 
-//NEXT & Hooks
-import Link from 'next/link';
+// Services
+import ExerciseService from '@/services/exercise-service';
+
+// Types
+import type { ExerciseViewModel } from '@/types/exercise-types';
 
 type Props = {
   exercises: ExerciseViewModel[];
@@ -28,18 +18,18 @@ type Props = {
 export default function ExerciseTable({ exercises }: Props) {
   const router = useRouter();
 
-  //Handle delete
-  const handleDelete = async (id: number) => {
+  // Handle delete
+  const handleDelete = (id: number) => {
     verifyDelete(id);
   };
 
-  //Pop up verify delete
+  // Verify delete
   const verifyDelete = (id: number): void => {
     toast('Är du säker på att du vill radera övningen?', {
       action: {
         label: 'Radera',
         onClick: async () => {
-          await removeExericse(id);
+          await removeExercise(id);
         },
       },
       cancel: {
@@ -49,61 +39,163 @@ export default function ExerciseTable({ exercises }: Props) {
     });
   };
 
-  //Remove Exercise from array
-  const removeExericse = async (id: number) => {
+  // Remove exercise
+  const removeExercise = async (id: number) => {
     const response = await ExerciseService.delete(id);
 
     if (!response.success) {
-      toast.error('Något gick fel, övning kunde inte raderas');
+      toast.error('Något gick fel. Övningen kunde inte raderas.');
       return;
     }
-    toast.success('Önving raderad');
+
+    toast.success('Övning raderad');
     router.refresh();
   };
 
   return (
-    <table className="w-full border-collapse">
-      <thead className="bg-zinc-800">
-        <tr>
-          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
-            Övning
-          </th>
-          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
-            Muskelgrupp
-          </th>
-          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
-            Redskap
-          </th>
-          <th className="border-b border-zinc-700 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">
-            Redigera
-          </th>
-        </tr>
-      </thead>
+    <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950">
+      <table className="w-full border-collapse">
+        {/* Header */}
+        <thead>
+          <tr className="border-b border-zinc-800 bg-zinc-900/80">
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Övning</th>
 
-      <tbody>
-        {exercises.map((exercise) => {
-          return (
-            <tr key={exercise.id} className="bg-zinc-900/50 transition-colors hover:bg-zinc-800">
-              <td className="border-b border-zinc-800 px-6 py-4 text-zinc-100">{exercise.name}</td>
-              <td className="border-b border-zinc-800 px-6 py-4 text-zinc-300">{exercise.muscleGroup}</td>
-              <td className="border-b border-zinc-800 px-6 py-4 text-zinc-300">{exercise.equipment}</td>
-              <td className="border-b border-zinc-800 px-6 py-4 text-zinc-300">
-                <div className="flex gap-4">
-                  <Link
-                    className={`${ButtonStyle.button} ${ButtonStyle.secondary} ${ButtonStyle.sm}`}
-                    href={`/exercise/${exercise.id}`}
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Muskelgrupp
+            </th>
+
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Redskap
+            </th>
+
+            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Åtgärder
+            </th>
+          </tr>
+        </thead>
+
+        {/* Body */}
+        <tbody>
+          {exercises.map((exercise) => (
+            <tr
+              key={exercise.id}
+              className="
+                group
+                border-b border-zinc-800/70
+                transition-all duration-200
+                last:border-b-0
+                hover:bg-zinc-800/40
+              "
+            >
+              {/* Exercise */}
+              <td className="px-6 py-5">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="
+                      flex h-10 w-10 shrink-0
+                      items-center justify-center
+                      rounded-xl
+                      bg-orange-500/10
+                      text-orange-400
+                      transition-all duration-200
+                      group-hover:bg-orange-500/15
+                      group-hover:scale-105
+                    "
                   >
-                    Redigera
+                    <Dumbbell className="h-5 w-5" />
+                  </div>
+
+                  <div>
+                    <p className="font-semibold text-zinc-100">{exercise.name}</p>
+
+                    <p className="mt-0.5 text-xs text-zinc-600">Exercise #{exercise.id}</p>
+                  </div>
+                </div>
+              </td>
+
+              {/* Muscle group */}
+              <td className="px-6 py-5">
+                <span
+                  className="
+                    inline-flex
+                    rounded-full
+                    border border-blue-500/20
+                    bg-blue-500/10
+                    px-3 py-1
+                    text-xs font-medium
+                    text-blue-400
+                  "
+                >
+                  {exercise.muscleGroup}
+                </span>
+              </td>
+
+              {/* Equipment */}
+              <td className="px-6 py-5">
+                <span
+                  className="
+                    inline-flex
+                    rounded-full
+                    border border-zinc-700
+                    bg-zinc-800/70
+                    px-3 py-1
+                    text-xs font-medium
+                    text-zinc-400
+                  "
+                >
+                  {exercise.equipment}
+                </span>
+              </td>
+
+              {/* Actions */}
+              <td className="px-6 py-5">
+                <div className="flex justify-end gap-2">
+                  {/* Edit */}
+                  <Link
+                    href={`/exercise/${exercise.id}`}
+                    aria-label={`Redigera ${exercise.name}`}
+                    className="
+                      flex h-9 w-9
+                      items-center justify-center
+                      rounded-lg
+                      border border-zinc-700
+                      bg-zinc-800/70
+                      text-zinc-400
+                      transition-all duration-200
+                      hover:border-blue-500/40
+                      hover:bg-blue-500/10
+                      hover:text-blue-400
+                    "
+                  >
+                    <Pencil className="h-4 w-4" />
                   </Link>
-                  <Button type="submit" variant="delete" onClick={() => handleDelete(exercise.id)}>
-                    Radera övning
-                  </Button>
+
+                  {/* Delete */}
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(exercise.id)}
+                    aria-label={`Radera ${exercise.name}`}
+                    className="
+                      flex h-9 w-9
+                      items-center justify-center
+                      rounded-lg
+                      border border-zinc-700
+                      bg-zinc-800/70
+                      text-zinc-400
+                      transition-all duration-200
+                      hover:border-red-500/40
+                      hover:bg-red-500/10
+                      hover:text-red-400
+                    "
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               </td>
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

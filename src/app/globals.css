@@ -145,3 +145,7 @@ img {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: var(--gap-20);
 }
+
+#history-section-weight {
+  margin-top: 13em;
+}

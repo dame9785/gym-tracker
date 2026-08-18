@@ -55,16 +55,14 @@ export default async function LogWeight() {
       <Statistic currentWeight={currentWeight} startWeight={startWeight} />
 
       {/* Graf */}
-      <div className="mb-10 rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-        <h2 className="mb-6 text-xl font-semibold text-white">Viktutveckling</h2>
-
+      <div className="mb-10 rounded-2xl">
         <div className="h-72">
           <WeightChart logList={LogList} />
         </div>
       </div>
 
       {/* Historik */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900">
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900" id="history-section-weight">
         <div className="border-b border-zinc-800 px-6 py-4">
           <h2 className="text-xl font-semibold text-white">Historik</h2>
         </div>
