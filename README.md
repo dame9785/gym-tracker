@@ -20,6 +20,16 @@ The application allows users to manage their fitness goals, workouts and workout
 - 🧩 Service and repository architecture
 - 📱 Responsive UI
 
+- ## 📸 Screenshots
+
+### Dashboard
+
+![GymTracker Dashboard](./screenshots/dashboard.png)
+
+<p align="center">
+  <img src="./screenshots/Dashboard.png" width="48%" />
+</p>
+
 ## 🛠️ Tech Stack
 
 ### Frontend
