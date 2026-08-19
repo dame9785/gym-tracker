@@ -85,45 +85,21 @@ export default function RegisterForm() {
           <label className={FormStyles.formLabel} htmlFor="name">
             Namn
           </label>
-          <input
-            className={FormStyles.formInput}
-            id="name"
-            name="name"
-            type="text"
-            required
-            placeholder="T.ex. knäböj"
-            onChange={handleChange}
-          ></input>
+          <input className={FormStyles.formInput} id="name" name="name" type="text" required placeholder="T.ex. knäböj" onChange={handleChange}></input>
           {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="muscleGroup">
             Muskelgrupp
           </label>
-          <input
-            className={FormStyles.formInput}
-            id="muscleGroup"
-            name="muscleGroup"
-            type="text"
-            required
-            placeholder="T.ex. ben"
-            onChange={handleChange}
-          ></input>
+          <input className={FormStyles.formInput} id="muscleGroup" name="muscleGroup" type="text" required placeholder="T.ex. ben" onChange={handleChange}></input>
           {errors.muscleGroup && <p className={FormStyles.fieldErrorMessage}>{errors.muscleGroup}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="equipment">
             Redskap
           </label>
-          <input
-            className={FormStyles.formInput}
-            id="equipment"
-            name="equipment"
-            type="text"
-            required
-            placeholder="T.ex. kettlebell / kroppsvikt"
-            onChange={handleChange}
-          ></input>
+          <input className={FormStyles.formInput} id="equipment" name="equipment" type="text" required placeholder="T.ex. kettlebell / kroppsvikt" onChange={handleChange}></input>
           {errors.equipment && <p className={FormStyles.fieldErrorMessage}>{errors.equipment}</p>}
         </div>
         <div className="grid grid-2">
