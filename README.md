@@ -20,7 +20,7 @@ The application allows users to manage their fitness goals, workouts and workout
 - 🧩 Service and repository architecture
 - 📱 Responsive UI
 
-- ## 📸 Screenshots
+
 
 ## 📸 Screenshots
 
