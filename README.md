@@ -24,17 +24,17 @@ The application allows users to manage their fitness goals, workouts and workout
 
 ## 📸 Screenshots
 
-### Dashboard
+### 📸 Dashboard
 <p align="center">
   <img src="./screenshots/Dashboard.png" width="90%" />
 </p>
 
-### Weight log
+### 📸 Weight log
 <p align="center">
   <img src="./screenshots/Weight-log.png" width="90%" />
 </p>
 
-### Workout
+### 📸 Workout
 <p align="center">
   <img src="./screenshots/Workout-item.png" width="90%" />
 </p>
