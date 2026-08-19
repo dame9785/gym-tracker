@@ -22,12 +22,12 @@ The application allows users to manage their fitness goals, workouts and workout
 
 - ## 📸 Screenshots
 
+## 📸 Screenshots
+
 ### Dashboard
 
-![GymTracker Dashboard](./screenshots/dashboard.png)
-
 <p align="center">
-  <img src="./screenshots/Dashboard.png" width="48%" />
+  <img src="./screenshots/dashboard.png" width="90%" />
 </p>
 
 ## 🛠️ Tech Stack
