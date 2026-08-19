@@ -23,34 +23,17 @@ The application allows users to manage their fitness goals, workouts and workout
 
 
 ## 📸 Screenshots
-
-
-
 <p align="center">
   <img src="./screenshots/Dashboard.png" width="48%" />
   <img src="./screenshots/WeightLog.png" width="48%" />
 </p>
+<br />
 <p align="center">
   <img src="./screenshots/Exericses.png" width="48%" />
   <img src="./screenshots/Workout-item.png" width="48%" />
 </p>
-<br />
-
-### 📸 Weight Log
-
-<p align="center">
-  <img src="./screenshots/WeightLog.png" width="90%" />
-</p>
 
 
-<br />
-
-### 📸 Workout Management
-
-<p align="center">
-  <img src="./screenshots/Exericses.png" width="48%" />
-  <img src="./screenshots/Workout-item.png" width="48%" />
-</p>
 
 ## 🛠️ Tech Stack
 
