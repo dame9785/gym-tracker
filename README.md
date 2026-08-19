@@ -32,6 +32,15 @@ The application allows users to manage their fitness goals, workouts and workout
 
 <br />
 
+### Weight Log
+
+<p align="center">
+  <img src="./screenshots/WeightLog.png" width="90%" />
+</p>
+
+
+<br />
+
 ### Workout Management
 
 <p align="center">
