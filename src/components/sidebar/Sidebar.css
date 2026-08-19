@@ -33,13 +33,13 @@
 }
 
 .sidebar-intro-wrapper .fa-dumbbell {
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
   color: var(--orange-clr);
 }
 
 .sidebar-intro-wrapper .sidebar-intro-text {
-  font-size: var(--font-size-l);
+  font-size: var(--font-size-m);
   font-weight: var(--font-w-800);
 
   span {

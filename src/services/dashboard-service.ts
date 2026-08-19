@@ -1,13 +1,9 @@
-//Repository
-import { DashboardRepository } from '@/repositories/dashboard-repository';
 import { ApiErrorResponse, ApiResponse, DashboardApiResponse } from '@/types/api-types';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/dashboard';
 
 export class DashboardService {
-  private dashboardRepository = new DashboardRepository();
-
   async getDashboard(): Promise<ApiResponse<DashboardApiResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {

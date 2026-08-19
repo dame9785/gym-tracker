@@ -12,11 +12,9 @@ import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 type Props = {
   workout: WeeklyWorkoutViewModel;
-  userToken: string;
 };
 
-export default function SelectedWorkout({ workout, userToken }: Props) {
-  console.log(workout);
+export default function SelectedWorkout({ workout }: Props) {
   return (
     <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950">
       {/* Header */}
@@ -87,9 +85,7 @@ export default function SelectedWorkout({ workout, userToken }: Props) {
             <div>
               <p className="text-xs text-zinc-500">Date</p>
 
-              <p className="mt-0.5 text-lg font-bold text-white">
-                {new Date(workout.date).toLocaleDateString('sv-SE')}
-              </p>
+              <p className="mt-0.5 text-lg font-bold text-white">{new Date(workout.date).toLocaleDateString('sv-SE')}</p>
             </div>
           </div>
         </div>

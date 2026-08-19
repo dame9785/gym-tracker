@@ -49,7 +49,7 @@ function Sidebar({ user }: Props) {
     <>
       <aside className="sidebar flex flex-col fixed justify-between">
         <div className="sidebar-top flex flex-col">
-          <div className="sidebar-intro-wrapper flex items-center">
+          <div className="sidebar-intro-wrapper flex items-center justify-center">
             <FaDumbbell className="fa-dumbbell" />
             <h3 className="sidebar-intro-text">
               Gym <span>Tracker</span>
@@ -117,7 +117,7 @@ function Sidebar({ user }: Props) {
           </nav>
         </div>
         <div className="sidebar-bottom">
-          <div className="sidebar-bottom-wrapper flex align-center">
+          <div className="sidebar-bottom-wrapper flex justify-center items-center">
             <BsPersonCircle />
             <p>
               <small>{user?.username}</small>

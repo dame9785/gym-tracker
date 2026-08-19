@@ -38,12 +38,8 @@ export default function WeeklyOverview({ workouts, userToken }: WeeklyOverviewPr
         })}
       </div>
 
-      <Modal
-        isOpen={!!selectedWorkout}
-        onClose={() => setSelectedWorkout(undefined)}
-        title={selectedWorkout?.workoutName}
-      >
-        {selectedWorkout && <SelectedWorkout workout={selectedWorkout} userToken={userToken} />}
+      <Modal isOpen={!!selectedWorkout} onClose={() => setSelectedWorkout(undefined)} title={selectedWorkout?.workoutName}>
+        {selectedWorkout && <SelectedWorkout workout={selectedWorkout} />}
       </Modal>
     </section>
   );
