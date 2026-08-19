@@ -20,23 +20,23 @@ The application allows users to manage their fitness goals, workouts and workout
 - 🧩 Service and repository architecture
 - 📱 Responsive UI
 
-- ## 📸 Screenshots
+
 
 ## 📸 Screenshots
 
-### 📸 Dashboard
+### Dashboard
+
 <p align="center">
   <img src="./screenshots/Dashboard.png" width="90%" />
 </p>
 
-### 📸 Weight log
-<p align="center">
-  <img src="./screenshots/Weight-log.png" width="90%" />
-</p>
+<br />
 
-### 📸 Workout
+### Workout Management
+
 <p align="center">
-  <img src="./screenshots/Workout-item.png" width="90%" />
+  <img src="./screenshots/Exericses.png" width="48%" />
+  <img src="./screenshots/Workout-item.png" width="48%" />
 </p>
 
 ## 🛠️ Tech Stack
