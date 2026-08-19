@@ -27,7 +27,7 @@ The application allows users to manage their fitness goals, workouts and workout
 ### Dashboard
 
 <p align="center">
-  <img src="./screenshots/dashboard.png" width="90%" />
+  <img src="./screenshots/Dashboard.png" width="90%" />
 </p>
 
 ## 🛠️ Tech Stack
