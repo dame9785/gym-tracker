@@ -5,21 +5,28 @@ import {
   ApiSuccessResponse,
   WorkoutFinishApiResponse,
   WorkoutSessionCreateResponse,
+  WorkoutSessionDetailApiResponse,
+  WorkoutSessionUpdatedSetResponse,
 } from '@/types/api-types';
-import { redirect } from 'next/navigation';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/workout-sessions';
 
 export default class WorkoutSessionService {
-  //GET Session By Id
-  static async getById(id: number) {
+  //GET: Session By Id
+  static async getById(id: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse>> {
     try {
-      const response = await fetch(`/api/workout-sessions/${id}`);
-      return await response.json();
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'GET',
+      });
+
+      const result = await response.json();
+      return result as ApiSuccessResponse<WorkoutSessionDetailApiResponse>;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Ett oväntat fel inträffade';
-      redirect(`/error?message=${encodeURIComponent(message)}`);
+      return {
+        success: false,
+        message: 'Kunde inte ansluta till servern',
+      } satisfies ApiErrorResponse;
     }
   }
 
@@ -37,7 +44,7 @@ export default class WorkoutSessionService {
       });
 
       const result = await response.json();
-      return result as ApiResponse<WorkoutSessionCreateResponse>;
+      return result as ApiSuccessResponse<WorkoutSessionCreateResponse>;
     } catch (error) {
       return {
         success: false,
@@ -47,7 +54,7 @@ export default class WorkoutSessionService {
   }
 
   //PUT: Update session
-  static async updateSet(id: number, actualReps: number, actualWeight: number) {
+  static async updateSet(id: number, actualReps: number, actualWeight: number): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
     try {
       const response = await fetch(`/api/workout-session-sets/${id}`, {
         method: 'PUT',
@@ -60,7 +67,8 @@ export default class WorkoutSessionService {
         }),
       });
 
-      return await response.json();
+      const result = await response.json();
+      return result as ApiSuccessResponse<WorkoutSessionUpdatedSetResponse>;
     } catch (error) {
       return {
         success: false,

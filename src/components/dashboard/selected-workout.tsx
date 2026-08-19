@@ -16,6 +16,7 @@ type Props = {
 };
 
 export default function SelectedWorkout({ workout, userToken }: Props) {
+  console.log(workout);
   return (
     <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950">
       {/* Header */}
@@ -168,7 +169,6 @@ export default function SelectedWorkout({ workout, userToken }: Props) {
       </div>
 
       {/* Actions */}
-      {/* Actions */}
       <div className="flex flex-col gap-3 border-t border-zinc-800 bg-zinc-900/40 p-6 sm:flex-row sm:items-center sm:justify-end">
         <Link
           href={`/workout/${workout.id}`}
@@ -194,7 +194,7 @@ export default function SelectedWorkout({ workout, userToken }: Props) {
           View Workout
         </Link>
 
-        <StartWorkoutButton workoutId={workout.id} userToken={userToken} />
+        <StartWorkoutButton workoutId={workout.id} />
       </div>
     </div>
   );

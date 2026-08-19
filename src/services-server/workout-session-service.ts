@@ -1,4 +1,4 @@
-import { mapWorkoutSession } from '@/mapping/workout-session-mapping';
+import { WorkoutSessionMapper } from '@/mapping/workout-session-mapping';
 import { WorkoutSessionRepository } from '@/repositories/workout-session-repository';
 import {
   ApiErrorResponse,
@@ -6,6 +6,8 @@ import {
   ApiSuccessResponse,
   WorkoutFinishApiResponse,
   WorkoutSessionCreateResponse,
+  WorkoutSessionDetailApiResponse,
+  WorkoutSessionUpdatedSetResponse,
 } from '@/types/api-types';
 
 export class WorkoutSessionService {
@@ -31,20 +33,21 @@ export class WorkoutSessionService {
     }
   }
 
-  async getById(id: number) {
+  async getById(id: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse>> {
     try {
       const workoutSession = await this.workoutSessionRepository.getById(id);
-
       if (!workoutSession) {
         return {
           success: false,
-          message: 'Träningspasset hittades inte.',
-        };
+          message: 'Kunde inte avsluta träningspasset.',
+        } satisfies ApiErrorResponse;
       }
 
       return {
         success: true,
-        workoutSession: mapWorkoutSession(workoutSession),
+        data: {
+          workoutSession: WorkoutSessionMapper.mapWorkoutSession(workoutSession),
+        },
       };
     } catch (error) {
       console.error(error);
@@ -55,13 +58,29 @@ export class WorkoutSessionService {
       };
     }
   }
-  async updateSet(id: number, actualReps: number, actualWeight: number) {
-    const updatedSet = await this.workoutSessionRepository.updateSet(id, actualReps, actualWeight);
+  async updateSet(id: number, actualReps: number, actualWeight: number): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
+    try {
+      const updatedSet = await this.workoutSessionRepository.updateSet(id, actualReps, actualWeight);
+      if (!updatedSet) {
+        return {
+          success: false,
+          message: 'Gick inte uppdatera, server fel',
+        } satisfies ApiErrorResponse;
+      }
 
-    return {
-      success: true,
-      workoutSessionSet: updatedSet,
-    };
+      return {
+        success: true,
+        data: {
+          updatedSet: updatedSet,
+        },
+      } satisfies ApiSuccessResponse<WorkoutSessionUpdatedSetResponse>;
+    } catch (error) {
+      console.log('ERROR', error);
+      return {
+        success: false,
+        message: 'Gick inte uppdatera, server fel',
+      } satisfies ApiErrorResponse;
+    }
   }
 
   async finish(id: number): Promise<ApiResponse<WorkoutFinishApiResponse>> {

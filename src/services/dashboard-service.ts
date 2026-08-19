@@ -2,12 +2,6 @@
 import { DashboardRepository } from '@/repositories/dashboard-repository';
 import { ApiErrorResponse, ApiResponse, DashboardApiResponse } from '@/types/api-types';
 
-//Types
-import type { DashboardResponse } from '@/types/dashboard-types';
-
-//NEXT Redirect
-import { redirect } from 'next/navigation';
-
 //API URL
 const API_URL = 'http://localhost:3000/api/dashboard';
 

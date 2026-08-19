@@ -6,6 +6,7 @@ import {
   WeeklyWorkoutViewModel,
   WorkoutSchedelueViewModel,
   WorkoutSessionFinishViewModel,
+  WorkoutSessionViewModel,
   WorkoutViewModel,
 } from './workout-types';
 import { WeeklySummaryViewModel } from './dashboard-types';
@@ -134,6 +135,26 @@ export interface WorkoutSessionCreateResponse {
   workoutSessionId: number;
 }
 
+export interface WorkoutSessionUpdatedSetResponse {
+  updatedSet: UpdatedSetViewModel;
+}
+
+export interface WorkoutSessionDetailApiResponse {
+  workoutSession: WorkoutSessionViewModel;
+}
+
 export interface WorkoutSchedelueCreateResponse {
   workoutSchedule: WorkoutSchedelueViewModel;
+}
+
+export interface UpdatedSetViewModel {
+  id: number;
+  actualReps: number | null;
+  actualWeight: number | null;
+  setNumber: number;
+  workoutSessionExerciseId: number;
+  targetReps: number;
+  targetWeight: number | null;
+  completed: boolean;
+  completedAt: Date | null;
 }

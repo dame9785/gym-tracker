@@ -1,5 +1,6 @@
 import WorkoutSession from '@/components/workout/workout-session';
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
+import { notFound } from 'next/navigation';
 
 const workoutSessionService = new WorkoutSessionService();
 
@@ -11,17 +12,12 @@ interface PageProps {
 
 export default async function WorkoutSessionPage({ params }: PageProps) {
   const { id } = await params;
-  const result = await workoutSessionService.getById(Number(id));
+  const response = await workoutSessionService.getById(Number(id));
 
-  if (!result.success) {
-    return (
-      <div className="container">
-        <h1 className="text-3xl font-bold text-red-500">Workout session hittades inte</h1>
-      </div>
-    );
+  if (!response.success) {
+    notFound();
   }
 
-  const workoutSession = result.workoutSession!;
-
+  const workoutSession = response.data.workoutSession;
   return <WorkoutSession workoutSession={workoutSession} />;
 }

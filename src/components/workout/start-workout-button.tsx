@@ -7,10 +7,9 @@ import { toast } from 'sonner';
 
 interface StartWorkoutButtonProps {
   workoutId: number;
-  userToken: string;
 }
 
-export default function StartWorkoutButton({ workoutId, userToken }: StartWorkoutButtonProps) {
+export default function StartWorkoutButton({ workoutId }: StartWorkoutButtonProps) {
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
 

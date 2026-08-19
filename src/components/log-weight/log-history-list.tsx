@@ -76,10 +76,8 @@ export default function LogHistory({ logItem }: PageProps) {
           >
             <CalendarDays className="h-5 w-5" />
           </div>
-
           <div>
             <p className="font-medium text-zinc-200">{new Date(logItem.logDate ?? '').toLocaleDateString('sv-SE')}</p>
-
             <p className="text-xs text-zinc-600">Weight log</p>
           </div>
         </div>
@@ -100,7 +98,7 @@ export default function LogHistory({ logItem }: PageProps) {
             <Scale className="h-4 w-4" />
           </div>
 
-          <span className="text-lg font-bold text-white">{logItem.weight} kg</span>
+          <span className="text-lg font-bold text-white">{logItem.weight.toString()} kg</span>
         </div>
       </td>
 
@@ -120,7 +118,7 @@ export default function LogHistory({ logItem }: PageProps) {
 
       {/* Actions */}
       <td className="px-6 py-5">
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-start gap-2">
           {/* Edit */}
           <Link
             href={`/log-weight/edit/${logItem.id}`}
@@ -147,6 +145,7 @@ export default function LogHistory({ logItem }: PageProps) {
             onClick={() => handleDelete(logItem.id)}
             aria-label="Ta bort vikt"
             className="
+            cursor-pointer
               flex h-9 w-9
               items-center justify-center
               rounded-lg

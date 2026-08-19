@@ -4,9 +4,7 @@ import { notFound } from 'next/navigation';
 import WorkoutDetails from '@/components/workout/workout-details';
 
 // Services
-import { WorkoutService } from '@/services-server/workout-service';
-
-const workoutService = new WorkoutService();
+import WorkoutService from '@/services/workout-service';
 
 interface PageProps {
   params: Promise<{
@@ -18,20 +16,17 @@ export default async function WorkoutPage({ params }: PageProps) {
   const { id } = await params;
 
   const workoutId = Number(id);
-
-  if (!Number.isInteger(workoutId) || workoutId <= 0) {
+  const response = await WorkoutService.getById(workoutId);
+  console.log(response);
+  if (!response.success) {
     notFound();
   }
 
-  const result = await workoutService.getById(workoutId);
-
-  if (!result.success || !result.workout) {
-    notFound();
-  }
+  const workout = response.data.workout;
 
   return (
     <div className="container">
-      <WorkoutDetails workout={result.workout} />
+      <WorkoutDetails workout={workout} />
     </div>
   );
 }

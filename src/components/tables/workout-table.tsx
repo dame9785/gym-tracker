@@ -80,31 +80,31 @@ export default function WorkoutTable({ workouts }: Props) {
 
       {workouts.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[950px] border-collapse">
+          <table className="w-full min-w-[1000px] table-fixed border-collapse">
             {/* Table header */}
             <thead>
               <tr className="border-b border-zinc-800/80">
-                <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                <th className="w-[220px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
                   Träningspass
                 </th>
 
-                <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                <th className="w-[220px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
                   Beskrivning
                 </th>
 
-                <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                <th className="w-[300px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
                   Övningar
                 </th>
 
-                <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                <th className="w-[150px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
                   Skapad
                 </th>
 
-                <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                <th className="w-[150px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
                   Uppdaterad
                 </th>
 
-                <th className="px-6 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                <th className="w-[120px] px-6 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
                   Åtgärder
                 </th>
               </tr>
@@ -152,8 +152,7 @@ export default function WorkoutTable({ workouts }: Props) {
                   </td>
 
                   {/* Description */}
-
-                  <td className="w-[240px] max-w-[240px] px-6 py-5">
+                  <td className="px-6 py-5">
                     <p className="truncate text-sm text-zinc-400" title={workout.description ?? undefined}>
                       {workout.description || 'Ingen beskrivning'}
                     </p>
@@ -208,7 +207,7 @@ export default function WorkoutTable({ workouts }: Props) {
                   {/* Created */}
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2 text-sm text-zinc-400">
-                      <CalendarDays className="h-4 w-4 text-zinc-600" />
+                      <CalendarDays className="h-4 w-4 text-amber-600" />
 
                       {new Date(workout.createdAt).toLocaleDateString('sv-SE')}
                     </div>
@@ -217,7 +216,7 @@ export default function WorkoutTable({ workouts }: Props) {
                   {/* Updated */}
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2 text-sm text-zinc-400">
-                      <CalendarDays className="h-4 w-4 text-zinc-600" />
+                      <CalendarDays className="h-4 w-4 text-amber-600" />
 
                       {new Date(workout.updatedAt).toLocaleDateString('sv-SE')}
                     </div>
@@ -252,6 +251,7 @@ export default function WorkoutTable({ workouts }: Props) {
                         onClick={() => handleDelete(workout.id)}
                         aria-label={`Radera ${workout.name}`}
                         className="
+                        cursor-pointer
                           flex h-9 w-9
                           items-center justify-center
                           rounded-lg
@@ -279,9 +279,7 @@ export default function WorkoutTable({ workouts }: Props) {
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-800">
             <Dumbbell className="h-6 w-6 text-zinc-600" />
           </div>
-
           <h3 className="mt-4 text-base font-semibold text-zinc-300">Inga träningspass ännu</h3>
-
           <p className="mt-1 max-w-sm text-sm text-zinc-600">
             Skapa ditt första träningspass för att börja bygga ditt träningsbibliotek.
           </p>
