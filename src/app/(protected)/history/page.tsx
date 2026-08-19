@@ -1,12 +1,12 @@
 //FA-Icons
-import { CalendarDays, Clock3, Dumbbell, History } from 'lucide-react';
+import { History } from 'lucide-react';
 
 //Services
 import HistoryService from '@/services/history-service';
 import { getTokenFromCookieStore } from '@/lib/auth';
-import AuthService from '@/services/auth-service';
-import { notFound, redirect } from 'next/navigation';
-import { UserViewModel } from '@/types/user-types';
+import { notFound } from 'next/navigation';
+import HistoryStats from '@/components/history/history-stats';
+import TrainingTimeStats from '@/components/history/training-time-stats';
 
 // function formatDuration(minutes: number) {
 //   const hours = Math.floor(minutes / 60);
@@ -23,17 +23,11 @@ export default async function HistoryPage() {
   const token = await getTokenFromCookieStore();
 
   if (!token) {
-    redirect('/account/login');
+    notFound();
   }
 
-  const useResponse = await AuthService.getCurrentUser(token);
-  if (!useResponse.success) {
-    redirect('/account/login');
-  }
-
-  const user: UserViewModel = useResponse.data.user;
-
-  const response = await HistoryService.getHistory(user.id);
+  const response = await HistoryService.getHistory(token);
+  console.log(response);
   if (!response.success) {
     notFound();
   }
@@ -61,39 +55,15 @@ export default async function HistoryPage() {
 
         <div>
           <h1 className="text-4xl font-bold text-white">Workout History</h1>
-
           <p className="text-zinc-400">Review your completed workouts</p>
         </div>
       </div>
 
-      <div className="mb-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-6">
-          <p className="text-sm text-zinc-400">Total Workouts</p>
-          <p className="mt-3 text-4xl font-bold text-white">{historyData.totalWorkouts}</p>
-        </div>
+      {/* History stats*/}
+      <HistoryStats data={historyData} />
 
-        <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-6">
-          <p className="text-sm text-zinc-400">Completed</p>
-          <p className="mt-3 text-4xl font-bold text-green-400">{historyData.totalCompletedWorkouts}</p>
-        </div>
-
-        <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-6">
-          <p className="text-sm text-zinc-400">Remaining</p>
-          {/* <p className="mt-3 text-4xl font-bold text-orange-400">{summary.remainingWorkouts}</p> */}
-        </div>
-      </div>
-
-      <div className="mb-10 grid gap-6 md:grid-cols-2">
-        <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-6">
-          <p className="text-sm text-zinc-400">Total Training Time</p>
-          {/* <p className="mt-3 text-4xl font-bold text-white">{formatDuration(totalMinutes)}</p> */}
-        </div>
-
-        <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-6">
-          <p className="text-sm text-zinc-400">Exercises Completed</p>
-          {/* <p className="mt-3 text-4xl font-bold text-white">{totalExercises}</p> */}
-        </div>
-      </div>
+      {/* Training time stats*/}
+      <TrainingTimeStats />
 
       {/* {history.length === 0 ? (
         <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-10 text-center">

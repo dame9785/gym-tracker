@@ -48,29 +48,10 @@ export default function DashboardStatCard({ icon, title, value, subtitle }: Dash
       </div>
 
       {/* Value */}
-      <p
-        className="
-          mt-6
-          text-3xl
-          font-bold
-          tracking-tight
-          text-white
-        "
-      >
-        {value}
-      </p>
+      <p className="mt-6 text-3xl font-bold tracking-tight text-white">{value}</p>
 
       {/* Title */}
-      <p
-        className="
-          mt-1
-          text-sm
-          font-semibold
-          text-zinc-300
-        "
-      >
-        {title}
-      </p>
+      <p className=" mt-1 text-sm  font-semibold  text-zinc-300  ">{title}</p>
 
       {/* Subtitle */}
       {subtitle && <p className="mt-1 text-xs text-zinc-500">{subtitle}</p>}
