@@ -1,4 +1,11 @@
-export default function TrainingTimeStats() {
+import { TotalTrainingTimeViewModel } from '@/types/history-types';
+
+type Props = {
+  totalTrainingTime: TotalTrainingTimeViewModel;
+  totalCompletedSets: number;
+};
+
+export default function TrainingTimeStats({ totalTrainingTime, totalCompletedSets }: Props) {
   return (
     <div className="mb-10 grid gap-5 md:grid-cols-2">
       {/* Total Training Time */}
@@ -6,11 +13,7 @@ export default function TrainingTimeStats() {
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm font-medium text-zinc-400">Total Training Time</p>
-
-            {/* <p className="mt-3 text-4xl font-bold tracking-tight text-white">
-              {formatDuration(totalMinutes)}
-            </p> */}
-
+            <p className="mt-3 text-4xl font-bold tracking-tight text-blue-400">{`${totalTrainingTime.hours} h ${totalTrainingTime.minutes} min ${totalTrainingTime.seconds} s`}</p>
             <p className="mt-3 text-4xl font-bold tracking-tight text-blue-400">—</p>
             <p className="mt-2 text-xs text-zinc-500">Time spent training</p>
           </div>
@@ -22,12 +25,8 @@ export default function TrainingTimeStats() {
       <div className="group rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-800/70 p-6 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:border-purple-500/30 hover:shadow-xl">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm font-medium text-zinc-400">Exercises Completed</p>
-
-            {/* <p className="mt-3 text-4xl font-bold tracking-tight text-white">
-              {totalExercises}
-            </p> */}
-
+            <p className="text-sm font-medium text-zinc-400">Total sets</p>
+            <p className="mt-3 text-4xl font-bold tracking-tight text-purple-400">{totalCompletedSets}</p>
             <p className="mt-3 text-4xl font-bold tracking-tight text-purple-400">—</p>
             <p className="mt-2 text-xs text-zinc-500">Exercises completed</p>
           </div>

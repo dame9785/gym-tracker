@@ -13,8 +13,8 @@ export class HistoryService {
     try {
       const totalWorkouts = await this.historyRepository.getAllWorkoutSessionsCount(userId);
       const totalCompleted = await this.historyRepository.getTotalCompletedWorkout(userId);
-      // const summary = await this.historyRepository.getWorkoutSummary();
-      // const history = sessions.map((s) => HistoryMapper.mapHistoryDtoToViewModel(s));
+      const totalTrainingTime = await this.historyRepository.getTotalTrainingTime(userId);
+      const totalCompeletedSets = await this.historyRepository.getTotalSets(userId);
 
       return {
         success: true,
@@ -22,6 +22,12 @@ export class HistoryService {
           history: {
             totalWorkouts: totalWorkouts ?? 0,
             totalCompletedWorkouts: totalCompleted ?? 0,
+            totalTrainingTime: {
+              seconds: totalTrainingTime.seconds,
+              minutes: totalTrainingTime.minutes,
+              hours: totalTrainingTime.hours,
+            },
+            totalCompletedSets: totalCompeletedSets,
           },
         },
       } satisfies ApiResponse<HistoryApiResponse>;

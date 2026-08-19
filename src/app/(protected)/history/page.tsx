@@ -33,6 +33,8 @@ export default async function HistoryPage() {
   }
 
   const historyData = response.data.history;
+  const totalTrainingTime = response.data.history.totalTrainingTime;
+  const totalCompletedSets = response.data.history.totalCompletedSets;
 
   // const [history, setHistory] = useState<HistoryViewModel[]>([]);
   // const [summary, setSummary] = useState({
@@ -63,7 +65,7 @@ export default async function HistoryPage() {
       <HistoryStats data={historyData} />
 
       {/* Training time stats*/}
-      <TrainingTimeStats />
+      <TrainingTimeStats totalTrainingTime={totalTrainingTime} totalCompletedSets={totalCompletedSets} />
 
       {/* {history.length === 0 ? (
         <div className="rounded-2xl border border-zinc-700 bg-zinc-800 p-10 text-center">

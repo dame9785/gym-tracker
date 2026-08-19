@@ -49,26 +49,53 @@ export class HistoryRepository {
     return totalCompletedCount;
   }
 
-  async getWorkoutSummary() {
-    const totalWorkouts = await prisma.workoutSchedule.count({
+  async getTotalTrainingTime(userId: number) {
+    const sessions = await prisma.workoutSession.findMany({
       where: {
-        userId: 15,
+        userId,
+        finishedAt: {
+          not: null,
+        },
+      },
+      select: {
+        startedAt: true,
+        finishedAt: true,
       },
     });
 
-    const completedWorkouts = await prisma.workoutSession.count({
-      where: {
-        userId: 15,
-        status: 'COMPLETED',
-      },
+    let totalSeconds = 0;
+
+    sessions.forEach((session) => {
+      if (session.finishedAt) {
+        const duration = session.finishedAt.getTime() - session.startedAt.getTime();
+
+        totalSeconds += Math.floor(duration / 1000);
+      }
     });
 
-    const remainingWorkouts = Math.max(totalWorkouts - completedWorkouts, 0);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
 
     return {
-      totalWorkouts,
-      completedWorkouts,
-      remainingWorkouts,
+      hours,
+      minutes,
+      seconds,
     };
+  }
+
+  async getTotalSets(userId: number) {
+    const totalSets = await prisma.workoutSessionSet.count({
+      where: {
+        workoutSessionExercise: {
+          workoutSession: {
+            userId: userId,
+            status: 'COMPLETED',
+          },
+        },
+      },
+    });
+
+    return totalSets;
   }
 }
