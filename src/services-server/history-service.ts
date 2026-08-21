@@ -1,4 +1,5 @@
 //Repository
+import { WorkoutSessionMapper } from '@/mapping/workout-session-mapping';
 import { HistoryRepository } from '@/repositories/history-repository';
 import { WorkoutRepository } from '@/repositories/workout-repository';
 
@@ -15,6 +16,7 @@ export class HistoryService {
       const totalCompleted = await this.historyRepository.getTotalCompletedWorkout(userId);
       const totalTrainingTime = await this.historyRepository.getTotalTrainingTime(userId);
       const totalCompeletedSets = await this.historyRepository.getTotalSets(userId);
+      const workoutSessions = await this.historyRepository.getCompletedWorkoutSessions(userId);
 
       return {
         success: true,
@@ -28,6 +30,7 @@ export class HistoryService {
               hours: totalTrainingTime.hours,
             },
             totalCompletedSets: totalCompeletedSets,
+            workoutSessions: workoutSessions.map((x) => WorkoutSessionMapper.mapWorkoutSessionWithExericses(x)),
           },
         },
       } satisfies ApiResponse<HistoryApiResponse>;

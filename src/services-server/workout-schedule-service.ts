@@ -5,6 +5,8 @@ import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 //Repository
 import { WorkoutScheduleRepository } from '@/repositories/workout-schedule-repository';
 import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, WorkoutSchedelueCreateResponse } from '@/types/api-types';
+import { SchedelueWorkoutDto, schedelueWorkoutSchema } from '@/schemas/schedelue-workout-schemas';
+import { ErrorsHelper } from '@/helpers/error-helper';
 
 export class WorkoutScheduleService {
   private workoutScheduleRepository = new WorkoutScheduleRepository();
@@ -12,6 +14,19 @@ export class WorkoutScheduleService {
   async create(dto: RegisterWorkoutScheduleDto): Promise<ApiResponse<WorkoutSchedelueCreateResponse>> {
     try {
       const workoutSchedule = await this.workoutScheduleRepository.create(dto);
+
+      //Validation
+      const validation = schedelueWorkoutSchema.safeParse(dto);
+      if (!validation.success) {
+        const fieldErrors = ErrorsHelper.getFormErrors<SchedelueWorkoutDto>(validation.error.issues);
+        const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
+
+        return {
+          success: false,
+          message: 'Felaktig email eller lösenord.',
+          errors: errors,
+        } satisfies ApiErrorResponse;
+      }
 
       return {
         success: true,

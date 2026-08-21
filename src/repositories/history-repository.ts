@@ -2,10 +2,10 @@
 import { prisma } from '@/lib/prisma';
 
 export class HistoryRepository {
-  async getCompletedWorkoutSessions() {
+  async getCompletedWorkoutSessions(userId: number) {
     const sessions = await prisma.workoutSession.findMany({
       where: {
-        userId: 15,
+        userId: userId,
         status: 'COMPLETED',
       },
       include: {
@@ -97,5 +97,15 @@ export class HistoryRepository {
     });
 
     return totalSets;
+  }
+
+  async getWorkoutSessions(userId: number) {
+    const workoutSessions = await prisma.workoutSession.findMany({
+      where: {
+        userId: userId,
+        status: 'COMPLETED',
+      },
+    });
+    return workoutSessions;
   }
 }

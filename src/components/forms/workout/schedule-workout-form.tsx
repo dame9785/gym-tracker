@@ -12,25 +12,31 @@ import { WorkoutViewModel } from '@/types/workout-types';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
+//Validation Schema ZOD
+import { SchedelueWorkoutDto, schedelueWorkoutSchema } from '@/schemas/schedelue-workout-schemas';
+import { ErrorsHelper } from '@/helpers/error-helper';
+
 type Props = {
   workouts: WorkoutViewModel[];
 };
 
 export default function ScheduleWorkoutForm({ workouts }: Props) {
   const [selectedWorkoutId, setSelectedWorkoutId] = useState('');
+  const [errors, setErrors] = useState<Partial<Record<keyof SchedelueWorkoutDto, string>>>({});
   const [date, setDate] = useState('');
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!selectedWorkoutId) {
-      alert('Välj ett workout.');
-      return;
-    }
+    const SchedelueWorkoutDto = {
+      workoutId: Number(selectedWorkoutId),
+      date: date,
+    };
 
-    if (!date) {
-      alert('Välj ett datum.');
+    const validation = schedelueWorkoutSchema.safeParse(SchedelueWorkoutDto);
+    if (!validation.success) {
+      setErrors(ErrorsHelper.getFormErrors<SchedelueWorkoutDto>(validation.error.issues));
       return;
     }
 
@@ -53,12 +59,7 @@ export default function ScheduleWorkoutForm({ workouts }: Props) {
       </div>
       <div className={FormStyles.formGrouo}>
         <label htmlFor="workout">Workout</label>
-        <select
-          className={FormStyles.formSelect}
-          id="workout"
-          value={selectedWorkoutId}
-          onChange={(e) => setSelectedWorkoutId(e.target.value)}
-        >
+        <select className={FormStyles.formSelect} id="workout" value={selectedWorkoutId} onChange={(e) => setSelectedWorkoutId(e.target.value)}>
           <option value="">Välj workout</option>
           {workouts.map((workout) => (
             <option key={workout.id} value={workout.id}>
@@ -66,17 +67,13 @@ export default function ScheduleWorkoutForm({ workouts }: Props) {
             </option>
           ))}
         </select>
+        {errors.workoutId && <p className={FormStyles.fieldErrorMessage}>{errors.workoutId}</p>}
         <div className={FormStyles.formGroup}>
           <label htmlFor="date" className={FormStyles.formLabel}>
             Datum
           </label>
-          <input
-            className={FormStyles.formInput}
-            id="date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+          <input className={FormStyles.formInput} id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          {errors.date && <p className={FormStyles.fieldErrorMessage}>{errors.date}</p>}
         </div>
       </div>
       <Button type="submit" variant="primary">

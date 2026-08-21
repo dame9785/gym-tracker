@@ -15,6 +15,7 @@ type Props = {
 };
 
 export default function SelectedWorkout({ workout }: Props) {
+  console.log(workout);
   return (
     <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950">
       {/* Header */}
@@ -190,7 +191,7 @@ export default function SelectedWorkout({ workout }: Props) {
           View Workout
         </Link>
 
-        <StartWorkoutButton workoutId={workout.id} />
+        {workout.status !== 'COMPLETED' && <StartWorkoutButton workoutId={workout.id} />}
       </div>
     </div>
   );
