@@ -5,15 +5,17 @@ import { errorResponse } from '@/utils/api-responses';
 
 const API_URL = 'http://localhost:3000/api/log-weight';
 
-export class LogWeightService {
-  static async getAll(userId: number): Promise<ApiResponse<UserLogWeightResponse>> {
+export default class LogWeightService {
+  static async getAll(userToken: string): Promise<ApiResponse<UserLogWeightResponse>> {
     try {
-      const response = await fetch(`${API_URL}/${userId}`, {
+      const response = await fetch(`${API_URL}`, {
         method: 'GET',
+        headers: {
+          Cookie: `token=${userToken}`,
+        },
       });
 
-      const result: ApiResponse<UserLogWeightResponse> = await response.json();
-
+      const result = (await response.json()) as ApiResponse<UserLogWeightResponse>;
       return result;
     } catch (error) {
       return errorResponse('Gick inte hämta data');

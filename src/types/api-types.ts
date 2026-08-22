@@ -7,8 +7,8 @@ import { WeeklySummaryViewModel } from './dashboard-types';
 import { HistoryViewModel } from './history-types';
 export interface ApiSuccessResponse<T> {
   success: true;
-  data: T;
   message?: string;
+  data: T;
 }
 
 export interface ApiErrorResponse {
@@ -25,9 +25,11 @@ export interface LoginResponse {
   token: string;
 }
 
-export interface UserResponse {
-  user: UserViewModel;
-}
+export type UserResponse = UserViewModel;
+
+export type LogWeightResponse = LogItemViewModel;
+
+export type EditLogWeightResponse = LogItemViewModel;
 
 // Register
 export interface RegisterResponse {
@@ -56,16 +58,8 @@ export interface UserLogWeightResponse {
   startWeight: string | undefined;
 }
 
-export interface LogWeightResponse {
-  log: LogItemViewModel;
-}
-
 export interface DeleteLogWeightResponse {
   data?: [];
-}
-
-export interface EditLogWeightResponse {
-  data: LogItemViewModel;
 }
 
 export interface ExerciseApiResponse {

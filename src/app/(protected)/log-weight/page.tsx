@@ -8,13 +8,9 @@ import WeightChart from '@/components/log-weight/weight-chart';
 import Button from '@/components/button/button';
 
 //Services
-import { WeightLogService } from '@/services-server/weight-log-service';
+import WeightLogService from '@/services/log-weight-service';
 import { getTokenFromCookieStore } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import AuthService from '@/services/auth-service';
-import { UserViewModel } from '@/types/user-types';
-
-const weightLogService = new WeightLogService();
 
 export default async function LogWeight() {
   const token = await getTokenFromCookieStore();
@@ -23,17 +19,11 @@ export default async function LogWeight() {
     redirect('/account/login');
   }
 
-  const response = await AuthService.getCurrentUser(token);
-  if (!response.success || response.data == null) {
-    redirect('/account/login');
-  }
+  const response = await WeightLogService.getAll(token);
 
-  const user: UserViewModel = response.data.user;
-
-  const result = await weightLogService.getAll(user.id);
-  const LogList = result.success ? result.data.logList : [];
-  const currentWeight = result.success ? result.data.currentWeight : 0;
-  const startWeight = result.success ? result.data.startWeight : 0;
+  const LogList = response.success ? response.data.logList : [];
+  const currentWeight = response.success ? response.data.currentWeight : 0;
+  const startWeight = response.success ? response.data.startWeight : 0;
 
   return (
     <div className="container max-w-7xl">

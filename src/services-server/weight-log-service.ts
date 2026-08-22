@@ -4,27 +4,13 @@ import { WeightLogRepository } from '@/repositories/weight-log-repository';
 //Mapping
 import { LogWeightMapper } from '@/mapping/log-weight-mapping';
 import { AddWeightDto, addWeightSchema, EditWeightDto } from '@/schemas/weight-log.schemas';
-import {
-  ApiErrorResponse,
-  ApiResponse,
-  ApiSuccessResponse,
-  DeleteLogWeightResponse,
-  EditLogWeightResponse,
-  LogWeightResponse,
-  UserLogWeightResponse,
-} from '@/types/api-types';
+import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, DeleteLogWeightResponse, EditLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
 
 export class WeightLogService {
   private weightLogRepository = new WeightLogRepository();
 
   async getAll(userId: number): Promise<ApiResponse<UserLogWeightResponse>> {
     try {
-      // const [lastLog, firstLog, allLogs] = await Promise.all([
-      //   this.weightLogRepository.lastLog(1),
-      //   this.weightLogRepository.firstLog(1),
-      //   this.weightLogRepository.getAll(1),
-      // ]);
-
       const lastLog = await this.weightLogRepository.lastLog(userId);
       const firstLog = await this.weightLogRepository.firstLog(userId);
       const allLogs = await this.weightLogRepository.getAll(userId);
@@ -34,11 +20,7 @@ export class WeightLogService {
       return {
         success: true,
         message: 'Hätmning lyckades',
-        data: {
-          logList: viewModel.logList,
-          currentWeight: viewModel.currentWeight,
-          startWeight: viewModel.startWeight,
-        },
+        data: viewModel,
       } satisfies ApiSuccessResponse<UserLogWeightResponse>;
     } catch (error) {
       return {
@@ -90,9 +72,7 @@ export class WeightLogService {
       return {
         success: true,
         message: 'Vikt lyckades loggas',
-        data: {
-          log: viewModel,
-        },
+        data: viewModel,
       } satisfies ApiSuccessResponse<LogWeightResponse>;
     } catch (error) {
       console.error('AuthService.updateUser failed:', error);
@@ -120,9 +100,7 @@ export class WeightLogService {
       const viewModel = LogWeightMapper.mapLogItemToViewModel(updatedData);
       return {
         success: true,
-        data: {
-          data: viewModel,
-        },
+        data: viewModel,
       } satisfies ApiSuccessResponse<EditLogWeightResponse>;
     } catch (error) {
       return {
@@ -144,9 +122,7 @@ export class WeightLogService {
 
       return {
         success: true,
-        data: {
-          log: LogWeightMapper.mapLogItemToViewModel(data),
-        },
+        data: LogWeightMapper.mapLogItemToViewModel(data),
       } satisfies ApiSuccessResponse<LogWeightResponse>;
     } catch (error) {
       console.error('getById error:', error);

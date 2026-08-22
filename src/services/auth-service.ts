@@ -24,8 +24,8 @@ export default class AuthService {
         return errorResponse('Gick inte hämta data');
       }
 
-      const apiResponse: ApiResponse<UserResponse> = await response.json();
-      return apiResponse;
+      const result = (await response.json()) as ApiResponse<UserResponse>;
+      return result;
     } catch (error) {
       return errorResponse('Gick inte hämta data');
     }

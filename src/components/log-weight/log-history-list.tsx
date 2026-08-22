@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import type { LogItemViewModel } from '@/types/log-weight-types';
 
 // Services
-import { LogWeightService } from '@/services/log-weight-service';
+import LogWeightService from '@/services/log-weight-service';
 
 // Props
 type PageProps = {
@@ -51,15 +51,7 @@ export default function LogHistory({ logItem }: PageProps) {
   };
 
   return (
-    <tr
-      className="
-        group
-        border-b border-zinc-800/70
-        transition-all duration-200
-        hover:bg-zinc-800/40
-        
-      "
-    >
+    <tr className="group border-b border-zinc-800/70 transition-all duration-200 hover:bg-zinc-800/40">
       {/* Date */}
       <td className="px-6 py-5">
         <div className="flex items-center gap-3">
