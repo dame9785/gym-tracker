@@ -31,25 +31,21 @@ export type LogWeightResponse = LogItemViewModel;
 
 export type EditLogWeightResponse = LogItemViewModel;
 
+export type UpdateUserResponse = UserViewModel;
+
+//Goal Type
+export type GoalResponse = GoalTypeViewModel[];
+
 // Register
 export interface RegisterResponse {
   userId: number;
   token: string;
 }
 
-export interface UpdateUserResponse {
-  user: UserViewModel;
-}
-
 //Login
 export interface LogoutResponse {
   success: boolean;
   message: string;
-}
-
-//Goal Type
-export interface GoalResponse {
-  goals: GoalTypeViewModel[];
 }
 
 export interface UserLogWeightResponse {

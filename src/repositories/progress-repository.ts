@@ -37,10 +37,56 @@ export class ProgressRepository {
       },
     });
 
+    if (user.weightLogs.length === 0 || !latestWeightLog) {
+      return null;
+    }
+
     return {
-      startWeight: user.weightLogs.length > 0 ? Number(user.weightLogs[0].weight) : null,
-      currentWeight: latestWeightLog ? Number(latestWeightLog.weight) : null,
+      startWeight: Number(user.weightLogs[0].weight),
+      currentWeight: Number(latestWeightLog.weight),
       goalWeight: Number(user.goalWeight),
     };
+  }
+
+  async getExerciseProgress(userId: number) {
+    const sessions = await prisma.workoutSession.findMany({
+      where: {
+        userId,
+        status: 'COMPLETED',
+      },
+      orderBy: {
+        finishedAt: 'asc',
+      },
+      select: {
+        finishedAt: true,
+
+        exercises: {
+          select: {
+            workoutExercise: {
+              select: {
+                exercise: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+
+            sets: {
+              where: {
+                completed: true,
+              },
+              select: {
+                actualReps: true,
+                actualWeight: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return sessions;
   }
 }
