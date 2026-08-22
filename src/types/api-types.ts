@@ -52,6 +52,7 @@ export interface UserLogWeightResponse {
   logList: LogItemViewModel[];
   currentWeight: string | undefined;
   startWeight: string | undefined;
+  pagination: PaginationViewModel;
 }
 
 export interface DeleteLogWeightResponse {

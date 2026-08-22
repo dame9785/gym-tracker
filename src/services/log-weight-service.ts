@@ -6,9 +6,9 @@ import { errorResponse } from '@/utils/api-responses';
 const API_URL = 'http://localhost:3000/api/log-weight';
 
 export default class LogWeightService {
-  static async getAll(userToken: string): Promise<ApiResponse<UserLogWeightResponse>> {
+  static async getAll(userToken: string, page: number): Promise<ApiResponse<UserLogWeightResponse>> {
     try {
-      const response = await fetch(`${API_URL}`, {
+      const response = await fetch(`${API_URL}?page=${page}`, {
         method: 'GET',
         headers: {
           Cookie: `token=${userToken}`,

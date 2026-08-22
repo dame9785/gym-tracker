@@ -9,18 +9,32 @@ import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, DeleteLogWeightRespo
 export class WeightLogService {
   private weightLogRepository = new WeightLogRepository();
 
-  async getAll(userId: number): Promise<ApiResponse<UserLogWeightResponse>> {
+  async getAll(userId: number, page: number): Promise<ApiResponse<UserLogWeightResponse>> {
     try {
       const lastLog = await this.weightLogRepository.lastLog(userId);
       const firstLog = await this.weightLogRepository.firstLog(userId);
-      const allLogs = await this.weightLogRepository.getAll(userId);
+
+      const pageSize = 7;
+      const totalLogs = await this.weightLogRepository.getTotalNumberOfLogs(userId);
+      const totalPages = Math.ceil(totalLogs / pageSize);
+      const allLogs = await this.weightLogRepository.getAll(userId, page);
 
       const viewModel = LogWeightMapper.mapLogViewModel(allLogs, firstLog, lastLog);
 
       return {
         success: true,
         message: 'Hätmning lyckades',
-        data: viewModel,
+        data: {
+          logList: viewModel.logList,
+          currentWeight: viewModel.currentWeight,
+          startWeight: viewModel.startWeight,
+          pagination: {
+            currentPage: page,
+            totalPages,
+            pageSize,
+            totalItems: totalLogs,
+          },
+        },
       } satisfies ApiSuccessResponse<UserLogWeightResponse>;
     } catch (error) {
       return {

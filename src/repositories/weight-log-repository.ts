@@ -1,13 +1,26 @@
 //Prisma
 import { prisma } from '@/lib/prisma';
-import { EditWeightDto } from '@/schemas/auth-schemas';
-
-//Types
-import type { LogWeightDto } from '@/types/log-weight-types';
+import { AddWeightDto, EditWeightDto } from '@/schemas/weight-log.schemas';
 
 export class WeightLogRepository {
-  async getAll(userId: number) {
+  async getAll(userId: number, page: number) {
+    const pageSize = 7;
+    const skip = (page - 1) * pageSize;
+
     return prisma.weightLog.findMany({
+      where: {
+        userId: userId,
+      },
+      orderBy: {
+        loggedAt: 'desc',
+      },
+      skip,
+      take: pageSize,
+    });
+  }
+
+  async getTotalNumberOfLogs(userId: number) {
+    return prisma.weightLog.count({
       where: {
         userId: userId,
       },
@@ -44,7 +57,7 @@ export class WeightLogRepository {
     });
   }
 
-  async create(userId: number, dto: LogWeightDto) {
+  async create(userId: number, dto: AddWeightDto) {
     return prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: {

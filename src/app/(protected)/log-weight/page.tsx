@@ -5,25 +5,40 @@ import Link from 'next/link';
 import Statistic from '@/components/log-weight/log-weight-statistics';
 import LogHistoryList from '@/components/log-weight/log-history-list';
 import WeightChart from '@/components/log-weight/weight-chart';
+import Pagination from '@/components/log-weight/log-pagination';
 import Button from '@/components/button/button';
 
 //Services
 import WeightLogService from '@/services/log-weight-service';
 import { getTokenFromCookieStore } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
-export default async function LogWeight() {
+type Props = {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+};
+
+export default async function LogWeight({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
   const token = await getTokenFromCookieStore();
 
   if (!token) {
     redirect('/account/login');
   }
 
-  const response = await WeightLogService.getAll(token);
+  const response = await WeightLogService.getAll(token, page);
+  if (!response.success) {
+    notFound();
+  }
+  const data = response.data;
 
-  const LogList = response.success ? response.data.logList : [];
-  const currentWeight = response.success ? response.data.currentWeight : 0;
-  const startWeight = response.success ? response.data.startWeight : 0;
+  const LogList = data.logList;
+  const currentWeight = data.currentWeight;
+  const startWeight = data.startWeight;
+  const currentPage = data.pagination.currentPage;
+  const totalPage = data.pagination.totalPages;
 
   return (
     <div className="container max-w-7xl">
@@ -74,6 +89,7 @@ export default async function LogWeight() {
           </tbody>
         </table>
       </div>
+      <Pagination currentPage={currentPage} totalPages={totalPage} />
     </div>
   );
 }

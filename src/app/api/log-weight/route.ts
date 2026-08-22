@@ -8,7 +8,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const weightLogService = new WeightLogService();
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const page = Number(searchParams.get('page')) || 1;
+
   try {
     const token = await getTokenFromCookieStore();
 
@@ -34,7 +37,7 @@ export async function GET() {
       );
     }
     const userId = payLoad.userId;
-    const response = await weightLogService.getAll(userId);
+    const response = await weightLogService.getAll(userId, page);
 
     return NextResponse.json(response, { status: response.success ? 200 : 404 });
   } catch (error) {
