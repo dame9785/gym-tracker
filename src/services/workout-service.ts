@@ -31,9 +31,9 @@ export default class WorkoutService {
     }
   }
 
-  static async getAll(userToken: string): Promise<ApiResponse<WorkoutApiResponse>> {
+  static async getAll(userToken: string, page: number): Promise<ApiResponse<WorkoutApiResponse>> {
     try {
-      const response = await fetch(`${API_URL}`, {
+      const response = await fetch(`${API_URL}?page=${page}`, {
         method: 'GET',
         headers: {
           Cookie: `token=${userToken}`,

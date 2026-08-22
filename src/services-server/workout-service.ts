@@ -77,14 +77,25 @@ export class WorkoutService {
     }
   }
 
-  async getAll(userId: number): Promise<ApiResponse<WorkoutApiResponse>> {
+  async getAll(userId: number, page: number): Promise<ApiResponse<WorkoutApiResponse>> {
+    const totalNumberWorkouts = await this.workoutRepository.getTotalNumberOfWorkouts(userId);
+
+    const pageSize = 5;
+    const totalPages = Math.ceil(totalNumberWorkouts / pageSize);
+
     try {
-      const workouts = await this.workoutRepository.getAll(userId);
+      const workouts = await this.workoutRepository.getAll(userId, page, pageSize);
 
       return {
         success: true,
         data: {
           workouts: WorkoutMapper.workoutDtosToViewModels(workouts),
+          pagination: {
+            currentPage: page,
+            totalPages,
+            pageSize,
+            totalItems: totalNumberWorkouts,
+          },
         },
       } satisfies ApiSuccessResponse<WorkoutApiResponse>;
     } catch (error) {

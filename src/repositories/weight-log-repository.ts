@@ -3,8 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { AddWeightDto, EditWeightDto } from '@/schemas/weight-log.schemas';
 
 export class WeightLogRepository {
-  async getAll(userId: number, page: number) {
-    const pageSize = 7;
+  async getAll(userId: number, page: number, pageSize: number) {
     const skip = (page - 1) * pageSize;
 
     return prisma.weightLog.findMany({

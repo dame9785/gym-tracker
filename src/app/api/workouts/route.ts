@@ -54,7 +54,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const page = Number(searchParams.get('page')) || 1;
+
   try {
     const token = await getTokenFromCookieStore();
 
@@ -81,7 +84,7 @@ export async function GET() {
     }
     const userId = payLoad.userId;
 
-    const result = await workoutService.getAll(userId);
+    const result = await workoutService.getAll(userId, page);
 
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {

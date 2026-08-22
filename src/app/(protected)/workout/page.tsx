@@ -3,17 +3,32 @@ import Button from '@/components/button/button';
 import WorkoutTable from '@/components/tables/workout-table';
 import WorkoutService from '@/services/workout-service';
 import { getTokenFromCookieStore } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import Pagination from '@/components/workout/pagination';
 
-export default async function Workouts() {
+type Props = {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+};
+
+export default async function Workouts({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+
   const userToken = await getTokenFromCookieStore();
 
   if (!userToken) {
     redirect('/account/login');
   }
 
-  const response = await WorkoutService.getAll(userToken);
-  const workouts = response.success ? response.data.workouts : [];
+  const response = await WorkoutService.getAll(userToken, page);
+  if (!response.success) {
+    notFound();
+  }
+  const workouts = response.data.workouts;
+  const totalPages = response.data.pagination.totalPages;
+  const currentPage = response.data.pagination.currentPage;
 
   return (
     <div className="container">
@@ -36,6 +51,7 @@ export default async function Workouts() {
       <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
         <WorkoutTable workouts={workouts} />
       </div>
+      <Pagination currentPage={currentPage} totalPages={totalPages} />
     </div>
   );
 }

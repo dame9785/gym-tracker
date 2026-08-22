@@ -82,6 +82,7 @@ export interface ExerciseApiUpdateResponse {
 
 export interface WorkoutApiResponse {
   workouts: WorkoutViewModel[];
+  pagination: PaginationViewModel;
 }
 
 export interface WorkoutApiDeleteResponse {

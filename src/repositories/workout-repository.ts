@@ -48,11 +48,13 @@ export class WorkoutRepository {
     });
   }
 
-  async getAll(userId: number) {
+  async getAll(userId: number, page: number, pageSize: number) {
+    const skip = (page - 1) * pageSize;
     return await prisma.workout.findMany({
       where: {
         userId: userId,
       },
+
       include: {
         exercises: {
           include: {
@@ -66,6 +68,8 @@ export class WorkoutRepository {
       orderBy: {
         createdAt: 'asc',
       },
+      skip,
+      take: pageSize,
     });
   }
 
@@ -133,6 +137,14 @@ export class WorkoutRepository {
     return await prisma.workout.delete({
       where: {
         id,
+      },
+    });
+  }
+
+  async getTotalNumberOfWorkouts(userId: number) {
+    return prisma.workout.count({
+      where: {
+        userId: userId,
       },
     });
   }

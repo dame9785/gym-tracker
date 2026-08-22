@@ -2,8 +2,7 @@
 import { prisma } from '@/lib/prisma';
 
 export class HistoryRepository {
-  async getCompletedWorkoutSessions(userId: number, page: number) {
-    const pageSize = 3;
+  async getCompletedWorkoutSessions(userId: number, page: number, pageSize: number) {
     const skip = (page - 1) * pageSize;
 
     const sessions = await prisma.workoutSession.findMany({

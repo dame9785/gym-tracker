@@ -17,7 +17,7 @@ export class WeightLogService {
       const pageSize = 7;
       const totalLogs = await this.weightLogRepository.getTotalNumberOfLogs(userId);
       const totalPages = Math.ceil(totalLogs / pageSize);
-      const allLogs = await this.weightLogRepository.getAll(userId, page);
+      const allLogs = await this.weightLogRepository.getAll(userId, page, pageSize);
 
       const viewModel = LogWeightMapper.mapLogViewModel(allLogs, firstLog, lastLog);
 

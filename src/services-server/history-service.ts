@@ -21,7 +21,7 @@ export class HistoryService {
 
       const totalTrainingTime = await this.historyRepository.getTotalTrainingTime(userId);
       const totalCompeletedSets = await this.historyRepository.getTotalSets(userId);
-      const workoutSessions = await this.historyRepository.getCompletedWorkoutSessions(userId, page);
+      const workoutSessions = await this.historyRepository.getCompletedWorkoutSessions(userId, page, pageSize);
 
       return {
         success: true,
