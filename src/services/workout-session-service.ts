@@ -1,5 +1,6 @@
 //Next Redirect
-import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, WorkoutFinishApiResponse, WorkoutSessionCreateResponse, WorkoutSessionDetailApiResponse, WorkoutSessionUpdatedSetResponse } from '@/types/api-types';
+import { ApiResponse, ApiSuccessResponse, WorkoutFinishApiResponse, WorkoutSessionCreateResponse, WorkoutSessionDetailApiResponse, WorkoutSessionUpdatedSetResponse } from '@/types/api-types';
+import { errorResponse } from '@/utils/api-responses';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/workout-sessions';
@@ -12,13 +13,14 @@ export default class WorkoutSessionService {
         method: 'GET',
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result = await response.json();
       return result as ApiSuccessResponse<WorkoutSessionDetailApiResponse>;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -36,13 +38,14 @@ export default class WorkoutSessionService {
         }),
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result = await response.json();
       return result as ApiSuccessResponse<WorkoutSessionCreateResponse>;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -60,13 +63,14 @@ export default class WorkoutSessionService {
         }),
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result = await response.json();
       return result as ApiSuccessResponse<WorkoutSessionUpdatedSetResponse>;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -77,13 +81,14 @@ export default class WorkoutSessionService {
         method: 'PUT',
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result = await response.json();
       return result as ApiSuccessResponse<WorkoutFinishApiResponse>;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 }

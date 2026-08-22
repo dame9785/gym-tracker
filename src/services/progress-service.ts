@@ -2,7 +2,7 @@ import { ApiResponse, ApiSuccessResponse } from '@/types/api-types';
 import { ProgressApiResponse } from '@/types/progress-type';
 
 //Utils
-import { errorResponse } from '@/utils/api-error-response';
+import { errorResponse } from '@/utils/api-responses';
 
 const API_URL = 'http://localhost:3000/api/progress';
 

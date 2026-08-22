@@ -1,8 +1,10 @@
 //Next Redirect
-import { ApiErrorResponse, ApiResponse, GoalResponse } from '@/types/api-types';
+import { ApiResponse, GoalResponse } from '@/types/api-types';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/goals';
+
+import { errorResponse } from '@/utils/api-responses';
 
 export default class GoalTypesService {
   static async getAll(): Promise<ApiResponse<GoalResponse>> {
@@ -11,10 +13,14 @@ export default class GoalTypesService {
         method: 'GET',
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<GoalResponse> = await response.json();
       return result;
     } catch (error) {
-      return { success: false, message: 'Server fel gick inte hämta data' } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 }

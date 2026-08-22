@@ -1,14 +1,9 @@
 //Types
 import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas';
-import {
-  ApiErrorResponse,
-  ApiResponse,
-  LogoutResponse,
-  LoginResponse,
-  RegisterResponse,
-  UserResponse,
-  UpdateUserResponse,
-} from '@/types/api-types';
+import { ApiResponse, LogoutResponse, LoginResponse, RegisterResponse, UserResponse, UpdateUserResponse } from '@/types/api-types';
+
+//Utils
+import { errorResponse } from '@/utils/api-responses';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/auth';
@@ -25,13 +20,14 @@ export default class AuthService {
         cache: 'no-store',
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const apiResponse: ApiResponse<UserResponse> = await response.json();
       return apiResponse;
     } catch (error) {
-      return {
-        message: 'Server fel',
-        success: false,
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -46,13 +42,14 @@ export default class AuthService {
         body: JSON.stringify(dto),
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<LoginResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -67,13 +64,14 @@ export default class AuthService {
         body: JSON.stringify(dto),
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const data: ApiResponse<RegisterResponse> = await response.json();
       return data;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -87,13 +85,14 @@ export default class AuthService {
         body: JSON.stringify(dto),
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<UpdateUserResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -104,13 +103,14 @@ export default class AuthService {
         method: 'POST',
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<LogoutResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Server fel',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 }

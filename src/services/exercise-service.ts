@@ -1,18 +1,8 @@
 //Types
 import { UpdateExericseDto } from '@/schemas/exercise-schema';
-import {
-  ApiErrorResponse,
-  ApiResponse,
-  ExerciseApiDeleteResponse,
-  ExerciseApiGetByIdResponse,
-  ExerciseApiRegisterResponse,
-  ExerciseApiResponse,
-  ExerciseApiUpdateResponse,
-} from '@/types/api-types';
+import { ApiResponse, ExerciseApiDeleteResponse, ExerciseApiGetByIdResponse, ExerciseApiRegisterResponse, ExerciseApiResponse, ExerciseApiUpdateResponse } from '@/types/api-types';
 import type { RegisterExerciseDto } from '@/types/exercise-types';
-
-//Next Redirect
-import { redirect } from 'next/navigation';
+import { errorResponse } from '@/utils/api-responses';
 
 const API_URL = 'http://localhost:3000/api/exercises';
 
@@ -24,13 +14,14 @@ export default class ExerciseService {
         method: 'GET',
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<ExerciseApiResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -45,13 +36,14 @@ export default class ExerciseService {
         body: JSON.stringify(dto),
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<ExerciseApiRegisterResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -62,13 +54,14 @@ export default class ExerciseService {
         method: 'delete',
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<ExerciseApiDeleteResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -82,13 +75,15 @@ export default class ExerciseService {
         },
         body: JSON.stringify(dto),
       });
+
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<ExerciseApiUpdateResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -98,13 +93,14 @@ export default class ExerciseService {
       const response = await fetch(`${API_URL}/${id}`, {
         method: 'GET',
       });
+
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
       const result: ApiResponse<ExerciseApiGetByIdResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 }

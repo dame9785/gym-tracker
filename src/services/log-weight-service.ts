@@ -1,12 +1,7 @@
 // Schemas
 import { AddWeightDto, EditWeightDto } from '@/schemas/weight-log.schemas';
-import {
-  ApiErrorResponse,
-  ApiResponse,
-  DeleteLogWeightResponse,
-  LogWeightResponse,
-  UserLogWeightResponse,
-} from '@/types/api-types';
+import { ApiResponse, DeleteLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
+import { errorResponse } from '@/utils/api-responses';
 
 const API_URL = 'http://localhost:3000/api/log-weight';
 
@@ -18,13 +13,10 @@ export class LogWeightService {
       });
 
       const result: ApiResponse<UserLogWeightResponse> = await response.json();
-      console.log(result);
+
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Server fel',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -33,13 +25,15 @@ export class LogWeightService {
       const response = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
       });
+
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<DeleteLogWeightResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Server fel',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -53,13 +47,14 @@ export class LogWeightService {
         body: JSON.stringify(dto),
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<LogWeightResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Server fel',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -73,13 +68,14 @@ export class LogWeightService {
         body: JSON.stringify(dto),
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<LogWeightResponse> = await response.json();
       return result;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Server fel',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 
@@ -89,14 +85,15 @@ export class LogWeightService {
         method: 'GET',
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result: ApiResponse<LogWeightResponse> = await response.json();
       return result;
     } catch (error) {
       console.log(error);
-      return {
-        success: false,
-        message: 'Server fel',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 }

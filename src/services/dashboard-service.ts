@@ -1,7 +1,10 @@
-import { ApiErrorResponse, ApiResponse, DashboardApiResponse } from '@/types/api-types';
+import { ApiResponse, DashboardApiResponse } from '@/types/api-types';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/dashboard';
+
+//Utils
+import { errorResponse } from '@/utils/api-responses';
 
 export default class DashboardService {
   static async getDashboard(token: string): Promise<ApiResponse<DashboardApiResponse>> {
@@ -13,13 +16,14 @@ export default class DashboardService {
         },
       });
 
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
       const result = await response.json();
       return result as ApiResponse<DashboardApiResponse>;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Gick inte hämta data');
     }
   }
 }
