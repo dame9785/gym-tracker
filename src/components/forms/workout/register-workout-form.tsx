@@ -27,9 +27,10 @@ import { ErrorsHelper } from '@/helpers/error-helper';
 
 type Props = {
   exericses: ExerciseViewModel[];
+  userToken: string;
 };
 
-export default function AddWorkoutForm({ exericses }: Props) {
+export default function AddWorkoutForm({ exericses, userToken }: Props) {
   const router = useRouter();
   const [errors, setErrors] = useState<Partial<Record<keyof AddWorkoutDto, string>>>({});
   const [formData, setFormData] = useState<RegisterWorkoutDto>({
@@ -42,7 +43,6 @@ export default function AddWorkoutForm({ exericses }: Props) {
     e.preventDefault();
 
     const validation = registerWorkoutSchema.safeParse(formData);
-    console.log(validation);
     if (!validation.success) {
       setErrors(ErrorsHelper.getFormErrors<AddWorkoutDto>(validation.error.issues));
       return;
@@ -55,7 +55,7 @@ export default function AddWorkoutForm({ exericses }: Props) {
     }
 
     try {
-      const result = await WorkoutService.create(formData);
+      const result = await WorkoutService.create(formData, userToken);
       if (!result.success) {
         toast.error('Något gick fel, kunde inte skapa');
         return;
@@ -164,14 +164,7 @@ export default function AddWorkoutForm({ exericses }: Props) {
           <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
           {formData.workoutExercises.map((exercise, index) => (
-            <WorkoutExerciseCard
-              key={index}
-              index={index}
-              exercise={exercise}
-              exercises={exericses}
-              onUpdate={updateExercise}
-              onRemove={removeExercise}
-            />
+            <WorkoutExerciseCard key={index} index={index} exercise={exercise} exercises={exericses} onUpdate={updateExercise} onRemove={removeExercise} />
           ))}
 
           <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>

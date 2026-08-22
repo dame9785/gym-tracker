@@ -1,21 +1,15 @@
 import { WorkoutSessionMapper } from '@/mapping/workout-session-mapping';
 import { WorkoutSessionRepository } from '@/repositories/workout-session-repository';
-import {
-  ApiErrorResponse,
-  ApiResponse,
-  ApiSuccessResponse,
-  WorkoutFinishApiResponse,
-  WorkoutSessionCreateResponse,
-  WorkoutSessionDetailApiResponse,
-  WorkoutSessionUpdatedSetResponse,
-} from '@/types/api-types';
+import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, WorkoutFinishApiResponse, WorkoutSessionCreateResponse, WorkoutSessionDetailApiResponse, WorkoutSessionUpdatedSetResponse } from '@/types/api-types';
 
 export class WorkoutSessionService {
   private workoutSessionRepository = new WorkoutSessionRepository();
 
-  async create(userId: number, workoutId: number): Promise<ApiResponse<WorkoutSessionCreateResponse>> {
+  async create(workoutId: number, userId: number): Promise<ApiResponse<WorkoutSessionCreateResponse>> {
     try {
-      const workoutSession = await this.workoutSessionRepository.create(userId, workoutId);
+      console.log('WORKOUT ID', workoutId);
+      console.log('USER ID', userId);
+      const workoutSession = await this.workoutSessionRepository.create(workoutId, userId);
 
       return {
         success: true,

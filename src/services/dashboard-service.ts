@@ -3,11 +3,14 @@ import { ApiErrorResponse, ApiResponse, DashboardApiResponse } from '@/types/api
 //API URL
 const API_URL = 'http://localhost:3000/api/dashboard';
 
-export class DashboardService {
-  async getDashboard(): Promise<ApiResponse<DashboardApiResponse>> {
+export default class DashboardService {
+  static async getDashboard(token: string): Promise<ApiResponse<DashboardApiResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {
         method: 'GET',
+        headers: {
+          Cookie: `token=${token}`,
+        },
       });
 
       const result = await response.json();

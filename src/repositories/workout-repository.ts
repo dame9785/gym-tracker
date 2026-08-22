@@ -6,11 +6,11 @@ import { prisma } from '@/lib/prisma';
 import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
 export class WorkoutRepository {
-  async create(dto: RegisterWorkoutDto) {
+  async create(dto: RegisterWorkoutDto, userId: number) {
     return await prisma.$transaction(async (tx) => {
       const workout = await tx.workout.create({
         data: {
-          userId: 1,
+          userId: userId,
           name: dto.name,
           description: dto.description,
         },
@@ -48,10 +48,10 @@ export class WorkoutRepository {
     });
   }
 
-  async getAll() {
+  async getAll(userId: number) {
     return await prisma.workout.findMany({
       where: {
-        userId: 1,
+        userId: userId,
       },
       include: {
         exercises: {
@@ -110,11 +110,11 @@ export class WorkoutRepository {
     });
   }
 
-  async getById(id: number) {
+  async getById(id: number, userId: number) {
     return await prisma.workout.findFirst({
       where: {
         id,
-        userId: 1, // Tillfälligt tills vi använder inloggad användare
+        userId: userId,
       },
       include: {
         exercises: {

@@ -11,6 +11,7 @@ const workoutSessionService = new WorkoutSessionService();
 export async function POST(request: NextRequest) {
   try {
     const token = await getTokenFromCookieStore();
+    console.log('TOKEN', token);
     if (!token) {
       return NextResponse.json(
         {
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
     const userId = payLoad.userId;
     const dto = await request.json();
-    const result = await workoutSessionService.create(userId, dto.workoutId);
+    const result = await workoutSessionService.create(dto.workoutId, userId);
 
     return NextResponse.json(result, {
       status: result.success ? 201 : 400,

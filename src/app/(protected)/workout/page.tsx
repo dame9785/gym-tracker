@@ -2,12 +2,19 @@ import Link from 'next/link';
 import Button from '@/components/button/button';
 import WorkoutTable from '@/components/tables/workout-table';
 import WorkoutService from '@/services/workout-service';
+import { getTokenFromCookieStore } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export default async function Workouts() {
-  const response = await WorkoutService.getAll();
-  console.log(response);
+  const userToken = await getTokenFromCookieStore();
+
+  if (!userToken) {
+    redirect('/account/login');
+  }
+
+  const response = await WorkoutService.getAll(userToken);
   const workouts = response.success ? response.data.workouts : [];
-  console.log(workouts);
+
   return (
     <div className="container">
       <div className="mb-8 p-5">

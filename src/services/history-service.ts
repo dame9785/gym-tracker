@@ -5,9 +5,9 @@ import { ApiErrorResponse, ApiResponse, HistoryApiResponse } from '@/types/api-t
 const API_URL = 'http://localhost:3000/api/history';
 
 export default class HistoryService {
-  static async getHistory(token: string): Promise<ApiResponse<HistoryApiResponse>> {
+  static async getHistory(token: string, page: number): Promise<ApiResponse<HistoryApiResponse>> {
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}?page=${page}`, {
         method: 'GET',
         headers: {
           Cookie: `token=${token}`,

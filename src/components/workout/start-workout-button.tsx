@@ -1,22 +1,25 @@
 'use client';
 
 import WorkoutSessionService from '@/services/workout-session-service';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 interface StartWorkoutButtonProps {
   workoutId: number;
+  userToken: string;
 }
 
-export default function StartWorkoutButton({ workoutId }: StartWorkoutButtonProps) {
+export default function StartWorkoutButton({ workoutId, userToken }: StartWorkoutButtonProps) {
+  console.log(workoutId);
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
 
   const handleStartWorkout = async () => {
     setIsStarting(true);
     try {
-      const response = await WorkoutSessionService.create(workoutId);
+      const response = await WorkoutSessionService.create(workoutId, userToken);
+
       if (!response.success) {
         toast.error('Något gick fel, gick inte starta träningspasset');
         return;

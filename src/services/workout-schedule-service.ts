@@ -28,9 +28,14 @@ export default class WorkoutScheduleService {
     }
   }
 
-  static async getByMonth(userId: number, year: number, month: number): Promise<CalendarWorkoutViewModel[]> {
+  static async getByMonth(userToken: string, year: number, month: number): Promise<CalendarWorkoutViewModel[]> {
     try {
-      const response = await fetch(`/api/workout-schedules?userId=${userId}&year=${year}&month=${month}`);
+      const response = await fetch(`/api/workout-schedules?&year=${year}&month=${month}`, {
+        method: 'GET',
+        headers: {
+          Cookie: `token=${userToken}`,
+        },
+      });
 
       if (!response.ok) {
         const text = await response.text();

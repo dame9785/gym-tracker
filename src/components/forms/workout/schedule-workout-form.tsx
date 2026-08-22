@@ -47,7 +47,7 @@ export default function ScheduleWorkoutForm({ workouts }: Props) {
     }
 
     toast.success('Passet är nu schemalagd');
-    router.push('/log-weight');
+    router.push('/dashboard');
   }
 
   return (

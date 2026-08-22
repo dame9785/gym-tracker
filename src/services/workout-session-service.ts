@@ -1,13 +1,5 @@
 //Next Redirect
-import {
-  ApiErrorResponse,
-  ApiResponse,
-  ApiSuccessResponse,
-  WorkoutFinishApiResponse,
-  WorkoutSessionCreateResponse,
-  WorkoutSessionDetailApiResponse,
-  WorkoutSessionUpdatedSetResponse,
-} from '@/types/api-types';
+import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, WorkoutFinishApiResponse, WorkoutSessionCreateResponse, WorkoutSessionDetailApiResponse, WorkoutSessionUpdatedSetResponse } from '@/types/api-types';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/workout-sessions';
@@ -31,12 +23,13 @@ export default class WorkoutSessionService {
   }
 
   //POST: Create session
-  static async create(workoutId: number): Promise<ApiResponse<WorkoutSessionCreateResponse>> {
+  static async create(workoutId: number, userToken: string): Promise<ApiResponse<WorkoutSessionCreateResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Cookie: `token=${userToken}`,
         },
         body: JSON.stringify({
           workoutId,

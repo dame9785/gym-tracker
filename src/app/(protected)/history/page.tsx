@@ -4,19 +4,30 @@ import { History } from 'lucide-react';
 //Services
 import HistoryService from '@/services/history-service';
 import { getTokenFromCookieStore } from '@/lib/auth';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import HistoryTopStats from '@/components/history/history-top-stats';
 import HistoryMiddleStats from '@/components/history/history-middle-stats';
+import WorkoutSessions from '@/components/history/workout-sessions';
+import HistoryPagination from '@/components/history/history-pagination';
+import HistoryHeader from '@/components/history/history-header';
 
-export default async function HistoryPage() {
+type Props = {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+};
+
+export default async function HistoryPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+
   const token = await getTokenFromCookieStore();
 
   if (!token) {
-    notFound();
+    redirect('/account/login');
   }
 
-  const response = await HistoryService.getHistory(token);
-  console.log(response);
+  const response = await HistoryService.getHistory(token, page);
   if (!response.success) {
     notFound();
   }
@@ -25,25 +36,23 @@ export default async function HistoryPage() {
   const totalTrainingTime = response.data.history.totalTrainingTime;
   const totalCompletedSets = response.data.history.totalCompletedSets;
   const workoutSessions = response.data.history.workoutSessions;
+  const pagination = response.data.pagination;
 
   return (
     <div className="mx-auto max-w-7xl p-8">
-      <div className="mb-10 flex items-center gap-4">
-        <div className="rounded-2xl bg-orange-500 p-3">
-          <History className="h-8 w-8 text-white" />
-        </div>
-
-        <div>
-          <h1 className="text-4xl font-bold text-white">Workout History</h1>
-          <p className="text-zinc-400">Review your completed workouts</p>
-        </div>
-      </div>
+      {/* History Header*/}
+      <HistoryHeader />
 
       {/* History stats*/}
       <HistoryTopStats data={historyData} />
 
       {/* Training time stats*/}
       <HistoryMiddleStats totalTrainingTime={totalTrainingTime} totalCompletedSets={totalCompletedSets} />
+
+      {/* Training time stats*/}
+      <WorkoutSessions workoutSessions={workoutSessions} />
+
+      <HistoryPagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
     </div>
   );
 }

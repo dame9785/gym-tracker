@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma';
 
 export class DashboardRepository {
-  async getWeeklyOverview() {
+  async getWeeklyOverview(userId: number) {
     const today = new Date();
 
     const startOfWeek = new Date(today);
@@ -14,7 +14,7 @@ export class DashboardRepository {
 
     return await prisma.workoutSchedule.findMany({
       where: {
-        userId: 1,
+        userId: userId,
         date: {
           gte: startOfWeek,
           lte: endOfWeek,

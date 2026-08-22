@@ -7,16 +7,7 @@ import type { RegisterWorkoutDto } from '@/types/workout-types';
 
 //Mapping
 import { WorkoutMapper } from '@/mapping/workout-mapping';
-import {
-  ApiErrorResponse,
-  ApiResponse,
-  ApiSuccessResponse,
-  WorkoutApiDeleteResponse,
-  WorkoutApiGetByIdResponse,
-  WorkoutApiRegisterResponse,
-  WorkoutApiResponse,
-  WorkoutApiUpdateResponse,
-} from '@/types/api-types';
+import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, WorkoutApiDeleteResponse, WorkoutApiGetByIdResponse, WorkoutApiRegisterResponse, WorkoutApiResponse, WorkoutApiUpdateResponse } from '@/types/api-types';
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
 import { UpdateWorkoutDto, updateWorkoutSchema } from '@/schemas/workout-schemas';
 import { ErrorsHelper } from '@/helpers/error-helper';
@@ -25,9 +16,9 @@ export class WorkoutService {
   private workoutRepository = new WorkoutRepository();
   private exericseRepository = new ExerciseRepository();
 
-  async create(dto: RegisterWorkoutDto): Promise<ApiResponse<WorkoutApiRegisterResponse>> {
+  async create(dto: RegisterWorkoutDto, userId: number): Promise<ApiResponse<WorkoutApiRegisterResponse>> {
     try {
-      const workout = await this.workoutRepository.create(dto);
+      const workout = await this.workoutRepository.create(dto, userId);
 
       return {
         success: true,
@@ -86,9 +77,9 @@ export class WorkoutService {
     }
   }
 
-  async getAll(): Promise<ApiResponse<WorkoutApiResponse>> {
+  async getAll(userId: number): Promise<ApiResponse<WorkoutApiResponse>> {
     try {
-      const workouts = await this.workoutRepository.getAll();
+      const workouts = await this.workoutRepository.getAll(userId);
 
       return {
         success: true,

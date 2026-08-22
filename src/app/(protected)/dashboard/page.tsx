@@ -1,4 +1,4 @@
-import { DashboardService } from '@/services-server/dashboard-service';
+import DashboardService from '@/services/dashboard-service';
 import DashboardStats from '@/components/dashboard/dashboard-stats';
 import DashboardHeader from '@/components/dashboard/dashboard-header';
 import WeeklyOverview from '@/components/dashboard/weekly-overview';
@@ -9,16 +9,15 @@ import { getTokenFromCookieStore } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export default async function DashboardPage() {
-  const dashboardService = new DashboardService();
-  const result = await dashboardService.getDashboard();
+  const userToken = await getTokenFromCookieStore();
 
-  if (!result.success) {
-    return <p>Kunde inte hämta dashboard.</p>;
+  if (!userToken) {
+    redirect('/account/login');
   }
 
-  const token = await getTokenFromCookieStore();
-  if (!token) {
-    redirect('/account/login');
+  const result = await DashboardService.getDashboard(userToken);
+  if (!result.success) {
+    return <p>Kunde inte hämta dashboard.</p>;
   }
 
   const dashboard = result.data;
@@ -27,8 +26,8 @@ export default async function DashboardPage() {
     <main className="container space-y-8">
       <DashboardHeader />
       <DashboardStats summary={dashboard.weeklySummary} />
-      <WeeklyOverview workouts={dashboard.weeklyOverview} userToken={token} />
-      <WorkoutCalendar userId={1} />
+      <WeeklyOverview workouts={dashboard.weeklyOverview} userToken={userToken} />
+      <WorkoutCalendar userToken={userToken} />
       <div className="grid gap-6 lg:grid-cols-2">
         <TodayWorkout workout={dashboard.todayWorkout} />
         <WeeklySummary summary={dashboard.weeklySummary} />

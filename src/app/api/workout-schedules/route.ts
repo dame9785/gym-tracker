@@ -3,16 +3,41 @@ import { NextRequest, NextResponse } from 'next/server';
 
 //Services
 import { WorkoutScheduleService } from '@/services-server/workout-schedule-service';
+import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
+import { ApiErrorResponse } from '@/types/api-types';
 
 const workoutScheduleService = new WorkoutScheduleService();
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = request.nextUrl;
+    const token = await getTokenFromCookieStore();
 
+    if (!token) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'No token found',
+        } satisfies ApiErrorResponse,
+        { status: 401 },
+      );
+    }
+
+    const payLoad = await getUserFromToken(token);
+
+    if (!payLoad) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Unauthorized ',
+        } satisfies ApiErrorResponse,
+        { status: 401 },
+      );
+    }
+
+    const userId = payLoad.userId;
+    const { searchParams } = request.nextUrl;
     const year = Number(searchParams.get('year'));
     const month = Number(searchParams.get('month'));
-    const userId = Number(searchParams.get('userId'));
 
     if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(userId)) {
       return NextResponse.json(
@@ -58,8 +83,33 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const token = await getTokenFromCookieStore();
+
+    if (!token) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'No token found',
+        } satisfies ApiErrorResponse,
+        { status: 401 },
+      );
+    }
+
+    const payLoad = await getUserFromToken(token);
+
+    if (!payLoad) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Unauthorized ',
+        } satisfies ApiErrorResponse,
+        { status: 401 },
+      );
+    }
+    const userId = payLoad.userId;
+
     const dto = await request.json();
-    const result = await workoutScheduleService.create(dto);
+    const result = await workoutScheduleService.create(dto, userId);
 
     if (!result.success) {
       return NextResponse.json(result, { status: 500 });

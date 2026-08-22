@@ -10,13 +10,18 @@ export class HistoryService {
   private historyRepository = new HistoryRepository();
   private workoutRepository = new WorkoutRepository();
 
-  async getHistory(userId: number): Promise<ApiResponse<HistoryApiResponse>> {
+  async getHistory(userId: number, page: number): Promise<ApiResponse<HistoryApiResponse>> {
     try {
       const totalWorkouts = await this.historyRepository.getAllWorkoutSessionsCount(userId);
+
       const totalCompleted = await this.historyRepository.getTotalCompletedWorkout(userId);
+
+      const pageSize = 3;
+      const totalPages = Math.ceil(totalCompleted / pageSize);
+
       const totalTrainingTime = await this.historyRepository.getTotalTrainingTime(userId);
       const totalCompeletedSets = await this.historyRepository.getTotalSets(userId);
-      const workoutSessions = await this.historyRepository.getCompletedWorkoutSessions(userId);
+      const workoutSessions = await this.historyRepository.getCompletedWorkoutSessions(userId, page);
 
       return {
         success: true,
@@ -24,13 +29,21 @@ export class HistoryService {
           history: {
             totalWorkouts: totalWorkouts ?? 0,
             totalCompletedWorkouts: totalCompleted ?? 0,
+
             totalTrainingTime: {
               seconds: totalTrainingTime.seconds,
               minutes: totalTrainingTime.minutes,
               hours: totalTrainingTime.hours,
             },
+
             totalCompletedSets: totalCompeletedSets,
             workoutSessions: workoutSessions.map((x) => WorkoutSessionMapper.mapWorkoutSessionWithExericses(x)),
+          },
+          pagination: {
+            currentPage: page,
+            totalPages,
+            pageSize,
+            totalItems: totalCompleted,
           },
         },
       } satisfies ApiResponse<HistoryApiResponse>;

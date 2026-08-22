@@ -5,10 +5,10 @@ import { prisma } from '@/lib/prisma';
 import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
 
 export class WorkoutScheduleRepository {
-  async create(dto: RegisterWorkoutScheduleDto) {
+  async create(dto: RegisterWorkoutScheduleDto, userId: number) {
     const workoutSchedule = await prisma.workoutSchedule.create({
       data: {
-        userId: 1, // Tillfälligt, senare hämtas från den inloggade användaren
+        userId: userId,
         workoutId: dto.workoutId,
         date: new Date(dto.date),
       },

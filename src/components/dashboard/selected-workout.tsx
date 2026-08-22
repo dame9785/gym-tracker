@@ -12,9 +12,10 @@ import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 type Props = {
   workout: WeeklyWorkoutViewModel;
+  userToken: string;
 };
 
-export default function SelectedWorkout({ workout }: Props) {
+export default function SelectedWorkout({ workout, userToken }: Props) {
   console.log(workout);
   return (
     <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950">
@@ -191,7 +192,7 @@ export default function SelectedWorkout({ workout }: Props) {
           View Workout
         </Link>
 
-        {workout.status !== 'COMPLETED' && <StartWorkoutButton workoutId={workout.id} />}
+        {workout.status !== 'COMPLETED' && <StartWorkoutButton workoutId={workout.id} userToken={userToken} />}
       </div>
     </div>
   );

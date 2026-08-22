@@ -1,14 +1,6 @@
 //Types
 import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
-import {
-  ApiErrorResponse,
-  ApiResponse,
-  WorkoutApiDeleteResponse,
-  WorkoutApiGetByIdResponse,
-  WorkoutApiRegisterResponse,
-  WorkoutApiResponse,
-  WorkoutApiUpdateResponse,
-} from '@/types/api-types';
+import { ApiErrorResponse, ApiResponse, WorkoutApiDeleteResponse, WorkoutApiGetByIdResponse, WorkoutApiRegisterResponse, WorkoutApiResponse, WorkoutApiUpdateResponse } from '@/types/api-types';
 
 import type { RegisterWorkoutDto } from '@/types/workout-types';
 
@@ -16,12 +8,13 @@ import type { RegisterWorkoutDto } from '@/types/workout-types';
 const API_URL = 'http://localhost:3000/api/workouts';
 
 export default class WorkoutService {
-  static async create(dto: RegisterWorkoutDto): Promise<ApiResponse<WorkoutApiRegisterResponse>> {
+  static async create(dto: RegisterWorkoutDto, userToken: string): Promise<ApiResponse<WorkoutApiRegisterResponse>> {
     try {
       const response = await fetch('/api/workouts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Cookie: `token=${userToken}`,
         },
         body: JSON.stringify(dto),
       });
@@ -36,10 +29,13 @@ export default class WorkoutService {
     }
   }
 
-  static async getAll(): Promise<ApiResponse<WorkoutApiResponse>> {
+  static async getAll(userToken: string): Promise<ApiResponse<WorkoutApiResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {
         method: 'GET',
+        headers: {
+          Cookie: `token=${userToken}`,
+        },
       });
 
       const result = await response.json();

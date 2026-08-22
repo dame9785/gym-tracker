@@ -8,7 +8,10 @@ import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
 
 const historyService = new HistoryService();
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const page = Number(searchParams.get('page')) || 1;
+
   try {
     const token = await getTokenFromCookieStore();
 
@@ -23,7 +26,7 @@ export async function GET() {
     }
 
     const payLoad = await getUserFromToken(token);
-    console.log('TOKEN', token);
+
     if (!payLoad) {
       return NextResponse.json(
         {
@@ -34,14 +37,17 @@ export async function GET() {
       );
     }
     const userId = payLoad.userId;
-    const result = await historyService.getHistory(Number(userId));
+    const result = await historyService.getHistory(Number(userId), page);
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     console.error('GET /api/history/get data', error);
 
-    return {
-      success: false,
-      message: 'Server error',
-    } satisfies ApiErrorResponse;
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Server error',
+      },
+      { status: 500 },
+    );
   }
 }

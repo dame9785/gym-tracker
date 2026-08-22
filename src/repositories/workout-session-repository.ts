@@ -6,7 +6,7 @@ import { WorkoutRepository } from './workout-repository';
 
 export class WorkoutSessionRepository {
   private workoutRepository = new WorkoutRepository();
-  async create(userId: number, workoutId: number) {
+  async create(workoutId: number, userId: number) {
     const activeSession = await prisma.workoutSession.findFirst({
       where: {
         userId,
@@ -18,7 +18,7 @@ export class WorkoutSessionRepository {
     if (activeSession) {
       return activeSession;
     }
-    const workout = await this.workoutRepository.getById(workoutId);
+    const workout = await this.workoutRepository.getById(workoutId, userId);
 
     if (!workout) {
       throw new Error('Workout hittades inte.');

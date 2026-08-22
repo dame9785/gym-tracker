@@ -4,13 +4,39 @@ import { NextRequest, NextResponse } from 'next/server';
 //Services
 import { WorkoutService } from '@/services-server/workout-service';
 import { ApiErrorResponse } from '@/types/api-types';
+import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
 
 const workoutService = new WorkoutService();
 
 export async function POST(request: NextRequest) {
   try {
+    const token = await getTokenFromCookieStore();
+
+    if (!token) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'No token found',
+        } satisfies ApiErrorResponse,
+        { status: 401 },
+      );
+    }
+
+    const payLoad = await getUserFromToken(token);
+
+    if (!payLoad) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Unauthorized ',
+        } satisfies ApiErrorResponse,
+        { status: 401 },
+      );
+    }
+    const userId = payLoad.userId;
+
     const dto = await request.json();
-    const result = await workoutService.create(dto);
+    const result = await workoutService.create(dto, userId);
 
     return NextResponse.json(result, { status: result.success ? 202 : 404 });
   } catch (error) {
@@ -30,7 +56,32 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const result = await workoutService.getAll();
+    const token = await getTokenFromCookieStore();
+
+    if (!token) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'No token found',
+        } satisfies ApiErrorResponse,
+        { status: 401 },
+      );
+    }
+
+    const payLoad = await getUserFromToken(token);
+
+    if (!payLoad) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Unauthorized ',
+        } satisfies ApiErrorResponse,
+        { status: 401 },
+      );
+    }
+    const userId = payLoad.userId;
+
+    const result = await workoutService.getAll(userId);
 
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {

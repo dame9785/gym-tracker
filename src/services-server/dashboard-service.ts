@@ -8,20 +8,16 @@ import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, DashboardApiResponse
 export class DashboardService {
   private dashboardRepository = new DashboardRepository();
 
-  async getDashboard(): Promise<ApiResponse<DashboardApiResponse>> {
+  async getDashboard(userId: number): Promise<ApiResponse<DashboardApiResponse>> {
     try {
-      const weeklyOverview = await this.dashboardRepository.getWeeklyOverview();
+      const weeklyOverview = await this.dashboardRepository.getWeeklyOverview(userId);
       const weeklyOverviewViewModel = mapWeeklyOverview(weeklyOverview);
 
       const today = new Date();
       const todayWorkout = weeklyOverviewViewModel.find((workout) => {
         const workoutDate = new Date(workout.date);
 
-        return (
-          workoutDate.getFullYear() === today.getFullYear() &&
-          workoutDate.getMonth() === today.getMonth() &&
-          workoutDate.getDate() === today.getDate()
-        );
+        return workoutDate.getFullYear() === today.getFullYear() && workoutDate.getMonth() === today.getMonth() && workoutDate.getDate() === today.getDate();
       });
 
       const weeklySummary = {
@@ -48,8 +44,8 @@ export class DashboardService {
     }
   }
 
-  async getWeeklyOverView() {
-    const weeklyOverViewDat = await this.dashboardRepository.getWeeklyOverview();
+  async getWeeklyOverView(userId: number) {
+    const weeklyOverViewDat = await this.dashboardRepository.getWeeklyOverview(userId);
     const viewModel = mapWeeklyOverview(weeklyOverViewDat);
 
     return viewModel; // ✅

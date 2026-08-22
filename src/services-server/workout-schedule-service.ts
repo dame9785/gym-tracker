@@ -11,9 +11,9 @@ import { ErrorsHelper } from '@/helpers/error-helper';
 export class WorkoutScheduleService {
   private workoutScheduleRepository = new WorkoutScheduleRepository();
 
-  async create(dto: RegisterWorkoutScheduleDto): Promise<ApiResponse<WorkoutSchedelueCreateResponse>> {
+  async create(dto: RegisterWorkoutScheduleDto, userId: number): Promise<ApiResponse<WorkoutSchedelueCreateResponse>> {
     try {
-      const workoutSchedule = await this.workoutScheduleRepository.create(dto);
+      const workoutSchedule = await this.workoutScheduleRepository.create(dto, userId);
 
       //Validation
       const validation = schedelueWorkoutSchema.safeParse(dto);
