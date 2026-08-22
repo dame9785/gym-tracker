@@ -81,7 +81,7 @@ function Sidebar({ user }: Props) {
 
               <li className="li flex items-center">
                 <FaChartBar className="fa-icon" />
-                <Link href="/" className="grid">
+                <Link href="/progress" className="grid">
                   Progress
                 </Link>
               </li>
