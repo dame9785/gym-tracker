@@ -12,9 +12,9 @@ const exerciseService = new ExerciseService();
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    console.log(id);
+
     const result = await exerciseService.delete(Number(id));
-    console.log(result);
+
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     return NextResponse.json(

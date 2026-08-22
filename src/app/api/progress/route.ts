@@ -3,28 +3,17 @@ import { NextResponse } from 'next/server';
 
 //Services
 import { ApiErrorResponse } from '@/types/api-types';
-import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
 import { ProgressService } from '@/services-server/progress-service';
+import { getCurrentUser } from '@/utils/auth';
 
 const progressService = new ProgressService();
 
 export async function GET() {
   try {
-    const token = await getTokenFromCookieStore();
+    //Get current User from Cookie store
+    const currentUserId = await getCurrentUser();
 
-    if (!token) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'No token found',
-        } satisfies ApiErrorResponse,
-        { status: 401 },
-      );
-    }
-
-    const payLoad = await getUserFromToken(token);
-
-    if (!payLoad) {
+    if (!currentUserId) {
       return NextResponse.json(
         {
           success: false,
@@ -33,9 +22,8 @@ export async function GET() {
         { status: 401 },
       );
     }
-    const userId = payLoad.userId;
 
-    const result = await progressService.getProgress(userId);
+    const result = await progressService.getProgress(currentUserId.userId);
     return NextResponse.json(result, { status: result.success ? 200 : 204 });
   } catch (error) {
     console.error('GET /api/progress/get data', error);

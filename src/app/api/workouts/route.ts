@@ -4,27 +4,16 @@ import { NextRequest, NextResponse } from 'next/server';
 //Services
 import { WorkoutService } from '@/services-server/workout-service';
 import { ApiErrorResponse } from '@/types/api-types';
-import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
+import { getCurrentUser } from '@/utils/auth';
 
 const workoutService = new WorkoutService();
 
 export async function POST(request: NextRequest) {
   try {
-    const token = await getTokenFromCookieStore();
+    //Get current User from Cookie store
+    const currentUserId = await getCurrentUser();
 
-    if (!token) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'No token found',
-        } satisfies ApiErrorResponse,
-        { status: 401 },
-      );
-    }
-
-    const payLoad = await getUserFromToken(token);
-
-    if (!payLoad) {
+    if (!currentUserId) {
       return NextResponse.json(
         {
           success: false,
@@ -33,10 +22,9 @@ export async function POST(request: NextRequest) {
         { status: 401 },
       );
     }
-    const userId = payLoad.userId;
 
     const dto = await request.json();
-    const result = await workoutService.create(dto, userId);
+    const result = await workoutService.create(dto, currentUserId.userId);
 
     return NextResponse.json(result, { status: result.success ? 202 : 404 });
   } catch (error) {
@@ -59,21 +47,10 @@ export async function GET(request: Request) {
   const page = Number(searchParams.get('page')) || 1;
 
   try {
-    const token = await getTokenFromCookieStore();
+    //Get current User from Cookie store
+    const currentUserId = await getCurrentUser();
 
-    if (!token) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'No token found',
-        } satisfies ApiErrorResponse,
-        { status: 401 },
-      );
-    }
-
-    const payLoad = await getUserFromToken(token);
-
-    if (!payLoad) {
+    if (!currentUserId) {
       return NextResponse.json(
         {
           success: false,
@@ -82,9 +59,8 @@ export async function GET(request: Request) {
         { status: 401 },
       );
     }
-    const userId = payLoad.userId;
 
-    const result = await workoutService.getAll(userId, page);
+    const result = await workoutService.getAll(currentUserId.userId, page);
 
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {

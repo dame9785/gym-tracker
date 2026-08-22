@@ -2,6 +2,7 @@ import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
 import { AddWeightDto, EditWeightDto } from '@/schemas/weight-log.schemas';
 import { WeightLogService } from '@/services-server/weight-log-service';
 import { ApiErrorResponse } from '@/types/api-types';
+import { getCurrentUser } from '@/utils/auth';
 
 //Next Response
 import { NextRequest, NextResponse } from 'next/server';
@@ -13,21 +14,10 @@ export async function GET(request: Request) {
   const page = Number(searchParams.get('page')) || 1;
 
   try {
-    const token = await getTokenFromCookieStore();
+    //Get current User from Cookie store
+    const currentUserId = await getCurrentUser();
 
-    if (!token) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'No token found',
-        } satisfies ApiErrorResponse,
-        { status: 401 },
-      );
-    }
-
-    const payLoad = await getUserFromToken(token);
-
-    if (!payLoad) {
+    if (!currentUserId) {
       return NextResponse.json(
         {
           success: false,
@@ -36,8 +26,7 @@ export async function GET(request: Request) {
         { status: 401 },
       );
     }
-    const userId = payLoad.userId;
-    const response = await weightLogService.getAll(userId, page);
+    const response = await weightLogService.getAll(currentUserId.userId, page);
 
     return NextResponse.json(response, { status: response.success ? 200 : 404 });
   } catch (error) {

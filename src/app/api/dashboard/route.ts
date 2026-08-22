@@ -4,27 +4,16 @@ import { NextResponse } from 'next/server';
 //Services
 import { DashboardService } from '@/services-server/dashboard-service';
 import { ApiErrorResponse } from '@/types/api-types';
-import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
+import { getCurrentUser } from '@/utils/auth';
 
 const dashboardService = new DashboardService();
 
 export async function GET() {
   try {
-    const token = await getTokenFromCookieStore();
+    //Get current User from Cookie store
+    const currentUserId = await getCurrentUser();
 
-    if (!token) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'No token found',
-        } satisfies ApiErrorResponse,
-        { status: 401 },
-      );
-    }
-
-    const payLoad = await getUserFromToken(token);
-
-    if (!payLoad) {
+    if (!currentUserId) {
       return NextResponse.json(
         {
           success: false,
@@ -33,9 +22,8 @@ export async function GET() {
         { status: 401 },
       );
     }
-    const userId = payLoad.userId;
 
-    const result = await dashboardService.getDashboard(userId);
+    const result = await dashboardService.getDashboard(currentUserId.userId);
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     console.error(error);

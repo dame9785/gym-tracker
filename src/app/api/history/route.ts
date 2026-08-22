@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 //Services
 import { HistoryService } from '@/services-server/history-service';
 import { ApiErrorResponse } from '@/types/api-types';
-import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
+import { getCurrentUser } from '@/utils/auth';
 
 const historyService = new HistoryService();
 
@@ -13,21 +13,10 @@ export async function GET(request: Request) {
   const page = Number(searchParams.get('page')) || 1;
 
   try {
-    const token = await getTokenFromCookieStore();
+    //Get current User from Cookie store
+    const currentUserId = await getCurrentUser();
 
-    if (!token) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'No token found',
-        } satisfies ApiErrorResponse,
-        { status: 401 },
-      );
-    }
-
-    const payLoad = await getUserFromToken(token);
-
-    if (!payLoad) {
+    if (!currentUserId) {
       return NextResponse.json(
         {
           success: false,
@@ -36,8 +25,7 @@ export async function GET(request: Request) {
         { status: 401 },
       );
     }
-    const userId = payLoad.userId;
-    const result = await historyService.getHistory(Number(userId), page);
+    const result = await historyService.getHistory(currentUserId.userId, page);
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     console.error('GET /api/history/get data', error);
