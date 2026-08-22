@@ -10,7 +10,6 @@ export class ProgressService {
       const weightProgress = await this.progressRepository.getWeightProgress(userId);
 
       const exerciseSessions = await this.progressRepository.getExerciseProgress(userId);
-      console.log('EXERCISE SESSIONS:', JSON.stringify(exerciseSessions, null, 2));
 
       const exerciseMap = new Map<number, ExerciseProgress>();
 

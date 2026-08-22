@@ -1,6 +1,6 @@
 import UpdateUserForm from '@/components/forms/user/update-user-form';
 import UserService from '@/services/auth-service';
-import GoalTypesService from '@/services/goal-types-service';
+import GoalTypesService from '@/services/goal-service';
 import { notFound } from 'next/navigation';
 import { getTokenFromCookieStore } from '@/lib/auth';
 
@@ -22,8 +22,8 @@ export default async function UserSettings() {
     notFound();
   }
 
-  const goals = goalResponse.data.goals;
-  const user = userResponse.data.user;
+  const goals = goalResponse.data;
+  const user = userResponse.data;
 
   return (
     <div className="container">

@@ -150,14 +150,10 @@ export default function LoginForm() {
       </div>
 
       {/* Login button */}
-      <div className="grid grid-2">
+      <div className="grid grid-1">
         <Button type="submit" variant="primary" disabled={isLoading}>
           {isLoading ? 'Loggar in...' : 'Logga in'}
         </Button>
-        {/* Back */}
-        <Link href="/" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
-          Gå tillbaka
-        </Link>
       </div>
 
       {/* Register */}

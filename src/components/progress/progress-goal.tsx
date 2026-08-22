@@ -6,8 +6,6 @@ type Props = {
 };
 
 export default function GoalProgress({ weightData }: Props) {
-  console.log('Weight data:', weightData);
-
   const current = Number(weightData?.currentWeight ?? 0);
   const start = Number(weightData?.startWeight ?? 0);
   const goal = Number(weightData?.goalWeight ?? 0);

@@ -33,9 +33,6 @@ export type EditLogWeightResponse = LogItemViewModel;
 
 export type UpdateUserResponse = UserViewModel;
 
-//Goal Type
-export type GoalResponse = GoalTypeViewModel[];
-
 // Register
 export interface RegisterResponse {
   userId: number;

@@ -11,7 +11,6 @@ interface StartWorkoutButtonProps {
 }
 
 export default function StartWorkoutButton({ workoutId, userToken }: StartWorkoutButtonProps) {
-  console.log(workoutId);
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
 

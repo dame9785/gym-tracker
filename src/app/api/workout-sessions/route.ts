@@ -11,7 +11,7 @@ const workoutSessionService = new WorkoutSessionService();
 export async function POST(request: NextRequest) {
   try {
     const token = await getTokenFromCookieStore();
-    console.log('TOKEN', token);
+
     if (!token) {
       return NextResponse.json(
         {

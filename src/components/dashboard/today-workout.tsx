@@ -31,8 +31,6 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
 
     const result = await workoutSessionService.create(workout.id);
 
-    console.log(result);
-
     if (result.success) {
       router.push(`/workout-sessions/${result.workoutSession.id}`);
     }
@@ -44,26 +42,14 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
         relative overflow-hidden rounded-2xl border
         bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950
         p-6
-        ${
-          hasWorkout
-            ? workout.status === 'COMPLETED'
-              ? 'border-green-500/30'
-              : 'border-orange-500/30'
-            : 'border-zinc-800'
-        }
+        ${hasWorkout ? (workout.status === 'COMPLETED' ? 'border-green-500/30' : 'border-orange-500/30') : 'border-zinc-800'}
       `}
     >
       {/* Top accent */}
       <div
         className={`
           absolute left-0 top-0 h-px w-full
-          ${
-            hasWorkout
-              ? workout.status === 'COMPLETED'
-                ? 'bg-gradient-to-r from-green-500/70 via-green-500/20 to-transparent'
-                : 'bg-gradient-to-r from-orange-500/70 via-orange-500/20 to-transparent'
-              : 'bg-zinc-700'
-          }
+          ${hasWorkout ? (workout.status === 'COMPLETED' ? 'bg-gradient-to-r from-green-500/70 via-green-500/20 to-transparent' : 'bg-gradient-to-r from-orange-500/70 via-orange-500/20 to-transparent') : 'bg-zinc-700'}
         `}
       />
 
@@ -95,15 +81,9 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
               </div>
             )}
 
-            {workout.status === 'ACTIVE' && (
-              <div className="rounded-full bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-400">
-                Ready to train
-              </div>
-            )}
+            {workout.status === 'ACTIVE' && <div className="rounded-full bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-400">Ready to train</div>}
 
-            {workout.status === 'NOTCOMPLETED' && (
-              <div className="rounded-full bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-400">Missed</div>
-            )}
+            {workout.status === 'NOTCOMPLETED' && <div className="rounded-full bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-400">Missed</div>}
           </div>
 
           {/* Workout information */}
@@ -111,11 +91,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
             <h3 className="text-2xl font-bold tracking-tight text-white">{workout.workoutName}</h3>
 
             <p className="mt-2 text-sm text-zinc-500">
-              {workout.status === 'COMPLETED'
-                ? 'Great work! You completed your workout today.'
-                : workout.status === 'NOTCOMPLETED'
-                  ? 'This workout was not completed.'
-                  : 'Everything is ready. Time to get started.'}
+              {workout.status === 'COMPLETED' ? 'Great work! You completed your workout today.' : workout.status === 'NOTCOMPLETED' ? 'This workout was not completed.' : 'Everything is ready. Time to get started.'}
             </p>
           </div>
 

@@ -16,7 +16,6 @@ type Props = {
 };
 
 export default function SelectedWorkout({ workout, userToken }: Props) {
-  console.log(workout);
   return (
     <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950">
       {/* Header */}

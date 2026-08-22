@@ -7,8 +7,6 @@ export class WorkoutSessionService {
 
   async create(workoutId: number, userId: number): Promise<ApiResponse<WorkoutSessionCreateResponse>> {
     try {
-      console.log('WORKOUT ID', workoutId);
-      console.log('USER ID', userId);
       const workoutSession = await this.workoutSessionRepository.create(workoutId, userId);
 
       return {

@@ -84,8 +84,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const body: EditWeightDto = await request.json();
 
-    console.log('ID:', id);
-    console.log('DTO:', body);
     const result = await weightLogService.update(id, body);
     return NextResponse.json(result, { status: result.success ? 200 : 500 });
   } catch (error) {

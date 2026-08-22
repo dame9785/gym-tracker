@@ -87,13 +87,6 @@ function Sidebar({ user }: Props) {
               </li>
 
               <li className="li flex items-center">
-                <BsBarChartLine className="fa-icon" />
-                <Link href="/" className="grid">
-                  Statics
-                </Link>
-              </li>
-
-              <li className="li flex items-center">
                 <FaTrophy className="fa-icon" />
                 <Link href="/exercise" className="grid">
                   Övningar

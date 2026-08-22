@@ -17,7 +17,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
     redirect('/account/login');
   }
 
-  const user: UserViewModel = response.data.user;
+  const user: UserViewModel = response.data;
   return (
     <div className="app-layout">
       <Sidebar user={user} />

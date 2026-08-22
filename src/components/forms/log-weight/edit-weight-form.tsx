@@ -31,7 +31,7 @@ export default function EditWeightForm({ user, logWeight }: Props) {
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validation = editWeightSchema.safeParse(formData);
-    console.log(validation);
+
     if (!validation.success) {
       setErrors(ErrorsHelper.getFormErrors<EditWeightDto>(validation.error.issues));
       return;
@@ -41,7 +41,7 @@ export default function EditWeightForm({ user, logWeight }: Props) {
     setErrors({});
     try {
       const result = await LogWeightService.update(logWeight.id.toString(), validation.data);
-      console.log(result);
+
       if (!result.success) {
         if (result.errors) {
           setErrors(ErrorsHelper.getFormErrorsFromApi<EditWeightDto>(result.errors));
@@ -77,30 +77,14 @@ export default function EditWeightForm({ user, logWeight }: Props) {
           <label className={FormStyles.formLabel} htmlFor="weight">
             Vikt
           </label>
-          <input
-            className={FormStyles.formInput}
-            id="weight"
-            name="weight"
-            type="number"
-            step="0.1"
-            value={formData.weight}
-            placeholder="T.ex. 50"
-            onChange={handleChange}
-          ></input>
+          <input className={FormStyles.formInput} id="weight" name="weight" type="number" step="0.1" value={formData.weight} placeholder="T.ex. 50" onChange={handleChange}></input>
           {errors.weight && <p className={FormStyles.fieldErrorMessage}>{errors.weight}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="note">
             Notering
           </label>
-          <textarea
-            className={FormStyles.formInput}
-            id="note"
-            name="note"
-            value={formData.note}
-            placeholder="T.ex. morgonen"
-            onChange={handleChange}
-          ></textarea>
+          <textarea className={FormStyles.formInput} id="note" name="note" value={formData.note} placeholder="T.ex. morgonen" onChange={handleChange}></textarea>
           {errors.note && <p className={FormStyles.fieldErrorMessage}>{errors.note}</p>}
         </div>
 

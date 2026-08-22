@@ -94,7 +94,6 @@ export default class LogWeightService {
       const result: ApiResponse<LogWeightResponse> = await response.json();
       return result;
     } catch (error) {
-      console.log(error);
       return errorResponse('Gick inte hämta data');
     }
   }

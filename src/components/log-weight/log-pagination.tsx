@@ -7,9 +7,6 @@ type Props = {
 };
 
 export default function LogPagination({ currentPage, totalPages }: Props) {
-  console.log('Current Page', currentPage);
-  console.log('totalPages', totalPages);
-
   return (
     <div className="mt-8 flex items-center justify-center gap-2">
       {/*Left arrow */}

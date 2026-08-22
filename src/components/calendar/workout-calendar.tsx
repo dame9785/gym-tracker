@@ -62,7 +62,7 @@ export default function WorkoutCalendar({ userToken }: WorkoutCalendarProps) {
   useEffect(() => {
     const loadWorkouts = async () => {
       const result = await WorkoutScheduleService.getByMonth(userToken, currentYear, currentMonth);
-      console.log(result);
+
       setWorkouts(result);
     };
 

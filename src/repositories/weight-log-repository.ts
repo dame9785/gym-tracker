@@ -78,7 +78,6 @@ export class WeightLogRepository {
   }
 
   async update(logWeightId: number, dto: EditWeightDto) {
-    console.log('logWeightId:', logWeightId);
     return await prisma.weightLog.update({
       where: {
         id: logWeightId,

@@ -22,18 +22,7 @@ import type { ChangeEvent } from 'react';
 import UserService from '@/services/auth-service';
 
 //FONTAWSOME ICONS
-import {
-  FaEnvelope,
-  FaWeightScale,
-  FaPhone,
-  FaRulerVertical,
-  FaCakeCandles,
-  FaWeightHanging,
-  FaFlagCheckered,
-  FaUser,
-  FaSignature,
-  FaBullseye,
-} from 'react-icons/fa6';
+import { FaEnvelope, FaWeightScale, FaPhone, FaRulerVertical, FaCakeCandles, FaWeightHanging, FaFlagCheckered, FaUser, FaSignature, FaBullseye } from 'react-icons/fa6';
 import { toast } from 'sonner';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
@@ -47,7 +36,6 @@ export default function UpdateUserForm({ user, goals }: Props) {
   const [errors, setErrors] = useState<Partial<Record<keyof UpdateUserDto, string>>>({});
   const [isSaving, setIsSaving] = useState(false);
 
-  console.log(user);
   const formatDateForInput = (date: string): string => {
     if (!date) {
       return '';
@@ -151,16 +139,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Email
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="email"
-              type="email"
-              id="email"
-              autoComplete="email"
-              placeholder="E-post..."
-              value={formData.email}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="email" type="email" id="email" autoComplete="email" placeholder="E-post..." value={formData.email} onChange={handleChange} />
             {errors.email && <p className={styles.fieldErrorMessage}>{errors.email}</p>}
           </div>
 
@@ -172,16 +151,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Användarnamn
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="username"
-              type="text"
-              id="username"
-              autoComplete="username"
-              placeholder="Användarnamn..."
-              value={formData.username}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="username" type="text" id="username" autoComplete="username" placeholder="Användarnamn..." value={formData.username} onChange={handleChange} />
             {errors.username && <p className={styles.fieldErrorMessage}>{errors.username}</p>}
           </div>
 
@@ -193,16 +163,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Namn
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="firstName"
-              type="text"
-              id="firstName"
-              autoComplete="given-name"
-              placeholder="Namn..."
-              value={formData.firstName}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="firstName" type="text" id="firstName" autoComplete="given-name" placeholder="Namn..." value={formData.firstName} onChange={handleChange} />
             {errors.firstName && <p className={styles.fieldErrorMessage}>{errors.firstName}</p>}
           </div>
 
@@ -214,16 +175,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Efternamn
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="lastName"
-              type="text"
-              id="lastName"
-              autoComplete="family-name"
-              placeholder="Efternamn..."
-              value={formData.lastName}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="lastName" type="text" id="lastName" autoComplete="family-name" placeholder="Efternamn..." value={formData.lastName} onChange={handleChange} />
             {errors.lastName && <p className={styles.fieldErrorMessage}>{errors.lastName}</p>}
           </div>
 
@@ -235,16 +187,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Nummer
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="phoneNumber"
-              type="tel"
-              id="phoneNumber"
-              autoComplete="tel"
-              placeholder="Telefonnummer..."
-              value={formData.phoneNumber}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="phoneNumber" type="tel" id="phoneNumber" autoComplete="tel" placeholder="Telefonnummer..." value={formData.phoneNumber} onChange={handleChange} />
             {errors.phoneNumber && <p className={styles.fieldErrorMessage}>{errors.phoneNumber}</p>}
           </div>
           {/* Goal Date */}
@@ -255,14 +198,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Måldatum
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="goalDate"
-              type="date"
-              id="goalDate"
-              value={formData.goalDate}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="goalDate" type="date" id="goalDate" value={formData.goalDate} onChange={handleChange} />
             {errors.goalDate && <p className={styles.fieldErrorMessage}>{errors.goalDate}</p>}
           </div>
         </div>
@@ -276,16 +212,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Kroppsvikt (kg)
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="bodyWeight"
-              type="number"
-              step="0.1"
-              id="bodyWeight"
-              placeholder="Ex (40.2kg)"
-              value={formData.bodyWeight}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="bodyWeight" type="number" step="0.1" id="bodyWeight" placeholder="Ex (40.2kg)" value={formData.bodyWeight} onChange={handleChange} />
             {errors.bodyWeight && <p className={styles.fieldErrorMessage}>{errors.bodyWeight}</p>}
           </div>
           {/* Height */}
@@ -296,16 +223,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Längd (cm)
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="height"
-              type="number"
-              step="0.1"
-              id="height"
-              placeholder="Ex (150.5cm)"
-              value={formData.height}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="height" type="number" step="0.1" id="height" placeholder="Ex (150.5cm)" value={formData.height} onChange={handleChange} />
             {errors.height && <p className={styles.fieldErrorMessage}>{errors.height}</p>}
           </div>
 
@@ -317,15 +235,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Född
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="birthDate"
-              type="date"
-              id="birthDate"
-              placeholder="1997-09-26"
-              value={formData.birthDate}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="birthDate" type="date" id="birthDate" placeholder="1997-09-26" value={formData.birthDate} onChange={handleChange} />
             {errors.birthDate && <p className={styles.fieldErrorMessage}>{errors.birthDate}</p>}
           </div>
 
@@ -337,13 +247,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Mål
               </label>
             </div>
-            <select
-              className={styles.formSelect}
-              name="goalTypeId"
-              id="goalTypeId"
-              value={formData.goalTypeId}
-              onChange={handleChange}
-            >
+            <select className={styles.formSelect} name="goalTypeId" id="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
               <option value="">Välj mål</option>
 
               {goals.map((goal) => (
@@ -363,16 +267,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
                 Mål vikt (kg)
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="goalWeight"
-              type="number"
-              step="0.1"
-              placeholder="Ex: 75"
-              id="goalWeight"
-              value={formData.goalWeight}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="goalWeight" type="number" step="0.1" placeholder="Ex: 75" id="goalWeight" value={formData.goalWeight} onChange={handleChange} />
             {errors.goalWeight && <p className={styles.fieldErrorMessage}>{errors.goalWeight}</p>}
           </div>
         </div>

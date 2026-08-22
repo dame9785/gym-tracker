@@ -14,7 +14,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const { userId } = await params;
     const body = await request.json();
     const response = await authService.updateUser(body, Number(userId));
-    console.log(response);
+
     return NextResponse.json(response, {
       status: response.success ? 200 : 404,
     });

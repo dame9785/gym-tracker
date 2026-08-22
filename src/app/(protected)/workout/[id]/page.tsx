@@ -17,7 +17,7 @@ export default async function WorkoutPage({ params }: PageProps) {
 
   const workoutId = Number(id);
   const response = await WorkoutService.getById(workoutId);
-  console.log(response);
+
   if (!response.success) {
     notFound();
   }
