@@ -3,7 +3,7 @@ import { RegisterUserDto, LoginDto, UpdateUserDto } from '@/schemas/auth-schemas
 import { ApiResponse, LogoutResponse, LoginResponse, RegisterResponse, UserResponse, UpdateUserResponse } from '@/types/api-types';
 
 //Utils
-import { errorResponse } from '@/utils/api-responses';
+import { errorResponse } from '@/utils/api-error';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/auth';

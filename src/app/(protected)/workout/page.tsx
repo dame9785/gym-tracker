@@ -24,7 +24,7 @@ export default async function Workouts({ searchParams }: Props) {
 
   const response = await WorkoutService.getAll(userToken, page);
   if (!response.success) {
-    notFound();
+    throw new Error('Something went wrong');
   }
   const workouts = response.data.workouts;
   const totalPages = response.data.pagination.totalPages;

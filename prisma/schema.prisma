@@ -85,6 +85,7 @@ model Workout {
   exercises WorkoutExercise[]
   schedules WorkoutSchedule[]
   sessions  WorkoutSession[]
+  estimatedMinutes Int?
 }
 
 model WorkoutExercise {

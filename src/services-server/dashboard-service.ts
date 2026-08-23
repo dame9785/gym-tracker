@@ -3,17 +3,27 @@ import { mapWeeklyOverview } from '@/mapping/dashboard-mapping';
 
 //Repository
 import { DashboardRepository } from '@/repositories/dashboard-repository';
+import { WorkoutSessionRepository } from '@/repositories/workout-session-repository';
 import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, DashboardApiResponse } from '@/types/api-types';
+
+//Utils
+import { calculateStreak } from '@/utils/calculate-streak';
 
 export class DashboardService {
   private dashboardRepository = new DashboardRepository();
+  private workoutSessionRepository = new WorkoutSessionRepository();
 
   async getDashboard(userId: number): Promise<ApiResponse<DashboardApiResponse>> {
     try {
-      const weeklyOverview = await this.dashboardRepository.getWeeklyOverview(userId);
+      const [weeklyOverview, getCompletedWorkoutSessions] = await Promise.all([
+        this.dashboardRepository.getWeeklyOverview(userId),
+        this.workoutSessionRepository.getCompeletedWorkoutSessiosn(userId),
+      ]);
+
       const weeklyOverviewViewModel = mapWeeklyOverview(weeklyOverview);
 
       const today = new Date();
+
       const todayWorkout = weeklyOverviewViewModel.find((workout) => {
         const workoutDate = new Date(workout.date);
 
@@ -22,8 +32,8 @@ export class DashboardService {
 
       const weeklySummary = {
         workouts: weeklyOverviewViewModel.length,
-        trainingTime: 45,
-        streak: 3,
+        trainingTime: weeklyOverviewViewModel.reduce((total, workout) => total + workout.estimatedMinutes, 0),
+        streak: calculateStreak(getCompletedWorkoutSessions),
       };
 
       return {

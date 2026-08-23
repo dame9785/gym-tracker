@@ -2,7 +2,7 @@ import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
 import { AddWeightDto, EditWeightDto } from '@/schemas/weight-log.schemas';
 import { WeightLogService } from '@/services-server/weight-log-service';
 import { ApiErrorResponse } from '@/types/api-types';
-import { getCurrentUser } from '@/utils/auth';
+import { getCurrentUser } from '@/utils/user-by-token';
 
 //Next Response
 import { NextRequest, NextResponse } from 'next/server';

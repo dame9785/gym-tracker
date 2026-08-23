@@ -116,4 +116,18 @@ export class WorkoutSessionRepository {
       },
     });
   }
+
+  async getCompeletedWorkoutSessiosn(userId: number) {
+    const sessions = await prisma.workoutSession.findMany({
+      where: {
+        userId: userId,
+        status: 'COMPLETED',
+      },
+      orderBy: {
+        startedAt: 'desc',
+      },
+    });
+
+    return sessions;
+  }
 }

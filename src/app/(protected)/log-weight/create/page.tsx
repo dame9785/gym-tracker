@@ -13,11 +13,11 @@ export default async function create() {
   }
 
   const response = await AuthService.getCurrentUser(token);
-  if (!response.success || response.data == null) {
-    redirect('/account/login');
+  if (!response.success) {
+    throw new Error('Something went wrong');
   }
 
-  const user: UserViewModel = response.data.user;
+  const user: UserViewModel = response.data;
 
   return (
     <div className="container">

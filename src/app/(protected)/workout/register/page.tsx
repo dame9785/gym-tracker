@@ -11,14 +11,13 @@ export default async function RegisterWorkout() {
   }
 
   const response = await ExerciseService.getAll();
-
   if (!response.success) {
-    notFound();
+    throw new Error('Something went wrong');
   }
 
   return (
     <div className="container">
-      <RegisterWorkoutForm exericses={response.data.exercises} userToken={userToken} />
+      <RegisterWorkoutForm exericses={response.data} userToken={userToken} />
     </div>
   );
 }

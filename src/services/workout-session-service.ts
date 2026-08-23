@@ -1,6 +1,6 @@
 //Next Redirect
 import { ApiResponse, ApiSuccessResponse, WorkoutFinishApiResponse, WorkoutSessionCreateResponse, WorkoutSessionDetailApiResponse, WorkoutSessionUpdatedSetResponse } from '@/types/api-types';
-import { errorResponse } from '@/utils/api-responses';
+import { errorResponse } from '@/utils/api-error';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/workout-sessions';

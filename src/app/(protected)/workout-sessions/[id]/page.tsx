@@ -15,9 +15,9 @@ export default async function WorkoutSessionPage({ params }: PageProps) {
   const response = await workoutSessionService.getById(Number(id));
 
   if (!response.success) {
-    notFound();
+    throw new Error('Something went wrong');
   }
 
-  const workoutSession = response.data.workoutSession;
+  const workoutSession = response.data;
   return <WorkoutSession workoutSession={workoutSession} />;
 }

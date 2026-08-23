@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 //Services
 import { WorkoutService } from '@/services-server/workout-service';
 import { ApiErrorResponse } from '@/types/api-types';
-import { getCurrentUser } from '@/utils/auth';
+import { getCurrentUser } from '@/utils/user-by-token';
 
 const workoutService = new WorkoutService();
 

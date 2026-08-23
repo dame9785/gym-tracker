@@ -1,7 +1,7 @@
 import ScheduleWorkoutForm from '@/components/forms/workout/schedule-workout-form';
 import { getTokenFromCookieStore } from '@/lib/auth';
 import WorkoutService from '@/services/workout-service';
-import { notFound, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 export default async function WorkoutSchedulePage() {
   const userToken = await getTokenFromCookieStore();
@@ -9,9 +9,9 @@ export default async function WorkoutSchedulePage() {
   if (!userToken) {
     redirect('/account/login');
   }
-  const response = await WorkoutService.getAll(userToken);
+  const response = await WorkoutService.getAll(userToken, 1);
   if (!response.success) {
-    notFound();
+    throw new Error('Something went wrong');
   }
 
   const workouts = response.data.workouts;

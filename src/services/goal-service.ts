@@ -5,7 +5,7 @@ import type { GoalApiResponse } from '@/types/goal-types';
 //API URL
 const API_URL = 'http://localhost:3000/api/goals';
 
-import { errorResponse } from '@/utils/api-responses';
+import { errorResponse } from '@/utils/api-error';
 
 export default class GoalTypesService {
   static async getAll(): Promise<ApiResponse<GoalApiResponse>> {

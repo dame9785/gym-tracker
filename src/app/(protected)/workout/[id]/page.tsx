@@ -19,7 +19,7 @@ export default async function WorkoutPage({ params }: PageProps) {
   const response = await WorkoutService.getById(workoutId);
 
   if (!response.success) {
-    notFound();
+    throw new Error('Something went wrong');
   }
 
   const workout = response.data.workout;

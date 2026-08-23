@@ -1,25 +1,20 @@
 import UpdateUserForm from '@/components/forms/user/update-user-form';
 import UserService from '@/services/auth-service';
 import GoalTypesService from '@/services/goal-service';
-import { notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { getTokenFromCookieStore } from '@/lib/auth';
 
 export default async function UserSettings() {
   const token = await getTokenFromCookieStore();
   if (!token) {
-    notFound();
+    redirect('/account/login');
   }
 
-  /* Fetch all goal types */
-  const goalResponse = await GoalTypesService.getAll();
-  const userResponse = await UserService.getCurrentUser(token);
+  /* Fetch all goal types & Current User*/
+  const [goalResponse, userResponse] = await Promise.all([GoalTypesService.getAll(), UserService.getCurrentUser(token)]);
 
-  if (!goalResponse.success) {
-    notFound();
-  }
-
-  if (!userResponse.success) {
-    notFound();
+  if (!goalResponse.success || !userResponse.success) {
+    throw new Error('Något gick fel');
   }
 
   const goals = goalResponse.data;

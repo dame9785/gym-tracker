@@ -91,7 +91,11 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
             <h3 className="text-2xl font-bold tracking-tight text-white">{workout.workoutName}</h3>
 
             <p className="mt-2 text-sm text-zinc-500">
-              {workout.status === 'COMPLETED' ? 'Great work! You completed your workout today.' : workout.status === 'NOTCOMPLETED' ? 'This workout was not completed.' : 'Everything is ready. Time to get started.'}
+              {workout.status === 'COMPLETED'
+                ? 'Great work! You completed your workout today.'
+                : workout.status === 'NOTCOMPLETED'
+                  ? 'This workout was not completed.'
+                  : 'Everything is ready. Time to get started.'}
             </p>
           </div>
 

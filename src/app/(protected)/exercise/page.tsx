@@ -8,7 +8,12 @@ import ExerciseService from '@/services/exercise-service';
 
 export default async function Exercise() {
   const response = await ExerciseService.getAll();
-  const exercises = response.success ? response.data.exercises : [];
+
+  if (!response.success) {
+    throw new Error('Something went wrong');
+  }
+
+  const exercises = response.data;
 
   return (
     <div className="container">

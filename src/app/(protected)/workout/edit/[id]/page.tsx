@@ -1,5 +1,6 @@
 import EditWorkoutForm from '@/components/forms/workout/edit-workout-form';
 import WorkoutService from '@/services/workout-service';
+import { error } from 'console';
 import { notFound } from 'next/navigation';
 
 type PageProps = {
@@ -12,12 +13,12 @@ export default async function EditWorkout({ params }: PageProps) {
   const { id } = await params;
 
   if (!id) {
-    notFound();
+    throw new Error('Something went wrong');
   }
 
   const response = await WorkoutService.getById(Number(id));
   if (!response.success) {
-    notFound();
+    throw new Error('Something went wrong');
   }
 
   const workout = response.data.workout;

@@ -3,7 +3,7 @@ import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 import { ApiResponse, WorkoutApiDeleteResponse, WorkoutApiGetByIdResponse, WorkoutApiRegisterResponse, WorkoutApiResponse, WorkoutApiUpdateResponse } from '@/types/api-types';
 
 import type { RegisterWorkoutDto } from '@/types/workout-types';
-import { errorResponse } from '@/utils/api-responses';
+import { errorResponse } from '@/utils/api-error';
 
 //API URL
 const API_URL = 'http://localhost:3000/api/workouts';

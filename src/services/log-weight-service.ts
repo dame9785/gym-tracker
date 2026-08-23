@@ -1,7 +1,7 @@
 // Schemas
 import { AddWeightDto, EditWeightDto } from '@/schemas/weight-log.schemas';
 import { ApiResponse, DeleteLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
-import { errorResponse } from '@/utils/api-responses';
+import { errorResponse } from '@/utils/api-error';
 
 const API_URL = 'http://localhost:3000/api/log-weight';
 

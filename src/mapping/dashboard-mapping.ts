@@ -38,7 +38,7 @@ export function mapWeeklyOverview(workouts: WeeklyOverview[]): WeeklyWorkoutView
       workoutName: workout.workout.name,
       date: workout.date.toISOString(),
       exerciseCount: exercises.length,
-      estimatedMinutes: 45,
+      estimatedMinutes: workout.workout.estimatedMinutes ?? 0,
       activeSessionId: latestSession?.id ?? null,
       status: latestSession?.status,
       exercises,

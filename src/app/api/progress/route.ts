@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 //Services
 import { ApiErrorResponse } from '@/types/api-types';
 import { ProgressService } from '@/services-server/progress-service';
-import { getCurrentUser } from '@/utils/auth';
+import { getCurrentUser } from '@/utils/user-by-token';
 
 const progressService = new ProgressService();
 

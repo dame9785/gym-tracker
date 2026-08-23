@@ -22,14 +22,13 @@ export default async function HistoryPage({ searchParams }: Props) {
   const page = Number(params.page) || 1;
 
   const token = await getTokenFromCookieStore();
-
   if (!token) {
     redirect('/account/login');
   }
 
   const response = await HistoryService.getHistory(token, page);
   if (!response.success) {
-    notFound();
+    throw new Error('Something went wrong');
   }
 
   const historyData = response.data.history;

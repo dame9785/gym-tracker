@@ -2,7 +2,7 @@
 import { UpdateExericseDto } from '@/schemas/exercise-schema';
 import { ApiResponse, ExerciseApiDeleteResponse, ExerciseApiGetByIdResponse, ExerciseApiRegisterResponse, ExerciseApiResponse, ExerciseApiUpdateResponse } from '@/types/api-types';
 import type { RegisterExerciseDto } from '@/types/exercise-types';
-import { errorResponse } from '@/utils/api-responses';
+import { errorResponse } from '@/utils/api-error';
 
 const API_URL = 'http://localhost:3000/api/exercises';
 

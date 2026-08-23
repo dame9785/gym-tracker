@@ -16,8 +16,9 @@ export default async function DashboardPage() {
   }
 
   const result = await DashboardService.getDashboard(userToken);
+  console.log(result);
   if (!result.success) {
-    return <p>Kunde inte hämta dashboard.</p>;
+    throw new Error('Something went wrong');
   }
 
   const dashboard = result.data;

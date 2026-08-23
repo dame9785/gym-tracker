@@ -24,7 +24,7 @@ export default function StartWorkoutButton({ workoutId, userToken }: StartWorkou
         return;
       }
       toast.success('Träningspass startad');
-      router.push(`/workout-sessions/${response.data.workoutSessionId}`);
+      router.push(`/workout-sessions/${response.data}`);
     } catch (error) {
       console.error('Kunde inte starta workout:', error);
     } finally {

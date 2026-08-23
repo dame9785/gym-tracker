@@ -4,7 +4,7 @@ import { ApiResponse, DashboardApiResponse } from '@/types/api-types';
 const API_URL = 'http://localhost:3000/api/dashboard';
 
 //Utils
-import { errorResponse } from '@/utils/api-responses';
+import { errorResponse } from '@/utils/api-error';
 
 export default class DashboardService {
   static async getDashboard(token: string): Promise<ApiResponse<DashboardApiResponse>> {

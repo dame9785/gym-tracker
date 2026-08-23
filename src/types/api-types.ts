@@ -52,30 +52,20 @@ export interface UserLogWeightResponse {
   pagination: PaginationViewModel;
 }
 
-export interface DeleteLogWeightResponse {
-  data?: [];
-}
+export type DeleteLogWeightResponse = [];
 
-export interface ExerciseApiResponse {
-  exercises: ExerciseViewModel[];
-}
+export type ExerciseApiResponse = ExerciseViewModel[];
 
 export interface ExerciseApiDeleteResponse {
   success: true;
   message: string;
 }
 
-export interface ExerciseApiRegisterResponse {
-  exercise: ExerciseViewModel;
-}
+export type ExerciseApiRegisterResponse = ExerciseViewModel;
 
-export interface ExerciseApiGetByIdResponse {
-  exercise: ExerciseViewModel;
-}
+export type ExerciseApiGetByIdResponse = ExerciseViewModel;
 
-export interface ExerciseApiUpdateResponse {
-  exercise: ExerciseViewModel;
-}
+export type ExerciseApiUpdateResponse = ExerciseViewModel;
 
 export interface WorkoutApiResponse {
   workouts: WorkoutViewModel[];
@@ -92,13 +82,9 @@ export interface WorkoutApiGetByIdResponse {
   exericses: ExerciseViewModel[];
 }
 
-export interface WorkoutApiUpdateResponse {
-  workout: WorkoutViewModel;
-}
+export type WorkoutApiUpdateResponse = WorkoutViewModel;
 
-export interface WorkoutApiRegisterResponse {
-  workout: WorkoutViewModel;
-}
+export type WorkoutApiRegisterResponse = WorkoutViewModel;
 
 export interface DashboardApiResponse {
   weeklyOverview: WeeklyWorkoutViewModel[];
@@ -118,25 +104,15 @@ export interface PaginationViewModel {
   totalItems: number;
 }
 
-export interface WorkoutFinishApiResponse {
-  workoutSession: WorkoutSessionFinishViewModel;
-}
+export type WorkoutFinishApiResponse = WorkoutSessionFinishViewModel;
 
-export interface WorkoutSessionCreateResponse {
-  workoutSessionId: number;
-}
+export type WorkoutSessionCreateResponse = number;
 
-export interface WorkoutSessionUpdatedSetResponse {
-  updatedSet: UpdatedSetViewModel;
-}
+export type WorkoutSessionUpdatedSetResponse = UpdatedSetViewModel;
 
-export interface WorkoutSessionDetailApiResponse {
-  workoutSession: WorkoutSessionViewModel;
-}
+export type WorkoutSessionDetailApiResponse = WorkoutSessionViewModel;
 
-export interface WorkoutSchedelueCreateResponse {
-  workoutSchedule: WorkoutSchedelueViewModel;
-}
+export type WorkoutSchedelueCreateResponse = WorkoutSchedelueViewModel;
 
 export interface UpdatedSetViewModel {
   id: number;

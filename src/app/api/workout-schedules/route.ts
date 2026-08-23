@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { WorkoutScheduleService } from '@/services-server/workout-schedule-service';
 import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
 import { ApiErrorResponse } from '@/types/api-types';
-import { getCurrentUser } from '@/utils/auth';
+import { getCurrentUser } from '@/utils/user-by-token';
 
 const workoutScheduleService = new WorkoutScheduleService();
 

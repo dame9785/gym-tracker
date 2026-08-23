@@ -1,7 +1,6 @@
 //Components
 import EditExerciseForm from '@/components/forms/exercise/edit-exercise-form';
 import ExerciseService from '@/services/exercise-service';
-import { notFound } from 'next/navigation';
 type PageProps = {
   params: Promise<{
     id: string;
@@ -13,10 +12,10 @@ export default async function EditExercises({ params }: PageProps) {
 
   const response = await ExerciseService.getById(id);
   if (!response.success) {
-    notFound();
+    throw new Error('Something went wrong');
   }
 
-  const exericse = response.data.exercise;
+  const exericse = response.data;
 
   return (
     <div className="container">

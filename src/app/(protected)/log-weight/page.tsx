@@ -30,8 +30,9 @@ export default async function LogWeight({ searchParams }: Props) {
 
   const response = await WeightLogService.getAll(token, page);
   if (!response.success) {
-    notFound();
+    throw new Error('Something went wrong');
   }
+
   const data = response.data;
 
   const LogList = data.logList;

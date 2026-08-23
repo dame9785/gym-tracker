@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 //Services
 import { HistoryService } from '@/services-server/history-service';
 import { ApiErrorResponse } from '@/types/api-types';
-import { getCurrentUser } from '@/utils/auth';
+import { getCurrentUser } from '@/utils/user-by-token';
 
 const historyService = new HistoryService();
 

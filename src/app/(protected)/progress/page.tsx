@@ -15,6 +15,9 @@ export default async function ProgressPage() {
   }
 
   const response = await ProgressService.getProgress(token);
+  if (!response.success) {
+    throw new Error('Something went wrong');
+  }
 
   return (
     <div className="mx-auto max-w-7xl p-8">
