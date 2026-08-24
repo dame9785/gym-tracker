@@ -63,19 +63,20 @@ export default function LogWeightForm({ userToken }: Props) {
     setIsSaving(true);
     setErrors({});
     try {
-      const result = await LogWeightService.create(LogWeightDto, userToken);
-      console.log(result);
-      if (!result.success) {
-        if (result.errors) {
-          setErrors(ErrorsHelper.getFormErrorsFromApi<AddWeightDto>(result.errors));
+      const response = await LogWeightService.create(LogWeightDto, userToken);
+
+      if (!response.success) {
+        if (response.errors) {
+          setErrors(ErrorsHelper.getFormErrorsFromApi<AddWeightDto>(response.errors));
         }
-        toast.error('Något gick fel, vikt blev inte loggad');
+        toast.error(response.message);
         return;
       }
-      toast.success('Vikt loggad');
+      toast.success(response.message);
       router.push('/log-weight');
     } catch (error) {
-      toast.error('Något gick fel, vikt blev inte loggad');
+      console.error('Failed to create weight log:', error);
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);
     }

@@ -1,8 +1,7 @@
 'use client';
 
-import { UserViewModel } from '@/types/user-types';
 import FormStyles from '@/components/forms/form.module.css';
-import { EditWeightDto, editWeightSchema } from '@/schemas/weight-log.schemas';
+import { UpdateWeightDto, updateWeightSchema } from '@/schemas/weight-log.schemas';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Button from '@/components/button/button';
@@ -10,49 +9,51 @@ import ButtonStyle from '@/components/button/button.module.css';
 import Link from 'next/link';
 import { LogItemViewModel } from '@/types/log-weight-types';
 import { ErrorsHelper } from '@/helpers/error-helper';
-import { LogWeightService } from '@/services/log-weight-service';
+import LogWeightService from '@/services/log-weight-service';
+
 import { toast } from 'sonner';
 
 type Props = {
-  user: UserViewModel;
+  userToken: string;
   logWeight: LogItemViewModel;
 };
 
-export default function EditWeightForm({ user, logWeight }: Props) {
+export default function EditWeightForm({ userToken, logWeight }: Props) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const [errors, setErrors] = useState<Partial<Record<keyof EditWeightDto, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof UpdateWeightDto, string>>>({});
 
-  const [formData, setFormData] = useState<EditWeightDto>({
+  const [formData, setFormData] = useState<UpdateWeightDto>({
     weight: Number(logWeight.weight),
     note: logWeight.note ?? '',
   });
 
-  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const validation = editWeightSchema.safeParse(formData);
+    const validation = updateWeightSchema.safeParse(formData);
 
     if (!validation.success) {
-      setErrors(ErrorsHelper.getFormErrors<EditWeightDto>(validation.error.issues));
+      setErrors(ErrorsHelper.getFormErrors<UpdateWeightDto>(validation.error.issues));
       return;
     }
 
     setIsSaving(true);
     setErrors({});
     try {
-      const result = await LogWeightService.update(logWeight.id.toString(), validation.data);
+      const response = await LogWeightService.update(logWeight.id, validation.data, userToken);
 
-      if (!result.success) {
-        if (result.errors) {
-          setErrors(ErrorsHelper.getFormErrorsFromApi<EditWeightDto>(result.errors));
+      if (!response.success) {
+        if (response.errors) {
+          setErrors(ErrorsHelper.getFormErrorsFromApi<UpdateWeightDto>(response.errors));
         }
-        toast.error('Något gick fel, vikt blev inte loggad');
+        toast.error(response.message);
         return;
       }
-      toast.success('Vikt loggad');
+      toast.success(response.message);
       router.push('/log-weight');
     } catch (error) {
-      toast.error('Något gick fel, vikt blev inte loggad');
+      console.error('Failed to update weight log:', error);
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -64,33 +65,54 @@ export default function EditWeightForm({ user, logWeight }: Props) {
       ...prev,
       [name]: value,
     }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+    }));
   };
 
   return (
     <div className={FormStyles.formContainer}>
       <h1 className={FormStyles.formTitle}>
-        Ändra
-        <span> Vikt</span>
+        Update
+        <span> Weight</span>
       </h1>
-      <form className={FormStyles.form} onSubmit={handleSumbit}>
+      <form className={FormStyles.form} onSubmit={handleSubmit}>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="weight">
-            Vikt
+            Weight
           </label>
-          <input className={FormStyles.formInput} id="weight" name="weight" type="number" step="0.1" value={formData.weight} placeholder="T.ex. 50" onChange={handleChange}></input>
+          <input
+            onChange={handleChange}
+            className={FormStyles.formInput}
+            id="weight"
+            name="weight"
+            type="number"
+            step="0.1"
+            value={formData.weight}
+            placeholder="T.ex. 50"
+          />
           {errors.weight && <p className={FormStyles.fieldErrorMessage}>{errors.weight}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="note">
-            Notering
+            Note
           </label>
-          <textarea className={FormStyles.formInput} id="note" name="note" value={formData.note} placeholder="T.ex. morgonen" onChange={handleChange}></textarea>
+          <textarea
+            className={FormStyles.formInput}
+            id="note"
+            name="note"
+            value={formData.note}
+            placeholder="Example. morning"
+            onChange={handleChange}
+          ></textarea>
           {errors.note && <p className={FormStyles.fieldErrorMessage}>{errors.note}</p>}
         </div>
 
         <div className="flex gap-2">
           <Button type="submit" variant="primary" disabled={isSaving}>
-            Uppdatera vikt
+            {isSaving ? 'Updating...' : 'Update weight'}
           </Button>
           <Link href="/log-weight" className={`${ButtonStyle.button} ${ButtonStyle.secondary}`}>
             Gå tillbaks

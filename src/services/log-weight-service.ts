@@ -57,7 +57,8 @@ export default class LogWeightService {
     }
   }
 
-  static async update(weightId: string, dto: UpdateWeightDto, userToken: string): Promise<ApiResponse<LogWeightResponse>> {
+  //PUT: /api/weight-logs/ID
+  static async update(weightId: number, dto: UpdateWeightDto, userToken: string): Promise<ApiResponse<LogWeightResponse>> {
     try {
       const response = await fetch(`${API_URL}/${weightId}`, {
         method: 'PUT',
