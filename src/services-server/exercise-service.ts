@@ -2,12 +2,11 @@
 import { ExerciseRepository } from '../repositories/exercise-repository';
 
 //Types
-import type { ExerciseResponse, ExerciseViewModel, RegisterExerciseDto } from '@/types/exercise-types';
+import type { RegisterExerciseDto } from '@/types/exercise-types';
 
 //Mapper
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
 import {
-  ApiErrorResponse,
   ApiResponse,
   ApiSuccessResponse,
   ExerciseApiDeleteResponse,
@@ -17,12 +16,12 @@ import {
   ExerciseApiUpdateResponse,
 } from '@/types/api-types';
 import { registerExerciseSchema, RegisterExericseDto } from '@/schemas/exercise-schema';
-import { ErrorsHelper } from '@/helpers/error-helper';
+import { errorResponse } from '@/utils/api-error';
 
 export class ExerciseService {
   private exerciseRepository = new ExerciseRepository();
 
-  async getAllExersise(): Promise<ApiResponse<ExerciseApiResponse>> {
+  async getAllExersise(userId: number): Promise<ApiResponse<ExerciseApiResponse>> {
     try {
       const exercises = await this.exerciseRepository.getAll();
       return {
@@ -30,10 +29,8 @@ export class ExerciseService {
         data: exercises.map((x) => ExerciseMapper.exerciseModelToViewModel(x)),
       };
     } catch (error) {
-      return {
-        success: false,
-        message: 'Server fel, gick inte hämta övningar',
-      } satisfies ApiErrorResponse;
+      console.error('Get all exericsces failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 
@@ -42,18 +39,15 @@ export class ExerciseService {
       await this.exerciseRepository.delete(id);
       return {
         success: true,
-        message: 'Övning borttagen',
+        message: 'Exericse deleted successfully',
         data: {
           success: true,
-          message: 'Övning borttagen',
+          message: 'Exericse deleted successfully',
         },
       } satisfies ApiSuccessResponse<ExerciseApiDeleteResponse>;
     } catch (error) {
-      console.log(error);
-      return {
-        success: false,
-        message: 'Server fel, gick ej ta bort övning',
-      } satisfies ApiErrorResponse;
+      console.error('Delete exericse failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 
@@ -61,29 +55,20 @@ export class ExerciseService {
     const validation = registerExerciseSchema.safeParse(dto);
 
     if (!validation.success) {
-      const fieldErrors = ErrorsHelper.getFormErrors<ExerciseApiRegisterResponse>(validation.error.issues);
-      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
-
-      return {
-        success: false,
-        message: 'Felaktig email eller lösenord.',
-        errors: errors,
-      } satisfies ApiErrorResponse;
+      const errors = validation.error.flatten().fieldErrors;
+      return errorResponse('Validation failed', errors);
     }
 
     try {
       const exericse = await this.exerciseRepository.register(dto);
       return {
         success: true,
-        message: 'Övning skapad',
+        message: 'Exericse created successfully.',
         data: ExerciseMapper.exerciseModelToViewModel(exericse),
       } satisfies ApiSuccessResponse<ExerciseApiRegisterResponse>;
     } catch (error) {
-      console.log(error);
-      return {
-        success: false,
-        message: 'Server fel, gick ej ta bort övning',
-      } satisfies ApiErrorResponse;
+      console.error('Create exericse failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 
@@ -91,20 +76,17 @@ export class ExerciseService {
     try {
       const exericse = await this.exerciseRepository.getById(id);
       if (!exericse) {
-        throw new Error('Övning hittades inte');
+        return errorResponse('Could not find exericse log.');
       }
 
       return {
         success: true,
-        message: 'Övning lyckades hämta',
+        message: 'Exericse fetched successfully.',
         data: ExerciseMapper.exerciseModelToViewModel(exericse),
       } satisfies ApiSuccessResponse<ExerciseApiGetByIdResponse>;
     } catch (error) {
-      console.log(error);
-      return {
-        success: false,
-        message: 'Server fel, gick ej ta bort övning',
-      } satisfies ApiErrorResponse;
+      console.error('Fetch exericse by id failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 
@@ -112,29 +94,20 @@ export class ExerciseService {
     const validation = registerExerciseSchema.safeParse(dto);
 
     if (!validation.success) {
-      const fieldErrors = ErrorsHelper.getFormErrors<ExerciseApiRegisterResponse>(validation.error.issues);
-      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
-
-      return {
-        success: false,
-        message: 'Felaktig email eller lösenord.',
-        errors: errors,
-      } satisfies ApiErrorResponse;
+      const errors = validation.error.flatten().fieldErrors;
+      return errorResponse('Validation failed', errors);
     }
 
     try {
       const updatedExericse = await this.exerciseRepository.update(id, dto);
       return {
         success: true,
-        message: 'Övning uppdaterad!',
+        message: 'Exericse updated successfully.',
         data: ExerciseMapper.exerciseModelToViewModel(updatedExericse),
       } satisfies ApiSuccessResponse<ExerciseApiUpdateResponse>;
     } catch (error) {
-      console.log(error);
-      return {
-        success: false,
-        message: 'Server fel, gick ej ta bort övning',
-      } satisfies ApiErrorResponse;
+      console.error('fetch exericse by id failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 }

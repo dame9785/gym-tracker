@@ -5,8 +5,9 @@ import { ExerciseService } from '@/services-server/exercise-service';
 import { NextRequest, NextResponse } from 'next/server';
 
 //Types
-import { ApiErrorResponse } from '@/types/api-types';
+
 import { UpdateExericseDto } from '@/schemas/exercise-schema';
+import { apiErrorResponse, apiResponse } from '@/utils/api-error';
 
 const exerciseService = new ExerciseService();
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -15,15 +16,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     const result = await exerciseService.delete(Number(id));
 
-    return NextResponse.json(result, { status: result.success ? 200 : 404 });
+    return apiResponse(result);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Server fel, gick inte radera övning',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('DELETE /api/exercise/id error:', error);
+    return apiErrorResponse('An error occurred while delete exericse.');
   }
 }
 
@@ -32,15 +28,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   const dto: UpdateExericseDto = await request.json();
   try {
     const result = await exerciseService.update(Number(id), dto);
-    return NextResponse.json(result, { status: result.success ? 200 : 404 });
+    return apiResponse(result);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Server fel, gick inte radera övning',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('PUT /api/exercise/id error:', error);
+    return apiErrorResponse('An error occurred while updating exericse.');
   }
 }
 
@@ -49,14 +40,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   try {
     const result = await exerciseService.getById(Number(id));
-    return NextResponse.json(result, { status: result.success ? 200 : 404 });
+    return apiResponse(result);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Något gick fel.',
-      },
-      { status: 500 },
-    );
+    console.error('GET /api/exercise/id error:', error);
+    return apiErrorResponse('An error occurred while fetching exericse.');
   }
 }

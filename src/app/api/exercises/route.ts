@@ -5,38 +5,36 @@ import { NextResponse } from 'next/server';
 import { ExerciseService } from '@/services-server/exercise-service';
 
 //Types
-import { ApiErrorResponse } from '@/types/api-types';
 import { RegisterExerciseDto } from '@/types/exercise-types';
+import { apiErrorResponse, apiResponse, unauthorizedResponse } from '@/utils/api-error';
+import { getCurrentUser } from '@/utils/user-by-token';
 
 const exerciseService = new ExerciseService();
 
 export async function GET() {
+  //Get current User from Cookie storage
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorizedResponse();
+  }
+
   try {
-    const result = await exerciseService.getAllExersise();
-    return NextResponse.json(result, { status: result.success ? 200 : 404 });
+    const result = await exerciseService.getAllExersise(user.userId);
+    return apiResponse(result);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Server fel, gick inte hämta övningar',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('GET /api/exercise error:', error);
+    return apiErrorResponse('An error occurred while fetching exericse.');
   }
 }
 
 export async function POST(request: Request) {
   const dto: RegisterExerciseDto = await request.json();
   try {
-    const response = await exerciseService.registerExercise(dto);
-    return NextResponse.json(response, { status: response.success ? 200 : 404 });
+    const result = await exerciseService.registerExercise(dto);
+    return apiResponse(result, 201);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Server fel, gick ej skapa övning',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('POST /api/exercise error:', error);
+    return apiErrorResponse('An error occurred while creating exericse.');
   }
 }

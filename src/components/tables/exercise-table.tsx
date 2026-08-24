@@ -13,9 +13,10 @@ import type { ExerciseViewModel } from '@/types/exercise-types';
 
 type Props = {
   exercises: ExerciseViewModel[];
+  userToken: string;
 };
 
-export default function ExerciseTable({ exercises }: Props) {
+export default function ExerciseTable({ exercises, userToken }: Props) {
   const router = useRouter();
 
   // Handle delete

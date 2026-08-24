@@ -6,6 +6,7 @@ import { errorResponse } from '@/utils/api-error';
 const API_URL = 'http://localhost:3000/api/log-weight';
 
 export default class LogWeightService {
+  //GET: /api/weight-logs
   static async getAll(userToken: string, page: number): Promise<ApiResponse<UserLogWeightResponse>> {
     try {
       const response = await fetch(`${API_URL}?page=${page}`, {
@@ -39,6 +40,7 @@ export default class LogWeightService {
     }
   }
 
+  //POST: /api/weight-logs
   static async create(dto: AddWeightDto, userToken: string): Promise<ApiResponse<LogWeightResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {
@@ -76,6 +78,7 @@ export default class LogWeightService {
     }
   }
 
+  //GET: /api/weight-logs/ID
   static async getById(id: string, userToken: string): Promise<ApiResponse<LogWeightResponse>> {
     try {
       const response = await fetch(`${API_URL}/${id}`, {

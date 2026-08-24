@@ -23,6 +23,7 @@ import { registerExerciseSchema } from '@/schemas/exercise-schema';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
 export default function RegisterForm() {
+  const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterExerciseDto, string>>>({});
 
@@ -55,21 +56,24 @@ export default function RegisterForm() {
       setErrors(ErrorsHelper.getFormErrors<RegisterExerciseDto>(validation.error.issues));
       return;
     }
-
+    setIsSaving(true);
+    setErrors({});
     try {
       const response = await ExerciseService.register(validation.data);
+
       if (!response.success) {
         if (response.errors) {
           setErrors(ErrorsHelper.getFormErrorsFromApi<RegisterExerciseDto>(response.errors));
         }
-        toast.error('Något gick fel, övning kunde inte skapas');
+        toast.error(response.message);
         return;
       }
-      toast.success('Övning skapad');
+      toast.success(response.message);
     } catch (error) {
-      toast.error('Något gick fel, vikt blev inte loggad');
-      return;
+      console.error('Failed to create exericse:', error);
+      toast.error('Something went wrong. Please try again.');
     } finally {
+      setIsSaving(false);
       router.push('/exercise');
     }
   };
@@ -92,18 +96,34 @@ export default function RegisterForm() {
           <label className={FormStyles.formLabel} htmlFor="muscleGroup">
             Muskelgrupp
           </label>
-          <input className={FormStyles.formInput} id="muscleGroup" name="muscleGroup" type="text" required placeholder="T.ex. ben" onChange={handleChange}></input>
+          <input
+            className={FormStyles.formInput}
+            id="muscleGroup"
+            name="muscleGroup"
+            type="text"
+            required
+            placeholder="T.ex. ben"
+            onChange={handleChange}
+          ></input>
           {errors.muscleGroup && <p className={FormStyles.fieldErrorMessage}>{errors.muscleGroup}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="equipment">
             Redskap
           </label>
-          <input className={FormStyles.formInput} id="equipment" name="equipment" type="text" required placeholder="T.ex. kettlebell / kroppsvikt" onChange={handleChange}></input>
+          <input
+            className={FormStyles.formInput}
+            id="equipment"
+            name="equipment"
+            type="text"
+            required
+            placeholder="T.ex. kettlebell / kroppsvikt"
+            onChange={handleChange}
+          ></input>
           {errors.equipment && <p className={FormStyles.fieldErrorMessage}>{errors.equipment}</p>}
         </div>
         <div className="grid grid-2">
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" disabled={isSaving}>
             Lägg till övning
           </Button>
           <Link href="/exercise">

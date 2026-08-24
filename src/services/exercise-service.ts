@@ -1,27 +1,33 @@
 //Types
 import { UpdateExericseDto } from '@/schemas/exercise-schema';
-import { ApiResponse, ExerciseApiDeleteResponse, ExerciseApiGetByIdResponse, ExerciseApiRegisterResponse, ExerciseApiResponse, ExerciseApiUpdateResponse } from '@/types/api-types';
+import {
+  ApiResponse,
+  ExerciseApiDeleteResponse,
+  ExerciseApiGetByIdResponse,
+  ExerciseApiRegisterResponse,
+  ExerciseApiResponse,
+  ExerciseApiUpdateResponse,
+} from '@/types/api-types';
 import type { RegisterExerciseDto } from '@/types/exercise-types';
 import { errorResponse } from '@/utils/api-error';
 
 const API_URL = 'http://localhost:3000/api/exercises';
 
 export default class ExerciseService {
-  //GET: Exericses
-  static async getAll(): Promise<ApiResponse<ExerciseApiResponse>> {
+  //GET: /api/exericses
+  static async getAll(userToken: string): Promise<ApiResponse<ExerciseApiResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {
         method: 'GET',
+        headers: {
+          Cookie: `token=${userToken}`,
+        },
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result: ApiResponse<ExerciseApiResponse> = await response.json();
+      const result = (await response.json()) as ApiResponse<ExerciseApiResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -36,14 +42,10 @@ export default class ExerciseService {
         body: JSON.stringify(dto),
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result: ApiResponse<ExerciseApiRegisterResponse> = await response.json();
+      const result = (await response.json()) as ApiResponse<ExerciseApiRegisterResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -54,14 +56,10 @@ export default class ExerciseService {
         method: 'delete',
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result: ApiResponse<ExerciseApiDeleteResponse> = await response.json();
+      const result = (await response.json()) as ApiResponse<ExerciseApiDeleteResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -76,14 +74,10 @@ export default class ExerciseService {
         body: JSON.stringify(dto),
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result: ApiResponse<ExerciseApiUpdateResponse> = await response.json();
+      const result = (await response.json()) as ApiResponse<ExerciseApiUpdateResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -94,13 +88,10 @@ export default class ExerciseService {
         method: 'GET',
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-      const result: ApiResponse<ExerciseApiGetByIdResponse> = await response.json();
+      const result = (await response.json()) as ApiResponse<ExerciseApiGetByIdResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 }
