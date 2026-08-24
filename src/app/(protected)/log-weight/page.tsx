@@ -46,13 +46,13 @@ export default async function LogWeight({ searchParams }: Props) {
       {/* Header */}
       <div className="mb-10 flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-white">Vikt</h1>
-          <p className="mt-2 text-zinc-400">Följ din viktutveckling över tid.</p>
+          <h1 className="text-4xl font-bold text-white">Weight</h1>
+          <p className="mt-2 text-zinc-400">Track your weight over time.</p>
         </div>
 
         <Link href="/log-weight/create">
           <Button type="submit" variant="primary">
-            Logga vikt
+            Log weight
           </Button>
         </Link>
       </div>
@@ -70,16 +70,16 @@ export default async function LogWeight({ searchParams }: Props) {
       {/* Historik */}
       <div className="rounded-2xl border border-zinc-800 bg-zinc-900" id="history-section-weight">
         <div className="border-b border-zinc-800 px-6 py-4">
-          <h2 className="text-xl font-semibold text-white">Historik</h2>
+          <h2 className="text-xl font-semibold text-white">History</h2>
         </div>
 
         <table className="w-full">
           <thead className="bg-zinc-950">
             <tr className="text-left text-sm text-zinc-400">
-              <th className="px-6 py-3">Datum</th>
-              <th className="px-6 py-3">Vikt</th>
-              <th className="px-6 py-3">Anteckning</th>
-              <th className="px-6 py-3">Redigera / ta bort</th>
+              <th className="px-6 py-3">Date</th>
+              <th className="px-6 py-3">Weight</th>
+              <th className="px-6 py-3">Notes</th>
+              <th className="px-6 py-3">Edit / Delete</th>
             </tr>
           </thead>
 
