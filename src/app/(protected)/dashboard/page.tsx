@@ -17,6 +17,7 @@ export default async function DashboardPage() {
 
   const result = await DashboardService.getDashboard(userToken);
   console.log(result);
+
   if (!result.success) {
     throw new Error('Something went wrong');
   }

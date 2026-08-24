@@ -130,4 +130,20 @@ export class WorkoutSessionRepository {
 
     return sessions;
   }
+
+  async updateWorkoutSessionsStatus(workoutSessionId: number): Promise<boolean> {
+    const result = await prisma.workoutSession.updateMany({
+      where: {
+        id: workoutSessionId,
+        status: 'ACTIVE',
+      },
+      data: {
+        status: 'NOTCOMPLETED',
+      },
+    });
+
+    console.log('UPDATE RESULT:', result);
+
+    return result.count > 0;
+  }
 }

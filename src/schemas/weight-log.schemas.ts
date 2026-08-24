@@ -5,8 +5,8 @@ export const addWeightSchema = z.object({
   note: z.string().trim().min(1, 'Du måste fylla i anteckning'),
 });
 
-export const editWeightSchema = addWeightSchema;
+export const updateWeightSchema = addWeightSchema;
 
 /*Weight Dtos*/
 export type AddWeightDto = z.infer<typeof addWeightSchema>;
-export type EditWeightDto = z.infer<typeof editWeightSchema>;
+export type UpdateWeightDto = z.infer<typeof updateWeightSchema>;

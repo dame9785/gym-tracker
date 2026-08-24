@@ -1,11 +1,10 @@
-import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
-import { AddWeightDto, EditWeightDto } from '@/schemas/weight-log.schemas';
+import { AddWeightDto, UpdateWeightDto } from '@/schemas/weight-log.schemas';
 import { WeightLogService } from '@/services-server/weight-log-service';
-import { ApiErrorResponse } from '@/types/api-types';
 import { getCurrentUser } from '@/utils/user-by-token';
+import { apiErrorResponse, apiResponse, unauthorizedResponse } from '@/utils//api-error';
 
 //Next Response
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 const weightLogService = new WeightLogService();
 
@@ -14,86 +13,76 @@ export async function GET(request: Request) {
   const page = Number(searchParams.get('page')) || 1;
 
   try {
-    //Get current User from Cookie store
-    const currentUserId = await getCurrentUser();
+    //Get current User from Cookie storage
+    const user = await getCurrentUser();
 
-    if (!currentUserId) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Unauthorized ',
-        } satisfies ApiErrorResponse,
-        { status: 401 },
-      );
+    if (!user) {
+      return unauthorizedResponse();
     }
-    const response = await weightLogService.getAll(currentUserId.userId, page);
 
-    return NextResponse.json(response, { status: response.success ? 200 : 404 });
+    const result = await weightLogService.getAll(user.userId, page);
+
+    return apiResponse(result);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : 'Something went wrong.',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('GET /api/weight-logs error:', error);
+    return apiErrorResponse('An error occurred while fetching weight logs.');
   }
 }
 
 //POST: Crate log of weight
-export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export async function POST(request: NextRequest) {
+  //Get current User from Cookie store
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorizedResponse();
+  }
 
   try {
     const body: AddWeightDto = await request.json();
-    const result = await weightLogService.create(body, Number(id));
-    return NextResponse.json(result, { status: result.success ? 200 : 500 });
+    const result = await weightLogService.create(body, user.userId);
+
+    return apiResponse(result, 201);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : 'Something went wrong.',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('POST /api/weight-logs error:', error);
+    return apiErrorResponse('An error occurred while creating the weight log.');
   }
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorizedResponse();
+  }
+
   try {
     const { id } = await params;
-    const result = await weightLogService.delete(Number(id));
+    const result = await weightLogService.delete(Number(id), user.userId);
 
-    return NextResponse.json(result, { status: result.success ? 200 : 404 });
+    return apiResponse(result);
   } catch (error) {
-    console.error('Error delete log', error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : 'Something went wrong.',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('DELETE /api/weight-logs error:', error);
+    return apiErrorResponse('An error occurred while deleting the weight log.');
   }
 }
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  try {
-    const body: EditWeightDto = await request.json();
+  const user = await getCurrentUser();
 
-    const result = await weightLogService.update(id, body);
-    return NextResponse.json(result, { status: result.success ? 200 : 500 });
+  if (!user) {
+    return unauthorizedResponse();
+  }
+
+  try {
+    const { id } = await params;
+
+    const body: UpdateWeightDto = await request.json();
+    const result = await weightLogService.update(id, body, user.userId);
+
+    return apiResponse(result);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : 'Something went wrong.',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('PUT /api/weight-logs error:', error);
+    return apiErrorResponse('An error occurred while updating the weight log.');
   }
 }

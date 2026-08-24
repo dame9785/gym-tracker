@@ -11,4 +11,5 @@ export interface LogViewModel {
   logList: LogItemViewModel[];
   currentWeight: string | undefined;
   startWeight: string | undefined;
+  userId: number;
 }

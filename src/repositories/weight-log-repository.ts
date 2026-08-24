@@ -37,10 +37,21 @@ export class WeightLogRepository {
     });
   }
 
-  async delete(id: number) {
-    return await prisma.weightLog.delete({
+  async delete(id: number, userId: number) {
+    const weightLog = await prisma.weightLog.findFirst({
       where: {
         id,
+        userId,
+      },
+    });
+
+    if (!weightLog) {
+      return null;
+    }
+
+    return await prisma.weightLog.delete({
+      where: {
+        id: weightLog.id,
       },
     });
   }
@@ -77,7 +88,18 @@ export class WeightLogRepository {
     });
   }
 
-  async update(logWeightId: number, dto: EditWeightDto) {
+  async update(logWeightId: number, userId: number, dto: EditWeightDto) {
+    const weightLog = prisma.weightLog.findFirst({
+      where: {
+        logWeightId,
+        userId,
+      },
+    });
+
+    if (!weightLog) {
+      return null;
+    }
+
     return await prisma.weightLog.update({
       where: {
         id: logWeightId,

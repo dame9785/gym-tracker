@@ -1,5 +1,13 @@
 //Next Redirect
-import { ApiResponse, ApiSuccessResponse, WorkoutFinishApiResponse, WorkoutSessionCreateResponse, WorkoutSessionDetailApiResponse, WorkoutSessionUpdatedSetResponse } from '@/types/api-types';
+import {
+  ApiResponse,
+  ApiSuccessResponse,
+  UpdateWorkoutSessionResponse,
+  WorkoutFinishApiResponse,
+  WorkoutSessionCreateResponse,
+  WorkoutSessionDetailApiResponse,
+  WorkoutSessionUpdatedSetResponse,
+} from '@/types/api-types';
 import { errorResponse } from '@/utils/api-error';
 
 //API URL
@@ -89,6 +97,28 @@ export default class WorkoutSessionService {
       return result as ApiSuccessResponse<WorkoutFinishApiResponse>;
     } catch (error) {
       return errorResponse('Gick inte hämta data');
+    }
+  }
+
+  //Set workoutSession to not performed
+  static async setNotPerformed(workoutSessionId: number): Promise<ApiResponse<UpdateWorkoutSessionResponse>> {
+    try {
+      const response = await fetch(`${API_URL}/${workoutSessionId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        return errorResponse('Gick inte hämta data');
+      }
+
+      const result = await response.json();
+      return result as ApiSuccessResponse<UpdateWorkoutSessionResponse>;
+    } catch (error) {
+      console.log(error);
+      return errorResponse('Servern  kunde inte ansluta');
     }
   }
 }

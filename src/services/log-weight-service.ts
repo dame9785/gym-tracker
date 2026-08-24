@@ -1,5 +1,5 @@
 // Schemas
-import { AddWeightDto, EditWeightDto } from '@/schemas/weight-log.schemas';
+import { AddWeightDto, UpdateWeightDto } from '@/schemas/weight-log.schemas';
 import { ApiResponse, DeleteLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
 import { errorResponse } from '@/utils/api-error';
 
@@ -18,83 +18,76 @@ export default class LogWeightService {
       const result = (await response.json()) as ApiResponse<UserLogWeightResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
-  static async delete(id: number): Promise<ApiResponse<DeleteLogWeightResponse>> {
+  //DELETE: /api/weight-logs
+  static async delete(id: number, userToken: string): Promise<ApiResponse<DeleteLogWeightResponse>> {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
+        headers: {
+          Cookie: `token=${userToken}`,
+        },
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result: ApiResponse<DeleteLogWeightResponse> = await response.json();
+      const result = (await response.json()) as ApiResponse<DeleteLogWeightResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
-  static async create(dto: AddWeightDto, userId: number): Promise<ApiResponse<LogWeightResponse>> {
+  static async create(dto: AddWeightDto, userToken: string): Promise<ApiResponse<LogWeightResponse>> {
     try {
-      const response = await fetch(`${API_URL}/${userId}`, {
+      const response = await fetch(`${API_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Cookie: `token=${userToken}`,
         },
         body: JSON.stringify(dto),
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result: ApiResponse<LogWeightResponse> = await response.json();
+      const result = (await response.json()) as ApiResponse<LogWeightResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
-  static async update(weightId: string, dto: EditWeightDto) {
+  static async update(weightId: string, dto: UpdateWeightDto, userToken: string): Promise<ApiResponse<LogWeightResponse>> {
     try {
       const response = await fetch(`${API_URL}/${weightId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Cookie: `token=${userToken}`,
         },
         body: JSON.stringify(dto),
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result: ApiResponse<LogWeightResponse> = await response.json();
+      const result = (await response.json()) as ApiResponse<LogWeightResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
-  static async getById(id: string): Promise<ApiResponse<LogWeightResponse>> {
+  static async getById(id: string, userToken: string): Promise<ApiResponse<LogWeightResponse>> {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
         method: 'GET',
+        headers: {
+          Cookie: `token=${userToken}`,
+        },
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result: ApiResponse<LogWeightResponse> = await response.json();
+      const result = (await response.json()) as ApiResponse<LogWeightResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 }

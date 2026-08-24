@@ -6,23 +6,16 @@ import { UserViewModel } from '@/types/user-types';
 import { redirect } from 'next/navigation';
 
 export default async function create() {
-  const token = await getTokenFromCookieStore();
+  const userToken = await getTokenFromCookieStore();
 
-  if (!token) {
+  if (!userToken) {
     redirect('/account/login');
   }
-
-  const response = await AuthService.getCurrentUser(token);
-  if (!response.success) {
-    throw new Error('Something went wrong');
-  }
-
-  const user: UserViewModel = response.data;
 
   return (
     <div className="container">
       <div className="form-wrapper flex justify-center items-center m-[5em]">
-        <LogWeightForm user={user} />
+        <LogWeightForm userToken={userToken} />
       </div>
     </div>
   );

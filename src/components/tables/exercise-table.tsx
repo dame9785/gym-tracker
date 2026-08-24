@@ -53,24 +53,18 @@ export default function ExerciseTable({ exercises }: Props) {
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950">
+    <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-950">
       <table className="w-full border-collapse">
         {/* Header */}
         <thead>
           <tr className="border-b border-zinc-800 bg-zinc-900/80">
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Övning</th>
 
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
-              Muskelgrupp
-            </th>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Muskelgrupp</th>
 
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
-              Redskap
-            </th>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Redskap</th>
 
-            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-zinc-500">
-              Åtgärder
-            </th>
+            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-zinc-500">Åtgärder</th>
           </tr>
         </thead>
 

@@ -22,13 +22,13 @@ type Props = {
 export default async function LogWeight({ searchParams }: Props) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
-  const token = await getTokenFromCookieStore();
+  const userToken = await getTokenFromCookieStore();
 
-  if (!token) {
+  if (!userToken) {
     redirect('/account/login');
   }
 
-  const response = await WeightLogService.getAll(token, page);
+  const response = await WeightLogService.getAll(userToken, page);
   if (!response.success) {
     throw new Error('Something went wrong');
   }
@@ -85,7 +85,7 @@ export default async function LogWeight({ searchParams }: Props) {
 
           <tbody>
             {LogList?.map((item) => {
-              return <LogHistoryList key={item.id} logItem={item} />;
+              return <LogHistoryList key={item.id} logItem={item} userToken={userToken} />;
             })}
           </tbody>
         </table>

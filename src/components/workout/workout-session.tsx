@@ -7,6 +7,7 @@ import WorkoutSessionService from '@/services/workout-session-service';
 import type { WorkoutSessionViewModel } from '@/types/workout-types';
 
 import WorkoutSessionExerciseCard from '@/components/workout/workout-session-exercise-card';
+import NotPerformedButton from '@/components/dashboard/not-perfomed-button';
 
 interface WorkoutSessionProps {
   workoutSession: WorkoutSessionViewModel;
@@ -41,9 +42,7 @@ export default function WorkoutSession({ workoutSession }: WorkoutSessionProps) 
         <div className="mt-1 flex items-center justify-between gap-4">
           <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Workout #{workoutSession.id}</h1>
 
-          <span className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400">
-            Pågår
-          </span>
+          <span className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400">Pågår</span>
         </div>
 
         <p className="mt-2 text-sm text-zinc-500">Registrera dina faktiska reps och vikter för varje set.</p>
@@ -57,7 +56,8 @@ export default function WorkoutSession({ workoutSession }: WorkoutSessionProps) 
       </div>
 
       {/* Finish workout */}
-      <div className="mt-8 flex justify-end border-t border-white/10 pt-6">
+      <div className="mt-8 flex justify-end border-t border-white/10 pt-6 grid-2 gap-2">
+        {workoutSession.status !== 'NOTCOMPLETED' && <NotPerformedButton workoutSessionId={workoutSession.id} />}
         <button
           type="button"
           onClick={handleFinishWorkout}

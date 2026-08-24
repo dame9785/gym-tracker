@@ -27,9 +27,7 @@ export class ExerciseService {
       const exercises = await this.exerciseRepository.getAll();
       return {
         success: true,
-        data: {
-          exercises: exercises.map((x) => ExerciseMapper.exerciseModelToViewModel(x)),
-        },
+        data: exercises.map((x) => ExerciseMapper.exerciseModelToViewModel(x)),
       };
     } catch (error) {
       return {
@@ -78,9 +76,7 @@ export class ExerciseService {
       return {
         success: true,
         message: 'Övning skapad',
-        data: {
-          exercise: ExerciseMapper.exerciseModelToViewModel(exericse),
-        },
+        data: ExerciseMapper.exerciseModelToViewModel(exericse),
       } satisfies ApiSuccessResponse<ExerciseApiRegisterResponse>;
     } catch (error) {
       console.log(error);
@@ -101,9 +97,7 @@ export class ExerciseService {
       return {
         success: true,
         message: 'Övning lyckades hämta',
-        data: {
-          exercise: ExerciseMapper.exerciseModelToViewModel(exericse),
-        },
+        data: ExerciseMapper.exerciseModelToViewModel(exericse),
       } satisfies ApiSuccessResponse<ExerciseApiGetByIdResponse>;
     } catch (error) {
       console.log(error);
@@ -133,9 +127,7 @@ export class ExerciseService {
       return {
         success: true,
         message: 'Övning uppdaterad!',
-        data: {
-          exercise: ExerciseMapper.exerciseModelToViewModel(updatedExericse),
-        },
+        data: ExerciseMapper.exerciseModelToViewModel(updatedExericse),
       } satisfies ApiSuccessResponse<ExerciseApiUpdateResponse>;
     } catch (error) {
       console.log(error);

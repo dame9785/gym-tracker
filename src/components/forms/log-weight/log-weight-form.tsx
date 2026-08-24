@@ -13,7 +13,7 @@ import buttonStyles from '@/components/button/button.module.css';
 import FormStyles from '@/components/forms/form.module.css';
 
 //Services
-import { LogWeightService } from '@/services/log-weight-service';
+import LogWeightService from '@/services/log-weight-service';
 
 //Components
 import Button from '@/components/button/button';
@@ -23,14 +23,13 @@ import { AddWeightDto, addWeightSchema } from '@/schemas/weight-log.schemas';
 
 //Helpers
 import { ErrorsHelper } from '@/helpers/error-helper';
-import { UserViewModel } from '@/types/user-types';
 
 //Props
 interface Props {
-  user: UserViewModel;
+  userToken: string;
 }
 
-export default function LogWeightForm({ user }: Props) {
+export default function LogWeightForm({ userToken }: Props) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof AddWeightDto, string>>>({});
@@ -64,7 +63,8 @@ export default function LogWeightForm({ user }: Props) {
     setIsSaving(true);
     setErrors({});
     try {
-      const result = await LogWeightService.create(LogWeightDto, user.id);
+      const result = await LogWeightService.create(LogWeightDto, userToken);
+      console.log(result);
       if (!result.success) {
         if (result.errors) {
           setErrors(ErrorsHelper.getFormErrorsFromApi<AddWeightDto>(result.errors));
@@ -92,28 +92,14 @@ export default function LogWeightForm({ user }: Props) {
           <label className={FormStyles.formLabel} htmlFor="weight">
             Vikt
           </label>
-          <input
-            className={FormStyles.formInput}
-            id="weight"
-            name="weight"
-            type="number"
-            step="0.1"
-            placeholder="T.ex. 50"
-            onChange={handleChange}
-          ></input>
+          <input className={FormStyles.formInput} id="weight" name="weight" type="number" step="0.1" placeholder="T.ex. 50" onChange={handleChange}></input>
           {errors.weight && <p className={FormStyles.fieldErrorMessage}>{errors.weight}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="note">
             Notering
           </label>
-          <textarea
-            className={FormStyles.formInput}
-            id="note"
-            name="note"
-            placeholder="T.ex. morgonen"
-            onChange={handleChange}
-          ></textarea>
+          <textarea className={FormStyles.formInput} id="note" name="note" placeholder="T.ex. morgonen" onChange={handleChange}></textarea>
           {errors.note && <p className={FormStyles.fieldErrorMessage}>{errors.note}</p>}
         </div>
 

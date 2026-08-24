@@ -1,6 +1,15 @@
 import { WorkoutSessionMapper } from '@/mapping/workout-session-mapping';
 import { WorkoutSessionRepository } from '@/repositories/workout-session-repository';
-import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, WorkoutFinishApiResponse, WorkoutSessionCreateResponse, WorkoutSessionDetailApiResponse, WorkoutSessionUpdatedSetResponse } from '@/types/api-types';
+import {
+  ApiErrorResponse,
+  ApiResponse,
+  ApiSuccessResponse,
+  UpdateWorkoutSessionResponse,
+  WorkoutFinishApiResponse,
+  WorkoutSessionCreateResponse,
+  WorkoutSessionDetailApiResponse,
+  WorkoutSessionUpdatedSetResponse,
+} from '@/types/api-types';
 
 export class WorkoutSessionService {
   private workoutSessionRepository = new WorkoutSessionRepository();
@@ -11,9 +20,7 @@ export class WorkoutSessionService {
 
       return {
         success: true,
-        data: {
-          workoutSessionId: workoutSession.id,
-        },
+        data: workoutSession.id,
       } satisfies ApiSuccessResponse<WorkoutSessionCreateResponse>;
     } catch (error) {
       console.error(error);
@@ -37,9 +44,7 @@ export class WorkoutSessionService {
 
       return {
         success: true,
-        data: {
-          workoutSession: WorkoutSessionMapper.mapWorkoutSession(workoutSession),
-        },
+        data: WorkoutSessionMapper.mapWorkoutSession(workoutSession),
       };
     } catch (error) {
       console.error(error);
@@ -62,9 +67,7 @@ export class WorkoutSessionService {
 
       return {
         success: true,
-        data: {
-          updatedSet: updatedSet,
-        },
+        data: updatedSet,
       } satisfies ApiSuccessResponse<WorkoutSessionUpdatedSetResponse>;
     } catch (error) {
       console.log('ERROR', error);
@@ -80,10 +83,43 @@ export class WorkoutSessionService {
       const workoutSession = await this.workoutSessionRepository.finish(id);
       return {
         success: true,
-        data: {
-          workoutSession: workoutSession,
-        },
+        data: workoutSession,
       } satisfies ApiSuccessResponse<WorkoutFinishApiResponse>;
+    } catch (error) {
+      console.error(error);
+
+      return {
+        success: false,
+        message: 'Kunde inte avsluta träningspasset.',
+      } satisfies ApiErrorResponse;
+    }
+  }
+
+  //Update workout session status
+  async updateWorkoutSessionStatus(workoutSessionId: number): Promise<ApiResponse<UpdateWorkoutSessionResponse>> {
+    console.log('WORKOUTID', workoutSessionId);
+    try {
+      // const [workoutSession, updatedWorkoutSession] = await Promise.all([
+      //   this.workoutSessionRepository.create(workoutId, userId),
+      //   this.workoutSessionRepository.updateWorkoutSessionsStatus(workoutId),
+      // ]);
+
+      const updatedWorkoutSession = await this.workoutSessionRepository.updateWorkoutSessionsStatus(workoutSessionId);
+      console.log('sessions:', updatedWorkoutSession);
+
+      if (!updatedWorkoutSession) {
+        return {
+          success: false,
+          message: 'Kunde inte avsluta träningspasset.',
+        } satisfies ApiErrorResponse;
+      }
+      return {
+        success: true,
+        data: {
+          success: true,
+          message: 'Status updated',
+        },
+      } satisfies ApiSuccessResponse<UpdateWorkoutSessionResponse>;
     } catch (error) {
       console.error(error);
 

@@ -35,11 +35,14 @@ export async function POST(request: Request) {
 
     return response;
   } catch (error) {
-    console.error('POST /api/auth/login failed:', error);
+    console.error(error);
 
-    return {
-      success: false,
-      message: 'Server error',
-    } satisfies ApiErrorResponse;
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Ett oväntat fel inträffade.',
+      } satisfies ApiErrorResponse,
+      { status: 500 },
+    );
   }
 }

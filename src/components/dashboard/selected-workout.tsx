@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 // Components
 import StartWorkoutButton from '@/components/workout/start-workout-button';
+import NotPerformedButton from '@/components/dashboard/not-perfomed-button';
 
 // Icons
 import { CalendarDays, Clock3, Dumbbell, ListChecks, Scale } from 'lucide-react';
@@ -16,8 +17,9 @@ type Props = {
 };
 
 export default function SelectedWorkout({ workout, userToken }: Props) {
+  console.log(workout);
   return (
-    <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950">
+    <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-950">
       {/* Header */}
       <div className="border-b border-zinc-800/80 p-6">
         <div className="flex items-start justify-between gap-4">
@@ -172,7 +174,7 @@ export default function SelectedWorkout({ workout, userToken }: Props) {
           className="
       inline-flex
       h-11
-      min-w-[132px]
+      min-w-33
       items-center
       justify-center
       rounded-xl

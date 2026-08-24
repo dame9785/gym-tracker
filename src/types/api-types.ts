@@ -5,6 +5,7 @@ import { ExerciseViewModel } from './exercise-types';
 import { WeeklyWorkoutViewModel, WorkoutSchedelueViewModel, WorkoutSessionFinishViewModel, WorkoutSessionViewModel, WorkoutViewModel } from './workout-types';
 import { WeeklySummaryViewModel } from './dashboard-types';
 import { HistoryViewModel } from './history-types';
+import { boolean } from 'zod';
 export interface ApiSuccessResponse<T> {
   success: true;
   message?: string;
@@ -113,6 +114,11 @@ export type WorkoutSessionUpdatedSetResponse = UpdatedSetViewModel;
 export type WorkoutSessionDetailApiResponse = WorkoutSessionViewModel;
 
 export type WorkoutSchedelueCreateResponse = WorkoutSchedelueViewModel;
+
+export interface UpdateWorkoutSessionResponse {
+  message: string;
+  success: boolean;
+}
 
 export interface UpdatedSetViewModel {
   id: number;

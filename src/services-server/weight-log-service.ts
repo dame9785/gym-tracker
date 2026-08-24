@@ -3,8 +3,10 @@ import { WeightLogRepository } from '@/repositories/weight-log-repository';
 
 //Mapping
 import { LogWeightMapper } from '@/mapping/log-weight-mapping';
-import { AddWeightDto, addWeightSchema, EditWeightDto } from '@/schemas/weight-log.schemas';
-import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, DeleteLogWeightResponse, EditLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
+import { AddWeightDto, addWeightSchema, UpdateWeightDto, updateWeightSchema } from '@/schemas/weight-log.schemas';
+import { ApiResponse, ApiSuccessResponse, DeleteLogWeightResponse, EditLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
+
+import { errorResponse } from '@/utils/api-error';
 
 export class WeightLogService {
   private weightLogRepository = new WeightLogRepository();
@@ -23,7 +25,7 @@ export class WeightLogService {
 
       return {
         success: true,
-        message: 'Hätmning lyckades',
+        message: 'Weight logs fetched successfully.',
         data: {
           logList: viewModel.logList,
           currentWeight: viewModel.currentWeight,
@@ -37,90 +39,73 @@ export class WeightLogService {
         },
       } satisfies ApiSuccessResponse<UserLogWeightResponse>;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Felaktig email eller lösenord.',
-      } satisfies ApiErrorResponse;
+      return errorResponse('An error occurred on the server.');
     }
   }
 
-  async delete(id: number): Promise<ApiResponse<DeleteLogWeightResponse>> {
-    if (id === null) {
-      return {
-        success: false,
-        message: 'Något gick fel, logg hittades inte',
-      } satisfies ApiErrorResponse;
+  async delete(id: number, userId: number): Promise<ApiResponse<DeleteLogWeightResponse>> {
+    if (!Number.isInteger(id) || id <= 0) {
+      return errorResponse('Invalid weight log ID');
     }
 
     try {
-      await this.weightLogRepository.delete(id);
+      await this.weightLogRepository.delete(id, userId);
       return {
         success: true,
-        message: 'Något gick fel, kunde inte raderas',
-        data: {
-          data: [],
-        },
+        message: 'Weight log deleted successfully',
+        data: [],
       } satisfies ApiSuccessResponse<DeleteLogWeightResponse>;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Användaren kunde inte uppdateras.',
-      } satisfies ApiErrorResponse;
+      return errorResponse('An error occurred on the server.');
     }
   }
 
   async create(dto: AddWeightDto, userId: number): Promise<ApiResponse<LogWeightResponse>> {
-    const fieldErrors: Partial<Record<keyof AddWeightDto, string>> = {};
     const validation = addWeightSchema.safeParse(dto);
+
     if (!validation.success) {
-      return {
-        success: false,
-        message: 'Validerings fel',
-        errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
-      } satisfies ApiErrorResponse;
+      const errors = validation.error.flatten().fieldErrors;
+      return errorResponse('Validation failed', errors);
     }
 
     try {
       const createdLog = await this.weightLogRepository.create(userId, validation.data);
       const viewModel = LogWeightMapper.mapLogItemToViewModel(createdLog);
+
       return {
         success: true,
-        message: 'Vikt lyckades loggas',
+        message: 'Weight log created successfully.',
         data: viewModel,
       } satisfies ApiSuccessResponse<LogWeightResponse>;
     } catch (error) {
-      console.error('AuthService.updateUser failed:', error);
-      return {
-        success: false,
-        message: 'Användaren kunde inte uppdateras.',
-      } satisfies ApiErrorResponse;
+      console.error('Weight-log created failed:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 
-  async update(weightId: string, dto: EditWeightDto): Promise<ApiResponse<EditLogWeightResponse>> {
-    const fieldErrors: Partial<Record<keyof AddWeightDto, string>> = {};
-    const validation = addWeightSchema.safeParse(dto);
+  async update(weightId: string, dto: UpdateWeightDto, userId: number): Promise<ApiResponse<EditLogWeightResponse>> {
+    const validation = updateWeightSchema.safeParse(dto);
 
     if (!validation.success) {
-      return {
-        success: false,
-        message: 'Validerings fel',
-        errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
-      } satisfies ApiErrorResponse;
+      const errors = validation.error.flatten().fieldErrors;
+      return errorResponse('Validation failed', errors);
     }
 
     try {
-      const updatedData = await this.weightLogRepository.update(Number(weightId), dto);
+      const updatedData = await this.weightLogRepository.update(Number(weightId), userId, validation.data);
+      if (!updatedData) {
+        return errorResponse('Could not find weight log');
+      }
+
       const viewModel = LogWeightMapper.mapLogItemToViewModel(updatedData);
+
       return {
         success: true,
         data: viewModel,
+        message: 'Weight log updated successfully.',
       } satisfies ApiSuccessResponse<EditLogWeightResponse>;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Något gick fel, server error',
-      } satisfies ApiErrorResponse;
+      return errorResponse('An error occurred on the server.');
     }
   }
 
@@ -128,10 +113,7 @@ export class WeightLogService {
     try {
       const data = await this.weightLogRepository.getById(id);
       if (!data) {
-        return {
-          success: false,
-          message: 'Viktloggen kunde inte hittas',
-        } satisfies ApiErrorResponse;
+        return errorResponse('Could not find weight log.');
       }
 
       return {
@@ -140,10 +122,7 @@ export class WeightLogService {
       } satisfies ApiSuccessResponse<LogWeightResponse>;
     } catch (error) {
       console.error('getById error:', error);
-      return {
-        success: false,
-        message: 'Server fel, gick ej hämta viktloggen',
-      } satisfies ApiErrorResponse;
+      return errorResponse('An error occurred on the server.');
     }
   }
 }
