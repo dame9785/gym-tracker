@@ -16,19 +16,13 @@ interface WorkoutExerciseCardProps {
   onRemove: (index: number) => void;
 }
 
-export default function WorkoutExerciseCard({
-  index,
-  exercise,
-  exercises,
-  onUpdate,
-  onRemove,
-}: WorkoutExerciseCardProps) {
+export default function WorkoutExerciseCard({ index, exercise, exercises, onUpdate, onRemove }: WorkoutExerciseCardProps) {
   return (
     <div className={FormStyles.exerciseCard}>
       {/* Övning */}
       <div className={FormStyles.formGroup}>
         <label htmlFor={`exercise-${index}`} className={FormStyles.formLabel}>
-          Övning
+          Exericse
         </label>
 
         <select
@@ -38,7 +32,7 @@ export default function WorkoutExerciseCard({
           onChange={(e) => onUpdate(index, 'exerciseId', Number(e.target.value))}
         >
           <option value={0} disabled>
-            Välj övning
+            Select exericse
           </option>
 
           {exercises.map((item) => (
@@ -83,7 +77,7 @@ export default function WorkoutExerciseCard({
 
         <div className={FormStyles.formGroup}>
           <label htmlFor={`weight-${index}`} className={FormStyles.formLabel}>
-            Vikt (kg)
+            Weight (kg)
           </label>
 
           <input
@@ -101,7 +95,7 @@ export default function WorkoutExerciseCard({
       {/* Anteckning */}
       <div className={FormStyles.formGroup}>
         <label htmlFor={`note-${index}`} className={FormStyles.formLabel}>
-          Anteckning
+          Note
         </label>
 
         <textarea
@@ -113,7 +107,7 @@ export default function WorkoutExerciseCard({
         />
       </div>
       <Button type="button" variant="delete" onClick={() => onRemove(index)}>
-        Ta bort
+        Remove
       </Button>
     </div>
   );

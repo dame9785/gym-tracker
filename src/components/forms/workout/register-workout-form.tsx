@@ -50,21 +50,22 @@ export default function AddWorkoutForm({ exericses, userToken }: Props) {
 
     //Check duplicate exericses
     if (hasDuplicateExercises(formData.workoutExercises)) {
-      toast.error('Du kan inte välja samma övning flera gånger.');
+      toast.error('You cannot choose the same exercise more than once.');
       return false;
     }
 
     try {
-      const result = await WorkoutService.create(formData, userToken);
-      if (!result.success) {
-        toast.error('Något gick fel, kunde inte skapa');
+      const response = await WorkoutService.create(formData, userToken);
+      if (!response.success) {
+        toast.error(response.message);
         return;
       }
     } catch (error) {
-      toast.error('Något är fel, övning ej skapad');
+      console.error('Failed to create exericse:', error);
+      toast.error('Something went wrong. Please try again.');
       return;
     } finally {
-      toast.success('Träningspass tillagt');
+      toast.success('Workout was successfully created');
       router.push('/workout');
     }
   };
@@ -111,21 +112,21 @@ export default function AddWorkoutForm({ exericses, userToken }: Props) {
   return (
     <div className={FormStyles.formContainer}>
       <h1 className={FormStyles.formTitle}>
-        Lägg till <span>träningspass</span>
+        Add <span>Workout</span>
       </h1>
 
       <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
         {/* Workout namn */}
         <div className={FormStyles.formGroup}>
           <label htmlFor="name" className={FormStyles.formLabel}>
-            Workout namn *
+            Workout name *
           </label>
 
           <input
             id="name"
             type="text"
             className={FormStyles.formInput}
-            placeholder="T.ex. Push Day"
+            placeholder="Example. Push Day"
             value={formData.name}
             onChange={(e) =>
               setFormData((prev) => ({
@@ -140,14 +141,14 @@ export default function AddWorkoutForm({ exericses, userToken }: Props) {
         {/* Beskrivning */}
         <div className={FormStyles.formGroup}>
           <label htmlFor="description" className={FormStyles.formLabel}>
-            Beskrivning
+            Description
           </label>
 
           <textarea
             id="description"
             rows={4}
             className={FormStyles.formTextarea}
-            placeholder="Fokusera på axlar, bröst..."
+            placeholder="Example. Focus on arms, breast..."
             value={formData.description}
             onChange={(e) =>
               setFormData((prev) => ({
@@ -161,19 +162,19 @@ export default function AddWorkoutForm({ exericses, userToken }: Props) {
 
         {/* Övningar */}
         <div className={FormStyles.exerciseSection}>
-          <h2 className={FormStyles.sectionTitle}>Övningar</h2>
+          <h2 className={FormStyles.sectionTitle}>Exericses</h2>
 
           {formData.workoutExercises.map((exercise, index) => (
             <WorkoutExerciseCard key={index} index={index} exercise={exercise} exercises={exericses} onUpdate={updateExercise} onRemove={removeExercise} />
           ))}
 
           <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>
-            + Lägg till övning
+            + Add more exericse
           </button>
         </div>
 
         <button type="submit" className={FormStyles.submitButton}>
-          Spara Workout
+          Save Workout
         </button>
       </form>
     </div>

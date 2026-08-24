@@ -1,7 +1,5 @@
 import EditWorkoutForm from '@/components/forms/workout/edit-workout-form';
 import WorkoutService from '@/services/workout-service';
-import { error } from 'console';
-import { notFound } from 'next/navigation';
 
 type PageProps = {
   params: Promise<{

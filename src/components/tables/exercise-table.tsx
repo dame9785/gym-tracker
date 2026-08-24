@@ -42,15 +42,20 @@ export default function ExerciseTable({ exercises, userToken }: Props) {
 
   // Remove exercise
   const removeExercise = async (id: number) => {
-    const response = await ExerciseService.delete(id);
+    try {
+      const response = await ExerciseService.delete(id);
 
-    if (!response.success) {
-      toast.error(response.message);
-      return;
+      if (!response.success) {
+        toast.error(response.message);
+        return;
+      }
+
+      toast.success(response.message);
+      router.refresh();
+    } catch (error) {
+      console.error('Failed to delete exericse:', error);
+      toast.error('Something went wrong. Please try again.');
     }
-
-    toast.success(response.message);
-    router.refresh();
   };
 
   return (

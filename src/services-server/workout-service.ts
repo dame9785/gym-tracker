@@ -7,10 +7,20 @@ import type { RegisterWorkoutDto } from '@/types/workout-types';
 
 //Mapping
 import { WorkoutMapper } from '@/mapping/workout-mapping';
-import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, WorkoutApiDeleteResponse, WorkoutApiGetByIdResponse, WorkoutApiRegisterResponse, WorkoutApiResponse, WorkoutApiUpdateResponse } from '@/types/api-types';
+import {
+  ApiErrorResponse,
+  ApiResponse,
+  ApiSuccessResponse,
+  WorkoutApiDeleteResponse,
+  WorkoutApiGetByIdResponse,
+  WorkoutApiRegisterResponse,
+  WorkoutApiResponse,
+  WorkoutApiUpdateResponse,
+} from '@/types/api-types';
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
 import { UpdateWorkoutDto, updateWorkoutSchema } from '@/schemas/workout-schemas';
 import { ErrorsHelper } from '@/helpers/error-helper';
+import { errorResponse } from '@/utils/api-error';
 
 export class WorkoutService {
   private workoutRepository = new WorkoutRepository();
@@ -22,22 +32,16 @@ export class WorkoutService {
 
       return {
         success: true,
-        message: 'Workout skapad.',
-        data: {
-          workout: WorkoutMapper.workoutDtoToViewModel(workout),
-        },
+        message: 'Workout created successfully.',
+        data: WorkoutMapper.workoutDtoToViewModel(workout),
       } satisfies ApiResponse<WorkoutApiRegisterResponse>;
     } catch (error) {
-      console.error('Kunde inte skapa workout:', error);
-
-      return {
-        success: false,
-        message: 'Server fel, kunde inte hämta workouts',
-      } satisfies ApiErrorResponse;
+      console.error('Create workout failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 
-  async update(id: number, dto: UpdateWorkoutDto): Promise<ApiResponse<WorkoutApiUpdateResponse>> {
+  async update(id: number, dto: UpdateWorkoutDto, userId: number): Promise<ApiResponse<WorkoutApiUpdateResponse>> {
     const validation = updateWorkoutSchema.safeParse(dto);
 
     if (!validation.success) {
@@ -46,34 +50,29 @@ export class WorkoutService {
 
       return {
         success: false,
-        message: 'Felaktig email eller lösenord.',
+        message: 'Incorrect email or password.',
         errors: errors,
       } satisfies ApiErrorResponse;
     }
+
     try {
       const updatedWorkout = await this.workoutRepository.update(id, dto);
-      const workout = await this.workoutRepository.getById(id);
+      const workout = await this.workoutRepository.getById(id, userId);
 
       if (!workout) {
         return {
           success: false,
-          message: 'Något gick fel, gick inte ta bort träningspasset',
+          message: 'Could not find workout.',
         } satisfies ApiErrorResponse;
       }
 
       return {
         success: true,
-        data: {
-          workout: WorkoutMapper.workoutDtoToViewModel(workout),
-        },
+        data: WorkoutMapper.workoutDtoToViewModel(workout),
       } satisfies ApiResponse<WorkoutApiUpdateResponse>;
     } catch (error) {
-      console.error('Kunde inte hämta workouts:', error);
-
-      return {
-        success: false,
-        message: 'Server fel, kunde inte hämta workouts',
-      } satisfies ApiErrorResponse;
+      console.error('Update workout failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 
@@ -88,6 +87,7 @@ export class WorkoutService {
 
       return {
         success: true,
+        message: 'Exericses fetched successfully.',
         data: {
           workouts: WorkoutMapper.workoutDtosToViewModels(workouts),
           pagination: {
@@ -99,41 +99,34 @@ export class WorkoutService {
         },
       } satisfies ApiSuccessResponse<WorkoutApiResponse>;
     } catch (error) {
-      console.error('Kunde inte hämta workouts:', error);
-
-      return {
-        success: false,
-        message: 'Server fel, kunde inte hämta workouts',
-      } satisfies ApiErrorResponse;
+      console.error('Fetch workouts failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 
-  async getById(id: number): Promise<ApiResponse<WorkoutApiGetByIdResponse>> {
+  async getById(id: number, userId: number): Promise<ApiResponse<WorkoutApiGetByIdResponse>> {
     try {
-      const workout = await this.workoutRepository.getById(id);
+      const workout = await this.workoutRepository.getById(id, userId);
       const exerices = await this.exericseRepository.getAll();
 
       if (!workout) {
         return {
           success: false,
-          message: 'Något gick fel, gick inte ta bort träningspasset',
+          message: 'Could not find workout.',
         } satisfies ApiErrorResponse;
       }
 
       return {
         success: true,
+        message: 'Workout fetched successfully.',
         data: {
           workout: WorkoutMapper.workoutDtoToViewModel(workout),
           exericses: exerices.map((x) => ExerciseMapper.exerciseModelToViewModel(x)),
         },
       } satisfies ApiSuccessResponse<WorkoutApiGetByIdResponse>;
     } catch (error) {
-      console.error('Kunde inte hämta workout:', error);
-
-      return {
-        success: false,
-        message: 'Något gick fel, gick inte ta bort träningspasset',
-      } satisfies ApiErrorResponse;
+      console.error('Fetch workouts by id failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 
@@ -144,14 +137,12 @@ export class WorkoutService {
         success: true,
         data: {
           success: true,
-          message: 'Träningspasset raderad!',
+          message: 'Exericse deleted successfully.',
         },
       } satisfies ApiSuccessResponse<WorkoutApiDeleteResponse>;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Något gick fel, gick inte ta bort träningspasset',
-      } satisfies ApiErrorResponse;
+      console.error('Delete workout failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
   }
 }

@@ -5,8 +5,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { WorkoutService } from '@/services-server/workout-service';
 
 //Types
-import { ApiErrorResponse } from '@/types/api-types';
 import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
+import { apiErrorResponse, apiResponse, unauthorizedResponse } from '@/utils/api-error';
+import { getCurrentUser } from '@/utils/user-by-token';
 
 const workoutService = new WorkoutService();
 
@@ -17,57 +18,61 @@ interface RouteContext {
 }
 
 export async function GET(request: NextRequest, { params }: RouteContext) {
+  //Get current User from Cookie storage
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorizedResponse();
+  }
+
   try {
     const { id } = await params;
-    const result = await workoutService.getById(Number(id));
+    const result = await workoutService.getById(Number(id), user.userId);
 
-    return NextResponse.json(result, { status: result.success ? 200 : 404 });
+    return apiResponse(result);
   } catch (error) {
-    console.error(error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Något gick fel.',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('GET /api/workouts error:', error);
+    return apiErrorResponse('An error occurred while fetch workouts.');
   }
 }
 
 //PUT: Workout
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  //Get current User from Cookie storage
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorizedResponse();
+  }
+
   try {
     const { id } = await params;
     const dto: UpdateWorkoutDto = await request.json();
 
-    const result = await workoutService.update(Number(id), dto);
-    return NextResponse.json(result, { status: result.success ? 200 : 404 });
+    const result = await workoutService.update(Number(id), dto, user.userId);
+    return apiResponse(result);
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Något gick fel.',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('PUT /api/workouts error:', error);
+    return apiErrorResponse('An error occurred while update workout.');
   }
 }
 
 //DELETE
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  //Get current User from Cookie storage
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorizedResponse();
+  }
+
   try {
     const { id } = await params;
     const result = await workoutService.delete(Number(id));
 
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Något gick fel.',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
-    );
+    console.error('DELETE /api/workouts/id error:', error);
+    return apiErrorResponse('An error occurred while delete workout.');
   }
 }

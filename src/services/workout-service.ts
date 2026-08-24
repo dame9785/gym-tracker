@@ -1,6 +1,13 @@
 //Types
 import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
-import { ApiResponse, WorkoutApiDeleteResponse, WorkoutApiGetByIdResponse, WorkoutApiRegisterResponse, WorkoutApiResponse, WorkoutApiUpdateResponse } from '@/types/api-types';
+import {
+  ApiResponse,
+  WorkoutApiDeleteResponse,
+  WorkoutApiGetByIdResponse,
+  WorkoutApiRegisterResponse,
+  WorkoutApiResponse,
+  WorkoutApiUpdateResponse,
+} from '@/types/api-types';
 
 import type { RegisterWorkoutDto } from '@/types/workout-types';
 import { errorResponse } from '@/utils/api-error';
@@ -9,6 +16,7 @@ import { errorResponse } from '@/utils/api-error';
 const API_URL = 'http://localhost:3000/api/workouts';
 
 export default class WorkoutService {
+  //POST: /api/workout
   static async create(dto: RegisterWorkoutDto, userToken: string): Promise<ApiResponse<WorkoutApiRegisterResponse>> {
     try {
       const response = await fetch('/api/workouts', {
@@ -20,17 +28,14 @@ export default class WorkoutService {
         body: JSON.stringify(dto),
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-      return result as ApiResponse<WorkoutApiRegisterResponse>;
+      const result = (await response.json()) as ApiResponse<WorkoutApiRegisterResponse>;
+      return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
+  //GET: /api/workout
   static async getAll(userToken: string, page: number): Promise<ApiResponse<WorkoutApiResponse>> {
     try {
       const response = await fetch(`${API_URL}?page=${page}`, {
@@ -40,18 +45,14 @@ export default class WorkoutService {
         },
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-      return result as ApiResponse<WorkoutApiResponse>;
+      const result = (await response.json()) as ApiResponse<WorkoutApiResponse>;
+      return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
-  //Update Workout
+  //PUT: /api/workout
   static async update(id: number, dto: UpdateWorkoutDto): Promise<ApiResponse<WorkoutApiUpdateResponse>> {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
@@ -62,51 +63,38 @@ export default class WorkoutService {
         body: JSON.stringify(dto),
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-
-      return result as ApiResponse<WorkoutApiUpdateResponse>;
+      const result = (await response.json()) as ApiResponse<WorkoutApiUpdateResponse>;
+      return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
-  //GET: Workout/{id}
+  //PUT: /api/workout/id
   static async getById(id: number): Promise<ApiResponse<WorkoutApiGetByIdResponse>> {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
         method: 'GET',
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-      return result as ApiResponse<WorkoutApiGetByIdResponse>;
+      const result = (await response.json()) as ApiResponse<WorkoutApiGetByIdResponse>;
+      return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
-  //DELETE: Workout
+  //DELETE: /api/workout/id
   static async delete(id: number): Promise<ApiResponse<WorkoutApiDeleteResponse>> {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-      return result as ApiResponse<WorkoutApiDeleteResponse>;
+      const result = (await response.json()) as ApiResponse<WorkoutApiDeleteResponse>;
+      return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 }

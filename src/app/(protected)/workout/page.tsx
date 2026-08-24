@@ -3,7 +3,7 @@ import Button from '@/components/button/button';
 import WorkoutTable from '@/components/tables/workout-table';
 import WorkoutService from '@/services/workout-service';
 import { getTokenFromCookieStore } from '@/lib/auth';
-import { notFound, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import Pagination from '@/components/workout/pagination';
 
 type Props = {
@@ -26,6 +26,7 @@ export default async function Workouts({ searchParams }: Props) {
   if (!response.success) {
     throw new Error('Something went wrong');
   }
+
   const workouts = response.data.workouts;
   const totalPages = response.data.pagination.totalPages;
   const currentPage = response.data.pagination.currentPage;
@@ -33,17 +34,17 @@ export default async function Workouts({ searchParams }: Props) {
   return (
     <div className="container">
       <div className="mb-8 p-5">
-        <h1 className="text-4xl font-bold text-white">Träningspass</h1>
-        <p className="mt-2 text-zinc-400">Här syns alla träningspass, som du kan redigera eller ta bort</p>
+        <h1 className="text-4xl font-bold text-white">Workout</h1>
+        <p className="mt-2 text-zinc-400">All workout sessions are displayed here; you can edit or delete them.</p>
         <div className="mt-5 flex  gap-5">
           <Link href="/workout/register">
             <Button type="submit" variant="secondary">
-              Lägg till träningspass
+              Add workout
             </Button>
           </Link>
           <Link href="/workout-schedule">
             <Button type="submit" variant="primary">
-              Shema lägg träningspass
+              Schedule a workout session
             </Button>
           </Link>
         </div>

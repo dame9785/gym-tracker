@@ -20,44 +20,40 @@ export default function WorkoutTable({ workouts }: Props) {
 
   // Handle delete
   const handleDelete = (id: number): void => {
-    if (!id) {
-      toast.error('Kunde inte hitta träningspasset.');
-      return;
-    }
-
-    confirmDelete(id);
+    verifyDelete(id);
   };
 
   // Confirm delete
-  const confirmDelete = (id: number): void => {
-    toast('Är du säker på att du vill radera träningspasset?', {
+  const verifyDelete = (id: number): void => {
+    toast('Are you sure you want to delete the workout?', {
       action: {
-        label: 'Radera',
+        label: 'Delete',
         onClick: async () => {
-          await callDeleteApi(id);
+          await deleteWorkout(id);
         },
       },
       cancel: {
-        label: 'Avbryt',
+        label: 'Cancel',
         onClick: () => {},
       },
     });
   };
 
   // Delete workout
-  const callDeleteApi = async (id: number): Promise<void> => {
+  const deleteWorkout = async (id: number): Promise<void> => {
     try {
       const response = await WorkoutService.delete(id);
 
       if (!response.success) {
-        toast.error('Något gick fel. Träningspasset kunde inte raderas.');
+        toast.error(response.message);
         return;
       }
 
-      toast.success('Träningspasset raderades');
+      toast.success(response.message);
       router.refresh();
-    } catch {
-      toast.error('Något gick fel. Träningspasset kunde inte raderas.');
+    } catch (error) {
+      console.error('Failed to delete workout:', error);
+      toast.error('Something went wrong. Please try again.');
     }
   };
 
@@ -66,10 +62,10 @@ export default function WorkoutTable({ workouts }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/60 px-6 py-4">
         <div>
-          <h2 className="text-base font-semibold text-white">Dina träningspass</h2>
+          <h2 className="text-base font-semibold text-white">Your workouts</h2>
 
           <p className="mt-0.5 text-xs text-zinc-500">
-            {workouts.length} {workouts.length === 1 ? 'träningspass' : 'träningspass'} totalt
+            {workouts.length} {workouts.length === 1 ? 'träningspass' : 'träningspass'} total
           </p>
         </div>
 
@@ -84,29 +80,12 @@ export default function WorkoutTable({ workouts }: Props) {
             {/* Table header */}
             <thead>
               <tr className="border-b border-zinc-800/80">
-                <th className="w-[220px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
-                  Träningspass
-                </th>
-
-                <th className="w-[220px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
-                  Beskrivning
-                </th>
-
-                <th className="w-[300px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
-                  Övningar
-                </th>
-
-                <th className="w-[150px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
-                  Skapad
-                </th>
-
-                <th className="w-[150px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
-                  Uppdaterad
-                </th>
-
-                <th className="w-[120px] px-6 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
-                  Åtgärder
-                </th>
+                <th className="w-[220px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">Workouts</th>
+                <th className="w-[220px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">Descriptions</th>
+                <th className="w-[300px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">Exericses</th>
+                <th className="w-[150px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">Created</th>
+                <th className="w-[150px] px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-600">Updated</th>
+                <th className="w-[120px] px-6 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-zinc-600">Measures</th>
               </tr>
             </thead>
 
@@ -154,7 +133,7 @@ export default function WorkoutTable({ workouts }: Props) {
                   {/* Description */}
                   <td className="px-6 py-5">
                     <p className="truncate text-sm text-zinc-400" title={workout.description ?? undefined}>
-                      {workout.description || 'Ingen beskrivning'}
+                      {workout.description || 'No description'}
                     </p>
                   </td>
 
@@ -194,12 +173,12 @@ export default function WorkoutTable({ workouts }: Props) {
                                 text-zinc-500
                               "
                             >
-                              +{workout.workoutExercises.length - 3} fler
+                              +{workout.workoutExercises.length - 3} more
                             </span>
                           )}
                         </>
                       ) : (
-                        <span className="text-sm text-zinc-600">Inga övningar</span>
+                        <span className="text-sm text-zinc-600">No workouts</span>
                       )}
                     </div>
                   </td>
@@ -279,10 +258,8 @@ export default function WorkoutTable({ workouts }: Props) {
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-800">
             <Dumbbell className="h-6 w-6 text-zinc-600" />
           </div>
-          <h3 className="mt-4 text-base font-semibold text-zinc-300">Inga träningspass ännu</h3>
-          <p className="mt-1 max-w-sm text-sm text-zinc-600">
-            Skapa ditt första träningspass för att börja bygga ditt träningsbibliotek.
-          </p>
+          <h3 className="mt-4 text-base font-semibold text-zinc-300">No training sessions yet</h3>
+          <p className="mt-1 max-w-sm text-sm text-zinc-600">Create your first workout to start building your workout library.</p>
         </div>
       )}
     </div>

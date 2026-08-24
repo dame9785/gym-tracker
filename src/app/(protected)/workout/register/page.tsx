@@ -10,7 +10,7 @@ export default async function RegisterWorkout() {
     redirect('/account/login');
   }
 
-  const response = await ExerciseService.getAll();
+  const response = await ExerciseService.getAll(userToken);
   if (!response.success) {
     throw new Error('Something went wrong');
   }
