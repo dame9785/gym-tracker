@@ -33,6 +33,11 @@ export default function RegisterForm() {
       ...prev,
       [name]: value,
     }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+    }));
   };
 
   const [formData, setFormData] = useState<RegisterExerciseDto>({
@@ -81,54 +86,38 @@ export default function RegisterForm() {
   return (
     <div className={FormStyles.formContainer}>
       <h1 className={FormStyles.formTitle}>
-        Lägg till
-        <span> Övning</span>
+        Add
+        <span> exercise</span>
       </h1>
       <form className={FormStyles.form} onSubmit={handleSumbit}>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="name">
-            Namn
+            Name of the exercise
           </label>
-          <input className={FormStyles.formInput} id="name" name="name" type="text" required placeholder="T.ex. knäböj" onChange={handleChange}></input>
+          <input className={FormStyles.formInput} id="name" name="name" type="text" placeholder="Example. squat" onChange={handleChange}></input>
           {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="muscleGroup">
-            Muskelgrupp
+            Muscle group
           </label>
-          <input
-            className={FormStyles.formInput}
-            id="muscleGroup"
-            name="muscleGroup"
-            type="text"
-            required
-            placeholder="T.ex. ben"
-            onChange={handleChange}
-          ></input>
+          <input className={FormStyles.formInput} id="muscleGroup" name="muscleGroup" type="text" placeholder="Example. arms" onChange={handleChange}></input>
           {errors.muscleGroup && <p className={FormStyles.fieldErrorMessage}>{errors.muscleGroup}</p>}
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="equipment">
-            Redskap
+            Equipment
           </label>
-          <input
-            className={FormStyles.formInput}
-            id="equipment"
-            name="equipment"
-            type="text"
-            required
-            placeholder="T.ex. kettlebell / kroppsvikt"
-            onChange={handleChange}
-          ></input>
+          <input className={FormStyles.formInput} id="equipment" name="equipment" type="text" placeholder="Example. Kettlebell" onChange={handleChange}></input>
           {errors.equipment && <p className={FormStyles.fieldErrorMessage}>{errors.equipment}</p>}
         </div>
         <div className="grid grid-2">
           <Button type="submit" variant="primary" disabled={isSaving}>
-            Lägg till övning
+            {isSaving ? 'Updating...' : 'Create exericse'}
           </Button>
           <Link href="/exercise">
             <Button type="button" variant="secondary">
-              Gå tillbaks
+              Go back
             </Button>
           </Link>
         </div>

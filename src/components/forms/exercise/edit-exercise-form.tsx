@@ -25,6 +25,7 @@ type Props = {
 };
 
 export default function EditExercise({ exericse }: Props) {
+  const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
   const [errors, setErrors] = useState<Partial<Record<keyof UpdateExericseDto, string>>>({});
 
@@ -39,6 +40,11 @@ export default function EditExercise({ exericse }: Props) {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
     }));
   };
 
@@ -57,20 +63,23 @@ export default function EditExercise({ exericse }: Props) {
       return;
     }
 
+    setIsSaving(true);
+    setErrors({});
     try {
       const response = await ExerciseService.update(exericse.id, validation.data);
       if (!response.success) {
         if (response.errors) {
           setErrors(ErrorsHelper.getFormErrorsFromApi<RegisterExerciseDto>(response.errors));
         }
-        toast.error('Något gick fel, övning kunde inte skapas');
+        toast.error(response.message);
         return;
       }
-      toast.success('Övning skapad');
+      toast.success(response.message);
     } catch (error) {
-      toast.error('Något gick fel, vikt blev inte loggad');
-      return;
+      console.error('Failed to update exericse:', error);
+      toast.error('Something went wrong. Please try again.');
     } finally {
+      setIsSaving(false);
       router.push('/exercise');
     }
   };
@@ -78,13 +87,13 @@ export default function EditExercise({ exericse }: Props) {
   return (
     <div className={FormStyles.formContainer}>
       <h1 className={FormStyles.formTitle}>
-        Redigera
-        <span> Övning</span>
+        Edit
+        <span> Exericse</span>
       </h1>
       <form className={FormStyles.form} onSubmit={handleSumbit}>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="name">
-            Namn
+            Name of the exercise
           </label>
           <input
             className={FormStyles.formInput}
@@ -92,7 +101,7 @@ export default function EditExercise({ exericse }: Props) {
             name="name"
             type="text"
             required
-            placeholder="T.ex. knäböj"
+            placeholder="Example. squat"
             value={formData.name}
             onChange={handleChange}
           ></input>
@@ -100,7 +109,7 @@ export default function EditExercise({ exericse }: Props) {
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="muscleGroup">
-            Muskelgrupp
+            Muscle group
           </label>
           <input
             className={FormStyles.formInput}
@@ -108,7 +117,7 @@ export default function EditExercise({ exericse }: Props) {
             name="muscleGroup"
             type="text"
             required
-            placeholder="T.ex. ben"
+            placeholder="Example. arms"
             value={formData.muscleGroup}
             onChange={handleChange}
           ></input>
@@ -116,7 +125,7 @@ export default function EditExercise({ exericse }: Props) {
         </div>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="equipment">
-            Redskap
+            Equipment
           </label>
           <input
             className={FormStyles.formInput}
@@ -124,15 +133,15 @@ export default function EditExercise({ exericse }: Props) {
             name="equipment"
             type="text"
             required
-            placeholder="T.ex. kettlebell / kroppsvikt"
+            placeholder="Example. Kettlebell"
             value={formData.equipment}
             onChange={handleChange}
           ></input>
           {errors.equipment && <p className={FormStyles.fieldErrorMessage}>{errors.equipment}</p>}
         </div>
         <div className="flex gap-2">
-          <Button type="submit" variant="primary">
-            Uppdatera
+          <Button type="submit" variant="primary" disabled={isSaving}>
+            {isSaving ? 'Updating...' : 'Update exericse'}
           </Button>
           <Link href="/exercise">
             <Button type="submit" variant="secondary">

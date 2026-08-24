@@ -44,6 +44,11 @@ export default function LogWeightForm({ userToken }: Props) {
       ...prev,
       [name]: value,
     }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+    }));
   };
 
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {

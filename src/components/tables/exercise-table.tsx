@@ -26,15 +26,15 @@ export default function ExerciseTable({ exercises, userToken }: Props) {
 
   // Verify delete
   const verifyDelete = (id: number): void => {
-    toast('Är du säker på att du vill radera övningen?', {
+    toast('Are you sure you want to delete the exercise?', {
       action: {
-        label: 'Radera',
+        label: 'Delete',
         onClick: async () => {
           await removeExercise(id);
         },
       },
       cancel: {
-        label: 'Avbryt',
+        label: 'Cancel',
         onClick: () => {},
       },
     });
@@ -45,11 +45,11 @@ export default function ExerciseTable({ exercises, userToken }: Props) {
     const response = await ExerciseService.delete(id);
 
     if (!response.success) {
-      toast.error('Något gick fel. Övningen kunde inte raderas.');
+      toast.error(response.message);
       return;
     }
 
-    toast.success('Övning raderad');
+    toast.success(response.message);
     router.refresh();
   };
 
@@ -59,29 +59,17 @@ export default function ExerciseTable({ exercises, userToken }: Props) {
         {/* Header */}
         <thead>
           <tr className="border-b border-zinc-800 bg-zinc-900/80">
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Övning</th>
-
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Muskelgrupp</th>
-
-            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Redskap</th>
-
-            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-zinc-500">Åtgärder</th>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Exericse</th>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Muscle group</th>
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Equipment</th>
+            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-zinc-500">Measures</th>
           </tr>
         </thead>
 
         {/* Body */}
         <tbody>
           {exercises.map((exercise) => (
-            <tr
-              key={exercise.id}
-              className="
-                group
-                border-b border-zinc-800/70
-                transition-all duration-200
-                last:border-b-0
-                hover:bg-zinc-800/40
-              "
-            >
+            <tr key={exercise.id} className="group border-b border-zinc-800/70 transition-all duration-200 last:border-b-0 hover:bg-zinc-800/40">
               {/* Exercise */}
               <td className="px-6 py-5">
                 <div className="flex items-center gap-3">
@@ -102,7 +90,6 @@ export default function ExerciseTable({ exercises, userToken }: Props) {
 
                   <div>
                     <p className="font-semibold text-zinc-100">{exercise.name}</p>
-
                     <p className="mt-0.5 text-xs text-zinc-600">Exercise #{exercise.id}</p>
                   </div>
                 </div>
@@ -110,34 +97,14 @@ export default function ExerciseTable({ exercises, userToken }: Props) {
 
               {/* Muscle group */}
               <td className="px-6 py-5">
-                <span
-                  className="
-                    inline-flex
-                    rounded-full
-                    border border-blue-500/20
-                    bg-blue-500/10
-                    px-3 py-1
-                    text-xs font-medium
-                    text-blue-400
-                  "
-                >
+                <span className="inline-flex rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
                   {exercise.muscleGroup}
                 </span>
               </td>
 
               {/* Equipment */}
               <td className="px-6 py-5">
-                <span
-                  className="
-                    inline-flex
-                    rounded-full
-                    border border-zinc-700
-                    bg-zinc-800/70
-                    px-3 py-1
-                    text-xs font-medium
-                    text-zinc-400
-                  "
-                >
+                <span className="inline-flex rounded-full border border-zinc-700 bg-zinc-800/70 px-3 py-1 text-xs font-mediumtext-zinc-400">
                   {exercise.equipment}
                 </span>
               </td>
@@ -149,18 +116,7 @@ export default function ExerciseTable({ exercises, userToken }: Props) {
                   <Link
                     href={`/exercise/${exercise.id}`}
                     aria-label={`Redigera ${exercise.name}`}
-                    className="
-                      flex h-9 w-9
-                      items-center justify-center
-                      rounded-lg
-                      border border-zinc-700
-                      bg-zinc-800/70
-                      text-zinc-400
-                      transition-all duration-200
-                      hover:border-blue-500/40
-                      hover:bg-blue-500/10
-                      hover:text-blue-400
-                    "
+                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800/70 text-zinc-400 transition-all duration-200 hover:border-blue-500/40 hover:bg-blue-500/10 hover:text-blue-400"
                   >
                     <Pencil className="h-4 w-4" />
                   </Link>
@@ -170,18 +126,7 @@ export default function ExerciseTable({ exercises, userToken }: Props) {
                     type="button"
                     onClick={() => handleDelete(exercise.id)}
                     aria-label={`Radera ${exercise.name}`}
-                    className="
-                      flex h-9 w-9
-                      items-center justify-center
-                      rounded-lg
-                      border border-zinc-700
-                      bg-zinc-800/70
-                      text-zinc-400
-                      transition-all duration-200
-                      hover:border-red-500/40
-                      hover:bg-red-500/10
-                      hover:text-red-400
-                    "
+                    className="cursor-pointer flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-700bg-zinc-800/70 text-zinc-400 transition-all duration-200 hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
