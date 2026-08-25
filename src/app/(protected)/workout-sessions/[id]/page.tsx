@@ -1,6 +1,7 @@
 import WorkoutSession from '@/components/workout/workout-session';
+import { getTokenFromCookieStore } from '@/lib/auth';
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
-import { notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 const workoutSessionService = new WorkoutSessionService();
 
@@ -12,7 +13,13 @@ interface PageProps {
 
 export default async function WorkoutSessionPage({ params }: PageProps) {
   const { id } = await params;
+
+  const userToken = await getTokenFromCookieStore();
+  if (!userToken) {
+    redirect('/account/login');
+  }
   const response = await workoutSessionService.getById(Number(id));
+  console.log(response);
 
   if (!response.success) {
     throw new Error('Something went wrong');

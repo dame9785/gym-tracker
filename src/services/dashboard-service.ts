@@ -16,12 +16,8 @@ export default class DashboardService {
         },
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-      return result as ApiResponse<DashboardApiResponse>;
+      const result = (await response.json()) as ApiResponse<DashboardApiResponse>;
+      return result;
     } catch (error) {
       return errorResponse('Gick inte hämta data');
     }

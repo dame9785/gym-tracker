@@ -4,6 +4,7 @@ import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 
 //Next Redirect
 import { ApiErrorResponse, ApiResponse, WorkoutSchedelueCreateResponse } from '@/types/api-types';
+import { errorResponse } from '@/utils/api-error';
 
 const API_URL = 'http://localhost:3000/api/workout-schedules';
 
@@ -21,10 +22,7 @@ export default class WorkoutScheduleService {
       const result = await response.json();
       return result as ApiResponse<WorkoutSchedelueCreateResponse>;
     } catch (error) {
-      return {
-        success: false,
-        message: 'Kunde inte ansluta till servern',
-      } satisfies ApiErrorResponse;
+      return errorResponse('Could not connect to the server.');
     }
   }
 

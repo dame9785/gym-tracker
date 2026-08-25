@@ -15,13 +15,8 @@ export default class HistoryService {
         },
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-
-      return result as ApiResponse<HistoryApiResponse>;
+      const result = (await response.json()) as ApiResponse<HistoryApiResponse>;
+      return result;
     } catch (error) {
       return errorResponse('Gick inte hämta data');
     }

@@ -16,12 +16,8 @@ export default class ProgressService {
         },
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-      return result as ApiSuccessResponse<ProgressApiResponse>;
+      const result = (await response.json()) as ApiResponse<ProgressApiResponse>;
+      return result;
     } catch (error) {
       return errorResponse('Kunde inte ansluta till servern');
     }

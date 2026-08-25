@@ -71,10 +71,13 @@ export default class WorkoutService {
   }
 
   //PUT: /api/workout/id
-  static async getById(id: number): Promise<ApiResponse<WorkoutApiGetByIdResponse>> {
+  static async getById(id: number, userToken: string): Promise<ApiResponse<WorkoutApiGetByIdResponse>> {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
         method: 'GET',
+        headers: {
+          Cookie: `token=${userToken}`,
+        },
       });
 
       const result = (await response.json()) as ApiResponse<WorkoutApiGetByIdResponse>;

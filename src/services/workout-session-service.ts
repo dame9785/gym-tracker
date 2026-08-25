@@ -21,12 +21,8 @@ export default class WorkoutSessionService {
         method: 'GET',
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-      return result as ApiSuccessResponse<WorkoutSessionDetailApiResponse>;
+      const result = (await response.json()) as ApiResponse<WorkoutSessionDetailApiResponse>;
+      return result;
     } catch (error) {
       return errorResponse('Gick inte hämta data');
     }
@@ -46,12 +42,8 @@ export default class WorkoutSessionService {
         }),
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-      return result as ApiSuccessResponse<WorkoutSessionCreateResponse>;
+      const result = (await response.json()) as ApiResponse<WorkoutSessionCreateResponse>;
+      return result;
     } catch (error) {
       return errorResponse('Gick inte hämta data');
     }
@@ -71,12 +63,8 @@ export default class WorkoutSessionService {
         }),
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-      return result as ApiSuccessResponse<WorkoutSessionUpdatedSetResponse>;
+      const result = (await response.json()) as ApiResponse<WorkoutSessionUpdatedSetResponse>;
+      return result;
     } catch (error) {
       return errorResponse('Gick inte hämta data');
     }
@@ -93,8 +81,8 @@ export default class WorkoutSessionService {
         return errorResponse('Gick inte hämta data');
       }
 
-      const result = await response.json();
-      return result as ApiSuccessResponse<WorkoutFinishApiResponse>;
+      const result = (await response.json()) as ApiResponse<WorkoutFinishApiResponse>;
+      return result;
     } catch (error) {
       return errorResponse('Gick inte hämta data');
     }
@@ -110,12 +98,8 @@ export default class WorkoutSessionService {
         },
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
-      const result = await response.json();
-      return result as ApiSuccessResponse<UpdateWorkoutSessionResponse>;
+      const result = (await response.json()) as ApiResponse<UpdateWorkoutSessionResponse>;
+      return result;
     } catch (error) {
       console.log(error);
       return errorResponse('Servern  kunde inte ansluta');

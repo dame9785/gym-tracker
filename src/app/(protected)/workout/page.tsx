@@ -44,7 +44,7 @@ export default async function Workouts({ searchParams }: Props) {
           </Link>
           <Link href="/workout-schedule">
             <Button type="submit" variant="primary">
-              Schedule a workout session
+              Schedule a workout
             </Button>
           </Link>
         </div>

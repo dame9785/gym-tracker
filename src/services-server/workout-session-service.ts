@@ -35,6 +35,7 @@ export class WorkoutSessionService {
   async getById(id: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse>> {
     try {
       const workoutSession = await this.workoutSessionRepository.getById(id);
+      console.log(workoutSession);
       if (!workoutSession) {
         return {
           success: false,
