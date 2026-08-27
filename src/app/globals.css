@@ -170,3 +170,14 @@ img {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgb(96 165 250);
 }
+
+/* Dölj pilarna på number inputs */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}

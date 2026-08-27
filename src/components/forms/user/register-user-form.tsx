@@ -1,7 +1,20 @@
 'use client';
 
 //FONTAWSOME ICONS
-import { FaEnvelope, FaWeightScale, FaPhone, FaRulerVertical, FaMars, FaCakeCandles, FaBullseye, FaWeightHanging, FaFlagCheckered, FaUser, FaSignature, FaLock } from 'react-icons/fa6';
+import {
+  FaEnvelope,
+  FaWeightScale,
+  FaPhone,
+  FaRulerVertical,
+  FaMars,
+  FaCakeCandles,
+  FaBullseye,
+  FaWeightHanging,
+  FaFlagCheckered,
+  FaUser,
+  FaSignature,
+  FaLock,
+} from 'react-icons/fa6';
 
 //Toast Alert
 import { toast } from 'sonner';
@@ -105,6 +118,7 @@ export default function RegisterForm({ goals }: Props) {
 
     try {
       const result = await AuthService.register(validation.data);
+      console.log(result);
       if (!result.success) {
         toast.error('Något gick fel, kontot kunde inte registreras.');
         return;
@@ -138,7 +152,16 @@ export default function RegisterForm({ goals }: Props) {
                 Email
               </label>
             </div>
-            <input className={FormStyles.formInput} name="email" type="email" id="email" autoComplete="email" value={formData.email} placeholder="E-post..." onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              name="email"
+              type="email"
+              id="email"
+              autoComplete="email"
+              value={formData.email}
+              placeholder="E-post..."
+              onChange={handleChange}
+            />
             {errors.email && <p className={FormStyles.fieldErrorMessage}>{errors.email}</p>}
           </div>
 
@@ -150,7 +173,16 @@ export default function RegisterForm({ goals }: Props) {
                 Användarnamn
               </label>
             </div>
-            <input className={FormStyles.formInput} name="username" type="text" value={formData.username} id="username" autoComplete="username" placeholder="Användarnamn..." onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              name="username"
+              type="text"
+              value={formData.username}
+              id="username"
+              autoComplete="username"
+              placeholder="Användarnamn..."
+              onChange={handleChange}
+            />
             {errors.username && <p className={FormStyles.fieldErrorMessage}>{errors.username}</p>}
           </div>
 
@@ -162,7 +194,16 @@ export default function RegisterForm({ goals }: Props) {
                 Namn
               </label>
             </div>
-            <input className={FormStyles.formInput} name="firstName" type="text" value={formData.firstName} id="firstName" autoComplete="given-name" placeholder="Namn..." onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              name="firstName"
+              type="text"
+              value={formData.firstName}
+              id="firstName"
+              autoComplete="given-name"
+              placeholder="Namn..."
+              onChange={handleChange}
+            />
             {errors.firstName && <p className={FormStyles.fieldErrorMessage}>{errors.firstName}</p>}
           </div>
 
@@ -174,7 +215,16 @@ export default function RegisterForm({ goals }: Props) {
                 Efternamn
               </label>
             </div>
-            <input className={FormStyles.formInput} name="lastName" type="text" value={formData.lastName} id="lastName" autoComplete="family-name" placeholder="Efternamn..." onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              name="lastName"
+              type="text"
+              value={formData.lastName}
+              id="lastName"
+              autoComplete="family-name"
+              placeholder="Efternamn..."
+              onChange={handleChange}
+            />
             {errors.lastName && <p className={FormStyles.fieldErrorMessage}>{errors.lastName}</p>}
           </div>
 
@@ -186,7 +236,16 @@ export default function RegisterForm({ goals }: Props) {
                 Nummer
               </label>
             </div>
-            <input className={FormStyles.formInput} name="phoneNumber" type="tel" id="phoneNumber" autoComplete="tel" value={formData.phoneNumber} placeholder="Telefonnummer..." onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              name="phoneNumber"
+              type="tel"
+              id="phoneNumber"
+              autoComplete="tel"
+              value={formData.phoneNumber}
+              placeholder="Telefonnummer..."
+              onChange={handleChange}
+            />
             {errors.phoneNumber && <p className={FormStyles.fieldErrorMessage}>{errors.phoneNumber}</p>}
           </div>
 
@@ -198,7 +257,16 @@ export default function RegisterForm({ goals }: Props) {
                 Kroppsvikt (kg)
               </label>
             </div>
-            <input className={FormStyles.formInput} name="bodyWeight" type="number" step="0.1" id="bodyWeight" value={formData.bodyWeight} placeholder="Ex (40.2kg)" onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              name="bodyWeight"
+              type="number"
+              step="0.1"
+              id="bodyWeight"
+              value={formData.bodyWeight}
+              placeholder="Ex (40.2kg)"
+              onChange={handleChange}
+            />
             {errors.bodyWeight && <p className={FormStyles.fieldErrorMessage}>{errors.bodyWeight}</p>}
           </div>
           {/* PASSWORD */}
@@ -209,7 +277,16 @@ export default function RegisterForm({ goals }: Props) {
                 Lösenord
               </label>
             </div>
-            <input className={FormStyles.formInput} value={formData.password} name="password" type="password" id="password" autoComplete="new-password" placeholder="Lösenord..." onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              value={formData.password}
+              name="password"
+              type="password"
+              id="password"
+              autoComplete="new-password"
+              placeholder="Lösenord..."
+              onChange={handleChange}
+            />
             {errors.password && <p className={FormStyles.fieldErrorMessage}>{errors.password}</p>}
           </div>
         </div>
@@ -223,7 +300,16 @@ export default function RegisterForm({ goals }: Props) {
                 Längd (cm)
               </label>
             </div>
-            <input className={FormStyles.formInput} name="height" type="number" step="0.1" id="height" value={formData.height} placeholder="Ex (150.5cm)" onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              name="height"
+              type="number"
+              step="0.1"
+              id="height"
+              value={formData.height}
+              placeholder="Ex (150.5cm)"
+              onChange={handleChange}
+            />
             {errors.height && <p className={FormStyles.fieldErrorMessage}>{errors.height}</p>}
           </div>
 
@@ -251,7 +337,15 @@ export default function RegisterForm({ goals }: Props) {
                 Född
               </label>
             </div>
-            <input className={FormStyles.formInput} name="birthDate" type="date" id="birthDate" placeholder="1997-09-26" value={formData.birthDate} onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              name="birthDate"
+              type="date"
+              id="birthDate"
+              placeholder="1997-09-26"
+              value={formData.birthDate}
+              onChange={handleChange}
+            />
             {errors.birthDate && <p className={FormStyles.fieldErrorMessage}>{errors.birthDate}</p>}
           </div>
 
@@ -283,7 +377,16 @@ export default function RegisterForm({ goals }: Props) {
                 Mål vikt (kg)
               </label>
             </div>
-            <input className={FormStyles.formInput} value={formData.goalWeight} name="goalWeight" type="number" step="0.1" placeholder="Ex: 75" id="goalWeight" onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              value={formData.goalWeight}
+              name="goalWeight"
+              type="number"
+              step="0.1"
+              placeholder="Ex: 75"
+              id="goalWeight"
+              onChange={handleChange}
+            />
             {errors.goalWeight && <p className={FormStyles.fieldErrorMessage}>{errors.goalWeight}</p>}
           </div>
 

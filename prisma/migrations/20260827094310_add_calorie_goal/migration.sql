@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `goal` ADD COLUMN `calorieGoal` ENUM('WEIGHT_LOSS', 'MAINTENANCE', 'MUSCLE_GAIN') NULL;

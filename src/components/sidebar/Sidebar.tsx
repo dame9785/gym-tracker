@@ -95,6 +95,13 @@ function Sidebar({ user }: Props) {
 
               <li className="li flex items-center">
                 <FaHistory className="fa-icon" />
+                <Link href="/calories" className="grid">
+                  Calories
+                </Link>
+              </li>
+
+              <li className="li flex items-center">
+                <FaHistory className="fa-icon" />
                 <Link href="/history" className="grid">
                   History
                 </Link>

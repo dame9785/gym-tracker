@@ -17,23 +17,8 @@ import { UserMapper } from '../mapping/user-mapping';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
 // Types
-import type {
-  ApiErrorResponse,
-  ApiResponse,
-  ApiSuccessResponse,
-  LoginResponse,
-  RegisterResponse,
-  UpdateUserResponse,
-  UserResponse,
-} from '@/types/api-types';
-import {
-  loginSchema,
-  registerSchema,
-  updateSchema,
-  type LoginDto,
-  type RegisterUserDto,
-  type UpdateUserDto,
-} from '@/schemas/auth-schemas';
+import type { ApiErrorResponse, ApiResponse, ApiSuccessResponse, LoginResponse, RegisterResponse, UpdateUserResponse, UserResponse } from '@/types/api-types';
+import { loginSchema, registerSchema, updateSchema, type LoginDto, type RegisterUserDto, type UpdateUserDto } from '@/schemas/auth-schemas';
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -110,10 +95,7 @@ export class AuthService {
   async register(dto: RegisterUserDto): Promise<ApiResponse<RegisterResponse>> {
     const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
 
-    const [existingEmail, existingUsername] = await Promise.all([
-      this.userRepository.emailExists(dto.email),
-      this.userRepository.usernameExists(dto.username),
-    ]);
+    const [existingEmail, existingUsername] = await Promise.all([this.userRepository.emailExists(dto.email), this.userRepository.usernameExists(dto.username)]);
 
     if (existingEmail) {
       fieldErrors.email = 'E-postadressen används redan.';
@@ -188,9 +170,7 @@ export class AuthService {
     const userViewModel = UserMapper.userDbToViewModel(user);
     return {
       success: true,
-      data: {
-        user: userViewModel,
-      },
+      data: userViewModel,
     } satisfies ApiSuccessResponse<UserResponse>;
   }
 

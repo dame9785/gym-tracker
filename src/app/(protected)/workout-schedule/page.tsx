@@ -9,7 +9,8 @@ export default async function WorkoutSchedulePage() {
   if (!userToken) {
     redirect('/account/login');
   }
-  const response = await WorkoutService.getAll(userToken, 1);
+  const response = await WorkoutService.getAll(userToken, 3);
+  console.log(response);
   if (!response.success) {
     throw new Error('Something went wrong');
   }

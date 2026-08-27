@@ -38,10 +38,6 @@ export default class AuthService {
         body: JSON.stringify(dto),
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
-
       const result = (await response.json()) as ApiResponse<LoginResponse>;
       return result;
     } catch (error) {
