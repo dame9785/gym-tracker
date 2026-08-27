@@ -13,6 +13,7 @@ import { formatDate } from '@/helpers/date';
 import { calculateAge } from '@/helpers/calculate-age';
 import CalorieService from '@/services/calories-service';
 import { getCalorieGoalStats } from '@/data/calorie-goals';
+import TodayMeals from './today-meals';
 import { toast } from 'sonner';
 
 import NutritionInput from '@/components/calories/Nutrition-Input';
@@ -27,7 +28,7 @@ type Props = {
 
 export default function Calculator({ user, calorieStats, userToken, initialNutritionGoal }: Props) {
   const age = calculateAge(user.birthDate);
-
+  const [isGoalSelectorOpen, setIsGoalSelectorOpen] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   // Aktivt mål
@@ -51,6 +52,12 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
     carbs: 0,
     fat: 0,
   });
+
+  const [mealRefreshKey, setMealRefreshKey] = useState(0);
+
+  function refreshMeals() {
+    setMealRefreshKey((current) => current + 1);
+  }
 
   // Historik
   const [history, setHistory] = useState<CalorieLog[]>([]);
@@ -147,22 +154,20 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
       fat: nutrition.fat ?? 0,
     };
 
-    try {
-      const response = await CalorieService.updateCalorieGoal(newNutritionGoal, userToken);
+    const response = await CalorieService.updateCalorieGoal(newNutritionGoal, userToken);
 
-      if (!response.success) {
-        toast.error('Kunde inte spara ditt näringsmål');
-        return;
-      }
-
-      setSelectedGoal(goal);
-      setNutritionGoal(newNutritionGoal);
-
-      toast.success('Näringsmål uppdaterat!');
-    } catch (error) {
-      console.error(error);
-      toast.error('Något gick fel när näringsmålet skulle sparas');
+    if (!response.success) {
+      toast.error('Kunde inte spara ditt näringsmål');
+      return;
     }
+
+    setSelectedGoal(goal);
+    setNutritionGoal(newNutritionGoal);
+
+    // Collapsa målsektionen
+    setIsGoalSelectorOpen(false);
+
+    toast.success('Näringsmål uppdaterat!');
   }
 
   function handleNutritionChange(field: 'calories' | 'protein' | 'carbs' | 'fat', value: number) {
@@ -491,6 +496,8 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
           </div>
         </section>
       </div>
+
+      <TodayMeals userToken={userToken} />
     </main>
   );
 }

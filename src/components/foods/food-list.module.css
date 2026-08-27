@@ -1,0 +1,237 @@
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.eyebrow {
+  margin-bottom: 6px;
+  color: #f59e0b;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.description {
+  margin-top: 8px;
+  color: #9ca3af;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 12px 18px;
+
+  background: #f59e0b;
+  color: #111827;
+
+  border-radius: 10px;
+
+  font-weight: 700;
+  text-decoration: none;
+
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+}
+
+.addButton:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.content {
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 24px;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.sectionHeader p {
+  margin-top: 6px;
+  color: #9ca3af;
+}
+
+.foodGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.foodCard {
+  background: #0f172a;
+  border: 1px solid #1f2937;
+  border-radius: 14px;
+
+  padding: 20px;
+
+  transition:
+    transform 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.foodCard:hover {
+  transform: translateY(-4px);
+  border-color: #f59e0b;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.25);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 24px;
+}
+
+.foodIcon {
+  display: grid;
+  place-items: center;
+
+  width: 44px;
+  height: 44px;
+
+  background: rgb(245 158 11 / 0.15);
+  color: #f59e0b;
+
+  border-radius: 12px;
+}
+
+.cardHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.cardHeader span {
+  display: block;
+  margin-top: 4px;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+.calories {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+
+  padding-bottom: 20px;
+  margin-bottom: 16px;
+
+  border-bottom: 1px solid #1f2937;
+}
+
+.calories span {
+  color: #9ca3af;
+}
+
+.calories strong {
+  font-size: 1.8rem;
+  color: #f59e0b;
+}
+
+.calories small {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.macros {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.macro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  padding: 10px;
+
+  background: #111827;
+  border-radius: 8px;
+}
+
+.macro svg {
+  color: #9ca3af;
+}
+
+.macro span {
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+.macro strong {
+  font-size: 0.9rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 60px 20px;
+  text-align: center;
+
+  border: 1px dashed #374151;
+  border-radius: 12px;
+}
+
+.emptyState h2 {
+  margin-bottom: 8px;
+}
+
+.emptyState p {
+  margin-bottom: 20px;
+  color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .addButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .foodGrid {
+    grid-template-columns: 1fr;
+  }
+}
