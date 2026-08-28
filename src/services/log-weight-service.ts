@@ -19,6 +19,8 @@ export default class LogWeightService {
       const result = (await response.json()) as ApiResponse<UserLogWeightResponse>;
       return result;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }
@@ -36,6 +38,8 @@ export default class LogWeightService {
       const result = (await response.json()) as ApiResponse<DeleteLogWeightResponse>;
       return result;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }
@@ -55,6 +59,8 @@ export default class LogWeightService {
       const result = (await response.json()) as ApiResponse<LogWeightResponse>;
       return result;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }
@@ -74,6 +80,8 @@ export default class LogWeightService {
       const result = (await response.json()) as ApiResponse<LogWeightResponse>;
       return result;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }
@@ -91,6 +99,8 @@ export default class LogWeightService {
       const result = (await response.json()) as ApiResponse<LogWeightResponse>;
       return result;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }

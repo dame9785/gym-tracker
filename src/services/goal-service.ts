@@ -21,7 +21,9 @@ export default class GoalTypesService {
       const result = (await response.json()) as ApiResponse<GoalApiResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      console.error('Could not connect to server:', error);
+
+      return errorResponse('Could not connect to the server.');
     }
   }
 }

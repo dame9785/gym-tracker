@@ -61,7 +61,7 @@ export default function CreateFoodForm() {
 
     try {
       const response = await foodService.create(dto);
-
+      console.log(response);
       if (!response.success) {
         toast.error(response.message ?? 'Something went wrong, try again');
         return;

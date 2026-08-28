@@ -1,5 +1,6 @@
 import { ApiResponse, ApiSuccessResponse } from '@/types/api-types';
 import { MealType, TodayMealsApiResponse } from '@/types/meal-types';
+import { errorResponse } from '@/utils/api-error';
 
 const API_URL = 'http://localhost:3000/api/meals';
 
@@ -71,12 +72,9 @@ export default class MealService {
 
       return result;
     } catch (error) {
-      console.error('Failed to add meal:', error);
+      console.error('Could not connect to server:', error);
 
-      return {
-        success: false,
-        message: 'Could not add meal.',
-      };
+      return errorResponse('Could not connect to the server.');
     }
   }
 }

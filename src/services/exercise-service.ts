@@ -27,6 +27,8 @@ export default class ExerciseService {
       const result = (await response.json()) as ApiResponse<ExerciseApiResponse>;
       return result;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }
@@ -45,6 +47,8 @@ export default class ExerciseService {
       const result = (await response.json()) as ApiResponse<ExerciseApiRegisterResponse>;
       return result;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }
@@ -59,6 +63,8 @@ export default class ExerciseService {
       const result = (await response.json()) as ApiResponse<ExerciseApiDeleteResponse>;
       return result;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }
@@ -77,6 +83,8 @@ export default class ExerciseService {
       const result = (await response.json()) as ApiResponse<ExerciseApiUpdateResponse>;
       return result;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }
@@ -91,6 +99,8 @@ export default class ExerciseService {
       const result = (await response.json()) as ApiResponse<ExerciseApiGetByIdResponse>;
       return result;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }

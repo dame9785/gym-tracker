@@ -19,7 +19,9 @@ export default class ProgressService {
       const result = (await response.json()) as ApiResponse<ProgressApiResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Kunde inte ansluta till servern');
+      console.error('Could not connect to server:', error);
+
+      return errorResponse('Could not connect to the server.');
     }
   }
 }

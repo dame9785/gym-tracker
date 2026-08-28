@@ -61,7 +61,7 @@ export default class MealService {
   }
 
   async getMealsByDate(userId: number, date: string): Promise<ApiResponse<TodayMealsApiResponse>> {
-    const meals = await mealRepository.getMealsByDate(userId, date);
+    const meals = await mealRepository.getMealsByDate(1, date);
 
     const goal = await goalService.getUserGoal(userId);
 

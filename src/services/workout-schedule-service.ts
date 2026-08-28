@@ -22,11 +22,13 @@ export default class WorkoutScheduleService {
       const result = await response.json();
       return result as ApiResponse<WorkoutSchedelueCreateResponse>;
     } catch (error) {
+      console.error('Could not connect to server:', error);
+
       return errorResponse('Could not connect to the server.');
     }
   }
 
-  static async getByMonth(userToken: string, year: number, month: number): Promise<CalendarWorkoutViewModel[]> {
+  static async getByMonth(userToken: string, year: number, month: number): Promise<ApiResponse[CalendarWorkoutViewModel]> {
     try {
       const response = await fetch(`/api/workout-schedules?&year=${year}&month=${month}`, {
         method: 'GET',
@@ -46,9 +48,9 @@ export default class WorkoutScheduleService {
 
       return data.workoutSchedules;
     } catch (error) {
-      console.error('WorkoutScheduleService.getByMonth ERROR:', error);
+      console.error('Could not connect to server:', error);
 
-      return [];
+      return errorResponse('Could not connect to the server.');
     }
   }
 }

@@ -27,9 +27,9 @@ export default class CalorieService {
 
       return (await response.json()) as ApiSuccessResponse<CalorieCalculatorResult>;
     } catch (error) {
-      console.error(error);
+      console.error('Could not connect to server:', error);
 
-      return errorResponse('Gick inte att hämta data');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -47,9 +47,9 @@ export default class CalorieService {
 
       return (await response.json()) as ApiSuccessResponse<CalorieLog>;
     } catch (error) {
-      console.error(error);
+      console.error('Could not connect to server:', error);
 
-      return errorResponse('Gick inte att spara dagens näringsintag');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -64,9 +64,9 @@ export default class CalorieService {
 
       return (await response.json()) as ApiSuccessResponse<CurrentNuitrationStats>;
     } catch (error) {
-      console.error(error);
+      console.error('Could not connect to server:', error);
 
-      return errorResponse('Gick inte att hämta kalorihistorik');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -82,9 +82,9 @@ export default class CalorieService {
 
       return (await response.json()) as ApiSuccessResponse<CalorieHistoryResult>;
     } catch (error) {
-      console.error(error);
+      console.error('Could not connect to server:', error);
 
-      return errorResponse('Gick inte att hämta kalorihistorik');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -100,9 +100,9 @@ export default class CalorieService {
 
       return (await response.json()) as ApiSuccessResponse<NutritionGoal>;
     } catch (error) {
-      console.error(error);
+      console.error('Could not connect to server:', error);
 
-      return errorResponse('Gick inte att hämta näringsmålet');
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -120,9 +120,9 @@ export default class CalorieService {
 
       return (await response.json()) as ApiSuccessResponse<NutritionGoal>;
     } catch (error) {
-      console.error(error);
+      console.error('Could not connect to server:', error);
 
-      return errorResponse('Gick inte att uppdatera näringsmålet');
+      return errorResponse('Could not connect to the server.');
     }
   }
 }

@@ -23,7 +23,9 @@ export default class AuthService {
       const result = (await response.json()) as ApiResponse<UserResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      console.error('Could not connect to server:', error);
+
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -41,7 +43,9 @@ export default class AuthService {
       const result = (await response.json()) as ApiResponse<LoginResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      console.error('Could not connect to server:', error);
+
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -59,7 +63,9 @@ export default class AuthService {
       const result = (await response.json()) as ApiResponse<RegisterResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      console.error('Could not connect to server:', error);
+
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -76,7 +82,9 @@ export default class AuthService {
       const result = (await response.json()) as ApiResponse<UpdateUserResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      console.error('Could not connect to server:', error);
+
+      return errorResponse('Could not connect to the server.');
     }
   }
 
@@ -90,7 +98,9 @@ export default class AuthService {
       const result = (await response.json()) as ApiResponse<LogoutResponse>;
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      console.error('Could not connect to server:', error);
+
+      return errorResponse('Could not connect to the server.');
     }
   }
 }
