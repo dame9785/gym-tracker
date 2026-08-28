@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 import FoodsService from '@/services/food-service';
 import { toast } from 'sonner';
@@ -14,7 +13,9 @@ const foodService = new FoodsService();
 export default function CreateFoodForm() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const isSavingRef = useRef(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
+
   const [formData, setFormData] = useState<AddFoodDto>({
     name: '',
     caloriesPer100g: 0,
@@ -34,12 +35,17 @@ export default function CreateFoodForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    // Direkt lås - stoppar flera submits omedelbart
+    if (isSavingRef.current) {
+      return;
+    }
+
     const dto: AddFoodDto = {
       name: formData.name,
       caloriesPer100g: Number(formData.caloriesPer100g),
+      proteinPer100g: Number(formData.proteinPer100g),
       carbsPer100g: Number(formData.carbsPer100g),
       fatPer100g: Number(formData.fatPer100g),
-      proteinPer100g: Number(formData.proteinPer100g),
     };
 
     const validate = addFoodSchema.safeParse(dto);
@@ -48,22 +54,28 @@ export default function CreateFoodForm() {
       return;
     }
 
+    setErrors({});
+    // Lås DIREKT före API-anropet
+    isSavingRef.current = true;
     setIsSaving(true);
 
-    // Rensa gamla fel
-    setErrors({});
     try {
-      const response = await foodService.create(formData);
+      const response = await foodService.create(dto);
+
       if (!response.success) {
-        toast.error('Något gick fel, försök igen');
+        toast.error(response.message ?? 'Something went wrong, try again');
+        return;
       }
 
-      toast.success('Food created sucsefully');
+      toast.success(response.message ?? 'Food created successfully');
+
       router.push('/foods');
       router.refresh();
-    } catch {
-      toast.error('Något gick fel, försök igen.');
+    } catch (error) {
+      console.error('Failed to create food:', error);
+      toast.error('Something went wrong, try again');
     } finally {
+      isSavingRef.current = false;
       setIsSaving(false);
     }
   }

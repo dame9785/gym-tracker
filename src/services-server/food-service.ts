@@ -1,7 +1,7 @@
 import FoodMapper from '@/mapping/food-mapping';
 import { FoodRepository } from '@/repositories/food-repository';
 import { ApiErrorResponse, ApiResponse } from '@/types/api-types';
-import { FoodApiResponse } from '@/types/food-type';
+import { FoodApiResponse, FoodDeleteApiResponse } from '@/types/food-type';
 import { errorResponse } from '@/utils/api-error';
 
 const foodRepository = new FoodRepository();
@@ -45,5 +45,20 @@ export class FoodService {
 
   async create(data: { name: string; caloriesPer100g: number; proteinPer100g: number; carbsPer100g: number; fatPer100g: number }) {
     return foodRepository.create(data);
+  }
+  async delete(foodId: number): Promise<ApiResponse<FoodDeleteApiResponse>> {
+    try {
+      await foodRepository.removeFoodFromMeal(foodId);
+      return {
+        success: true,
+        message: 'Food deleted successfully',
+        data: {
+          success: true,
+        },
+      };
+    } catch (error) {
+      console.error('Delete food failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
+    }
   }
 }

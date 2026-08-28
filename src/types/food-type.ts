@@ -35,6 +35,10 @@ export interface TodayMealApiResponse {
 export interface FoodApiResponse {
   foods: FoodViewModel[];
 }
+
+export interface FoodDeleteApiResponse {
+  success: boolean;
+}
 export interface FoodViewModel {
   name: string;
   id: number;

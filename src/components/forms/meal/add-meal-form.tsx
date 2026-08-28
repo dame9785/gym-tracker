@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { MealType } from '@/types/meal-types';
 import MealService from '@/services/meal-service';
 import { AddMealDto, addMealSchema } from '@/schemas/meal-schemas';
 import { toast } from 'sonner';
+import Button from '@/components/button/button';
 
 type Food = {
   id: number;
@@ -21,7 +22,8 @@ const mealService = new MealService();
 
 export default function AddMealForm({ foods }: AddMealFormProps) {
   const router = useRouter();
-
+  const [isSaving, setIsSaving] = useState(false);
+  const isSavingRef = useRef(false);
   const [foodId, setFoodId] = useState('');
   const [mealType, setMealType] = useState<MealType>('BREAKFAST');
   const [grams, setGrams] = useState('');
@@ -30,11 +32,18 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    // Direkt lås - stoppar flera submits omedelbart
+    if (isSavingRef.current) {
+      return;
+    }
+
     const formData: AddMealDto = {
       foodId: Number(foodId),
       mealType,
       grams: Number(grams),
     };
+
+    setErrors({});
 
     const validate = addMealSchema.safeParse(formData);
     if (!validate.success) {
@@ -42,21 +51,26 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
       return;
     }
 
+    // Lås DIREKT före API-anropet
+    isSavingRef.current = true;
+    setIsSaving(true);
     try {
-      const result = await mealService.addMeal(formData);
-      if (!result.success) {
-        toast.error('Något gick fel');
+      const response = await mealService.addMeal(formData);
+      if (!response.success) {
+        toast.error(response.message ?? 'Something went wrong, try again');
         return;
       }
 
-      toast.success('Måltid tillagd');
+      toast.success(response.message ?? 'Meal created successfully');
+      router.push('/meals');
+      router.refresh();
     } catch (error) {
-      console.log(error);
-      toast.error('Något gick fel');
+      console.error('Failed to add meal:', error);
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      isSavingRef.current = false;
+      setIsSaving(false);
     }
-
-    router.push('/meals');
-    router.refresh();
   }
 
   return (
@@ -79,6 +93,7 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
         <select
           id="mealType"
           value={mealType}
+          disabled={isSaving}
           onChange={(event) => setMealType(event.target.value as MealType)}
           className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
         >
@@ -101,8 +116,9 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
         </label>
 
         <select
-          id="food"
+          id="foodId"
           value={foodId}
+          disabled={isSaving}
           onChange={(event) => setFoodId(event.target.value)}
           className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
         >
@@ -114,9 +130,9 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
             </option>
           ))}
         </select>
-        {errors.food?.[0] && (
-          <p id="food-error" className="text-red-500" role="alert">
-            {errors.food[0]}
+        {errors.foodId?.[0] && (
+          <p id="foodId-error" className="text-red-500" role="alert">
+            {errors.foodId[0]}
           </p>
         )}
       </div>
@@ -129,6 +145,7 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
 
         <div className="relative">
           <input
+            disabled={isSaving}
             id="grams"
             type="number"
             min="1"
@@ -148,13 +165,9 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
       </div>
 
       {/* Button */}
-      <button
-        type="submit"
-        disabled={!foodId || !grams}
-        className="w-full rounded-lg bg-orange-500 px-4 py-3 font-semibold text-black transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        Add food
-      </button>
+      <Button type="submit" variant="primary" disabled={isSaving}>
+        {isSaving ? 'Adding meal...' : 'Add meal'}
+      </Button>
     </form>
   );
 }

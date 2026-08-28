@@ -6,6 +6,7 @@ const foodsService = new FoodsService();
 
 export default async function AddMealPage() {
   const response = await foodsService.getAllFoods();
+  console.log(response);
   if (!response.success || !response.data) {
     return (
       <main>

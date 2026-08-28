@@ -37,19 +37,11 @@ export class FoodRepository {
     });
   }
 
-  async delete(foodId: number) {
-    return await prisma.$transaction(async (tx) => {
-      await tx.meal.deleteMany({
-        where: {
-          userId: 1,
-        },
-      });
-
-      return await tx.food.delete({
-        where: {
-          id: foodId,
-        },
-      });
+  async removeFoodFromMeal(mealItemId: number) {
+    return prisma.mealItem.delete({
+      where: {
+        id: mealItemId,
+      },
     });
   }
 }
