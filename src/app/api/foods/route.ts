@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FoodService } from '@/services-server/food-service';
+import { apiErrorResponse, apiResponse } from '@/utils/api-error';
 
 const foodService = new FoodService();
 
@@ -10,17 +11,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
-    console.error('GET FOODS ERROR:', error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Kunde inte hämta mat',
-      },
-      {
-        status: 500,
-      },
-    );
+    console.error('GET /api/foods error:', error);
+    return apiErrorResponse('An error occurred while fetching food.');
   }
 }
 
@@ -36,26 +28,9 @@ export async function POST(request: NextRequest) {
       fatPer100g: Number(body.fatPer100g),
     });
 
-    return NextResponse.json(
-      {
-        success: true,
-        data: food,
-      },
-      {
-        status: 201,
-      },
-    );
+    return apiResponse(food);
   } catch (error) {
-    console.error(error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Could not create meal',
-      },
-      {
-        status: 500,
-      },
-    );
+    console.error('POST /api/foods error:', error);
+    return apiErrorResponse('An error occurred while creating food.');
   }
 }
