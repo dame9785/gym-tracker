@@ -35,20 +35,11 @@ export interface TodayMealApiResponse {
 export interface FoodApiResponse {
   foods: FoodViewModel[];
 }
-
 export interface FoodViewModel {
   name: string;
   id: number;
   createdAt: Date;
   updatedAt: Date;
-  caloriesPer100g: number;
-  proteinPer100g: number;
-  carbsPer100g: number;
-  fatPer100g: number;
-}
-
-export interface FoodDto {
-  name: string;
   caloriesPer100g: number;
   proteinPer100g: number;
   carbsPer100g: number;

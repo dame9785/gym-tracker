@@ -1,3 +1,4 @@
+import { AddFoodDto } from '@/schemas/food-schemas';
 import { ApiResponse } from '@/types/api-types';
 import { FoodApiResponse } from '@/types/food-type';
 import { errorResponse } from '@/utils/api-error';
@@ -5,16 +6,8 @@ import { errorResponse } from '@/utils/api-error';
 //API URL
 const API_URL = 'http://localhost:3000/api/foods';
 
-interface FoodDto {
-  name: string;
-  caloriesPer100g: number;
-  proteinPer100g: number;
-  carbsPer100g: number;
-  fatPer100g: number;
-}
-
 export default class FoodService {
-  static async getAllFoods(): Promise<ApiResponse<FoodApiResponse>> {
+  async getAllFoods(): Promise<ApiResponse<FoodApiResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {
         method: 'GET',
@@ -26,7 +19,7 @@ export default class FoodService {
     }
   }
 
-  static async create(dto: FoodDto): Promise<ApiResponse<FoodApiResponse>> {
+  async create(dto: AddFoodDto): Promise<ApiResponse<FoodApiResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {
         method: 'POST',

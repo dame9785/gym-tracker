@@ -7,21 +7,14 @@ import Link from 'next/link';
 import FoodsService from '@/services/food-service';
 import { toast } from 'sonner';
 import FormStyles from '@/components/forms/form.module.css';
-import { FoodDto } from '@/types/food-type';
+import { AddFoodDto, addFoodSchema } from '@/schemas/food-schemas';
+import Button from '@/components/button/button';
 
 export default function CreateFoodForm() {
   const router = useRouter();
-
-  const [name, setName] = useState('');
-  const [caloriesPer100g, setCaloriesPer100g] = useState('');
-  const [proteinPer100g, setProteinPer100g] = useState('');
-  const [carbsPer100g, setCarbsPer100g] = useState('');
-  const [fatPer100g, setFatPer100g] = useState('');
-
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [formData, setFormData] = useState<FoodDto>({
+  const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [formData, setFormData] = useState<AddFoodDto>({
     name: '',
     caloriesPer100g: 0,
     proteinPer100g: 0,
@@ -40,12 +33,24 @@ export default function CreateFoodForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    setError('');
-    setIsLoading(true);
+    const dto: AddFoodDto = {
+      name: formData.name,
+      caloriesPer100g: Number(formData.caloriesPer100g),
+      carbsPer100g: Number(formData.carbsPer100g),
+      fatPer100g: Number(formData.fatPer100g),
+      proteinPer100g: Number(formData.proteinPer100g),
+    };
 
-    console.log(formData);
-    return;
+    const validate = addFoodSchema.safeParse(dto);
+    if (!validate.success) {
+      setErrors(validate.error.flatten().fieldErrors);
+      return;
+    }
 
+    setIsSaving(true);
+
+    // Rensa gamla fel
+    setErrors({});
     try {
       const response = await FoodsService.create(formData);
       if (!response.success) {
@@ -56,48 +61,109 @@ export default function CreateFoodForm() {
       router.push('/foods');
       router.refresh();
     } catch {
-      setError('Something went wrong');
+      toast.error('Något gick fel, försök igen.');
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
+      <h1 className={FormStyles.formTitle}>
+        Lägg till
+        <span> Mat</span>
+      </h1>
       {/* namn */}
       <div className={FormStyles.formGroup}>
         <label htmlFor="name" className={FormStyles.formLabel}>
           Name
         </label>
-        <input onChange={handleChange} required id="name" type="text" className={FormStyles.formInput} placeholder="T.ex. Kyckling"></input>
+        <input className={FormStyles.formInput} id="name" name="name" type="text" step="0.1" placeholder="e.g. chicken" onChange={handleChange}></input>
+        {errors.name?.[0] && (
+          <p id="name-error" className="text-red-500" role="alert">
+            {errors.name[0]}
+          </p>
+        )}
       </div>
       <div className={FormStyles.formGroup}>
         <label htmlFor="caloriesPer100g" className={FormStyles.formLabel}>
           Calories Per/100g
         </label>
-        <input onChange={handleChange} required id="caloriesPer100g" type="text" className={FormStyles.formInput} placeholder="T.ex. 400 cal"></input>
+        <input
+          className={FormStyles.formInput}
+          id="caloriesPer100g"
+          name="caloriesPer100g"
+          type="number"
+          step="0.1"
+          placeholder="e.g. 50 cal"
+          onChange={handleChange}
+        ></input>
+        {errors.caloriesPer100g?.[0] && (
+          <p id="caloriesPer100g-error" className="text-red-500" role="alert">
+            {errors.caloriesPer100g[0]}
+          </p>
+        )}
       </div>
       <div className={FormStyles.formGroup}>
-        <label htmlFor="protein" className={FormStyles.formLabel}>
+        <label htmlFor="proteinPer100g" className={FormStyles.formLabel}>
           Protein Per/100g
         </label>
-        <input required id="protein" type="text" className={FormStyles.formInput} placeholder="T.ex. 400g"></input>
+        <input
+          className={FormStyles.formInput}
+          id="proteinPer100g"
+          name="proteinPer100g"
+          type="number"
+          step="0.1"
+          placeholder="e.g. 50 cal"
+          onChange={handleChange}
+        ></input>
+        {errors.proteinPer100g?.[0] && (
+          <p id="proteinPer100g-error" className="text-red-500" role="alert">
+            {errors.proteinPer100g[0]}
+          </p>
+        )}
       </div>
       <div className={FormStyles.formGroup}>
-        <label htmlFor="carbs" className={FormStyles.formLabel}>
+        <label htmlFor="carbsPer100g" className={FormStyles.formLabel}>
           Carbs Per/100g
         </label>
-        <input onChange={handleChange} required id="carbs" type="text" className={FormStyles.formInput} placeholder="T.ex. 400g"></input>
+        <input
+          className={FormStyles.formInput}
+          id="carbsPer100g"
+          name="carbsPer100g"
+          type="number"
+          step="0.1"
+          placeholder="e.g. 50 cal"
+          onChange={handleChange}
+        ></input>
+        {errors.carbsPer100g?.[0] && (
+          <p id="carbsPer100g-error" className="text-red-500" role="alert">
+            {errors.carbsPer100g[0]}
+          </p>
+        )}
       </div>
       <div className={FormStyles.formGroup}>
-        <label htmlFor="fat" className={FormStyles.formLabel}>
+        <label htmlFor="fatPer100g" className={FormStyles.formLabel}>
           Fat Per/100g
         </label>
-        <input onChange={handleChange} required id="fat" type="text" className={FormStyles.formInput} placeholder="T.ex. 400g"></input>
+        <input
+          className={FormStyles.formInput}
+          id="fatPer100g"
+          name="fatPer100g"
+          type="number"
+          step="0.1"
+          placeholder="e.g. 50 cal"
+          onChange={handleChange}
+        ></input>
+        {errors.fatPer100g?.[0] && (
+          <p id="fatPer100g-error" className="text-red-500" role="alert">
+            {errors.fatPer100g[0]}
+          </p>
+        )}
       </div>
-      <button type="submit" className={FormStyles.submitButton}>
-        Spara Workout
-      </button>
+      <Button type="submit" variant="primary" disabled={isSaving}>
+        {isSaving ? 'Creating...' : 'Save'}
+      </Button>
     </form>
   );
 }

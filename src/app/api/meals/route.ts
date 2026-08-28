@@ -1,77 +1,67 @@
 import { NextResponse } from 'next/server';
 
-import { ApiErrorResponse } from '@/types/api-types';
-import { MealService } from '@/services-server/meal-service';
-import { MealRepository } from '@/repositories/meal-repository';
+// Services
+import MealService from '@/services-server/meal-service';
+
+// Schemas
+import { addMealItemSchema } from '@/schemas/meal-schemas';
+
+// Utils
+import { apiErrorResponse, apiResponse, unauthorizedResponse } from '@/utils/api-error';
+import { getCurrentUser } from '@/utils/user-by-token';
 
 const mealService = new MealService();
-const mealRepository = new MealRepository();
 
-export async function GET() {
-  //Get current User from Cookie store
-  // const currentUserId = await getCurrentUser();
-
-  // if (!currentUserId) {
-  //   return NextResponse.json(
-  //     {
-  //       success: false,
-  //       message: 'Unauthorized ',
-  //     } satisfies ApiErrorResponse,
-  //     { status: 401 },
-  //   );
-  // }
+export async function POST(request: Request) {
+  // 1. Hämta inloggad användare
+  const userId = 1;
 
   try {
-    const result = await mealService.getMeals(1);
+    // 2. Hämta data från request
+    const body = await request.json();
 
-    return NextResponse.json(result, { status: result.success ? 200 : 402 });
-  } catch (error) {
-    console.error('Failed to fetch meals', error);
+    // 3. Validera med Zod
+    const validation = addMealItemSchema.safeParse(body);
 
-    return NextResponse.json(
+    if (!validation.success) {
+      return unauthorizedResponse();
+    }
+
+    // 4. Lägg till maten i måltiden
+    const result = await mealService.addFoodToMeal(userId, validation.data);
+
+    // 5. Returnera resultat
+    return apiResponse(
       {
-        success: false,
-        message: 'Kunde inte hämta måltyper.',
-      } satisfies ApiErrorResponse,
-      { status: 500 },
+        success: true,
+        data: result,
+      },
+      201,
     );
+  } catch (error) {
+    console.error('POST /api/meals error:', error);
+
+    return apiErrorResponse('An error occurred while adding food to meal.');
   }
 }
 
-export async function POST() {
+export async function GET(request: Request) {
+  //Get current User from Cookie storage
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorizedResponse();
+  }
+
   try {
-    const meal = await mealRepository.create({
-      userId: 1,
-      name: 'Spenatstavar',
-      mealType: 'LUNCH',
+    // 2. Hämta dagens måltider
+    const result = await mealService.getTodayMeals(user.userId);
 
-      items: [
-        {
-          foodId: 1,
-          grams: 200,
-          calories: 330,
-          protein: 62,
-          carbs: 0,
-          fat: 7.2,
-        },
-      ],
-    });
-
-    return NextResponse.json({
-      success: true,
-      data: meal,
-    });
+    // 3. Returnera resultatet
+    return apiResponse(result);
   } catch (error) {
-    console.error(error);
+    console.error('GET /api/meals error:', error);
 
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Could not create meal',
-      },
-      {
-        status: 500,
-      },
-    );
+    return apiErrorResponse('An error occurred while fetching today meals.');
   }
 }

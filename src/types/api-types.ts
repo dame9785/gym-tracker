@@ -5,7 +5,7 @@ import { ExerciseViewModel } from './exercise-types';
 import { WeeklyWorkoutViewModel, WorkoutSchedelueViewModel, WorkoutSessionFinishViewModel, WorkoutSessionViewModel, WorkoutViewModel } from './workout-types';
 import { WeeklySummaryViewModel } from './dashboard-types';
 import { HistoryViewModel } from './history-types';
-import { boolean } from 'zod';
+
 export interface ApiSuccessResponse<T> {
   success: true;
   message?: string;

@@ -10,4 +10,12 @@ export class GoalRepository {
       },
     });
   }
+
+  async getByUserId(userId: number) {
+    return prisma.goal.findUnique({
+      where: {
+        userId,
+      },
+    });
+  }
 }

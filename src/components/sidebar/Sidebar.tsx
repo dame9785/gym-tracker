@@ -101,6 +101,12 @@ function Sidebar({ user }: Props) {
               </li>
 
               <li className="li flex items-center">
+                <FaTrophy className="fa-icon" />
+                <Link href="/meals" className="grid">
+                  Meals
+                </Link>
+              </li>
+              <li className="li flex items-center">
                 <FaHistory className="fa-icon" />
                 <Link href="/history" className="grid">
                   History

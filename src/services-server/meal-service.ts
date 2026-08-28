@@ -1,83 +1,96 @@
 import { MealRepository } from '@/repositories/meal-repository';
-
-import type { MealsApiResponse } from '@/types/meal-types';
-
-import { ApiResponse, ApiSuccessResponse } from '@/types/api-types';
+import { FoodRepository } from '@/repositories/food-repository';
+import { AddMealItemDto } from '@/schemas/meal-schemas';
+import { MealType } from '@prisma/client';
+import { ApiErrorResponse, ApiResponse, ApiSuccessResponse } from '@/types/api-types';
+import { TodayMealsApiResponse } from '@/types/meal-types';
 import MealMapper from '@/mapping/meals-mapping';
+import GoalService from '@/services-server/goal-service';
 
 const mealRepository = new MealRepository();
+const foodRepository = new FoodRepository();
+const goalService = new GoalService();
 
-export class MealService {
-  // async create(userId: number, data: CreateMealInput) {
-  //   const mealItems = [];
+export default class MealService {
+  async addFoodToMeal(userId: number, dto: AddMealItemDto) {
+    // 1. Hämta maten från databasen
+    const food = await foodRepository.getById(dto.foodId);
 
-  //   for (const item of data.items) {
-  //     const food = await foodRepository.getById(item.foodId);
+    if (!food) {
+      throw new Error('Food not found');
+    }
 
-  //     if (!food) {
-  //       throw new Error(`Mat med id ${item.foodId} hittades inte`);
-  //     }
+    // 2. Beräkna näringsvärden baserat på antal gram
+    const multiplier = dto.grams / 100;
 
-  //     const multiplier = item.grams / 100;
+    const calories = food.caloriesPer100g * multiplier;
 
-  //     const calories = Math.round(food.caloriesPer100g * multiplier);
-  //     const protein = Math.round(food.proteinPer100g * multiplier);
-  //     const carbs = Math.round(food.carbsPer100g * multiplier);
-  //     const fat = Math.round(food.fatPer100g * multiplier);
+    const protein = food.proteinPer100g * multiplier;
 
-  //     mealItems.push({
-  //       foodId: food.id,
-  //       grams: item.grams,
-  //       calories,
-  //       protein,
-  //       carbs,
-  //       fat,
-  //     });
-  //   }
+    const carbs = food.carbsPer100g * multiplier;
 
-  //   // Summera hela måltiden
-  //   const totals = mealItems.reduce(
-  //     (total, item) => ({
-  //       calories: total.calories + item.calories,
-  //       protein: total.protein + item.protein,
-  //       carbs: total.carbs + item.carbs,
-  //       fat: total.fat + item.fat,
-  //     }),
-  //     {
-  //       calories: 0,
-  //       protein: 0,
-  //       carbs: 0,
-  //       fat: 0,
-  //     },
-  //   );
+    const fat = food.fatPer100g * multiplier;
 
-  //   // Spara själva måltiden + ingredienser
-  //   const meal = await mealRepository.create({
-  //     userId,
-  //     name: data.name,
-  //     mealType: data.mealType,
-  //     items: mealItems,
-  //   });
+    // 3. Leta efter dagens måltid
+    const existingMeal = await mealRepository.findTodayMealByType(userId, dto.mealType as MealType);
 
-  //   // Lägg automatiskt till måltiden i dagens intag
-  //   await calorieRepository.upsertNutritionLog(userId, totals);
+    let mealId: number;
 
-  //   return {
-  //     meal,
-  //     totals,
-  //   };
-  // }
+    // 4. Använd befintlig måltid eller skapa en ny
+    if (existingMeal) {
+      mealId = existingMeal.id;
+    } else {
+      const newMeal = await mealRepository.createMeal(userId, dto.mealType as MealType);
 
-  async getMeals(userId: number): Promise<ApiResponse<MealsApiResponse>> {
-    const meals = await mealRepository.getMeals(userId);
+      mealId = newMeal.id;
+    }
 
-    const viewModel = meals.map((meal) => MealMapper.mapMealDboToViewModel(meal));
+    // 5. Lägg till maten i måltiden
+    const mealItem = await mealRepository.addItem({
+      mealId,
+      foodId: food.id,
+      grams: dto.grams,
+      calories,
+      protein,
+      carbs,
+      fat,
+    });
+
+    return mealItem;
+  }
+
+  async getTodayMeals(userId: number): Promise<ApiResponse<TodayMealsApiResponse>> {
+    const meals = await mealRepository.getTodayMeals(userId);
+    const goal = await goalService.getUserGoal(userId);
+
+    const totals = {
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+    };
+
+    for (const meal of meals) {
+      for (const item of meal.items) {
+        totals.calories += item.calories;
+        totals.protein += item.protein;
+        totals.carbs += item.carbs;
+        totals.fat += item.fat;
+      }
+    }
 
     return {
       success: true,
       data: {
-        meals: viewModel,
+        totals: totals,
+        goal: {
+          calories: goal?.calories ?? 0,
+          protein: goal?.protein ?? 0,
+          carbs: goal?.carbs ?? 0,
+          fat: goal?.fat ?? 0,
+        },
+        meals: meals.map((item) => MealMapper.toViewModel(item)),
       },
-    } satisfies ApiSuccessResponse<MealsApiResponse>;
+    } satisfies ApiSuccessResponse<TodayMealsApiResponse>;
   }
 }

@@ -207,7 +207,7 @@ model Meal {
   userId    Int
 
   name      String
-  mealType  MealType?
+  mealType  MealType
 
   loggedAt  DateTime @default(now())
 

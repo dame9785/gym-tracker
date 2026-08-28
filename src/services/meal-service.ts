@@ -1,22 +1,57 @@
-import { ApiResponse } from '@/types/api-types';
-import { TodayMealApiResponse } from '@/types/food-type';
-import { errorResponse } from '@/utils/api-error';
+import { ApiResponse, ApiSuccessResponse } from '@/types/api-types';
+import { MealType, TodayMealsApiResponse } from '@/types/meal-types';
 
 const API_URL = 'http://localhost:3000/api/meals';
 
+interface AddMealDto {
+  foodId: number;
+  mealType: MealType;
+  grams: number;
+}
+
 export default class MealService {
-  static async getMeals(userToken: string): Promise<ApiResponse<TodayMealApiResponse>> {
+  async getTodayMeals(userToken: string): Promise<ApiResponse<TodayMealsApiResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {
         method: 'GET',
-        credentials: 'include',
         headers: {
+          'Content-Type': 'application/json',
           Cookie: `token=${userToken}`,
         },
       });
-      return (await response.json()) as ApiResponse<TodayMealApiResponse>;
+
+      const result = (await response.json()) as ApiSuccessResponse<TodayMealsApiResponse>;
+      return result;
     } catch (error) {
-      return errorResponse('Kunde inte ansluta till servern');
+      console.error('Failed to fetch today meals:', error);
+
+      return {
+        success: false,
+        message: 'Failed to fetch today meals.',
+      };
+    }
+  }
+
+  async addMeal(formData: AddMealDto): Promise<ApiResponse<unknown>> {
+    try {
+      const response = await fetch(`${API_URL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = (await response.json()) as ApiSuccessResponse<unknown>;
+
+      return result;
+    } catch (error) {
+      console.error('Failed to add meal:', error);
+
+      return {
+        success: false,
+        message: 'Could not add meal.',
+      };
     }
   }
 }

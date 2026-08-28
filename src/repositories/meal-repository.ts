@@ -1,102 +1,77 @@
-import { Meal, MealType, Prisma } from '@prisma/client';
+import { MealType } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import { ApiResponse, ApiSuccessResponse } from '@/types/api-types';
 
-import MealMapper from '@/mapping/meals-mapping';
-import { MealsApiResponse } from '@/types/meal-types';
-
-type CreateMealData = {
-  userId: number;
-  name: string;
-  mealType: MealType;
-  items: {
-    foodId: number;
-    grams: number;
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  }[];
-};
-export type MealWithItemsAndFood = Prisma.MealGetPayload<{
-  include: {
-    items: {
-      include: {
-        food: true;
-      };
-    };
-  };
-}>;
+interface CreateMealItemData {
+  mealId: number;
+  foodId: number;
+  grams: number;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
 
 export class MealRepository {
-  async create(data: CreateMealData) {
-    return prisma.meal.create({
-      data: {
-        userId: data.userId,
-        name: data.name,
-        mealType: data.mealType,
+  async findTodayMealByType(userId: number, mealType: MealType) {
+    const now = new Date();
 
-        items: {
-          create: data.items.map((item) => ({
-            foodId: item.foodId,
-            grams: item.grams,
-            calories: item.calories,
-            protein: item.protein,
-            carbs: item.carbs,
-            fat: item.fat,
-          })),
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return prisma.meal.findFirst({
+      where: {
+        userId,
+        mealType,
+        loggedAt: {
+          gte: startOfDay,
+          lte: endOfDay,
         },
       },
-
       include: {
-        items: {
-          include: {
-            food: true,
-          },
-        },
+        items: true,
       },
     });
   }
 
-  async createMealItem(
-    mealId: number,
-    foodId: number,
-    data: {
-      grams: number;
-      calories: number;
-      protein: number;
-      carbs: number;
-      fat: number;
-    },
-  ) {
-    return prisma.mealItem.create({
+  async createMeal(userId: number, mealType: MealType) {
+    return prisma.meal.create({
       data: {
-        mealId,
-        foodId,
-        ...data,
+        userId,
+        mealType,
+        name: mealType,
       },
+    });
+  }
+
+  async addItem(data: CreateMealItemData) {
+    return prisma.mealItem.create({
+      data,
       include: {
         food: true,
       },
     });
   }
 
-  async getMeals(userId: number): Promise<MealWithItemsAndFood[]> {
+  async getTodayMeals(userId: number) {
     const now = new Date();
 
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
 
-    const startOfTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
 
-    const meals = await prisma.meal.findMany({
+    return prisma.meal.findMany({
       where: {
         userId,
         loggedAt: {
           gte: startOfDay,
-          lt: startOfTomorrow,
+          lte: endOfDay,
         },
       },
-
       include: {
         items: {
           include: {
@@ -104,12 +79,9 @@ export class MealRepository {
           },
         },
       },
-
       orderBy: {
         loggedAt: 'asc',
       },
     });
-
-    return meals;
   }
 }
