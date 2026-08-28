@@ -1,5 +1,6 @@
 import FoodsService from '@/services/food-service';
 import AddMealForm from '@/components/forms/meal/add-meal-form';
+import ErrorMessage from '@/components/ui/error-message';
 
 const foodsService = new FoodsService();
 
@@ -8,7 +9,7 @@ export default async function AddMealPage() {
   if (!response.success || !response.data) {
     return (
       <main>
-        <p>Could not load foods.</p>
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
       </main>
     );
   }

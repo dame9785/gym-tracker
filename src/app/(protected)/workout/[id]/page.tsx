@@ -6,6 +6,7 @@ import WorkoutDetails from '@/components/workout/workout-details';
 // Services
 import WorkoutService from '@/services/workout-service';
 import { getTokenFromCookieStore } from '@/lib/auth';
+import ErrorMessage from '@/components/ui/error-message';
 
 interface PageProps {
   params: Promise<{
@@ -24,8 +25,12 @@ export default async function WorkoutPage({ params }: PageProps) {
   const workoutId = Number(id);
   const response = await WorkoutService.getById(workoutId, userToken);
 
-  if (!response.success) {
-    throw new Error('Something went wrong');
+  if (!response.success || !response.data) {
+    return (
+      <main>
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+      </main>
+    );
   }
 
   const workout = response.data.workout;

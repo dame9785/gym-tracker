@@ -12,6 +12,7 @@ import Button from '@/components/button/button';
 import WeightLogService from '@/services/log-weight-service';
 import { getTokenFromCookieStore } from '@/lib/auth';
 import { notFound, redirect } from 'next/navigation';
+import ErrorMessage from '@/components/ui/error-message';
 
 type Props = {
   searchParams: Promise<{
@@ -29,8 +30,12 @@ export default async function LogWeight({ searchParams }: Props) {
   }
 
   const response = await WeightLogService.getAll(userToken, page);
-  if (!response.success) {
-    throw new Error('Something went wrong');
+  if (!response.success || !response.data) {
+    return (
+      <main>
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+      </main>
+    );
   }
 
   const data = response.data;

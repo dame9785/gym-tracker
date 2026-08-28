@@ -5,6 +5,7 @@ import WorkoutService from '@/services/workout-service';
 import { getTokenFromCookieStore } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Pagination from '@/components/workout/pagination';
+import ErrorMessage from '@/components/ui/error-message';
 
 type Props = {
   searchParams: Promise<{
@@ -23,8 +24,12 @@ export default async function Workouts({ searchParams }: Props) {
   }
 
   const response = await WorkoutService.getAll(userToken, page);
-  if (!response.success) {
-    throw new Error('Something went wrong');
+  if (!response.success || !response.data) {
+    return (
+      <main>
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+      </main>
+    );
   }
 
   const workouts = response.data.workouts;

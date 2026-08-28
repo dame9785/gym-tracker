@@ -1,3 +1,4 @@
+import ErrorMessage from '@/components/ui/error-message';
 import WorkoutSession from '@/components/workout/workout-session';
 import { getTokenFromCookieStore } from '@/lib/auth';
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
@@ -19,10 +20,12 @@ export default async function WorkoutSessionPage({ params }: PageProps) {
     redirect('/account/login');
   }
   const response = await workoutSessionService.getById(Number(id));
-  console.log(response);
-
-  if (!response.success) {
-    throw new Error('Something went wrong');
+  if (!response.success || !response.data) {
+    return (
+      <main>
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+      </main>
+    );
   }
 
   const workoutSession = response.data;

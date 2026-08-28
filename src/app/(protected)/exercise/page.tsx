@@ -7,6 +7,7 @@ import ExerciseTable from '@/components/tables/exercise-table';
 import ExerciseService from '@/services/exercise-service';
 import { redirect } from 'next/navigation';
 import { getTokenFromCookieStore } from '@/lib/auth';
+import ErrorMessage from '@/components/ui/error-message';
 
 export default async function Exercise() {
   const userToken = await getTokenFromCookieStore();
@@ -16,8 +17,12 @@ export default async function Exercise() {
   }
 
   const response = await ExerciseService.getAll(userToken);
-  if (!response.success) {
-    throw new Error('Something went wrong');
+  if (!response.success || !response.data) {
+    return (
+      <main>
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+      </main>
+    );
   }
 
   const exercises = response.data;

@@ -7,6 +7,7 @@ import WeeklySummary from '@/components/dashboard/weekly-summary';
 import WorkoutCalendar from '@/components/calendar/workout-calendar';
 import { getTokenFromCookieStore } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import ErrorMessage from '@/components/ui/error-message';
 
 export default async function DashboardPage() {
   const userToken = await getTokenFromCookieStore();
@@ -15,14 +16,16 @@ export default async function DashboardPage() {
     redirect('/account/login');
   }
 
-  const result = await DashboardService.getDashboard(userToken);
-  console.log(result);
-
-  if (!result.success) {
-    throw new Error('Something went wrong');
+  const response = await DashboardService.getDashboard(userToken);
+  if (!response.success || !response.data) {
+    return (
+      <main>
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+      </main>
+    );
   }
 
-  const dashboard = result.data;
+  const dashboard = response.data;
 
   return (
     <main className="container space-y-8">

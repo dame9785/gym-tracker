@@ -5,6 +5,7 @@ import MealCalendar from '@/components/meals/meal-calandar';
 import { getTokenFromCookieStore } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import ErrorMessage from '@/components/ui/error-message';
 
 const mealService = new MealService();
 
@@ -53,8 +54,8 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
 
   if (!response.success || !response.data) {
     return (
-      <main className="mx-auto w-full max-w-7xl p-4">
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">Could not load meals.</div>
+      <main>
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
       </main>
     );
   }

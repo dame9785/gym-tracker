@@ -6,6 +6,7 @@ import { getTokenFromCookieStore } from '@/lib/auth';
 
 import ProgressService from '@/services/progress-service';
 import { redirect } from 'next/navigation';
+import ErrorMessage from '@/components/ui/error-message';
 
 export default async function ProgressPage() {
   const token = await getTokenFromCookieStore();
@@ -15,8 +16,12 @@ export default async function ProgressPage() {
   }
 
   const response = await ProgressService.getProgress(token);
-  if (!response.success) {
-    throw new Error('Something went wrong');
+  if (!response.success || !response.data) {
+    return (
+      <main>
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+      </main>
+    );
   }
 
   return (

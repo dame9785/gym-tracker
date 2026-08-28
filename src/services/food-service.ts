@@ -9,7 +9,7 @@ const API_URL = 'http://localhost:3000/api/foods';
 export default class FoodService {
   async getAllFoods(): Promise<ApiResponse<FoodApiResponse>> {
     try {
-      const response = await fetch(`${API_URL}`, {
+      const response = await fetch(`${API_URL}112`, {
         method: 'GET',
       });
 

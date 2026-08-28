@@ -3,6 +3,7 @@ import UserService from '@/services/auth-service';
 import GoalTypesService from '@/services/goal-service';
 import { redirect } from 'next/navigation';
 import { getTokenFromCookieStore } from '@/lib/auth';
+import ErrorMessage from '@/components/ui/error-message';
 
 export default async function UserSettings() {
   const token = await getTokenFromCookieStore();
@@ -12,9 +13,12 @@ export default async function UserSettings() {
 
   /* Fetch all goal types & Current User*/
   const [goalResponse, userResponse] = await Promise.all([GoalTypesService.getAll(), UserService.getCurrentUser(token)]);
-
-  if (!goalResponse.success || !userResponse.success) {
-    throw new Error('Något gick fel');
+  if (!goalResponse.success || !goalResponse.data || !userResponse.success || !userResponse.data) {
+    return (
+      <main>
+        <ErrorMessage title="Unable to load foods" message={goalResponse.message ?? 'Something went wrong while loading your foods.'} />
+      </main>
+    );
   }
 
   const goals = goalResponse.data;

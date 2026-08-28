@@ -10,6 +10,7 @@ import HistoryMiddleStats from '@/components/history/history-middle-stats';
 import WorkoutSessions from '@/components/history/workout-sessions';
 import HistoryPagination from '@/components/history/history-pagination';
 import HistoryHeader from '@/components/history/history-header';
+import ErrorMessage from '@/components/ui/error-message';
 
 type Props = {
   searchParams: Promise<{
@@ -27,8 +28,12 @@ export default async function HistoryPage({ searchParams }: Props) {
   }
 
   const response = await HistoryService.getHistory(token, page);
-  if (!response.success) {
-    throw new Error('Something went wrong');
+  if (!response.success || !response.data) {
+    return (
+      <main>
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+      </main>
+    );
   }
 
   const historyData = response.data.history;
