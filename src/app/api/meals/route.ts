@@ -46,7 +46,6 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  //Get current User from Cookie storage
   const user = await getCurrentUser();
 
   if (!user) {
@@ -54,14 +53,16 @@ export async function GET(request: Request) {
   }
 
   try {
-    // 2. Hämta dagens måltider
-    const result = await mealService.getTodayMeals(user.userId);
+    const { searchParams } = new URL(request.url);
 
-    // 3. Returnera resultatet
+    const date = searchParams.get('date');
+
+    const result = date ? await mealService.getMealsByDate(user.userId, date) : await mealService.getTodayMeals(user.userId);
+
     return apiResponse(result);
   } catch (error) {
     console.error('GET /api/meals error:', error);
 
-    return apiErrorResponse('An error occurred while fetching today meals.');
+    return apiErrorResponse('An error occurred while fetching meals.');
   }
 }

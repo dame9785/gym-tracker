@@ -6,6 +6,7 @@ import { ApiErrorResponse, ApiResponse, ApiSuccessResponse } from '@/types/api-t
 import { TodayMealsApiResponse } from '@/types/meal-types';
 import MealMapper from '@/mapping/meals-mapping';
 import GoalService from '@/services-server/goal-service';
+import { success } from 'zod';
 
 const mealRepository = new MealRepository();
 const foodRepository = new FoodRepository();
@@ -59,6 +60,42 @@ export default class MealService {
     return mealItem;
   }
 
+  async getMealsByDate(userId: number, date: string): Promise<ApiResponse<TodayMealsApiResponse>> {
+    const meals = await mealRepository.getMealsByDate(userId, date);
+
+    const goal = await goalService.getUserGoal(userId);
+
+    const totals = {
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+    };
+
+    for (const meal of meals) {
+      for (const item of meal.items) {
+        totals.calories += item.calories;
+        totals.protein += item.protein;
+        totals.carbs += item.carbs;
+        totals.fat += item.fat;
+      }
+    }
+
+    return {
+      success: true,
+      data: {
+        totals,
+        goal: {
+          calories: goal?.calories ?? 0,
+          protein: goal?.protein ?? 0,
+          carbs: goal?.carbs ?? 0,
+          fat: goal?.fat ?? 0,
+        },
+        meals: meals.map((meal) => MealMapper.toViewModel(meal)),
+      },
+    } satisfies ApiSuccessResponse<TodayMealsApiResponse>;
+  }
+
   async getTodayMeals(userId: number): Promise<ApiResponse<TodayMealsApiResponse>> {
     const meals = await mealRepository.getTodayMeals(userId);
     const goal = await goalService.getUserGoal(userId);
@@ -92,5 +129,21 @@ export default class MealService {
         meals: meals.map((item) => MealMapper.toViewModel(item)),
       },
     } satisfies ApiSuccessResponse<TodayMealsApiResponse>;
+  }
+  async deleteMeal(id: number) {
+    try {
+      const result = await mealRepository.deleteMeal(id);
+      return {
+        success: true,
+        message: 'Måltid borttagen',
+      };
+    } catch (error) {
+      console.error('Failed to add meal:', error);
+
+      return {
+        success: false,
+        message: 'Could not add meal.',
+      };
+    }
   }
 }

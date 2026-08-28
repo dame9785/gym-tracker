@@ -7,7 +7,6 @@ import type {
   CalorieLog,
   CurrentNuitrationStats,
   NutritionGoal,
-  NutritionGoalInput,
   NutritionLogInput,
 } from '@/types/calorie-types';
 
@@ -108,7 +107,7 @@ export default class CalorieService {
   }
 
   // Uppdatera näringsmål
-  static async updateCalorieGoal(data: NutritionGoalInput, userToken: string): Promise<ApiResponse<NutritionGoal>> {
+  static async updateCalorieGoal(data: NutritionGoal, userToken: string): Promise<ApiResponse<NutritionGoal>> {
     try {
       const response = await fetch(`${API_URL}/goal`, {
         method: 'POST',

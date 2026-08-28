@@ -1,23 +1,23 @@
 'use client';
 
 import { Flame, Activity, User, Ruler, Weight, Calendar, Target } from 'lucide-react';
-
-import { calculateNutrition } from '@/helpers/nutrition-calculator';
 import { useEffect, useState } from 'react';
-
-import type { UserViewModel } from '@/types/user-types';
-
-import type { CalorieCalculatorResult, CalorieGoal, CalorieLog, NutritionGoal, NutritionLogInput } from '@/types/calorie-types';
-
-import { formatDate } from '@/helpers/date';
-import { calculateAge } from '@/helpers/calculate-age';
-import CalorieService from '@/services/calories-service';
-import { getCalorieGoalStats } from '@/data/calorie-goals';
-import TodayMeals from './today-meals';
 import { toast } from 'sonner';
 
-import NutritionInput from '@/components/calories/Nutrition-Input';
+import { calculateNutrition } from '@/helpers/nutrition-calculator';
+import { calculateAge } from '@/helpers/calculate-age';
+
+import type { UserViewModel } from '@/types/user-types';
+import type { CalorieCalculatorResult, CalorieGoal, NutritionGoal, NutritionLogInput } from '@/types/calorie-types';
+
+import CalorieService from '@/services/calories-service';
+import MealService from '@/services/meal-service';
+
+import { getCalorieGoalStats } from '@/data/calorie-goals';
+
 import ProfileStats from '@/components/calories/profile-stats';
+
+const mealService = new MealService();
 
 type Props = {
   user: UserViewModel;
@@ -28,8 +28,6 @@ type Props = {
 
 export default function Calculator({ user, calorieStats, userToken, initialNutritionGoal }: Props) {
   const age = calculateAge(user.birthDate);
-  const [isGoalSelectorOpen, setIsGoalSelectorOpen] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
 
   // Aktivt mål
   const [selectedGoal, setSelectedGoal] = useState<CalorieGoal>(initialNutritionGoal.calorieGoal);
@@ -37,7 +35,7 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
   // Sparat näringsmål
   const [nutritionGoal, setNutritionGoal] = useState<NutritionGoal>(initialNutritionGoal);
 
-  // Redan sparat näringsintag idag
+  // Dagens totala intag från Meals
   const [currentNutrition, setCurrentNutrition] = useState<NutritionLogInput>({
     calories: 0,
     protein: 0,
@@ -45,23 +43,45 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
     fat: 0,
   });
 
-  // Nytt intag som användaren skriver in
-  const [nutritionData, setNutritionData] = useState<NutritionLogInput>({
-    calories: 0,
-    protein: 0,
-    carbs: 0,
-    fat: 0,
-  });
-
+  // Används för att uppdatera dagens meals
   const [mealRefreshKey, setMealRefreshKey] = useState(0);
 
   function refreshMeals() {
     setMealRefreshKey((current) => current + 1);
   }
 
-  // Historik
-  const [history, setHistory] = useState<CalorieLog[]>([]);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  // Hämta dagens nutrition från Meals
+  useEffect(() => {
+    async function loadCurrentNutrition() {
+      try {
+        const result = await mealService.getTodayMeals(userToken);
+
+        console.log('Today meals result:', result);
+
+        if (!result.success || !result.data) {
+          setCurrentNutrition({
+            calories: 0,
+            protein: 0,
+            carbs: 0,
+            fat: 0,
+          });
+
+          return;
+        }
+
+        setCurrentNutrition({
+          calories: result.data.totals.calories,
+          protein: result.data.totals.protein,
+          carbs: result.data.totals.carbs,
+          fat: result.data.totals.fat,
+        });
+      } catch (error) {
+        console.error('Kunde inte hämta dagens näringsintag:', error);
+      }
+    }
+
+    void loadCurrentNutrition();
+  }, [userToken, mealRefreshKey]);
 
   const stats = getCalorieGoalStats(calorieStats);
 
@@ -73,12 +93,12 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
         ? calorieStats.muscleGainCalories
         : calorieStats.maintenanceCalories);
 
-  // Totalt idag inklusive det användaren håller på att lägga till
+  // Dagens totalsumma kommer ENDAST från Meals
   const totalNutritionToday = {
-    calories: currentNutrition.calories + nutritionData.calories,
-    protein: currentNutrition.protein + nutritionData.protein,
-    carbs: currentNutrition.carbs + nutritionData.carbs,
-    fat: currentNutrition.fat + nutritionData.fat,
+    calories: currentNutrition.calories,
+    protein: currentNutrition.protein,
+    carbs: currentNutrition.carbs,
+    fat: currentNutrition.fat,
   };
 
   const progressPercentage = selectedCalories > 0 ? Math.min(Math.round((totalNutritionToday.calories / selectedCalories) * 100), 100) : 0;
@@ -91,51 +111,6 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
     MUSCLE_GAIN: 'Gå upp i vikt',
   };
 
-  useEffect(() => {
-    void loadHistory();
-  }, [userToken]);
-
-  async function loadHistory(): Promise<void> {
-    try {
-      setIsLoadingHistory(true);
-
-      const result = await CalorieService.getHistory(userToken);
-
-      if (result.success && result.data) {
-        setHistory(result.data);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error('Kunde inte hämta historik');
-    } finally {
-      setIsLoadingHistory(false);
-    }
-  }
-
-  useEffect(() => {
-    async function loadCurrentNutrition() {
-      try {
-        const result = await CalorieService.getTodaysNuitration(userToken);
-
-        if (!result.success || !result.data) {
-          return;
-        }
-
-        // Spara dagens redan loggade totalsumma
-        setCurrentNutrition({
-          calories: result.data.calories,
-          protein: result.data.protein,
-          carbs: result.data.carbs,
-          fat: result.data.fat,
-        });
-      } catch (error) {
-        console.error('Kunde inte hämta dagens näringsintag:', error);
-      }
-    }
-
-    void loadCurrentNutrition();
-  }, [userToken]);
-
   async function handleGoalChange(goal: CalorieGoal) {
     const goalCalories =
       goal === 'WEIGHT_LOSS' ? calorieStats.weightLossCalories : goal === 'MUSCLE_GAIN' ? calorieStats.muscleGainCalories : calorieStats.maintenanceCalories;
@@ -146,7 +121,7 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
       goal,
     });
 
-    const newNutritionGoal = {
+    const newNutritionGoal: NutritionGoal = {
       calorieGoal: goal,
       calories: nutrition.calories ?? 0,
       protein: nutrition.protein ?? 0,
@@ -155,7 +130,6 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
     };
 
     const response = await CalorieService.updateCalorieGoal(newNutritionGoal, userToken);
-
     if (!response.success) {
       toast.error('Kunde inte spara ditt näringsmål');
       return;
@@ -164,58 +138,7 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
     setSelectedGoal(goal);
     setNutritionGoal(newNutritionGoal);
 
-    // Collapsa målsektionen
-    setIsGoalSelectorOpen(false);
-
     toast.success('Näringsmål uppdaterat!');
-  }
-
-  function handleNutritionChange(field: 'calories' | 'protein' | 'carbs' | 'fat', value: number) {
-    setNutritionData((previous) => ({
-      ...previous,
-      [field]: value,
-    }));
-  }
-
-  async function handleSaveNutrition() {
-    try {
-      setIsSaving(true);
-
-      // Skickar endast det nya intaget
-      const result = await CalorieService.saveNutritionLog(nutritionData, userToken);
-
-      if (!result.success || !result.data) {
-        toast.error('Kunde inte spara dagens näringsintag');
-        return;
-      }
-
-      // Backend returnerar nya totalsumman efter increment
-      setCurrentNutrition({
-        calories: result.data.calories,
-        protein: result.data.protein,
-        carbs: result.data.carbs,
-        fat: result.data.fat,
-      });
-
-      // Nollställ nytt intag
-      setNutritionData({
-        calories: 0,
-        protein: 0,
-        carbs: 0,
-        fat: 0,
-      });
-
-      // Uppdatera historiken
-      await loadHistory();
-
-      toast.success('Dagens näringsintag sparades!');
-    } catch (error) {
-      console.error('Kunde inte spara näringsintag:', error);
-
-      toast.error('Något gick fel när intaget skulle sparas');
-    } finally {
-      setIsSaving(false);
-    }
   }
 
   return (
@@ -331,11 +254,13 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
 
                 <span className="ml-2 text-lg font-normal text-slate-400">kcal</span>
               </h2>
+
               <p className="mt-3 text-sm text-slate-400">Aktivt mål: {goalLabels[selectedGoal]}</p>
             </div>
 
             <div className="rounded-xl border border-white/10 bg-black/20 px-5 py-4 text-right">
               <p className="text-xs text-slate-400">Dagens mål</p>
+
               <p className="mt-1 text-xl font-bold text-blue-400">{Math.round(selectedCalories).toLocaleString('sv-SE')} kcal</p>
             </div>
           </div>
@@ -343,6 +268,7 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
           <div className="mt-6">
             <div className="mb-2 flex justify-between text-sm">
               <span className="text-slate-400">Dagens framsteg</span>
+
               <span className="font-semibold">{progressPercentage}%</span>
             </div>
 
@@ -360,93 +286,17 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
             {totalNutritionToday.calories >= selectedCalories ? (
               <>
                 <p className="font-semibold text-green-400">🎉 Du har uppnått ditt kalorimål!</p>
+
                 <p className="mt-1 text-sm text-slate-400">Du har ätit {totalNutritionToday.calories.toLocaleString('sv-SE')} kcal idag.</p>
               </>
             ) : (
               <>
                 <p className="font-semibold text-blue-400">Du har {caloriesRemaining.toLocaleString('sv-SE')} kcal kvar</p>
+
                 <p className="mt-1 text-sm text-slate-400">Fortsätt logga ditt kaloriintag under dagen.</p>
               </>
             )}
           </div>
-        </section>
-
-        {/* Log today's nutrition */}
-        <section className="mt-6 rounded-2xl border border-white/10 bg-white/3 p-6 shadow-2xl">
-          <div className="mb-6">
-            <p className="text-sm font-medium text-blue-400">LOGGA INTAG</p>
-            <h2 className="mt-1 text-2xl font-bold">Dagens näringsintag</h2>
-            <p className="mt-2 text-sm text-slate-400">Lägg till det du har ätit. Värdet läggs till på dagens nuvarande intag.</p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <NutritionInput id="calories" unit="calories" label="calories" onChange={(value) => handleNutritionChange('calories', value)} />
-            <NutritionInput id="carbs" unit="carbs" label="carbs" onChange={(value) => handleNutritionChange('carbs', value)} />
-            <NutritionInput id="protein" unit="protein" label="protein" onChange={(value) => handleNutritionChange('protein', value)} />
-            <NutritionInput id="fat" unit="fat" label="fat" onChange={(value) => handleNutritionChange('fat', value)} />
-          </div>
-
-          <button
-            type="button"
-            disabled={isSaving}
-            onClick={handleSaveNutrition}
-            className="mt-6  rounded-xl bg-blue-500 px-5 py-3 font-semibold text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isSaving ? 'Sparar...' : 'Lägg till dagens intag'}
-          </button>
-        </section>
-
-        {/* History */}
-        <section className="mt-6 rounded-2xl border border-white/10 bg-white/3 p-6">
-          <div className="mb-6">
-            <p className="text-sm font-medium text-blue-400">HISTORIK</p>
-            <h2 className="mt-1 text-2xl font-bold">Näringsintag</h2>
-            <p className="mt-2 text-sm text-slate-400">Se ditt intag dag för dag.</p>
-          </div>
-
-          {isLoadingHistory ? (
-            <p className="text-sm text-slate-400">Hämtar historik...</p>
-          ) : history.length === 0 ? (
-            <p className="text-sm text-slate-400">Ingen historik ännu.</p>
-          ) : (
-            <div className="space-y-3">
-              {history.map((log) => (
-                <div key={log.id} className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p>{formatDate(new Date(log.loggedAt))}</p>
-
-                      <p className="mt-1 text-sm text-slate-500">Dagens näringsintag</p>
-                    </div>
-
-                    <div className="text-right">
-                      <p className="text-xl font-bold text-orange-400">{log.calories.toLocaleString('sv-SE')} kcal</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-3 gap-3 border-t border-white/10 pt-4 text-sm">
-                    <div>
-                      <p className="text-slate-500">Protein</p>
-
-                      <p className="font-semibold">{log.protein} g</p>
-                    </div>
-
-                    <div>
-                      <p className="text-slate-500">Kolhydrater</p>
-
-                      <p className="font-semibold">{log.carbs} g</p>
-                    </div>
-
-                    <div>
-                      <p className="text-slate-500">Fett</p>
-
-                      <p className="font-semibold">{log.fat} g</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </section>
 
         {/* BMR */}
@@ -496,8 +346,6 @@ export default function Calculator({ user, calorieStats, userToken, initialNutri
           </div>
         </section>
       </div>
-
-      <TodayMeals userToken={userToken} />
     </main>
   );
 }

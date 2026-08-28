@@ -10,6 +10,7 @@ import FormStyles from '@/components/forms/form.module.css';
 import { AddFoodDto, addFoodSchema } from '@/schemas/food-schemas';
 import Button from '@/components/button/button';
 
+const foodService = new FoodsService();
 export default function CreateFoodForm() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
@@ -52,7 +53,7 @@ export default function CreateFoodForm() {
     // Rensa gamla fel
     setErrors({});
     try {
-      const response = await FoodsService.create(formData);
+      const response = await foodService.create(formData);
       if (!response.success) {
         toast.error('Något gick fel, försök igen');
       }

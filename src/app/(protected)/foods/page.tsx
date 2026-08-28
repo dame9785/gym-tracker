@@ -2,8 +2,9 @@ import FoodsService from '@/services/food-service';
 import FoodList from '@/components/foods/food-list';
 import Link from 'next/link';
 
+const foodService = new FoodsService();
 export default async function FoodPage() {
-  const response = await FoodsService.getAllFoods();
+  const response = await foodService.getAllFoods();
 
   if (!response.success) {
     throw new Error(response.message ?? 'Failed to fetch foods');
