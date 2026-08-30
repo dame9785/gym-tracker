@@ -53,7 +53,17 @@ export default function MealCalendar({ selectedDate }: MealCalendarProps) {
   });
 
   return (
-    <section className="rounded-xl border border-slate-700 bg-slate-900 p-5">
+    <section
+      className="group relative overflow-hidden
+        rounded-2xl border border-zinc-800
+        bg-linear-to-br from-zinc-900 to-zinc-950
+        p-6
+        transition-all duration-300
+        hover:-translate-y-1
+        hover:border-orange-500/40
+        hover:shadow-xl
+        hover:shadow-orange-500/5"
+    >
       {/* Månad */}
       <h2 className="mb-6 text-center text-lg font-semibold capitalize text-white">
         {currentMonth.toLocaleDateString('sv-SE', {

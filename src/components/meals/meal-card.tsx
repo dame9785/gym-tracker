@@ -9,22 +9,30 @@ export default function MealCard({ meal }: MealCardProps) {
   const totalCalories = meal.items.reduce((total, item) => total + item.calories, 0);
 
   return (
-    <article className="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2">
+    <article
+      className="group relative overflow-hidden
+        rounded-2xl border border-zinc-800
+        bg-linear-to-br from-zinc-900 to-zinc-950
+        p-6
+        transition-all duration-300
+        hover:-translate-y-1
+        hover:border-orange-500/40
+        hover:shadow-xl
+        hover:shadow-orange-500/5"
+    >
       {/* Header */}
       <header className="flex items-center justify-between border-b border-slate-700 pb-2">
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-white">
+          <h2 className="mt-1 block text-lg font-bold text-white">
             {meal.mealType.charAt(0)}
             {meal.mealType.slice(1).toLowerCase()}
           </h2>
-
           <span className="text-xs text-slate-400">{meal.items.length} foods</span>
         </div>
 
         <div className="text-right">
-          <strong className="text-sm font-bold text-orange-400">{totalCalories.toFixed(0)}</strong>
-
-          <span className="ml-1 text-[10px] text-slate-400">kcal</span>
+          <strong className="mt-1 block text-lg font-bold">{totalCalories.toFixed(0)}</strong>
+          <span className=" mt-1 block text-sm font-bold">kcal</span>
         </div>
       </header>
 
