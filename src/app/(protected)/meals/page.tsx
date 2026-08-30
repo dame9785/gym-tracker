@@ -61,6 +61,7 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
   }
 
   const { totals, meals, goal } = response.data;
+  console.log(meals);
 
   const displayDate = selectedDate.toLocaleDateString('sv-SE', {
     weekday: 'long',

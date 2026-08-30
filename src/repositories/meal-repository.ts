@@ -23,7 +23,7 @@ export class MealRepository {
 
     return prisma.meal.findFirst({
       where: {
-        id: 1,
+        id: userId,
         mealType,
         loggedAt: {
           gte: startOfDay,
@@ -66,7 +66,7 @@ export class MealRepository {
 
     return prisma.meal.findMany({
       where: {
-        userId: 1,
+        userId: userId,
         loggedAt: {
           gte: startOfDay,
           lte: endOfDay,
@@ -96,7 +96,7 @@ export class MealRepository {
 
     return prisma.meal.findMany({
       where: {
-        userId: 1,
+        userId: userId,
         loggedAt: {
           gte: startOfDay,
           lte: endOfDay,

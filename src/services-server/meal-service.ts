@@ -2,11 +2,10 @@ import { MealRepository } from '@/repositories/meal-repository';
 import { FoodRepository } from '@/repositories/food-repository';
 import { AddMealItemDto } from '@/schemas/meal-schemas';
 import { MealType } from '@prisma/client';
-import { ApiErrorResponse, ApiResponse, ApiSuccessResponse } from '@/types/api-types';
+import { ApiResponse, ApiSuccessResponse } from '@/types/api-types';
 import { TodayMealsApiResponse } from '@/types/meal-types';
 import MealMapper from '@/mapping/meals-mapping';
 import GoalService from '@/services-server/goal-service';
-import { success } from 'zod';
 
 const mealRepository = new MealRepository();
 const foodRepository = new FoodRepository();
@@ -61,7 +60,7 @@ export default class MealService {
   }
 
   async getMealsByDate(userId: number, date: string): Promise<ApiResponse<TodayMealsApiResponse>> {
-    const meals = await mealRepository.getMealsByDate(1, date);
+    const meals = await mealRepository.getMealsByDate(userId, date);
 
     const goal = await goalService.getUserGoal(userId);
 
@@ -132,7 +131,7 @@ export default class MealService {
   }
   async deleteMeal(id: number) {
     try {
-      const result = await mealRepository.deleteMeal(id);
+      await mealRepository.deleteMeal(id);
       return {
         success: true,
         message: 'Måltid borttagen',
