@@ -5,7 +5,8 @@ export const updateWorkoutExericeSchema = z.object({
   sets: z.number(),
   reps: z.number(),
   weight: z.number(),
-  note: z.string().trim().min(1, 'Anteckning måste anges.'),
+  seconds: z.number(),
+  note: z.string().trim(),
 });
 
 export const updateWorkoutSchema = z.object({

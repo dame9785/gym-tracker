@@ -68,7 +68,6 @@ export default function WorkoutExerciseCard({ index, exercise, exercises, onUpda
           <input
             id={`reps-${index}`}
             type="number"
-            min={1}
             className={FormStyles.formInput}
             value={exercise.reps}
             onChange={(e) => onUpdate(index, 'reps', Number(e.target.value))}
@@ -88,6 +87,21 @@ export default function WorkoutExerciseCard({ index, exercise, exercises, onUpda
             className={FormStyles.formInput}
             value={exercise.weight ?? ''}
             onChange={(e) => onUpdate(index, 'weight', Number(e.target.value))}
+          />
+        </div>
+        <div className={FormStyles.formGroup}>
+          <label htmlFor={`seconds-${index}`} className={FormStyles.formLabel}>
+            Seconds
+          </label>
+
+          <input
+            id={`seconds-${index}`}
+            type="number"
+            min={0}
+            step="0.5"
+            className={FormStyles.formInput}
+            value={exercise.seconds ?? ''}
+            onChange={(e) => onUpdate(index, 'seconds', Number(e.target.value))}
           />
         </div>
       </div>

@@ -58,12 +58,13 @@ export default class MealService {
     }
   }
 
-  async addMeal(formData: AddMealDto): Promise<ApiResponse<unknown>> {
+  async addMeal(formData: AddMealDto, userToken: string): Promise<ApiResponse<unknown>> {
     try {
       const response = await fetch(`${API_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Cookie: `token=${userToken}`,
         },
         body: JSON.stringify(formData),
       });

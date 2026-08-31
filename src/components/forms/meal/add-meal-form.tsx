@@ -16,11 +16,11 @@ type Food = {
 
 type AddMealFormProps = {
   foods: Food[];
+  userToken: string;
 };
 
 const mealService = new MealService();
-
-export default function AddMealForm({ foods }: AddMealFormProps) {
+export default function AddMealForm({ foods, userToken }: AddMealFormProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const isSavingRef = useRef(false);
@@ -55,7 +55,7 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
     isSavingRef.current = true;
     setIsSaving(true);
     try {
-      const response = await mealService.addMeal(formData);
+      const response = await mealService.addMeal(formData, userToken);
       if (!response.success) {
         toast.error(response.message ?? 'Something went wrong, try again');
         return;

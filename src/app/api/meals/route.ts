@@ -13,8 +13,11 @@ import { getCurrentUser } from '@/utils/user-by-token';
 const mealService = new MealService();
 
 export async function POST(request: Request) {
-  // 1. Hämta inloggad användare
-  const userId = 1;
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorizedResponse();
+  }
 
   try {
     // 2. Hämta data från request
@@ -28,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     // 4. Lägg till maten i måltiden
-    const result = await mealService.addFoodToMeal(userId, validation.data);
+    const result = await mealService.addFoodToMeal(user.userId, validation.data);
 
     // 5. Returnera resultat
     return apiResponse(

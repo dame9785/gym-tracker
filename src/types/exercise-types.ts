@@ -33,6 +33,7 @@ export interface RegisterWorkoutExerciseDto {
   reps: number;
   weight: number | null;
   note: string;
+  seconds: number;
 }
 
 export interface WorkoutExerciseViewModel {

@@ -22,8 +22,7 @@ import type { ExerciseViewModel, RegisterWorkoutExerciseDto } from '@/types/exer
 
 //Toast alert sonner
 import { toast } from 'sonner';
-import { AddWorkoutDto, registerWorkoutSchema } from '@/schemas/workout-schemas';
-import { ErrorsHelper } from '@/helpers/error-helper';
+import { registerWorkoutSchema } from '@/schemas/workout-schemas';
 
 type Props = {
   exericses: ExerciseViewModel[];
@@ -32,7 +31,7 @@ type Props = {
 
 export default function AddWorkoutForm({ exericses, userToken }: Props) {
   const router = useRouter();
-  const [errors, setErrors] = useState<Partial<Record<keyof AddWorkoutDto, string>>>({});
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [formData, setFormData] = useState<RegisterWorkoutDto>({
     name: '',
     description: '',
@@ -42,9 +41,10 @@ export default function AddWorkoutForm({ exericses, userToken }: Props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const validation = registerWorkoutSchema.safeParse(formData);
-    if (!validation.success) {
-      setErrors(ErrorsHelper.getFormErrors<AddWorkoutDto>(validation.error.issues));
+    const validate = registerWorkoutSchema.safeParse(formData);
+    console.log(validate);
+    if (!validate.success) {
+      setErrors(validate.error.flatten().fieldErrors);
       return;
     }
 
@@ -56,6 +56,7 @@ export default function AddWorkoutForm({ exericses, userToken }: Props) {
 
     try {
       const response = await WorkoutService.create(formData, userToken);
+      console.log(response);
       if (!response.success) {
         toast.error(response.message);
         return;
@@ -81,6 +82,7 @@ export default function AddWorkoutForm({ exericses, userToken }: Props) {
           reps: 0,
           weight: 0,
           note: '',
+          seconds: 0,
         },
       ],
     }));
@@ -135,7 +137,11 @@ export default function AddWorkoutForm({ exericses, userToken }: Props) {
               }))
             }
           />
-          {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
+          {errors.name?.[0] && (
+            <p id="name-error" className="text-red-500" role="alert">
+              {errors.name[0]}
+            </p>
+          )}
         </div>
 
         {/* Beskrivning */}
@@ -157,7 +163,11 @@ export default function AddWorkoutForm({ exericses, userToken }: Props) {
               }))
             }
           />
-          {errors.description && <p className={FormStyles.fieldErrorMessage}>{errors.description}</p>}
+          {errors.description?.[0] && (
+            <p id="description-error" className="text-red-500" role="alert">
+              {errors.description[0]}
+            </p>
+          )}
         </div>
 
         {/* Övningar */}

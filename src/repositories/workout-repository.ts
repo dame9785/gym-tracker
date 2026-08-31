@@ -37,6 +37,7 @@ export class WorkoutRepository {
             reps: exercise.reps,
             weight: exercise.weight,
             note: exercise.note,
+            seconds: exercise.seconds,
             order,
           },
         });

@@ -20,6 +20,7 @@ export default async function WorkoutSessionPage({ params }: PageProps) {
     redirect('/account/login');
   }
   const response = await workoutSessionService.getById(Number(id));
+  console.log(response);
   if (!response.success || !response.data) {
     return (
       <main>
