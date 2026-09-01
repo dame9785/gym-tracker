@@ -8,7 +8,7 @@ import FormStyles from '@/components/forms/form.module.css';
 import { addFoodSchema, UpdateFoodDto } from '@/schemas/food-schemas';
 import Button from '@/components/button/button';
 
-import { createFoodAction, updateFoodAction } from '@/actions/food-actions';
+import { updateFoodAction } from '@/actions/food-actions';
 import { FoodViewModel } from '@/types/food-type';
 
 type Props = {

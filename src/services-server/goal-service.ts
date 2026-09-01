@@ -1,13 +1,12 @@
 import { GoalRepository } from '@/repositories/goal-repository';
-import { ApiErrorResponse, ApiResponse, ApiSuccessResponse } from '@/types/api-types';
-import { GoalApiResponse } from '@/types/goal-types';
+import { ErrorResponse, ApiResponse, SuccessResponse } from '@/types/api-types';
 import { GoalTypeMapper } from '@/mapping/goal-type-mapping';
-import { GoalViewModel } from '@/types/goal-types';
+import { GoalTypeViewModel, GoalViewModel } from '@/types/goal-types';
 
 const goalRepository = new GoalRepository();
 
-export default class GoalTypesService {
-  async getAllGoals(): Promise<ApiResponse<GoalApiResponse>> {
+export class GoalTypesService {
+  async getAllGoals(): Promise<ApiResponse<GoalTypeViewModel[]>> {
     try {
       const goalTypes = await goalRepository.getAllGoals();
       const viewModel = goalTypes.map((goalType) => GoalTypeMapper.goalTypeDbToViewModel(goalType));
@@ -15,13 +14,14 @@ export default class GoalTypesService {
       return {
         success: true,
         data: viewModel,
-      } satisfies ApiSuccessResponse<GoalApiResponse>;
+      } satisfies SuccessResponse<GoalTypeViewModel[]>;
     } catch (error) {
       console.error(error);
+
       return {
         success: false,
         message: 'Server error',
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
   }
   async getUserGoal(userId: number): Promise<GoalViewModel | null> {

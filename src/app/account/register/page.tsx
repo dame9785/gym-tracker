@@ -1,14 +1,16 @@
 /* Services */
-import GoalTypesService from '@/services/goal-service';
+import { GoalTypesService } from '@/services-server/goal-service';
 
 /* Components */
 import RegisterForm from '@/components/forms/user/register-user-form';
+import { redirect } from 'next/navigation';
 
+const goalTypeService = new GoalTypesService();
 export default async function Register() {
   /* Fetch all goal types */
-  const response = await GoalTypesService.getAll();
-  if (!response.success) {
-    throw new Error('Något gick fel');
+  const response = await goalTypeService.getAllGoals();
+  if (!response.success || response.data === undefined) {
+    redirect('/account/login');
   }
 
   //Goals Data

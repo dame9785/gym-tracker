@@ -17,7 +17,7 @@ const goalDateSchema = z.iso.date('Ogiltigt datum.').refine((date) => {
   return new Date(date) >= tomorrow;
 }, 'Måldatum måste ligga i framtiden.');
 
-export const registerSchema = z.object({
+export const registerUserSchema = z.object({
   username: z
     .string()
     .trim()
@@ -60,7 +60,7 @@ export const registerSchema = z.object({
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
 });
 
-export const updateSchema = registerSchema.omit({
+export const updateUserSchema = registerUserSchema.omit({
   password: true,
 });
 
@@ -70,6 +70,6 @@ export const loginSchema = z.object({
 });
 
 /*User Dtos*/
-export type RegisterUserDto = z.infer<typeof registerSchema>;
+export type RegisterUserDto = z.infer<typeof registerUserSchema>;
 export type LoginDto = z.infer<typeof loginSchema>;
-export type UpdateUserDto = z.infer<typeof updateSchema>;
+export type UpdateUserDto = z.infer<typeof updateUserSchema>;

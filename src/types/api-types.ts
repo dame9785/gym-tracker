@@ -2,23 +2,29 @@ import { GoalTypeViewModel } from './goal-types';
 import { UserViewModel } from './user-types';
 import { LogItemViewModel } from './log-weight-types';
 import { ExerciseViewModel } from './exercise-types';
-import { WeeklyWorkoutViewModel, WorkoutSchedelueViewModel, WorkoutSessionFinishViewModel, WorkoutSessionViewModel, WorkoutViewModel } from './workout-types';
+import {
+  WeeklyWorkoutViewModel,
+  WorkoutSchedelueViewModel,
+  WorkoutSessionFinishViewModel,
+  WorkoutSessionViewModel,
+  WorkoutViewModel,
+} from './workout-types';
 import { WeeklySummaryViewModel } from './dashboard-types';
 import { HistoryViewModel } from './history-types';
 
-export type ApiSuccessResponse<T = undefined> = {
+export type SuccessResponse<T = undefined> = {
   success: true;
   message?: string;
   data?: T;
 };
 
-export interface ApiErrorResponse {
+export interface ErrorResponse {
   success: false;
   message: string;
   errors?: Record<string, string[]>;
 }
 
-export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
+export type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
 
 // Login
 export interface LoginResponse {

@@ -10,7 +10,7 @@ export class HistoryService {
   private historyRepository = new HistoryRepository();
   private workoutRepository = new WorkoutRepository();
 
-  async getHistory(userId: number, page: number): Promise<ApiResponse<HistoryApiResponse>> {
+  async getHistory(page: number, userId: number): Promise<ApiResponse<HistoryApiResponse>> {
     try {
       const totalWorkouts = await this.historyRepository.getAllWorkoutSessionsCount(userId);
 

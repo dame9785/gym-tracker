@@ -6,6 +6,8 @@ import { requireAuth } from '@/lib/auth';
 import Link from 'next/link';
 import ErrorMessage from '@/components/ui/error-message';
 
+import { formatDate, addDays } from '@/helpers/date-helper';
+
 const mealService = new MealService();
 
 type MealsPageProps = {
@@ -14,16 +16,8 @@ type MealsPageProps = {
   }>;
 };
 
-function formatDate(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
-}
-
 export default async function MealsPage({ searchParams }: MealsPageProps) {
-  //Check if user has token or exiperied token.
+  // Kontrollera att användaren är inloggad
   const user = await requireAuth();
 
   const { date } = await searchParams;
@@ -31,23 +25,16 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
   // Om inget datum finns i URL:en använder vi idag
   const selectedDate = date ? new Date(`${date}T12:00:00`) : new Date();
 
+  // Formaterat valt datum
   const formattedDate = formatDate(selectedDate);
 
-  // Föregående dag
-  const previousDate = new Date(selectedDate);
-  previousDate.setDate(previousDate.getDate() - 1);
-
-  const previousDateString = formatDate(previousDate);
-
-  // Nästa dag
-  const nextDate = new Date(selectedDate);
-  nextDate.setDate(nextDate.getDate() + 1);
-
-  const nextDateString = formatDate(nextDate);
+  const previousDateString = formatDate(addDays(selectedDate, -1));
+  const nextDateString = formatDate(addDays(selectedDate, 1));
 
   // Hämta meals för valt datum
   const response = await mealService.getMealsByDate(formattedDate, user.userId);
 
+  // Hantera fel
   if (!response.success || !response.data) {
     return (
       <main>
@@ -57,8 +44,8 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
   }
 
   const { totals, meals, goal } = response.data;
-  console.log(meals);
 
+  // Datum som visas för användaren
   const displayDate = selectedDate.toLocaleDateString('sv-SE', {
     weekday: 'long',
     day: 'numeric',
@@ -66,6 +53,7 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
     year: 'numeric',
   });
 
+  // Kontrollera om valt datum är idag
   const todayString = formatDate(new Date());
 
   const isToday = formattedDate === todayString;
@@ -76,7 +64,9 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">Daily overview</p>
+
           <h1 className="mt-1 text-2xl font-bold text-white">Nutrition</h1>
+
           <p className="mt-1 text-sm text-slate-400">Track your meals and daily nutrition.</p>
         </div>
 
@@ -86,20 +76,23 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
       </header>
 
       {/* Date navigation */}
-      <section className="mt-6 p-6  flex items-center justify-between rounded-2xl  bg-linear-to-br from-zinc-900 to-zinc-950 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5">
+      <section className="mt-6 flex items-center justify-between rounded-2xl bg-linear-to-br from-zinc-900 to-zinc-950 p-6 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5">
         <Link
           href={`/meals?date=${previousDateString}`}
-          className="rounded-lg px-3 py-2  text-lg font-bold transition hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5"
+          className="rounded-lg px-3 py-2 text-lg font-bold transition hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5"
         >
           ← Previous
         </Link>
+
         <div className="text-center">
-          <p className=" text-lg font-bold ">{displayDate}</p>
+          <p className="text-lg font-bold">{displayDate}</p>
+
           {isToday && <span className="text-xs text-orange-400">Idag</span>}
         </div>
+
         <Link
           href={`/meals?date=${nextDateString}`}
-          className="rounded-lg px-3 py-2  text-lg font-bold transition hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5"
+          className="rounded-lg px-3 py-2 text-lg font-bold transition hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5"
         >
           Next →
         </Link>
@@ -118,80 +111,95 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
       <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {/* Calories */}
         <div
-          className="group relative overflow-hidden
-        rounded-2xl border border-zinc-800
-        bg-linear-to-br from-zinc-900 to-zinc-950
-        p-6
-        transition-all duration-300
-        hover:-translate-y-1
-        hover:border-orange-500/40
-        hover:shadow-xl
-        hover:shadow-orange-500/5 "
+          className="
+            group relative overflow-hidden
+            rounded-2xl border border-zinc-800
+            bg-linear-to-br from-zinc-900 to-zinc-950
+            p-6
+            transition-all duration-300
+            hover:-translate-y-1
+            hover:border-orange-500/40
+            hover:shadow-xl
+            hover:shadow-orange-500/5
+          "
         >
           <span className="text-xs text-slate-400">Calories</span>
+
           <strong className="mt-1 block text-lg font-bold text-white">
             {totals.calories.toFixed(0)}
             <span className="mx-1 text-sm text-slate-500">/</span>
             {goal.calories}
           </strong>
+
           <span className="text-[11px] text-slate-500">kcal</span>
         </div>
 
         {/* Protein */}
         <div
-          className="group relative overflow-hidden
-        rounded-2xl border border-zinc-800
-        bg-linear-to-br from-zinc-900 to-zinc-950
-        p-6
-        transition-all duration-300
-        hover:-translate-y-1
-        hover:border-orange-500/40
-        hover:shadow-xl
-        hover:shadow-orange-500/5"
+          className="
+            group relative overflow-hidden
+            rounded-2xl border border-zinc-800
+            bg-linear-to-br from-zinc-900 to-zinc-950
+            p-6
+            transition-all duration-300
+            hover:-translate-y-1
+            hover:border-orange-500/40
+            hover:shadow-xl
+            hover:shadow-orange-500/5
+          "
         >
           <span className="text-xs text-slate-400">Protein</span>
+
           <strong className="mt-1 block text-lg font-bold text-white">
             {totals.protein.toFixed(1)}
             <span className="mx-1 text-sm text-slate-500">/</span>
             {goal.protein}
           </strong>
+
           <span className="text-[11px] text-slate-500">grams</span>
         </div>
 
         {/* Carbs */}
         <div
-          className="  group relative overflow-hidden
-        rounded-2xl border border-zinc-800
-        bg-linear-to-br from-zinc-900 to-zinc-950
-        p-6
-        transition-all duration-300
-        hover:-translate-y-1
-        hover:border-orange-500/40
-        hover:shadow-xl
-        hover:shadow-orange-500/5"
+          className="
+            group relative overflow-hidden
+            rounded-2xl border border-zinc-800
+            bg-linear-to-br from-zinc-900 to-zinc-950
+            p-6
+            transition-all duration-300
+            hover:-translate-y-1
+            hover:border-orange-500/40
+            hover:shadow-xl
+            hover:shadow-orange-500/5
+          "
         >
           <span className="text-xs text-slate-400">Carbs</span>
+
           <strong className="mt-1 block text-lg font-bold text-white">
             {totals.carbs.toFixed(1)}
             <span className="mx-1 text-sm text-slate-500">/</span>
             {goal.carbs}
           </strong>
+
           <span className="text-[11px] text-slate-500">grams</span>
         </div>
 
         {/* Fat */}
         <div
-          className="group relative overflow-hidden
-        rounded-2xl border border-zinc-800
-        bg-linear-to-br from-zinc-900 to-zinc-950
-        p-6
-        transition-all duration-300
-        hover:-translate-y-1
-        hover:border-orange-500/40
-        hover:shadow-xl
-        hover:shadow-orange-500/5"
+          className="
+            group relative overflow-hidden
+            rounded-2xl border border-zinc-800
+            bg-linear-to-br from-zinc-900 to-zinc-950
+            p-6
+            transition-all duration-300
+            hover:-translate-y-1
+            hover:border-orange-500/40
+            hover:shadow-xl
+            hover:shadow-orange-500/5
+          "
         >
           <span className="text-xs text-slate-400">Fat</span>
+
           <strong className="mt-1 block text-lg font-bold text-white">
             {totals.fat.toFixed(1)}
             <span className="mx-1 text-sm text-slate-500">/</span>
@@ -213,7 +221,9 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
               <h2 className="text-lg font-semibold text-white">{isToday ? 'Todays meals' : 'Meals'}</h2>
             </div>
 
-            <span className="rounded-md bg-slate-800 px-2 py-1 text-xs text-slate-400">{meals.length} meals</span>
+            <span className="rounded-md bg-slate-800 px-2 py-1 text-xs text-slate-400">
+              {meals.length} {meals.length === 1 ? 'meal' : 'meals'}
+            </span>
           </div>
 
           <MealList meals={meals} />

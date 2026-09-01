@@ -17,8 +17,25 @@ import { UserMapper } from '../mapping/user-mapping';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
 // Types
-import type { ApiErrorResponse, ApiResponse, ApiSuccessResponse, LoginResponse, RegisterResponse, UpdateUserResponse, UserResponse } from '@/types/api-types';
-import { loginSchema, registerSchema, updateSchema, type LoginDto, type RegisterUserDto, type UpdateUserDto } from '@/schemas/auth-schemas';
+import type {
+  ApiResponse,
+  ErrorResponse,
+  LoginResponse,
+  RegisterResponse,
+  SuccessResponse,
+  UpdateUserResponse,
+  UserResponse,
+} from '@/types/api-types';
+import {
+  loginSchema,
+  registerUserSchema,
+  updateUserSchema,
+  type LoginDto,
+  type RegisterUserDto,
+  type UpdateUserDto,
+} from '@/schemas/auth-schemas';
+import { errorResponse } from '@/utils/api-error';
+import { UserViewModel } from '@/types/user-types';
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -40,14 +57,14 @@ export class AuthService {
           success: false,
           message: 'Validerings fel',
           errors: errors,
-        } satisfies ApiErrorResponse;
+        } satisfies ErrorResponse;
       }
 
       if (!user) {
         return {
           success: false,
           message: 'Felaktig email eller lösenord.',
-        } satisfies ApiErrorResponse;
+        } satisfies ErrorResponse;
       }
 
       //Check if password match
@@ -56,12 +73,12 @@ export class AuthService {
         return {
           success: false,
           message: 'Felaktig email eller lösenord.',
-        } satisfies ApiErrorResponse;
+        } satisfies ErrorResponse;
       }
 
       //If errors existing
       if (Object.keys(errors).length > 0) {
-        const validationResult: ApiErrorResponse = {
+        const validationResult: ErrorResponse = {
           success: false,
           message: 'Kontrollera formuläret.',
           errors,
@@ -72,6 +89,7 @@ export class AuthService {
 
       //Generate token
       const token = generateToken(user.id);
+      console.log(token);
 
       return {
         success: true,
@@ -80,7 +98,7 @@ export class AuthService {
           token: token,
           userId: user.id,
         },
-      } satisfies ApiSuccessResponse<LoginResponse>;
+      } satisfies SuccessResponse<LoginResponse>;
     } catch (error) {
       console.error('AuthService.login failed:', error);
 
@@ -95,7 +113,10 @@ export class AuthService {
   async register(dto: RegisterUserDto): Promise<ApiResponse<RegisterResponse>> {
     const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
 
-    const [existingEmail, existingUsername] = await Promise.all([this.userRepository.emailExists(dto.email), this.userRepository.usernameExists(dto.username)]);
+    const [existingEmail, existingUsername] = await Promise.all([
+      this.userRepository.emailExists(dto.email),
+      this.userRepository.usernameExists(dto.username),
+    ]);
 
     if (existingEmail) {
       fieldErrors.email = 'E-postadressen används redan.';
@@ -110,11 +131,11 @@ export class AuthService {
         success: false,
         message: 'Användare eller e-postadress används redan.',
         errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
 
     //Validation
-    const validation = registerSchema.safeParse(dto);
+    const validation = registerUserSchema.safeParse(dto);
     if (!validation.success) {
       const fieldErrors = ErrorsHelper.getFormErrors<RegisterUserDto>(validation.error.issues);
       const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
@@ -123,7 +144,7 @@ export class AuthService {
         success: false,
         message: 'Felaktig email eller lösenord.',
         errors: errors,
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
 
     try {
@@ -138,7 +159,7 @@ export class AuthService {
           userId: user.id,
           token: generateToken(user.id),
         },
-      } satisfies ApiSuccessResponse<RegisterResponse>;
+      } satisfies SuccessResponse<RegisterResponse>;
     } catch (error) {
       console.error('AuthService.register failed:', error);
 
@@ -164,24 +185,38 @@ export class AuthService {
     const user = await this.userRepository.findById(id);
 
     if (!user) {
-      return { success: false, message: 'Gick inte hämta användaren' } satisfies ApiErrorResponse;
+      return { success: false, message: 'Gick inte hämta användaren' } satisfies ErrorResponse;
     }
 
     const userViewModel = UserMapper.userDbToViewModel(user);
     return {
       success: true,
       data: userViewModel,
-    } satisfies ApiSuccessResponse<UserResponse>;
+    } satisfies SuccessResponse<UserResponse>;
   }
 
   // Update User
-  async updateUser(dto: UpdateUserDto, userId: number): Promise<ApiResponse<UpdateUserResponse>> {
-    const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
+  // Update User
+  async updateUser(dto: UpdateUserDto, userId: number): Promise<ApiResponse<UserViewModel>> {
+    // Validation
+    const validation = updateUserSchema.safeParse(dto);
 
+    if (!validation.success) {
+      const errors = validation.error.flatten().fieldErrors;
+
+      return errorResponse('Validation failed', errors);
+    }
+
+    // Använd validerad data efter Zod-valideringen
+    const data = validation.data;
+
+    // Kontrollera om email eller username redan används
     const [existingEmail, existingUsername] = await Promise.all([
-      this.userRepository.emailExists(dto.email, userId),
-      this.userRepository.usernameExists(dto.username, userId),
+      this.userRepository.emailExists(data.email, userId),
+      this.userRepository.usernameExists(data.username, userId),
     ]);
+
+    const fieldErrors: Record<string, string> = {};
 
     if (existingEmail) {
       fieldErrors.email = 'E-postadressen är upptagen.';
@@ -191,51 +226,40 @@ export class AuthService {
       fieldErrors.username = 'Användarnamnet är upptaget.';
     }
 
-    if (existingUsername || existingEmail) {
+    if (existingEmail || existingUsername) {
       return {
         success: false,
         message: 'Användare eller e-postadress används redan.',
         errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
-      } satisfies ApiErrorResponse;
-    }
-
-    //Validation
-    const validation = updateSchema.safeParse(dto);
-    if (!validation.success) {
-      const fieldErrors = ErrorsHelper.getFormErrors<RegisterUserDto>(validation.error.issues);
-      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
-
-      return {
-        success: false,
-        message: 'Felaktig email eller lösenord.',
-        errors: errors,
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
 
     try {
-      const updateData = UserMapper.userDtoToDbModel(dto);
+      const updateData = UserMapper.userDtoToDbModel(data);
+
       await this.userRepository.update(userId, updateData);
+
       const updatedUser = await this.userRepository.findById(userId);
-      if (updatedUser == null) {
+
+      if (!updatedUser) {
         return {
           success: false,
-          message: 'Något gick fel',
-        } satisfies ApiErrorResponse;
+          message: 'Användaren kunde inte hittas.',
+        } satisfies ErrorResponse;
       }
 
       return {
         success: true,
-        message: 'Användaren registrerades.',
-        data: {
-          user: UserMapper.userDbToViewModel(updatedUser),
-        },
-      } satisfies ApiSuccessResponse<UpdateUserResponse>;
+        message: 'Användaren uppdaterades.',
+        data: UserMapper.userDbToViewModel(updatedUser),
+      } satisfies SuccessResponse<UpdateUserResponse>;
     } catch (error) {
       console.error('AuthService.updateUser failed:', error);
+
       return {
         success: false,
         message: 'Användaren kunde inte uppdateras.',
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
   }
 }

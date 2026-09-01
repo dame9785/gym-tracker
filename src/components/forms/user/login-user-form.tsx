@@ -15,13 +15,11 @@ import { FaEnvelope, FaLock, FaDumbbell } from 'react-icons/fa6';
 
 // CSS
 import styles from '@/components/forms/form.module.css';
-import buttonStyles from '@/components/button/button.module.css';
+
+import { loginUserAction } from '@/actions/user-actions';
 
 // Components
 import Button from '@/components/button/button';
-
-// Services
-import AuthService from '@/services/auth-service';
 
 // Toast
 import { toast } from 'sonner';
@@ -29,15 +27,11 @@ import { toast } from 'sonner';
 // Schemas
 import { loginSchema } from '@/schemas/auth-schemas';
 
-//Helpers
-import { ErrorsHelper } from '@/helpers/error-helper';
-
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Partial<Record<keyof LoginDto, string>>>({});
-
+  const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
   //Routing
   const router = useRouter();
 
@@ -53,32 +47,33 @@ export default function LoginForm() {
     const validation = loginSchema.safeParse(loginData);
 
     if (!validation.success) {
-      setErrors(ErrorsHelper.getFormErrors<LoginDto>(validation.error.issues));
+      setErrors(validation.error.flatten().fieldErrors);
       return;
     }
 
     // Start loading only after validation succeeds
-    setIsLoading(true);
+    setIsSaving(true);
     setErrors({});
 
     try {
-      const result = await AuthService.login(validation.data);
+      const response = await loginUserAction(validation.data);
 
-      if (!result.success) {
-        if (result.errors) {
-          setErrors(ErrorsHelper.getFormErrorsFromApi<LoginDto>(result.errors));
+      if (!response.success) {
+        if (response.errors) {
+          setErrors(response.errors);
         }
 
-        toast.error(result.message);
+        toast.error(response.message);
         return;
       }
 
-      toast.success('Inloggning lyckades');
-      router.replace('/dashboard');
+      toast.success(response.message);
+      router.push('/dashboard');
     } catch (error) {
-      toast.error('Ett oväntat fel inträffade vid inloggningen.');
+      console.error('Failed to create food:', error);
+      toast.error('Something went wrong. Please try again.');
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -112,10 +107,6 @@ export default function LoginForm() {
           value={email}
           onChange={(e) => {
             setEmail(e.target.value);
-            setErrors((prev) => ({
-              ...prev,
-              email: undefined,
-            }));
           }}
         />
         {errors.email && <p className={styles.fieldErrorMessage}>{errors.email}</p>}
@@ -140,10 +131,6 @@ export default function LoginForm() {
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
-            setErrors((prev) => ({
-              ...prev,
-              password: undefined,
-            }));
           }}
         />
         {errors.password && <p className={styles.fieldErrorMessage}>{errors.password}</p>}
@@ -151,8 +138,8 @@ export default function LoginForm() {
 
       {/* Login button */}
       <div className="grid grid-1">
-        <Button type="submit" variant="primary" disabled={isLoading}>
-          {isLoading ? 'Loggar in...' : 'Logga in'}
+        <Button type="submit" variant="primary" disabled={isSaving}>
+          {isSaving ? 'Creating account...' : 'Save'}
         </Button>
       </div>
 

@@ -1,26 +1,17 @@
 import { redirect } from 'next/navigation';
 
-import Sidebar from '@/components/sidebar/Sidebar';
 import { getTokenFromCookieStore } from '@/lib/auth';
-import AuthService from '@/services/auth-service';
-import { UserViewModel } from '@/types/user-types';
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const token = await getTokenFromCookieStore();
 
+  console.log(token);
   if (!token) {
     redirect('/account/login');
   }
 
-  const response = await AuthService.getCurrentUser(token);
-  if (!response.success || response.data == null) {
-    redirect('/account/login');
-  }
-
-  const user: UserViewModel = response.data;
   return (
     <div className="app-layout">
-      <Sidebar user={user} />
       <main>{children}</main>
     </div>
   );

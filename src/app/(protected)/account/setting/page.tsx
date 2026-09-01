@@ -1,33 +1,40 @@
 import UpdateUserForm from '@/components/forms/user/update-user-form';
-import UserService from '@/services/auth-service';
-import GoalTypesService from '@/services/goal-service';
-import { redirect } from 'next/navigation';
-import { getTokenFromCookieStore } from '@/lib/auth';
+import { AuthService } from '@/services-server/auth-service';
+import { GoalTypesService } from '@/services-server/goal-service';
 import ErrorMessage from '@/components/ui/error-message';
+import { requireAuth } from '@/lib/auth';
+
+const goalTypeService = new GoalTypesService();
+const authService = new AuthService();
 
 export default async function UserSettings() {
-  const token = await getTokenFromCookieStore();
-  if (!token) {
-    redirect('/account/login');
-  }
+  // Kontrollera att användaren är inloggad
+  const user = await requireAuth();
 
   /* Fetch all goal types & Current User*/
-  const [goalResponse, userResponse] = await Promise.all([GoalTypesService.getAll(), UserService.getCurrentUser(token)]);
+  const [goalResponse, userResponse] = await Promise.all([
+    goalTypeService.getAllGoals(),
+    authService.getUserById(user.userId),
+  ]);
+
   if (!goalResponse.success || !goalResponse.data || !userResponse.success || !userResponse.data) {
     return (
       <main>
-        <ErrorMessage title="Unable to load foods" message={goalResponse.message ?? 'Something went wrong while loading your foods.'} />
+        <ErrorMessage
+          title="Unable to load foods"
+          message={goalResponse.message ?? 'Something went wrong while loading your foods.'}
+        />
       </main>
     );
   }
 
   const goals = goalResponse.data;
-  const user = userResponse.data;
+  const currentUser = userResponse.data;
 
   return (
     <div className="container">
       <div className="form-wrapper m-[5em] flex items-center justify-center">
-        <UpdateUserForm user={user} goals={goals} />
+        <UpdateUserForm user={currentUser} goals={goals} />
       </div>
     </div>
   );

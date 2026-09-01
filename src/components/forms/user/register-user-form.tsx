@@ -31,27 +31,22 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-//Services
-import AuthService from '@/services/auth-service';
-
 //Types
-import { registerSchema, type RegisterUserDto } from '@/schemas/auth-schemas';
+import { registerUserSchema, type RegisterUserDto } from '@/schemas/auth-schemas';
 import type { GoalTypeViewModel } from '@/types/goal-types';
 import { Gender } from '@prisma/client';
 
-/*Helpers*/
-import { ErrorsHelper } from '@/helpers/error-helper';
+import { registerUserAction } from '@/actions/user-actions';
 
 type Props = {
   goals: GoalTypeViewModel[];
 };
 
 export default function RegisterForm({ goals }: Props) {
-  console.log(goals);
   const router = useRouter();
 
   /*States*/
-  const [errors, setErrors] = useState<Partial<Record<keyof RegisterUserDto, string>>>({});
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<RegisterUserDto>({
     email: '',
@@ -106,9 +101,9 @@ export default function RegisterForm({ goals }: Props) {
     e.preventDefault();
 
     /*zod validation*/
-    const validation = registerSchema.safeParse(formData);
-    if (!validation.success) {
-      setErrors(ErrorsHelper.getFormErrors<RegisterUserDto>(validation.error.issues));
+    const validate = registerUserSchema.safeParse(formData);
+    if (!validate.success) {
+      setErrors(validate.error.flatten().fieldErrors);
       return;
     }
 
@@ -118,18 +113,22 @@ export default function RegisterForm({ goals }: Props) {
     setErrors({});
 
     try {
-      const result = await AuthService.register(validation.data);
-      console.log(result);
-      if (!result.success) {
-        toast.error('Något gick fel, kontot kunde inte registreras.');
+      const response = await registerUserAction(validate.data);
+
+      if (!response.success) {
+        if (response.errors) {
+          setErrors(response.errors);
+        }
+
+        toast.error(response.message);
         return;
       }
 
-      toast.success('Användaren registrerades!');
-      router.push('/dashboard');
+      toast.success(response.message);
+      router.push('/account/settings');
     } catch (error) {
-      console.error('Register failed:', error);
-      toast.error('Något gick fel, kontot kunde inte skapas.');
+      console.error('Failed to create food:', error);
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -322,7 +321,13 @@ export default function RegisterForm({ goals }: Props) {
                 Kön
               </label>
             </div>
-            <select className={FormStyles.formSelect} id="gender" name="gender" value={formData.gender} onChange={handleChange}>
+            <select
+              className={FormStyles.formSelect}
+              id="gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+            >
               <option value="">Välj kön</option>
               <option value={Gender.MALE}>Man</option>
               <option value={Gender.FEMALE}>Kvinna</option>
@@ -358,7 +363,12 @@ export default function RegisterForm({ goals }: Props) {
                 Mål
               </label>
             </div>
-            <select className={FormStyles.formSelect} name="goalTypeId" value={formData.goalTypeId} onChange={handleChange}>
+            <select
+              className={FormStyles.formSelect}
+              name="goalTypeId"
+              value={formData.goalTypeId}
+              onChange={handleChange}
+            >
               <option value="">Välj mål</option>
 
               {goals.map((goal) => (
@@ -399,7 +409,14 @@ export default function RegisterForm({ goals }: Props) {
                 Måldatum
               </label>
             </div>
-            <input className={FormStyles.formInput} value={formData.goalDate} name="goalDate" type="date" id="goalDate" onChange={handleChange} />
+            <input
+              className={FormStyles.formInput}
+              value={formData.goalDate}
+              name="goalDate"
+              type="date"
+              id="goalDate"
+              onChange={handleChange}
+            />
             {errors.goalDate && <p className={FormStyles.fieldErrorMessage}>{errors.goalDate}</p>}
           </div>
         </div>

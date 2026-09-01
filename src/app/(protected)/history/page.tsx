@@ -1,10 +1,7 @@
-//FA-Icons
-import { History } from 'lucide-react';
-
 //Services
-import HistoryService from '@/services/history-service';
-import { getTokenFromCookieStore } from '@/lib/auth';
-import { notFound, redirect } from 'next/navigation';
+import { HistoryService } from '@/services-server/history-service';
+import { requireAuth } from '@/lib/auth';
+
 import HistoryTopStats from '@/components/history/history-top-stats';
 import HistoryMiddleStats from '@/components/history/history-middle-stats';
 import WorkoutSessions from '@/components/history/workout-sessions';
@@ -18,16 +15,16 @@ type Props = {
   }>;
 };
 
+const historyService = new HistoryService();
+
 export default async function HistoryPage({ searchParams }: Props) {
+  // Kontrollera att användaren är inloggad
+  const user = await requireAuth();
+
   const params = await searchParams;
   const page = Number(params.page) || 1;
 
-  const token = await getTokenFromCookieStore();
-  if (!token) {
-    redirect('/account/login');
-  }
-
-  const response = await HistoryService.getHistory(token, page);
+  const response = await historyService.getHistory(page, user.userId);
   if (!response.success || !response.data) {
     return (
       <main>

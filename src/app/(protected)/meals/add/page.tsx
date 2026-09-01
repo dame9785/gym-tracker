@@ -10,7 +10,6 @@ export default async function AddMealPage() {
   const user = await requireAuth();
 
   const response = await foodsService.getAll(user.userId);
-
   if (!response.success || !response.data) {
     return (
       <main>
