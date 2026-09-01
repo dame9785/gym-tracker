@@ -18,7 +18,6 @@ export default async function WorkoutSessionPage({ params }: PageProps) {
   const user = await requireAuth();
 
   const response = await workoutSessionService.getById(Number(id), user.userId);
-
   if (!response.success || !response.data) {
     return (
       <main>
