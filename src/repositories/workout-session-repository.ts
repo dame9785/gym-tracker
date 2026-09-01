@@ -65,10 +65,11 @@ export class WorkoutSessionRepository {
     });
   }
 
-  async getById(id: number) {
+  async getById(id: number, userId: number) {
     return await prisma.workoutSession.findFirst({
       where: {
         id,
+        userId,
       },
       include: {
         exercises: {

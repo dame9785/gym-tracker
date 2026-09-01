@@ -10,6 +10,7 @@ import {
   WorkoutSessionDetailApiResponse,
   WorkoutSessionUpdatedSetResponse,
 } from '@/types/api-types';
+import { ZodNumberFormat } from 'zod';
 
 export class WorkoutSessionService {
   private workoutSessionRepository = new WorkoutSessionRepository();
@@ -32,9 +33,9 @@ export class WorkoutSessionService {
     }
   }
 
-  async getById(id: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse>> {
+  async getById(id: number, userId: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse>> {
     try {
-      const workoutSession = await this.workoutSessionRepository.getById(id);
+      const workoutSession = await this.workoutSessionRepository.getById(id, userId);
       console.log(workoutSession);
       if (!workoutSession) {
         return {

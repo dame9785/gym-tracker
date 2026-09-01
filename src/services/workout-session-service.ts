@@ -14,38 +14,23 @@ import { errorResponse } from '@/utils/api-error';
 const API_URL = 'http://localhost:3000/api/workout-sessions';
 
 export default class WorkoutSessionService {
-  //GET: Session By Id
-  static async getById(id: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse>> {
-    try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: 'GET',
-      });
-
-      const result = (await response.json()) as ApiResponse<WorkoutSessionDetailApiResponse>;
-      return result;
-    } catch (error) {
-      return errorResponse('Gick inte hämta data');
-    }
-  }
-
   //POST: Create session
-  static async create(workoutId: number, userToken: string): Promise<ApiResponse<WorkoutSessionCreateResponse>> {
+  static async create(workoutId: number): Promise<ApiResponse<WorkoutSessionCreateResponse>> {
     try {
       const response = await fetch(`${API_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Cookie: `token=${userToken}`,
         },
-        body: JSON.stringify({
-          workoutId,
-        }),
+        credentials: 'include',
+        body: JSON.stringify({ workoutId }),
       });
 
       const result = (await response.json()) as ApiResponse<WorkoutSessionCreateResponse>;
+
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Gick inte att hämta data');
     }
   }
 
@@ -57,6 +42,7 @@ export default class WorkoutSessionService {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           actualReps,
           actualWeight,
@@ -64,9 +50,10 @@ export default class WorkoutSessionService {
       });
 
       const result = (await response.json()) as ApiResponse<WorkoutSessionUpdatedSetResponse>;
+
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      return errorResponse('Gick inte att hämta data');
     }
   }
 
@@ -75,6 +62,7 @@ export default class WorkoutSessionService {
     try {
       const response = await fetch(`${API_URL}/${sessionId}`, {
         method: 'PUT',
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -96,13 +84,14 @@ export default class WorkoutSessionService {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
       });
 
       const result = (await response.json()) as ApiResponse<UpdateWorkoutSessionResponse>;
+
       return result;
     } catch (error) {
-      console.log(error);
-      return errorResponse('Servern  kunde inte ansluta');
+      return errorResponse('Servern kunde inte ansluta');
     }
   }
 }
