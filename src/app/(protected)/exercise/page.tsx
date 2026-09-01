@@ -4,19 +4,17 @@ import Link from 'next/link';
 //Components
 import Button from '@/components/button/button';
 import ExerciseTable from '@/components/tables/exercise-table';
-import ExerciseService from '@/services/exercise-service';
-import { redirect } from 'next/navigation';
-import { getTokenFromCookieStore } from '@/lib/auth';
+import { ExerciseService } from '@/services-server/exercise-service';
+
+import { requireAuth } from '@/lib/auth';
 import ErrorMessage from '@/components/ui/error-message';
 
+const exerciseService = new ExerciseService();
 export default async function Exercise() {
-  const userToken = await getTokenFromCookieStore();
+  //Check if user has token or exiperied token.
+  await requireAuth();
 
-  if (!userToken) {
-    redirect('/account/login');
-  }
-
-  const response = await ExerciseService.getAll(userToken);
+  const response = await exerciseService.getAllExersise();
   if (!response.success || !response.data) {
     return (
       <main>
@@ -41,7 +39,7 @@ export default async function Exercise() {
         </div>
       </div>
       <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
-        <ExerciseTable exercises={exercises} userToken={userToken} />
+        <ExerciseTable exercises={exercises} />
       </div>
     </div>
   );

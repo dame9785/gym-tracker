@@ -1,38 +1,12 @@
 //Types
 import { UpdateExericseDto } from '@/schemas/exercise-schema';
-import {
-  ApiResponse,
-  ExerciseApiDeleteResponse,
-  ExerciseApiGetByIdResponse,
-  ExerciseApiRegisterResponse,
-  ExerciseApiResponse,
-  ExerciseApiUpdateResponse,
-} from '@/types/api-types';
+import { ApiResponse, ExerciseApiDeleteResponse, ExerciseApiGetByIdResponse, ExerciseApiRegisterResponse, ExerciseApiUpdateResponse } from '@/types/api-types';
 import type { RegisterExerciseDto } from '@/types/exercise-types';
 import { errorResponse } from '@/utils/api-error';
 
 const API_URL = 'http://localhost:3000/api/exercises';
 
 export default class ExerciseService {
-  //GET: /api/exericses
-  static async getAll(userToken: string): Promise<ApiResponse<ExerciseApiResponse>> {
-    try {
-      const response = await fetch(`${API_URL}`, {
-        method: 'GET',
-        headers: {
-          Cookie: `token=${userToken}`,
-        },
-      });
-
-      const result = (await response.json()) as ApiResponse<ExerciseApiResponse>;
-      return result;
-    } catch (error) {
-      console.error('Could not connect to server:', error);
-
-      return errorResponse('Could not connect to the server.');
-    }
-  }
-
   //POST: Register Exericse
   static async register(dto: RegisterExerciseDto): Promise<ApiResponse<ExerciseApiRegisterResponse>> {
     try {

@@ -21,7 +21,7 @@ import { errorResponse } from '@/utils/api-error';
 export class ExerciseService {
   private exerciseRepository = new ExerciseRepository();
 
-  async getAllExersise(userId: number): Promise<ApiResponse<ExerciseApiResponse>> {
+  async getAllExersise(): Promise<ApiResponse<ExerciseApiResponse>> {
     try {
       const exercises = await this.exerciseRepository.getAll();
       return {
