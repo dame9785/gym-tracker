@@ -1,15 +1,58 @@
+'use client';
+
 import type { FoodViewModel } from '@/types/food-type';
 
 import Link from 'next/link';
-import { Plus, Flame, Beef, Wheat, Droplets } from 'lucide-react';
+import { Plus, Flame, Beef, Wheat, Droplets, Trash2, Pencil } from 'lucide-react';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 import styles from './food-list.module.css';
+import { deleteFoodAction } from '@/actions/food-actions';
 
 type Props = {
   foods: FoodViewModel[];
 };
 
 export default function FoodList({ foods }: Props) {
+  const router = useRouter();
+
+  const handleDelete = (id: number) => {
+    verifyDelete(id);
+  };
+
+  const verifyDelete = (id: number): void => {
+    toast('Are you sure you want to delete this food?', {
+      action: {
+        label: 'Delete',
+        onClick: async () => {
+          await removeFood(id);
+        },
+      },
+      cancel: {
+        label: 'Cancel',
+        onClick: () => {},
+      },
+    });
+  };
+
+  const removeFood = async (id: number) => {
+    try {
+      const response = await deleteFoodAction(id);
+
+      if (!response.success) {
+        toast.error(response.message);
+        return;
+      }
+
+      toast.success(response.message);
+      router.refresh();
+    } catch (error) {
+      console.error('Failed to delete food:', error);
+      toast.error('Something went wrong. Please try again.');
+    }
+  };
+
   return (
     <main className={styles.container}>
       <header className={styles.header}>
@@ -88,6 +131,48 @@ export default function FoodList({ foods }: Props) {
                     <strong>{food.fatPer100g}g</strong>
                   </div>
                 </div>
+
+                {/* Edit */}
+                <Link
+                  href={`/foods/edit/${food.id}`}
+                  aria-label={`Redigera ${food.name}`}
+                  className="
+                          flex h-9 w-9
+                          items-center justify-center
+                          rounded-lg
+                          border border-zinc-700
+                          bg-zinc-800/60
+                          text-zinc-500
+                          transition-all duration-200
+                          hover:border-blue-500/40
+                          hover:bg-blue-500/10
+                          hover:text-blue-400
+                        "
+                >
+                  <Pencil className="h-4 w-4" />
+                </Link>
+
+                {/* Delete */}
+                <button
+                  type="button"
+                  onClick={() => handleDelete(food.id)}
+                  aria-label={`Radera ${food.name}`}
+                  className="
+                        cursor-pointer
+                          flex h-9 w-9
+                          items-center justify-center
+                          rounded-lg
+                          border border-zinc-700
+                          bg-zinc-800/60
+                          text-zinc-500
+                          transition-all duration-200
+                          hover:border-red-500/40
+                          hover:bg-red-500/10
+                          hover:text-red-400
+                        "
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
               </article>
             ))}
           </div>

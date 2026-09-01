@@ -6,11 +6,11 @@ import { WeeklyWorkoutViewModel, WorkoutSchedelueViewModel, WorkoutSessionFinish
 import { WeeklySummaryViewModel } from './dashboard-types';
 import { HistoryViewModel } from './history-types';
 
-export interface ApiSuccessResponse<T> {
+export type ApiSuccessResponse<T = undefined> = {
   success: true;
   message?: string;
-  data: T;
-}
+  data?: T;
+};
 
 export interface ApiErrorResponse {
   success: false;
@@ -48,12 +48,14 @@ export interface LogoutResponse {
 
 export interface UserLogWeightResponse {
   logList: LogItemViewModel[];
-  currentWeight: string | undefined;
-  startWeight: string | undefined;
+  currentWeight: number | null;
+  startWeight: number | null;
   pagination: PaginationViewModel;
 }
 
 export type DeleteLogWeightResponse = [];
+
+export type FoodDeleteResponse = [];
 
 export type ExerciseApiResponse = ExerciseViewModel[];
 
@@ -66,7 +68,7 @@ export type ExerciseApiRegisterResponse = ExerciseViewModel;
 
 export type ExerciseApiGetByIdResponse = ExerciseViewModel;
 
-export type ExerciseApiUpdateResponse = ExerciseViewModel;
+export type ExerciseApiUpdateResponse = void;
 
 export interface WorkoutApiResponse {
   workouts: WorkoutViewModel[];

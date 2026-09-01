@@ -32,9 +32,11 @@ export interface TodayMealApiResponse {
   meals: TodayMealViewModel[];
 }
 
-export interface FoodApiResponse {
-  foods: FoodViewModel[];
-}
+export type FoodResponse = FoodViewModel[];
+
+export type CreateFoodResponse = FoodViewModel;
+
+export type UpdateFoodResponse = FoodViewModel;
 
 export interface FoodDeleteApiResponse {
   success: boolean;

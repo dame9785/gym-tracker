@@ -1,15 +1,21 @@
-import { Decimal } from '@prisma/client/runtime/library';
-
 export interface LogItemViewModel {
   id: number;
   logDate: string;
   note: string;
-  weight: Decimal;
+  weight: number;
+  userId: number;
 }
 
 export interface LogViewModel {
-  logList: LogItemViewModel[];
-  currentWeight: string | undefined;
-  startWeight: string | undefined;
+  currentWeight: number | null;
+  startWeight: number | null;
   userId: number;
+
+  logList: {
+    id: number;
+    logDate: string;
+    note: string;
+    weight: number;
+    userId: number;
+  }[];
 }

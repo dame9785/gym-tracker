@@ -91,6 +91,19 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
           />
         </div>
       </div>
+      <div className={FormStyles.formGroup}>
+        <label htmlFor={`reps-${index}`} className={FormStyles.formLabel}>
+          Seconds
+        </label>
+
+        <input
+          id={`reps-${index}`}
+          type="number"
+          className={FormStyles.formInput}
+          value={workoutExericse.seconds ?? 0}
+          onChange={(e) => onUpdate(index, 'reps', Number(e.target.value))}
+        />
+      </div>
 
       {/* Anteckning */}
       <div className={FormStyles.formGroup}>

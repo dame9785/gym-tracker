@@ -1,26 +1,31 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { toast } from 'sonner';
 import FormStyles from '@/components/forms/form.module.css';
-import { AddFoodDto, addFoodSchema } from '@/schemas/food-schemas';
+import { addFoodSchema, UpdateFoodDto } from '@/schemas/food-schemas';
 import Button from '@/components/button/button';
 
-import { createFoodAction } from '@/actions/food-actions';
+import { createFoodAction, updateFoodAction } from '@/actions/food-actions';
+import { FoodViewModel } from '@/types/food-type';
 
-export default function CreateFoodForm() {
+type Props = {
+  food: FoodViewModel;
+};
+
+export default function CreateFoodForm({ food }: Props) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
-  const [formData, setFormData] = useState<AddFoodDto>({
-    name: '',
-    caloriesPer100g: 0,
-    proteinPer100g: 0,
-    carbsPer100g: 0,
-    fatPer100g: 0,
+  const [formData, setFormData] = useState<UpdateFoodDto>({
+    name: food.name,
+    caloriesPer100g: food.caloriesPer100g,
+    proteinPer100g: food.proteinPer100g,
+    carbsPer100g: food.carbsPer100g,
+    fatPer100g: food.fatPer100g,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -34,16 +39,7 @@ export default function CreateFoodForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const dto: AddFoodDto = {
-      name: formData.name,
-      caloriesPer100g: Number(formData.caloriesPer100g),
-      proteinPer100g: Number(formData.proteinPer100g),
-      carbsPer100g: Number(formData.carbsPer100g),
-      fatPer100g: Number(formData.fatPer100g),
-    };
-
-    const validate = addFoodSchema.safeParse(dto);
-
+    const validate = addFoodSchema.safeParse(formData);
     if (!validate.success) {
       setErrors(validate.error.flatten().fieldErrors);
       return;
@@ -53,7 +49,7 @@ export default function CreateFoodForm() {
     setErrors({});
 
     try {
-      const response = await createFoodAction(validate.data);
+      const response = await updateFoodAction(validate.data, food.id);
 
       if (!response.success) {
         if (response.errors) {
@@ -85,7 +81,16 @@ export default function CreateFoodForm() {
         <label htmlFor="name" className={FormStyles.formLabel}>
           Name
         </label>
-        <input className={FormStyles.formInput} id="name" name="name" type="text" step="0.1" placeholder="e.g. chicken" onChange={handleChange}></input>
+        <input
+          className={FormStyles.formInput}
+          value={formData.name}
+          id="name"
+          name="name"
+          type="text"
+          step="0.1"
+          placeholder="e.g. chicken"
+          onChange={handleChange}
+        ></input>
         {errors.name?.[0] && (
           <p id="name-error" className="text-red-500" role="alert">
             {errors.name[0]}
@@ -98,6 +103,7 @@ export default function CreateFoodForm() {
         </label>
         <input
           className={FormStyles.formInput}
+          value={formData.caloriesPer100g}
           id="caloriesPer100g"
           name="caloriesPer100g"
           type="number"
@@ -117,6 +123,7 @@ export default function CreateFoodForm() {
         </label>
         <input
           className={FormStyles.formInput}
+          value={formData.proteinPer100g}
           id="proteinPer100g"
           name="proteinPer100g"
           type="number"
@@ -136,6 +143,7 @@ export default function CreateFoodForm() {
         </label>
         <input
           className={FormStyles.formInput}
+          value={formData.carbsPer100g}
           id="carbsPer100g"
           name="carbsPer100g"
           type="number"
@@ -155,6 +163,7 @@ export default function CreateFoodForm() {
         </label>
         <input
           className={FormStyles.formInput}
+          value={formData.fatPer100g}
           id="fatPer100g"
           name="fatPer100g"
           type="number"

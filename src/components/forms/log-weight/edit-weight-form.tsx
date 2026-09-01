@@ -9,16 +9,15 @@ import ButtonStyle from '@/components/button/button.module.css';
 import Link from 'next/link';
 import { LogItemViewModel } from '@/types/log-weight-types';
 import { ErrorsHelper } from '@/helpers/error-helper';
-import LogWeightService from '@/services/log-weight-service';
+import { updateLogWeightAction } from '@/actions/log-weight-actions';
 
 import { toast } from 'sonner';
 
 type Props = {
-  userToken: string;
   logWeight: LogItemViewModel;
 };
 
-export default function EditWeightForm({ userToken, logWeight }: Props) {
+export default function EditWeightForm({ logWeight }: Props) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof UpdateWeightDto, string>>>({});
@@ -40,19 +39,21 @@ export default function EditWeightForm({ userToken, logWeight }: Props) {
     setIsSaving(true);
     setErrors({});
     try {
-      const response = await LogWeightService.update(logWeight.id, validation.data, userToken);
+      const response = await updateLogWeightAction(logWeight.id, validation.data);
 
       if (!response.success) {
         if (response.errors) {
           setErrors(ErrorsHelper.getFormErrorsFromApi<UpdateWeightDto>(response.errors));
         }
+
         toast.error(response.message);
         return;
       }
+
       toast.success(response.message);
       router.push('/log-weight');
     } catch (error) {
-      console.error('Failed to update weight log:', error);
+      console.error('Failed to update exercise:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);

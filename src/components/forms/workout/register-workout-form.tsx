@@ -10,9 +10,6 @@ import FormStyles from '@/components/forms/form.module.css';
 // Components
 import WorkoutExerciseCard from '@/components/forms/workout/workout-exercise-card';
 
-// Services
-import WorkoutService from '@/services/workout-service';
-
 //Helpers
 import { hasDuplicateExercises } from '@/helpers/check-dupplicate-exericse-helper';
 
@@ -24,12 +21,13 @@ import type { ExerciseViewModel, RegisterWorkoutExerciseDto } from '@/types/exer
 import { toast } from 'sonner';
 import { registerWorkoutSchema } from '@/schemas/workout-schemas';
 
+import { registerWorkoutAction } from '@/actions/workout-actions';
+
 type Props = {
   exericses: ExerciseViewModel[];
-  userToken: string;
 };
 
-export default function AddWorkoutForm({ exericses, userToken }: Props) {
+export default function AddWorkoutForm({ exericses }: Props) {
   const router = useRouter();
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [formData, setFormData] = useState<RegisterWorkoutDto>({
@@ -41,33 +39,34 @@ export default function AddWorkoutForm({ exericses, userToken }: Props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    //Validate data with ZOD
     const validate = registerWorkoutSchema.safeParse(formData);
-    console.log(validate);
+
     if (!validate.success) {
       setErrors(validate.error.flatten().fieldErrors);
       return;
     }
 
-    //Check duplicate exericses
+    // Check duplicate exercises
     if (hasDuplicateExercises(formData.workoutExercises)) {
       toast.error('You cannot choose the same exercise more than once.');
-      return false;
+      return;
     }
 
     try {
-      const response = await WorkoutService.create(formData, userToken);
-      console.log(response);
+      const response = await registerWorkoutAction(validate.data);
+
       if (!response.success) {
+        setErrors(response.errors ?? {});
         toast.error(response.message);
         return;
       }
-    } catch (error) {
-      console.error('Failed to create exericse:', error);
-      toast.error('Something went wrong. Please try again.');
-      return;
-    } finally {
-      toast.success('Workout was successfully created');
+
+      toast.success(response.message ?? 'Workout was successfully created.');
       router.push('/workout');
+    } catch (error) {
+      console.error('Failed to create workout:', error);
+      toast.error('Something went wrong. Please try again.');
     }
   };
 

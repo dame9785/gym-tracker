@@ -76,7 +76,7 @@ export class WorkoutService {
     }
   }
 
-  async getAll(userId: number, page: number): Promise<ApiResponse<WorkoutApiResponse>> {
+  async getAll(page: number, userId: number): Promise<ApiResponse<WorkoutApiResponse>> {
     const totalNumberWorkouts = await this.workoutRepository.getTotalNumberOfWorkouts(userId);
 
     const pageSize = 5;
@@ -107,7 +107,7 @@ export class WorkoutService {
   async getById(id: number, userId: number): Promise<ApiResponse<WorkoutApiGetByIdResponse>> {
     try {
       const workout = await this.workoutRepository.getById(id, userId);
-      const exerices = await this.exericseRepository.getAll();
+      const exerices = await this.exericseRepository.getAllExersise(userId);
 
       if (!workout) {
         return {
@@ -130,9 +130,9 @@ export class WorkoutService {
     }
   }
 
-  async delete(id: number): Promise<ApiResponse<WorkoutApiDeleteResponse>> {
+  async delete(id: number, userId: number): Promise<ApiResponse<WorkoutApiDeleteResponse>> {
     try {
-      await this.workoutRepository.delete(id);
+      await this.workoutRepository.delete(id, userId);
       return {
         success: true,
         data: {

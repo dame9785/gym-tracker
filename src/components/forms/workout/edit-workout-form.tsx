@@ -12,7 +12,6 @@ import type { ExerciseViewModel } from '@/types/exercise-types';
 import type { WorkoutViewModel } from '@/types/workout-types';
 
 //Services
-import WorkoutService from '@/services/workout-service';
 import { toast } from 'sonner';
 
 //Components
@@ -21,7 +20,8 @@ import EditWorkoutExericeCard from '@/components/forms/workout/edit-workout-exer
 //NEXT Redirect
 
 import { UpdateWorkoutDto, UpdateWorkoutExericseDto, updateWorkoutSchema } from '@/schemas/workout-schemas';
-import { ErrorsHelper } from '@/helpers/error-helper';
+import { updateWorkoutAction } from '@/actions/workout-actions';
+import Button from '@/components/button/button';
 
 //Props
 type props = {
@@ -30,32 +30,22 @@ type props = {
 };
 
 export default function EditWorkoutForm({ workout, exericses }: props) {
-  const [errors, setErrors] = useState<Partial<Record<keyof UpdateWorkoutDto, string>>>({});
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
   const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState<UpdateWorkoutDto>({
     name: workout.name,
     description: workout.description ?? '',
-    workoutExercises: workout.workoutExercises,
+    workoutExercises: workout.workoutExercises.map((exercise) => ({
+      exerciseId: exercise.exerciseId,
+      sets: exercise.sets,
+      reps: exercise.reps,
+      weight: exercise.weight,
+      seconds: exercise.seconds,
+      note: exercise.note ?? '',
+    })),
   });
-
-  const addExercise = () => {
-    setFormData((prev) => ({
-      ...prev,
-      workoutExercises: [
-        ...prev.workoutExercises,
-        {
-          exerciseId: 0,
-          name: '',
-          sets: 0,
-          reps: 0,
-          order: 0,
-          weight: 0,
-          note: '',
-        },
-      ],
-    }));
-  };
 
   const updateExercise = (index: number, field: keyof UpdateWorkoutExericseDto, value: number | string) => {
     setFormData((prev) => {
@@ -80,27 +70,62 @@ export default function EditWorkoutForm({ workout, exericses }: props) {
     }));
   };
 
-  //Handle Sumbit
+  const addExercise = () => {
+    setFormData((prev) => ({
+      ...prev,
+      workoutExercises: [
+        ...prev.workoutExercises,
+        {
+          exerciseId: 0,
+          sets: 0,
+          reps: 0,
+          weight: 0,
+          seconds: 0,
+          note: '',
+        },
+      ],
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const validation = updateWorkoutSchema.safeParse(formData);
-    if (!validation.success) {
-      setErrors(ErrorsHelper.getFormErrors<UpdateWorkoutDto>(validation.error.issues));
+    console.log('1. Submit triggered');
+    console.log('2. Form data:', formData);
+
+    const validate = updateWorkoutSchema.safeParse(formData);
+
+    if (!validate.success) {
+      console.log('VALIDATION FAILED');
+      console.log(validate.error.flatten().fieldErrors);
+      console.log(validate.error.issues);
+
+      setErrors(validate.error.flatten().fieldErrors);
       return;
     }
 
+    setIsSaving(true);
+    setErrors({});
+
     try {
-      const response = await WorkoutService.update(Number(workout.id), validation.data);
+      const response = await updateWorkoutAction(workout.id, validate.data);
+
       if (!response.success) {
-        toast.error('Träningspass tillagt');
+        if (response.errors) {
+          setErrors(response.errors);
+        }
+
+        toast.error(response.message);
         return;
       }
-    } catch (error) {
-      toast.error('Något gick fel, gick inte uppdatera träningspasset');
-      return;
-    } finally {
+
+      toast.success(response.message);
       router.push('/workout');
+    } catch (error) {
+      console.error('Failed to update workout:', error);
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -177,9 +202,10 @@ export default function EditWorkoutForm({ workout, exericses }: props) {
           </button>
         </div>
 
-        <button type="submit" className={FormStyles.submitButton}>
-          Spara Workout
-        </button>
+        {/* Button */}
+        <Button type="submit" variant="primary" disabled={isSaving}>
+          {isSaving ? 'Updating workout...' : 'Update workout'}
+        </Button>
       </form>
     </div>
   );

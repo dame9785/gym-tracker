@@ -1,6 +1,6 @@
 //Prisma
 import { prisma } from '@/lib/prisma';
-import { AddWeightDto, EditWeightDto } from '@/schemas/weight-log.schemas';
+import { AddWeightDto, UpdateWeightDto } from '@/schemas/weight-log.schemas';
 
 export class WeightLogRepository {
   async getAll(userId: number, page: number, pageSize: number) {
@@ -67,7 +67,7 @@ export class WeightLogRepository {
     });
   }
 
-  async create(userId: number, dto: AddWeightDto) {
+  async create(dto: AddWeightDto, userId: number) {
     return prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: {
@@ -88,7 +88,7 @@ export class WeightLogRepository {
     });
   }
 
-  async update(logWeightId: number, userId: number, dto: EditWeightDto) {
+  async update(logWeightId: number, userId: number, dto: UpdateWeightDto) {
     const weightLog = prisma.weightLog.findFirst({
       where: {
         logWeightId,
@@ -111,10 +111,11 @@ export class WeightLogRepository {
     });
   }
 
-  async getById(id: number) {
+  async getById(id: number, userId: number) {
     return await prisma.weightLog.findUnique({
       where: {
         id: id,
+        userId,
       },
     });
   }

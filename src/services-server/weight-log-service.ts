@@ -11,7 +11,7 @@ import { errorResponse } from '@/utils/api-error';
 export class WeightLogService {
   private weightLogRepository = new WeightLogRepository();
 
-  async getAll(userId: number, page: number): Promise<ApiResponse<UserLogWeightResponse>> {
+  async getAll(page: number, userId: number): Promise<ApiResponse<UserLogWeightResponse>> {
     try {
       const lastLog = await this.weightLogRepository.lastLog(userId);
       const firstLog = await this.weightLogRepository.firstLog(userId);
@@ -69,7 +69,7 @@ export class WeightLogService {
     }
 
     try {
-      const createdLog = await this.weightLogRepository.create(userId, validation.data);
+      const createdLog = await this.weightLogRepository.create(validation.data, userId);
       const viewModel = LogWeightMapper.mapLogItemToViewModel(createdLog);
 
       return {
@@ -83,7 +83,7 @@ export class WeightLogService {
     }
   }
 
-  async update(weightId: string, dto: UpdateWeightDto, userId: number): Promise<ApiResponse<EditLogWeightResponse>> {
+  async update(weightId: number, dto: UpdateWeightDto, userId: number): Promise<ApiResponse<EditLogWeightResponse>> {
     const validation = updateWeightSchema.safeParse(dto);
 
     if (!validation.success) {
@@ -109,9 +109,9 @@ export class WeightLogService {
     }
   }
 
-  async getById(id: number): Promise<ApiResponse<LogWeightResponse>> {
+  async getById(id: number, userId: number): Promise<ApiResponse<LogWeightResponse>> {
     try {
-      const data = await this.weightLogRepository.getById(id);
+      const data = await this.weightLogRepository.getById(id, userId);
       if (!data) {
         return errorResponse('Could not find weight log.');
       }

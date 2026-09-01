@@ -5,11 +5,9 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
-// Services
-import WorkoutService from '@/services/workout-service';
-
 // Types
 import type { WorkoutViewModel } from '@/types/workout-types';
+import { deleteWorkoutAction } from '@/actions/workout-actions';
 
 type Props = {
   workouts: WorkoutViewModel[];
@@ -19,17 +17,17 @@ export default function WorkoutTable({ workouts }: Props) {
   const router = useRouter();
 
   // Handle delete
-  const handleDelete = (id: number): void => {
+  const handleDelete = (id: number) => {
     verifyDelete(id);
   };
 
-  // Confirm delete
+  // Verify delete
   const verifyDelete = (id: number): void => {
-    toast('Are you sure you want to delete the workout?', {
+    toast('Are you sure you want to delete the exercise?', {
       action: {
         label: 'Delete',
         onClick: async () => {
-          await deleteWorkout(id);
+          await removeExercise(id);
         },
       },
       cancel: {
@@ -39,10 +37,10 @@ export default function WorkoutTable({ workouts }: Props) {
     });
   };
 
-  // Delete workout
-  const deleteWorkout = async (id: number): Promise<void> => {
+  // Remove exercise
+  const removeExercise = async (id: number) => {
     try {
-      const response = await WorkoutService.delete(id);
+      const response = await deleteWorkoutAction(id);
 
       if (!response.success) {
         toast.error(response.message);

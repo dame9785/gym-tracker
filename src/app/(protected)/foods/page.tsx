@@ -1,13 +1,16 @@
-import FoodsService from '@/services/food-service';
+import { FoodService } from '@/services-server/food-service';
 import FoodList from '@/components/foods/food-list';
 import Link from 'next/link';
 import ErrorMessage from '@/components/ui/error-message';
+import { requireAuth } from '@/lib/auth';
 
-const foodService = new FoodsService();
+const foodService = new FoodService();
 
 export default async function FoodPage() {
-  const response = await foodService.getAllFoods();
+  //Check if user has token or exiperied token.
+  const user = await requireAuth();
 
+  const response = await foodService.getAll(user.userId);
   if (!response.success || !response.data) {
     return (
       <main>
@@ -34,7 +37,7 @@ export default async function FoodPage() {
         </Link>
       </header>
 
-      <FoodList foods={response.data.foods} />
+      <FoodList foods={response.data} />
     </main>
   );
 }

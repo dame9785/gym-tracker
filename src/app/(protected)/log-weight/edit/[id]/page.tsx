@@ -1,8 +1,7 @@
 import WeightForm from '@/components/forms/log-weight/edit-weight-form';
 import ErrorMessage from '@/components/ui/error-message';
-import { getTokenFromCookieStore } from '@/lib/auth';
-import LogWeightService from '@/services/log-weight-service';
-import { redirect } from 'next/navigation';
+import { requireAuth } from '@/lib/auth';
+import { WeightLogService } from '@/services-server/weight-log-service';
 
 interface Props {
   params: Promise<{
@@ -10,14 +9,15 @@ interface Props {
   }>;
 }
 
+const weightLogService = new WeightLogService();
+
 export default async function EditWeight({ params }: Props) {
+  //Check if user has token or exiperied token.
+  const user = await requireAuth();
+
   const { id } = await params;
 
-  const userToken = await getTokenFromCookieStore();
-  if (!userToken) {
-    redirect('/account/login');
-  }
-  const response = await LogWeightService.getById(id, userToken);
+  const response = await weightLogService.getById(Number(id), user.userId);
   if (!response.success || !response.data) {
     return (
       <main>
@@ -26,5 +26,5 @@ export default async function EditWeight({ params }: Props) {
     );
   }
 
-  return <WeightForm userToken={userToken} logWeight={response.data} />;
+  return <WeightForm logWeight={response.data} />;
 }

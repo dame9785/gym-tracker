@@ -1,32 +1,30 @@
-//Types
-import type { LogViewModel } from '@/types/log-weight-types';
-
-//Prisma
-import { WeightLog } from '@prisma/client';
-import { useId } from 'react';
+import type { LogViewModel, LogItemViewModel } from '@/types/log-weight-types';
+import type { WeightLog } from '@prisma/client';
 
 export class LogWeightMapper {
   static mapLogViewModel(logs: WeightLog[], firstLog: WeightLog | null, lastLog: WeightLog | null): LogViewModel {
     return {
-      currentWeight: lastLog?.weight.toString() ?? '',
-      startWeight: firstLog?.weight.toString() ?? '',
-      userId: 1,
+      currentWeight: lastLog ? Number(lastLog.weight) : null,
+      startWeight: firstLog ? Number(firstLog.weight) : null,
+      userId: firstLog?.userId ?? 0,
+
       logList: logs.map((log) => ({
         id: log.id,
-        logDate: log.loggedAt.toString(),
+        logDate: log.loggedAt.toISOString(),
         note: log.note ?? '',
-        weight: log.weight,
+        weight: Number(log.weight),
+        userId: log.userId,
       })),
     };
   }
 
-  static mapLogItemToViewModel(item: WeightLog) {
+  static mapLogItemToViewModel(item: WeightLog): LogItemViewModel {
     return {
       id: item.id,
-      logDate: item.loggedAt.toString(),
+      logDate: item.loggedAt.toISOString(),
       note: item.note ?? '',
-      weight: item.weight,
-      useId: item.userId,
+      weight: Number(item.weight),
+      userId: item.userId,
     };
   }
 }

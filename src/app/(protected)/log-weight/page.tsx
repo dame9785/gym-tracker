@@ -9,10 +9,10 @@ import Pagination from '@/components/log-weight/log-pagination';
 import Button from '@/components/button/button';
 
 //Services
-import WeightLogService from '@/services/log-weight-service';
-import { getTokenFromCookieStore } from '@/lib/auth';
-import { notFound, redirect } from 'next/navigation';
+import { WeightLogService } from '@/services-server/weight-log-service';
+
 import ErrorMessage from '@/components/ui/error-message';
+import { requireAuth } from '@/lib/auth';
 
 type Props = {
   searchParams: Promise<{
@@ -20,16 +20,17 @@ type Props = {
   }>;
 };
 
+const weightLogService = new WeightLogService();
+
 export default async function LogWeight({ searchParams }: Props) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
-  const userToken = await getTokenFromCookieStore();
 
-  if (!userToken) {
-    redirect('/account/login');
-  }
+  //Check if user has token or exiperied token.
+  const user = await requireAuth();
 
-  const response = await WeightLogService.getAll(userToken, page);
+  const response = await weightLogService.getAll(page, user.userId);
+  console.log(response);
   if (!response.success || !response.data) {
     return (
       <main>
@@ -90,7 +91,7 @@ export default async function LogWeight({ searchParams }: Props) {
 
           <tbody>
             {LogList?.map((item) => {
-              return <LogHistoryList key={item.id} logItem={item} userToken={userToken} />;
+              return <LogHistoryList key={item.id} logItem={item} />;
             })}
           </tbody>
         </table>

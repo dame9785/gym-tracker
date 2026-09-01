@@ -8,4 +8,7 @@ export const addFoodSchema = z.object({
   fatPer100g: z.number(),
 });
 
+export const updateFoodSchema = addFoodSchema;
+
 export type AddFoodDto = z.infer<typeof addFoodSchema>;
+export type UpdateFoodDto = z.infer<typeof addFoodSchema>;

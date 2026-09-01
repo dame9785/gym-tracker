@@ -1,9 +1,8 @@
-import MealService from '@/services/meal-service';
+import { MealService } from '@/services-server/meal-service';
 import MealList from '@/components/meals/meal-list';
 import MealCalendar from '@/components/meals/meal-calandar';
 
-import { getTokenFromCookieStore } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { requireAuth } from '@/lib/auth';
 import Link from 'next/link';
 import ErrorMessage from '@/components/ui/error-message';
 
@@ -24,11 +23,8 @@ function formatDate(date: Date) {
 }
 
 export default async function MealsPage({ searchParams }: MealsPageProps) {
-  const token = await getTokenFromCookieStore();
-
-  if (!token) {
-    redirect('/account/login');
-  }
+  //Check if user has token or exiperied token.
+  const user = await requireAuth();
 
   const { date } = await searchParams;
 
@@ -50,7 +46,7 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
   const nextDateString = formatDate(nextDate);
 
   // Hämta meals för valt datum
-  const response = await mealService.getMealsByDate(token, formattedDate);
+  const response = await mealService.getMealsByDate(formattedDate, user.userId);
 
   if (!response.success || !response.data) {
     return (

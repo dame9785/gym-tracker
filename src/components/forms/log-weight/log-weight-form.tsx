@@ -12,9 +12,6 @@ import { toast } from 'sonner';
 import buttonStyles from '@/components/button/button.module.css';
 import FormStyles from '@/components/forms/form.module.css';
 
-//Services
-import LogWeightService from '@/services/log-weight-service';
-
 //Components
 import Button from '@/components/button/button';
 
@@ -24,12 +21,9 @@ import { AddWeightDto, addWeightSchema } from '@/schemas/weight-log.schemas';
 //Helpers
 import { ErrorsHelper } from '@/helpers/error-helper';
 
-//Props
-interface Props {
-  userToken: string;
-}
+import { CreateWeightLogAction } from '@/actions/log-weight-actions';
 
-export default function LogWeightForm({ userToken }: Props) {
+export default function LogWeightForm() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof AddWeightDto, string>>>({});
@@ -68,19 +62,21 @@ export default function LogWeightForm({ userToken }: Props) {
     setIsSaving(true);
     setErrors({});
     try {
-      const response = await LogWeightService.create(LogWeightDto, userToken);
+      const response = await CreateWeightLogAction(validation.data);
 
       if (!response.success) {
         if (response.errors) {
           setErrors(ErrorsHelper.getFormErrorsFromApi<AddWeightDto>(response.errors));
         }
+
         toast.error(response.message);
         return;
       }
+
       toast.success(response.message);
       router.push('/log-weight');
     } catch (error) {
-      console.error('Failed to create weight log:', error);
+      console.error('Failed to update exercise:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);

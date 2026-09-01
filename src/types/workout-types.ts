@@ -46,6 +46,7 @@ export interface WorkoutExercisesViewModel {
   weight: number;
   note: string;
   order: number;
+  seconds: number;
 }
 
 export interface EditWorkoutDto {

@@ -8,24 +8,28 @@ import { toast } from 'sonner';
 // Types
 import type { LogItemViewModel } from '@/types/log-weight-types';
 
-// Services
-import LogWeightService from '@/services/log-weight-service';
+import { deleteLogWeight } from '@/actions/log-weight-actions';
 
 // Props
 type PageProps = {
   logItem: LogItemViewModel;
-  userToken: string;
 };
 
-export default function LogHistory({ logItem, userToken }: PageProps) {
+export default function LogHistory({ logItem }: PageProps) {
   const router = useRouter();
 
-  const handleDelete = (id: number): void => {
-    toast('Are you sure you want to delete the log?', {
+  // Handle delete
+  const handleDelete = (id: number) => {
+    verifyDelete(id);
+  };
+
+  // Verify delete
+  const verifyDelete = (id: number): void => {
+    toast('Are you sure you want to delete the exercise?', {
       action: {
-        label: 'Remove',
+        label: 'Delete',
         onClick: async () => {
-          await removeLogCallAPI(id, userToken);
+          await removeLogWeight(id);
         },
       },
       cancel: {
@@ -35,19 +39,20 @@ export default function LogHistory({ logItem, userToken }: PageProps) {
     });
   };
 
-  const removeLogCallAPI = async (id: number, userToken: string): Promise<void> => {
+  // Remove Log weight
+  const removeLogWeight = async (id: number) => {
     try {
-      const result = await LogWeightService.delete(id, userToken);
+      const response = await deleteLogWeight(id);
 
-      if (!result.success) {
-        toast.error(result.message);
+      if (!response.success) {
+        toast.error(response.message);
         return;
       }
 
-      toast.success(result.message);
+      toast.success(response.message);
       router.refresh();
     } catch (error) {
-      console.error('Failed to delete weight log:', error);
+      console.error('Failed to delete Weight:', error);
       toast.error('Something went wrong. Please try again.');
     }
   };

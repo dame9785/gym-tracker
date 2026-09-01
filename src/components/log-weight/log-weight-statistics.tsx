@@ -1,8 +1,8 @@
 import { Scale, TrendingDown, TrendingUp } from 'lucide-react';
 
 type StatisticProps = {
-  currentWeight: string | number | undefined;
-  startWeight: string | number | undefined;
+  currentWeight: number | null;
+  startWeight: number | null;
 };
 
 export default function Statistic({ currentWeight, startWeight }: StatisticProps) {

@@ -12,9 +12,10 @@ import ErrorMessage from '@/components/ui/error-message';
 const exerciseService = new ExerciseService();
 export default async function Exercise() {
   //Check if user has token or exiperied token.
-  await requireAuth();
+  const user = await requireAuth();
 
-  const response = await exerciseService.getAllExersise();
+  const response = await exerciseService.getAllExersise(user.userId);
+
   if (!response.success || !response.data) {
     return (
       <main>

@@ -15,15 +15,15 @@ import {
   ExerciseApiResponse,
   ExerciseApiUpdateResponse,
 } from '@/types/api-types';
-import { registerExerciseSchema, RegisterExericseDto } from '@/schemas/exercise-schema';
+import { registerExerciseSchema } from '@/schemas/exercise-schema';
 import { errorResponse } from '@/utils/api-error';
 
 export class ExerciseService {
   private exerciseRepository = new ExerciseRepository();
 
-  async getAllExersise(): Promise<ApiResponse<ExerciseApiResponse>> {
+  async getAllExersise(userId: number): Promise<ApiResponse<ExerciseApiResponse>> {
     try {
-      const exercises = await this.exerciseRepository.getAll();
+      const exercises = await this.exerciseRepository.getAllExersise(userId);
       return {
         success: true,
         data: exercises.map((x) => ExerciseMapper.exerciseModelToViewModel(x)),
@@ -34,9 +34,9 @@ export class ExerciseService {
     }
   }
 
-  async delete(id: number): Promise<ApiResponse<ExerciseApiDeleteResponse>> {
+  async delete(id: number, userId: number): Promise<ApiResponse<ExerciseApiDeleteResponse>> {
     try {
-      await this.exerciseRepository.delete(id);
+      await this.exerciseRepository.delete(id, userId);
       return {
         success: true,
         message: 'Exericse deleted successfully',
@@ -51,30 +51,33 @@ export class ExerciseService {
     }
   }
 
-  async registerExercise(dto: RegisterExericseDto): Promise<ApiResponse<ExerciseApiRegisterResponse>> {
+  async registerExercise(dto: RegisterExerciseDto, userId: number): Promise<ApiResponse<ExerciseApiRegisterResponse>> {
     const validation = registerExerciseSchema.safeParse(dto);
 
     if (!validation.success) {
       const errors = validation.error.flatten().fieldErrors;
+
       return errorResponse('Validation failed', errors);
     }
 
     try {
-      const exericse = await this.exerciseRepository.register(dto);
+      const exercise = await this.exerciseRepository.register(validation.data, userId);
+
       return {
         success: true,
-        message: 'Exericse created successfully.',
-        data: ExerciseMapper.exerciseModelToViewModel(exericse),
+        message: 'Exercise created successfully.',
+        data: ExerciseMapper.exerciseModelToViewModel(exercise),
       } satisfies ApiSuccessResponse<ExerciseApiRegisterResponse>;
     } catch (error) {
-      console.error('Create exericse failed, server error:', error);
+      console.error('Create exercise failed, server error:', error);
+
       return errorResponse('An error occurred on the server.');
     }
   }
 
-  async getById(id: number): Promise<ApiResponse<ExerciseApiGetByIdResponse>> {
+  async getById(id: number, userId: number): Promise<ApiResponse<ExerciseApiGetByIdResponse>> {
     try {
-      const exericse = await this.exerciseRepository.getById(id);
+      const exericse = await this.exerciseRepository.getById(id, userId);
       if (!exericse) {
         return errorResponse('Could not find exericse log.');
       }
@@ -90,23 +93,29 @@ export class ExerciseService {
     }
   }
 
-  async update(id: number, dto: RegisterExerciseDto): Promise<ApiResponse<ExerciseApiUpdateResponse>> {
+  async update(id: number, dto: RegisterExerciseDto, userId: number): Promise<ApiResponse<void>> {
     const validation = registerExerciseSchema.safeParse(dto);
 
     if (!validation.success) {
       const errors = validation.error.flatten().fieldErrors;
+
       return errorResponse('Validation failed', errors);
     }
 
     try {
-      const updatedExericse = await this.exerciseRepository.update(id, dto);
+      const result = await this.exerciseRepository.update(id, dto, userId);
+
+      if (result.count === 0) {
+        return errorResponse('Exercise not found or unauthorized.');
+      }
+
       return {
         success: true,
-        message: 'Exericse updated successfully.',
-        data: ExerciseMapper.exerciseModelToViewModel(updatedExericse),
+        message: 'Exercise updated successfully.',
       } satisfies ApiSuccessResponse<ExerciseApiUpdateResponse>;
     } catch (error) {
-      console.error('fetch exericse by id failed, server error:', error);
+      console.error('Update exercise failed, server error:', error);
+
       return errorResponse('An error occurred on the server.');
     }
   }

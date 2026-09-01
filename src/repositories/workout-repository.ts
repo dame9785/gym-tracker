@@ -134,9 +134,10 @@ export class WorkoutRepository {
     });
   }
 
-  async delete(id: number) {
+  async delete(id: number, userId: number) {
     return await prisma.workout.delete({
       where: {
+        userId,
         id,
       },
     });

@@ -5,42 +5,48 @@ import { prisma } from '@/lib/prisma';
 import type { RegisterExerciseDto } from '@/types/exercise-types';
 
 export class ExerciseRepository {
-  async getAll() {
+  async getAllExersise(userId: number) {
     return await prisma.exercise.findMany({
+      where: {
+        userId,
+      },
       orderBy: {
         id: 'desc',
       },
     });
   }
 
-  async register(dto: RegisterExerciseDto) {
+  async register(dto: RegisterExerciseDto, userId: number) {
     return await prisma.exercise.create({
       data: {
         name: dto.name,
         muscleGroup: dto.muscleGroup,
         equipment: dto.equipment,
+        userId,
       },
     });
   }
 
-  async delete(id: number) {
-    await prisma.workoutExercise.deleteMany({
+  async delete(id: number, userId: number) {
+    const result = await prisma.exercise.deleteMany({
       where: {
-        exerciseId: id,
+        id,
+        userId,
       },
     });
 
-    return await prisma.exercise.delete({
-      where: {
-        id,
-      },
-    });
+    if (result.count === 0) {
+      throw new Error('Exercise not found or unauthorized');
+    }
+
+    return result;
   }
 
-  async update(id: number, dto: RegisterExerciseDto) {
-    return await prisma.exercise.update({
+  async update(id: number, dto: RegisterExerciseDto, userId: number) {
+    return await prisma.exercise.updateMany({
       where: {
         id,
+        userId,
       },
       data: {
         name: dto.name,
@@ -50,10 +56,11 @@ export class ExerciseRepository {
     });
   }
 
-  async getById(id: number) {
+  async getById(id: number, userId: number) {
     return await prisma.exercise.findUnique({
       where: {
         id,
+        userId,
       },
     });
   }

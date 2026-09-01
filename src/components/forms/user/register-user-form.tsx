@@ -47,6 +47,7 @@ type Props = {
 };
 
 export default function RegisterForm({ goals }: Props) {
+  console.log(goals);
   const router = useRouter();
 
   /*States*/

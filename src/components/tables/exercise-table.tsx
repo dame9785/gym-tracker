@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
-// Services
-import ExerciseService from '@/services/exercise-service';
+import { deleteExerciseAction } from '@/actions/exercise-actions';
 
 // Types
 import type { ExerciseViewModel } from '@/types/exercise-types';
@@ -42,7 +41,7 @@ export default function ExerciseTable({ exercises }: Props) {
   // Remove exercise
   const removeExercise = async (id: number) => {
     try {
-      const response = await ExerciseService.delete(id);
+      const response = await deleteExerciseAction(id);
 
       if (!response.success) {
         toast.error(response.message);
@@ -52,7 +51,7 @@ export default function ExerciseTable({ exercises }: Props) {
       toast.success(response.message);
       router.refresh();
     } catch (error) {
-      console.error('Failed to delete exericse:', error);
+      console.error('Failed to delete exercise:', error);
       toast.error('Something went wrong. Please try again.');
     }
   };

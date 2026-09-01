@@ -1,17 +1,15 @@
 import RegisterWorkoutForm from '@/components/forms/workout/register-workout-form';
 import ErrorMessage from '@/components/ui/error-message';
-import { getTokenFromCookieStore } from '@/lib/auth';
-import ExerciseService from '@/services/exercise-service';
-import { notFound, redirect } from 'next/navigation';
+import { requireAuth } from '@/lib/auth';
 
+import { ExerciseService } from '@/services-server/exercise-service';
+
+const exerciseService = new ExerciseService();
 export default async function RegisterWorkout() {
-  const userToken = await getTokenFromCookieStore();
+  //Check if user has token or exiperied token.
+  const user = await requireAuth();
 
-  if (!userToken) {
-    redirect('/account/login');
-  }
-
-  const response = await ExerciseService.getAll(userToken);
+  const response = await exerciseService.getAllExersise(user.userId);
   if (!response.success || !response.data) {
     return (
       <main>
@@ -22,7 +20,7 @@ export default async function RegisterWorkout() {
 
   return (
     <div className="container">
-      <RegisterWorkoutForm exericses={response.data} userToken={userToken} />
+      <RegisterWorkoutForm exericses={response.data} />
     </div>
   );
 }

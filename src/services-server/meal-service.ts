@@ -1,66 +1,82 @@
 import { MealRepository } from '@/repositories/meal-repository';
 import { FoodRepository } from '@/repositories/food-repository';
-import { AddMealItemDto } from '@/schemas/meal-schemas';
+import { AddMealDto, AddMealItemDto, addMealSchema } from '@/schemas/meal-schemas';
 import { MealType } from '@prisma/client';
 import { ApiResponse, ApiSuccessResponse } from '@/types/api-types';
-import { TodayMealsApiResponse } from '@/types/meal-types';
+import { MealViewModel, TodayMealsApiResponse } from '@/types/meal-types';
 import MealMapper from '@/mapping/meals-mapping';
 import GoalService from '@/services-server/goal-service';
+import { errorResponse } from '@/utils/api-error';
 
 const mealRepository = new MealRepository();
 const foodRepository = new FoodRepository();
 const goalService = new GoalService();
 
-export default class MealService {
-  async addFoodToMeal(userId: number, dto: AddMealItemDto) {
-    // 1. Hämta maten från databasen
-    const food = await foodRepository.getById(dto.foodId);
+export class MealService {
+  async addFoodToMeal(dto: AddMealDto, userId: number) {
+    const validation = addMealSchema.safeParse(dto);
 
-    if (!food) {
-      throw new Error('Food not found');
+    if (!validation.success) {
+      const errors = validation.error.flatten().fieldErrors;
+      return errorResponse('Validation failed', errors);
     }
 
-    // 2. Beräkna näringsvärden baserat på antal gram
-    const multiplier = dto.grams / 100;
+    try {
+      // 1. Hämta maten från databasen
+      const food = await foodRepository.getById(dto.foodId, userId);
 
-    const calories = food.caloriesPer100g * multiplier;
+      if (!food) {
+        return errorResponse('Could find food.');
+      }
 
-    const protein = food.proteinPer100g * multiplier;
+      // 2. Beräkna näringsvärden baserat på antal gram
+      const multiplier = dto.grams / 100;
 
-    const carbs = food.carbsPer100g * multiplier;
+      const calories = food.caloriesPer100g * multiplier;
 
-    const fat = food.fatPer100g * multiplier;
+      const protein = food.proteinPer100g * multiplier;
 
-    // 3. Leta efter dagens måltid
-    const existingMeal = await mealRepository.findTodayMealByType(userId, dto.mealType as MealType);
+      const carbs = food.carbsPer100g * multiplier;
 
-    let mealId: number;
+      const fat = food.fatPer100g * multiplier;
 
-    // 4. Använd befintlig måltid eller skapa en ny
-    if (existingMeal) {
-      mealId = existingMeal.id;
-    } else {
-      const newMeal = await mealRepository.createMeal(userId, dto.mealType as MealType);
+      // 3. Leta efter dagens måltid
+      const existingMeal = await mealRepository.findTodayMealByType(userId, dto.mealType as MealType);
 
-      mealId = newMeal.id;
+      let mealId: number;
+
+      // 4. Använd befintlig måltid eller skapa en ny
+      if (existingMeal) {
+        mealId = existingMeal.id;
+      } else {
+        const newMeal = await mealRepository.createMeal(userId, dto.mealType as MealType);
+
+        mealId = newMeal.id;
+      }
+
+      // 5. Lägg till maten i måltiden
+      const mealItem = await mealRepository.addItem({
+        mealId,
+        foodId: food.id,
+        grams: dto.grams,
+        calories,
+        protein,
+        carbs,
+        fat,
+      });
+      return {
+        success: true,
+        message: 'Food fetched successfully.',
+        data: mealItem,
+      } satisfies ApiSuccessResponse<MealViewModel>;
+    } catch (error) {
+      console.error('Create meal failed, server error:', error);
+      return errorResponse('An error occurred on the server.');
     }
-
-    // 5. Lägg till maten i måltiden
-    const mealItem = await mealRepository.addItem({
-      mealId,
-      foodId: food.id,
-      grams: dto.grams,
-      calories,
-      protein,
-      carbs,
-      fat,
-    });
-
-    return mealItem;
   }
 
-  async getMealsByDate(userId: number, date: string): Promise<ApiResponse<TodayMealsApiResponse>> {
-    const meals = await mealRepository.getMealsByDate(userId, date);
+  async getMealsByDate(formattedDate: string, userId: number): Promise<ApiResponse<TodayMealsApiResponse>> {
+    const meals = await mealRepository.getMealsByDate(userId, formattedDate);
 
     const goal = await goalService.getUserGoal(userId);
 

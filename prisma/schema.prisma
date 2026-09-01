@@ -8,12 +8,12 @@ datasource db {
 }
 
 model User {
-   id           Int      @id @default(autoincrement())
-  firstName    String   @db.VarChar(50)
-  lastName     String   @db.VarChar(50)
-  username     String   @unique @db.VarChar(50)
-  email        String   @unique @db.VarChar(100)
-  phoneNumber  String   @db.VarChar(20)
+  id           Int    @id @default(autoincrement())
+  firstName    String @db.VarChar(50)
+  lastName     String @db.VarChar(50)
+  username     String @unique @db.VarChar(50)
+  email        String @unique @db.VarChar(100)
+  phoneNumber  String @db.VarChar(20)
   passwordHash String
 
   bodyWeight Decimal @db.Decimal(5, 2)
@@ -31,13 +31,14 @@ model User {
   goalType   GoalType? @relation(fields: [goalTypeId], references: [id])
   goal       Goal?
 
+  food             Food[]
   workout          Workout[]
   workoutSchedules WorkoutSchedule[]
   workoutSessions  WorkoutSession[]
   weightLogs       WeightLog[]
   calorieLogs      CalorieLog[]
-
-  meals Meal[] // ✅ Lägg till denna
+  exercises        Exercise[]
+  meals            Meal[]
 }
 
 model WeightLog {
@@ -55,21 +56,197 @@ model WeightLog {
 model GoalType {
   id    Int    @id @default(autoincrement())
   title String @unique
+
   users User[]
 }
 
 model Goal {
-  id          Int             @id @default(autoincrement())
-  userId      Int             @unique
-  user        User            @relation(fields: [userId], references: [id])
+  id     Int @id @default(autoincrement())
+  userId Int @unique
 
+  user        User             @relation(fields: [userId], references: [id])
   calorieGoal CalorieGoalType?
 
-  calories    Int?
-  protein     Int?
-  carbs       Int?
-  fat         Int?
-  
+  calories Int?
+  protein  Int?
+  carbs    Int?
+  fat      Int?
+}
+
+model Exercise {
+  id          Int     @id @default(autoincrement())
+  name        String
+  muscleGroup String
+  equipment   String? @db.VarChar(50)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  workouts WorkoutExercise[]
+}
+
+model Workout {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  name             String   @db.VarChar(100)
+  description      String?  @db.VarChar(500)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  estimatedMinutes Int?
+
+  user      User              @relation(fields: [userId], references: [id])
+  exercises WorkoutExercise[]
+  schedules WorkoutSchedule[]
+  sessions  WorkoutSession[]
+
+  @@index([userId])
+}
+
+model WorkoutExercise {
+  id         Int     @id @default(autoincrement())
+  workoutId  Int
+  exerciseId Int
+  sets       Int
+  reps       Int?
+  weight     Float?
+  order      Int
+  seconds    Int?
+  note       String? @db.VarChar(500)
+
+  workout  Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exercise Exercise @relation(fields: [exerciseId], references: [id])
+
+  sessionExercises WorkoutSessionExercise[]
+
+  @@index([workoutId])
+  @@index([exerciseId])
+}
+
+model WorkoutSchedule {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  workoutId Int
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  workout Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([workoutId])
+}
+
+model WorkoutSession {
+  id         Int                  @id @default(autoincrement())
+  userId     Int
+  workoutId  Int
+  startedAt  DateTime             @default(now())
+  finishedAt DateTime?
+  status     WorkoutSessionStatus @default(ACTIVE)
+
+  user      User                     @relation(fields: [userId], references: [id])
+  workout   Workout                  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exercises WorkoutSessionExercise[]
+
+  @@index([userId])
+  @@index([workoutId])
+}
+
+model WorkoutSessionExercise {
+  id                Int @id @default(autoincrement())
+  workoutSessionId  Int
+  workoutExerciseId Int
+  order             Int
+
+  workoutSession  WorkoutSession  @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
+
+  sets WorkoutSessionSet[]
+
+  @@index([workoutSessionId])
+  @@index([workoutExerciseId])
+}
+
+model WorkoutSessionSet {
+  id                       Int       @id @default(autoincrement())
+  workoutSessionExerciseId Int
+  setNumber                Int
+  targetReps               Int
+  targetWeight             Float?
+  actualReps               Int?
+  actualWeight             Float?
+  completed                Boolean   @default(false)
+  completedAt              DateTime?
+
+  workoutSessionExercise WorkoutSessionExercise @relation(fields: [workoutSessionExerciseId], references: [id], onDelete: Cascade)
+
+  @@index([workoutSessionExerciseId])
+}
+
+model CalorieLog {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  calories Int      @default(0)
+  protein  Int      @default(0)
+  carbs    Int      @default(0)
+  fat      Int      @default(0)
+  loggedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Food {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  caloriesPer100g Float
+  proteinPer100g  Float
+  carbsPer100g    Float
+  fatPer100g      Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mealItems MealItem[]
+   userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model Meal {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  name     String
+  mealType MealType
+
+  loggedAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User       @relation(fields: [userId], references: [id])
+  items MealItem[]
+
+  @@index([userId])
+}
+
+model MealItem {
+  id     Int @id @default(autoincrement())
+  mealId Int
+  foodId Int
+
+  grams Float
+
+  calories Float
+  protein  Float
+  carbs    Float
+  fat      Float
+
+  meal Meal @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  food Food @relation(fields: [foodId], references: [id])
+
+  @@index([mealId])
+  @@index([foodId])
 }
 
 enum Gender {
@@ -88,153 +265,6 @@ enum CalorieGoalType {
   WEIGHT_LOSS
   MAINTENANCE
   MUSCLE_GAIN
-}
-
-model Workout {
-  id               Int               @id @default(autoincrement())
-  userId           Int
-  name             String            @db.VarChar(100)
-  description      String?           @db.VarChar(500)
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  user             User              @relation(fields: [userId], references: [id])
-  exercises        WorkoutExercise[]
-  schedules        WorkoutSchedule[]
-  sessions         WorkoutSession[]
-  estimatedMinutes Int?
-}
-
-model WorkoutExercise {
-  id               Int                      @id @default(autoincrement())
-  workoutId        Int
-  exerciseId       Int
-  sets             Int
-  reps             Int?
-  weight           Float?
-  order            Int
-  seconds          Int?
-  note             String?                  @db.VarChar(500)
-  workout          Workout                  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-  exercise         Exercise                 @relation(fields: [exerciseId], references: [id])
-  sessionExercises WorkoutSessionExercise[]
-}
-
-model Exercise {
-  id          Int               @id @default(autoincrement())
-  name        String
-  muscleGroup String
-  equipment   String?           @db.VarChar(50)
-  workouts    WorkoutExercise[]
-}
-
-model WorkoutSchedule {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  workoutId Int
-  date      DateTime
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-  workout   Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-}
-
-model WorkoutSession {
-  id         Int                      @id @default(autoincrement())
-  userId     Int
-  workoutId  Int
-  startedAt  DateTime                 @default(now())
-  finishedAt DateTime?
-  status     WorkoutSessionStatus     @default(ACTIVE)
-  user       User                     @relation(fields: [userId], references: [id])
-  workout    Workout                  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-  exercises  WorkoutSessionExercise[]
-}
-
-model WorkoutSessionExercise {
-  id                Int @id @default(autoincrement())
-  workoutSessionId  Int
-  workoutExerciseId Int
-  order             Int
-
-  workoutSession  WorkoutSession  @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
-
-  sets WorkoutSessionSet[]
-}
-
-model WorkoutSessionSet {
-  id                       Int                    @id @default(autoincrement())
-  workoutSessionExerciseId Int
-  setNumber                Int
-  targetReps               Int
-  targetWeight             Float?
-  actualReps               Int?
-  actualWeight             Float?
-  completed                Boolean                @default(false)
-  completedAt              DateTime?
-  workoutSessionExercise   WorkoutSessionExercise @relation(fields: [workoutSessionExerciseId], references: [id], onDelete: Cascade)
-}
-
-model CalorieLog {
- id        Int      @id @default(autoincrement())
-  userId    Int
-  calories  Int      @default(0)
-  protein   Int      @default(0)
-  carbs     Int      @default(0)
-  fat       Int      @default(0)
-  loggedAt  DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
-}
-
-
-model Food {
-  id              Int      @id @default(autoincrement())
-  name            String
-
-  caloriesPer100g Float
-  proteinPer100g  Float
-  carbsPer100g    Float
-  fatPer100g      Float
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  mealItems MealItem[]
-}
-
-model Meal {
-  id        Int      @id @default(autoincrement())
-
-  userId    Int
-
-  name      String
-  mealType  MealType
-
-  loggedAt  DateTime @default(now())
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
-
-  items MealItem[]
-}
-
-model MealItem {
-  id Int @id @default(autoincrement())
-
-  mealId Int
-  foodId Int
-
-  grams Float
-
-  calories Float
-  protein  Float
-  carbs    Float
-  fat      Float
-
-  meal Meal @relation(fields: [mealId], references: [id], onDelete: Cascade)
-  food Food @relation(fields: [foodId], references: [id])
 }
 
 enum MealType {

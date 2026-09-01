@@ -1,6 +1,7 @@
 import EditWorkoutForm from '@/components/forms/workout/edit-workout-form';
 import ErrorMessage from '@/components/ui/error-message';
-import WorkoutService from '@/services/workout-service';
+import { requireAuth } from '@/lib/auth';
+import { WorkoutService } from '@/services-server/workout-service';
 
 type PageProps = {
   params: Promise<{
@@ -8,14 +9,18 @@ type PageProps = {
   }>;
 };
 
-export default async function EditWorkout({ params }: PageProps) {
-  const { id } = await params;
+const workoutService = new WorkoutService();
 
+export default async function EditWorkout({ params }: PageProps) {
+  //Check if user has token or exiperied token.
+  const user = await requireAuth();
+
+  const { id } = await params;
   if (!id) {
     throw new Error('Something went wrong');
   }
 
-  const response = await WorkoutService.getAll(Number(id));
+  const response = await workoutService.getById(Number(id), user.userId);
   if (!response.success || !response.data) {
     return (
       <main>

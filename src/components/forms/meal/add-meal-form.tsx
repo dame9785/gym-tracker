@@ -1,41 +1,30 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { MealType } from '@/types/meal-types';
-import MealService from '@/services/meal-service';
+
 import { AddMealDto, addMealSchema } from '@/schemas/meal-schemas';
 import { toast } from 'sonner';
 import Button from '@/components/button/button';
-
-type Food = {
-  id: number;
-  name: string;
-};
+import { createMealAction } from '@/actions/meal-action';
+import { FoodViewModel } from '@/types/food-type';
 
 type AddMealFormProps = {
-  foods: Food[];
-  userToken: string;
+  foods: FoodViewModel[];
 };
 
-const mealService = new MealService();
-export default function AddMealForm({ foods, userToken }: AddMealFormProps) {
+export default function AddMealForm({ foods }: AddMealFormProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const isSavingRef = useRef(false);
   const [foodId, setFoodId] = useState('');
   const [mealType, setMealType] = useState<MealType>('BREAKFAST');
   const [grams, setGrams] = useState('');
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    // Direkt lås - stoppar flera submits omedelbart
-    if (isSavingRef.current) {
-      return;
-    }
+  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     const formData: AddMealDto = {
       foodId: Number(foodId),
@@ -43,38 +32,38 @@ export default function AddMealForm({ foods, userToken }: AddMealFormProps) {
       grams: Number(grams),
     };
 
-    setErrors({});
-
     const validate = addMealSchema.safeParse(formData);
     if (!validate.success) {
       setErrors(validate.error.flatten().fieldErrors);
       return;
     }
 
-    // Lås DIREKT före API-anropet
-    isSavingRef.current = true;
     setIsSaving(true);
+    setErrors({});
     try {
-      const response = await mealService.addMeal(formData, userToken);
+      const response = await createMealAction(validate.data);
+
       if (!response.success) {
-        toast.error(response.message ?? 'Something went wrong, try again');
+        if (response.errors) {
+          setErrors(response.errors);
+        }
+
+        toast.error(response.message);
         return;
       }
 
-      toast.success(response.message ?? 'Meal created successfully');
-      router.push('/meals');
-      router.refresh();
+      toast.success(response.message);
+      router.push('/foods');
     } catch (error) {
-      console.error('Failed to add meal:', error);
+      console.error('Failed to create food:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
-      isSavingRef.current = false;
       setIsSaving(false);
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto w-full max-w-xl space-y-6 rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-xl">
+    <form onSubmit={handleSumbit} className="mx-auto w-full max-w-xl space-y-6 rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-xl">
       {/* Header */}
       <div>
         <p className="text-xs font-semibold tracking-[0.2em] text-orange-400">ADD MEAL</p>

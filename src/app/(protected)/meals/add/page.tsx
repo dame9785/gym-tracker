@@ -1,19 +1,15 @@
-import FoodsService from '@/services/food-service';
+import { FoodService } from '@/services-server/food-service';
 import AddMealForm from '@/components/forms/meal/add-meal-form';
 import ErrorMessage from '@/components/ui/error-message';
-import { getTokenFromCookieStore } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { requireAuth } from '@/lib/auth';
 
-const foodsService = new FoodsService();
+const foodsService = new FoodService();
 
 export default async function AddMealPage() {
-  const userToken = await getTokenFromCookieStore();
+  //Check if user has token or exiperied token.
+  const user = await requireAuth();
 
-  if (!userToken) {
-    redirect('/account/login');
-  }
-
-  const response = await foodsService.getAllFoods();
+  const response = await foodsService.getAll(user.userId);
 
   if (!response.success || !response.data) {
     return (
@@ -27,7 +23,7 @@ export default async function AddMealPage() {
     <main>
       <h1>Add food</h1>
 
-      <AddMealForm userToken={userToken} foods={response.data.foods} />
+      <AddMealForm foods={response.data} />
     </main>
   );
 }

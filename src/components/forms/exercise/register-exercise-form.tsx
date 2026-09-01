@@ -1,23 +1,17 @@
 'use client';
 
-//Styles
 import FormStyles from '@/components/forms/form.module.css';
 
-//Services
-import ExerciseService from '@/services/exercise-service';
+import { registerExerciseAction } from '@/actions/exercise-actions';
 
-//Types
 import type { RegisterExerciseDto } from '@/types/exercise-types';
 
-//Alert
 import { toast } from 'sonner';
 
-//Next Link & Routing
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-//Components
 import Button from '@/components/button/button';
 import { registerExerciseSchema } from '@/schemas/exercise-schema';
 import { ErrorsHelper } from '@/helpers/error-helper';
@@ -59,27 +53,32 @@ export default function RegisterForm() {
 
     if (!validation.success) {
       setErrors(ErrorsHelper.getFormErrors<RegisterExerciseDto>(validation.error.issues));
+
       return;
     }
+
     setIsSaving(true);
     setErrors({});
+
     try {
-      const response = await ExerciseService.register(validation.data);
+      const response = await registerExerciseAction(validation.data);
 
       if (!response.success) {
         if (response.errors) {
           setErrors(ErrorsHelper.getFormErrorsFromApi<RegisterExerciseDto>(response.errors));
         }
+
         toast.error(response.message);
         return;
       }
+
       toast.success(response.message);
+      router.push('/exercise');
     } catch (error) {
-      console.error('Failed to create exericse:', error);
+      console.error('Failed to create exercise:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);
-      router.push('/exercise');
     }
   };
 

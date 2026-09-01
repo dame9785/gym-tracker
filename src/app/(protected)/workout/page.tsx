@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import Button from '@/components/button/button';
 import WorkoutTable from '@/components/tables/workout-table';
-import WorkoutService from '@/services/workout-service';
-import { getTokenFromCookieStore } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { WorkoutService } from '@/services-server/workout-service';
+
 import Pagination from '@/components/workout/pagination';
 import ErrorMessage from '@/components/ui/error-message';
+import { requireAuth } from '@/lib/auth';
 
 type Props = {
   searchParams: Promise<{
@@ -13,17 +13,16 @@ type Props = {
   }>;
 };
 
+const workoutService = new WorkoutService();
 export default async function Workouts({ searchParams }: Props) {
+  //Pagination params
   const params = await searchParams;
   const page = Number(params.page) || 1;
 
-  const userToken = await getTokenFromCookieStore();
+  //Check if user has token or exiperied token.
+  const user = await requireAuth();
 
-  if (!userToken) {
-    redirect('/account/login');
-  }
-
-  const response = await WorkoutService.getAll(userToken, page);
+  const response = await workoutService.getAll(page, user.userId);
   if (!response.success || !response.data) {
     return (
       <main>

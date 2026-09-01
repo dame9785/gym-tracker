@@ -1,8 +1,13 @@
 import { prisma } from '@/lib/prisma';
+import { AddFoodDto, UpdateFoodDto } from '@/schemas/food-schemas';
+import { Food } from '@prisma/client';
 
 export class FoodRepository {
-  async getAll() {
+  async getAll(userId: number) {
     return prisma.food.findMany({
+      where: {
+        userId,
+      },
       orderBy: {
         name: 'asc',
       },
@@ -23,24 +28,60 @@ export class FoodRepository {
     });
   }
 
-  async getById(id: number) {
-    return prisma.food.findUnique({
-      where: {
-        id,
+  async create(dto: AddFoodDto, userId: number) {
+    return await prisma.food.create({
+      data: {
+        name: dto.name,
+        caloriesPer100g: dto.caloriesPer100g,
+        carbsPer100g: dto.carbsPer100g,
+        proteinPer100g: dto.proteinPer100g,
+        fatPer100g: dto.fatPer100g,
+        userId,
       },
     });
   }
 
-  async create(data: { name: string; caloriesPer100g: number; proteinPer100g: number; carbsPer100g: number; fatPer100g: number }) {
-    return prisma.food.create({
-      data,
+  async remove(foodId: number, userId: number) {
+    return prisma.food.delete({
+      where: {
+        id: foodId,
+        userId,
+      },
     });
   }
 
-  async removeFoodFromMeal(mealItemId: number) {
-    return prisma.mealItem.delete({
+  async getById(foodId: number, userId: number): Promise<Food | null> {
+    return prisma.food.findFirst({
       where: {
-        id: mealItemId,
+        id: foodId,
+        userId,
+      },
+    });
+  }
+
+  async update(dto: UpdateFoodDto, foodId: number, userId: number) {
+    const food = prisma.food.findFirst({
+      where: {
+        id: foodId,
+        userId,
+      },
+    });
+
+    if (!food) {
+      return null;
+    }
+
+    return await prisma.food.update({
+      where: {
+        id: foodId,
+        userId,
+      },
+      data: {
+        name: dto.name,
+        caloriesPer100g: dto.caloriesPer100g,
+        proteinPer100g: dto.proteinPer100g,
+        carbsPer100g: dto.carbsPer100g,
+        fatPer100g: dto.fatPer100g,
       },
     });
   }

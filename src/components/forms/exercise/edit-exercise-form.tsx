@@ -2,13 +2,13 @@
 
 //Components
 import Button from '@/components/button/button';
-import ExerciseService from '@/services/exercise-service';
+import { updateExerciseAction } from '@/actions/exercise-actions';
 
 //CSS Modules
 import FormStyles from '@/components/forms/form.module.css';
 
 //Types
-import type { ExerciseViewModel, RegisterExerciseDto } from '@/types/exercise-types';
+import type { ExerciseViewModel } from '@/types/exercise-types';
 
 //Toast alert
 import { toast } from 'sonner';
@@ -58,29 +58,35 @@ export default function EditExercise({ exericse }: Props) {
     };
 
     const validation = updateExerciseSchema.safeParse(exericseDto);
+
     if (!validation.success) {
       setErrors(ErrorsHelper.getFormErrors<UpdateExericseDto>(validation.error.issues));
+
       return;
     }
 
     setIsSaving(true);
     setErrors({});
+
     try {
-      const response = await ExerciseService.update(exericse.id, validation.data);
+      const response = await updateExerciseAction(exericse.id, validation.data);
+
       if (!response.success) {
         if (response.errors) {
-          setErrors(ErrorsHelper.getFormErrorsFromApi<RegisterExerciseDto>(response.errors));
+          setErrors(ErrorsHelper.getFormErrorsFromApi<UpdateExericseDto>(response.errors));
         }
+
         toast.error(response.message);
         return;
       }
+
       toast.success(response.message);
+      router.push('/exercise');
     } catch (error) {
-      console.error('Failed to update exericse:', error);
+      console.error('Failed to update exercise:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);
-      router.push('/exercise');
     }
   };
 

@@ -48,12 +48,13 @@ export interface TodayMealsApiResponse {
 }
 
 export interface MealViewModel {
-  id: number;
-  userId: number;
-  mealType: MealType;
-  createdAt: string;
-  updatedAt: string;
-  items: MealItemViewModel[];
+  mealId: number;
+  foodId: number;
+  grams: number;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
 }
 
 export interface MealItemViewModel {
