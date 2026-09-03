@@ -24,9 +24,6 @@ import Button from '@/components/button/button';
 // Toast
 import { toast } from 'sonner';
 
-// Schemas
-import { loginSchema } from '@/schemas/auth-schemas';
-
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,25 +35,17 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const loginData = {
+    const dto = {
       email,
       password,
     } satisfies LoginDto;
-
-    // ZOD Validation
-    const validation = loginSchema.safeParse(loginData);
-
-    if (!validation.success) {
-      setErrors(validation.error.flatten().fieldErrors);
-      return;
-    }
 
     // Start loading only after validation succeeds
     setIsSaving(true);
     setErrors({});
 
     try {
-      const response = await loginUserAction(validation.data);
+      const response = await loginUserAction(dto);
 
       if (!response.success) {
         if (response.errors) {
@@ -70,7 +59,7 @@ export default function LoginForm() {
       toast.success(response.message);
       router.push('/dashboard');
     } catch (error) {
-      console.error('Failed to create food:', error);
+      console.error('Failed to login:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);

@@ -109,7 +109,7 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
         </label>
 
         <select
-          id="foodId"
+          id="food"
           value={foodId}
           disabled={isSaving}
           onChange={(event) => setFoodId(event.target.value)}

@@ -1,5 +1,5 @@
 import { NutritionGoals } from '@/types/calorie-types';
-import { NutritionGoalViewModel, NutritionTotals } from '@/types/meal-types';
+import { NutritionTotals } from '@/types/meal-types';
 
 type Props = {
   totalNuitrationsStats: NutritionTotals;
@@ -7,7 +7,6 @@ type Props = {
 };
 
 export default function TotalNuitrationStats({ totalNuitrationsStats, recomendedIntakeStats }: Props) {
-  console.log('Daily Intake goals');
   return (
     <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
       {/* Calories */}

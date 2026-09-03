@@ -64,33 +64,40 @@ export async function loginUserAction(dto: LoginDto) {
     };
   }
 
-  const response = await authService.login(validation.data);
+  try {
+    const response = await authService.login(validation.data);
 
-  if (!response.success) {
-    return response;
-  }
+    if (!response.success) {
+      return response;
+    }
 
-  const cookieStore = await cookies();
-  if (!response.data) {
+    const cookieStore = await cookies();
+    if (!response.data) {
+      return {
+        success: false,
+        message: response.message,
+      };
+    }
+
+    cookieStore.set('token', response.data.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return {
+      success: true,
+      message: response.message,
+      data: {
+        userId: response.data.userId,
+      },
+    };
+  } catch (error) {
     return {
       success: false,
-      message: response.message,
+      message: 'Something went wrong..',
     };
   }
-
-  cookieStore.set('token', response.data.token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7,
-  });
-
-  return {
-    success: true,
-    message: response.message,
-    data: {
-      userId: response.data.userId,
-    },
-  };
 }

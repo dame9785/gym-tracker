@@ -89,7 +89,6 @@ export class AuthService {
 
       //Generate token
       const token = generateToken(user.id);
-      console.log(token);
 
       return {
         success: true,
