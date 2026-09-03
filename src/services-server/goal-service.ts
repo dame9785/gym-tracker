@@ -1,28 +1,20 @@
 import { GoalRepository } from '@/repositories/goal-repository';
-import { ErrorResponse, ApiResponse, SuccessResponse } from '@/types/api-types';
+import { ApiResponse, SuccessResponse } from '@/types/api-types';
 import { GoalTypeMapper } from '@/mapping/goal-type-mapping';
 import { GoalTypeViewModel, GoalViewModel } from '@/types/goal-types';
-
+import { GoalType } from '@prisma/client';
 const goalRepository = new GoalRepository();
 
 export class GoalTypesService {
   async getAllGoals(): Promise<ApiResponse<GoalTypeViewModel[]>> {
-    try {
-      const goalTypes = await goalRepository.getAllGoals();
-      const viewModel = goalTypes.map((goalType) => GoalTypeMapper.goalTypeDbToViewModel(goalType));
+    const goalTypes: GoalType[] = [GoalType.WEIGHT_LOSS, GoalType.MUSCLE_GAIN, GoalType.MAINTENANCE];
 
-      return {
-        success: true,
-        data: viewModel,
-      } satisfies SuccessResponse<GoalTypeViewModel[]>;
-    } catch (error) {
-      console.error(error);
+    const viewModel = goalTypes.map((goalType) => GoalTypeMapper.goalTypeDbToViewModel(goalType));
 
-      return {
-        success: false,
-        message: 'Server error',
-      } satisfies ErrorResponse;
-    }
+    return {
+      success: true,
+      data: viewModel,
+    } satisfies SuccessResponse<GoalTypeViewModel[]>;
   }
   async getUserGoal(userId: number): Promise<GoalViewModel | null> {
     const goal = await goalRepository.getByUserId(userId);

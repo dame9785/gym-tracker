@@ -1,5 +1,5 @@
 //Prisma
-import { Prisma } from '@prisma/client';
+import { GoalType, Prisma } from '@prisma/client';
 
 //Types
 import type { UserSettingsViewModel, UserViewModel } from '@/types/user-types';
@@ -23,7 +23,7 @@ export class UserMapper {
       goalDate: user.goalDate.toISOString(),
       createdAt: user.createdAt.toISOString(),
       updatedAt: user.updatedAt.toISOString(),
-      goalTypeId: user.goalTypeId ?? null,
+      goalType: user.goalType,
       gender: user.gender,
     };
   }
@@ -43,7 +43,7 @@ export class UserMapper {
       goalDate: user.goalDate.toISOString(),
       createdAt: user.createdAt.toISOString(),
       updatedAt: user.updatedAt.toISOString(),
-      goalTypeId: user.goalTypeId ?? null,
+      goalType: user.goalType,
       gender: user.gender,
     };
   }
@@ -62,11 +62,7 @@ export class UserMapper {
       birthDate: new Date(dto.birthDate),
       goalDate: new Date(dto.goalDate),
       passwordHash,
-      goalType: {
-        connect: {
-          id: dto.goalTypeId,
-        },
-      },
+      goalType: dto.goalType,
     };
   }
 
@@ -82,11 +78,6 @@ export class UserMapper {
       birthDate: new Date(dto.birthDate),
       goalWeight: new Prisma.Decimal(dto.goalWeight),
       goalDate: new Date(dto.goalDate),
-      goalType: {
-        connect: {
-          id: dto.goalTypeId,
-        },
-      },
     };
   }
 }

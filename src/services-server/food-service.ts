@@ -1,7 +1,7 @@
 import FoodMapper from '@/mapping/food-mapping';
 import { FoodRepository } from '@/repositories/food-repository';
 import { AddFoodDto, addFoodSchema, UpdateFoodDto, updateFoodSchema } from '@/schemas/food-schemas';
-import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, FoodDeleteResponse } from '@/types/api-types';
+import { ErrorResponse, ApiResponse, SuccessResponse, FoodDeleteResponse } from '@/types/api-types';
 import { CreateFoodResponse, FoodResponse, FoodViewModel, UpdateFoodResponse } from '@/types/food-type';
 import { errorResponse } from '@/utils/api-error';
 
@@ -16,13 +16,13 @@ export class FoodService {
         return {
           success: false,
           message: 'Failed to fetch foods',
-        } satisfies ApiErrorResponse;
+        } satisfies ErrorResponse;
       }
 
       return {
         success: true,
         data: foods.map((item) => FoodMapper.foodModelToViewModel(item)),
-      } satisfies ApiSuccessResponse<FoodResponse>;
+      } satisfies SuccessResponse<FoodResponse>;
     } catch (error) {
       console.error('Foods failed, server error:', error);
       return errorResponse('An error occurred on the server.');
@@ -49,7 +49,7 @@ export class FoodService {
         success: true,
         message: 'Food fetched successfully.',
         data: FoodMapper.foodModelToViewModel(foodItem),
-      } satisfies ApiSuccessResponse<FoodViewModel>;
+      } satisfies SuccessResponse<FoodViewModel>;
     } catch (error) {
       console.error('Fetch food by id failed, server error:', error);
       return errorResponse('An error occurred on the server.');
@@ -71,7 +71,7 @@ export class FoodService {
         success: true,
         message: 'Exercise created successfully.',
         data: FoodMapper.foodModelToViewModel(food),
-      } satisfies ApiSuccessResponse<CreateFoodResponse>;
+      } satisfies SuccessResponse<CreateFoodResponse>;
     } catch (error) {
       console.error('Create exercise failed, server error:', error);
 
@@ -85,7 +85,7 @@ export class FoodService {
       return {
         success: true,
         message: 'Exericse deleted successfully',
-      } satisfies ApiSuccessResponse<FoodResponse>;
+      } satisfies SuccessResponse<FoodResponse>;
     } catch (error) {
       console.error('Delete exericse failed, server error:', error);
       return errorResponse('An error occurred on the server.');
@@ -113,7 +113,7 @@ export class FoodService {
         success: true,
         message: 'Exercise updated successfully.',
         data: viewModel,
-      } satisfies ApiSuccessResponse<UpdateFoodResponse>;
+      } satisfies SuccessResponse<UpdateFoodResponse>;
     } catch (error) {
       console.error('Update exercise failed, server error:', error);
 

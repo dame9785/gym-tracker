@@ -12,36 +12,21 @@ import Button from '@/components/button/button';
 
 // Icons
 import { FaDumbbell, FaWeight, FaHistory, FaHome } from 'react-icons/fa';
-import { FaTrophy } from 'react-icons/fa6';
+
 import { BsBarChartLine, BsPersonCircle } from 'react-icons/bs';
 import { IoIosSettings } from 'react-icons/io';
 import { FaPersonRunning, FaUtensils } from 'react-icons/fa6';
 import { MdOutlineLocalFireDepartment } from 'react-icons/md';
+import { logoutAction } from '@/actions/user-actions';
 
-// Services
-import AuthService from '@/services/auth-service';
-
-// Types
-import type { UserSettingsViewModel } from '@/types/user-types';
-
-interface Props {
-  user: UserSettingsViewModel | null;
-}
-
-function Sidebar({ user }: Props) {
+function Sidebar() {
   const router = useRouter();
 
-  if (user === null) {
-    router.push('/account/login');
-    return null;
-  }
-
   const handleLogout = async () => {
-    const apiResponse = await AuthService.logout();
+    await logoutAction();
 
-    if (apiResponse.success) {
-      router.push('/account/login');
-    }
+    router.push('/account/login');
+    router.refresh();
   };
 
   return (
@@ -109,9 +94,9 @@ function Sidebar({ user }: Props) {
         <div className="sidebar-bottom-wrapper flex items-center justify-center">
           <BsPersonCircle />
 
-          <p>
+          {/* <p>
             <small>{user.username}</small>
-          </p>
+          </p> */}
         </div>
 
         <div className="logout-wrapper mt-5 flex justify-center">

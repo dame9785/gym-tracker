@@ -34,15 +34,7 @@ export default function CreateFoodForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const dto: AddFoodDto = {
-      name: formData.name,
-      caloriesPer100g: Number(formData.caloriesPer100g),
-      proteinPer100g: Number(formData.proteinPer100g),
-      carbsPer100g: Number(formData.carbsPer100g),
-      fatPer100g: Number(formData.fatPer100g),
-    };
-
-    const validate = addFoodSchema.safeParse(dto);
+    const validate = addFoodSchema.safeParse(formData);
 
     if (!validate.success) {
       setErrors(validate.error.flatten().fieldErrors);
@@ -85,7 +77,15 @@ export default function CreateFoodForm() {
         <label htmlFor="name" className={FormStyles.formLabel}>
           Name
         </label>
-        <input className={FormStyles.formInput} id="name" name="name" type="text" step="0.1" placeholder="e.g. chicken" onChange={handleChange}></input>
+        <input
+          className={FormStyles.formInput}
+          id="name"
+          name="name"
+          type="text"
+          step="0.1"
+          placeholder="e.g. chicken"
+          onChange={handleChange}
+        ></input>
         {errors.name?.[0] && (
           <p id="name-error" className="text-red-500" role="alert">
             {errors.name[0]}

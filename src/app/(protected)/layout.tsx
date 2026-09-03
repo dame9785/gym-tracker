@@ -1,18 +1,15 @@
-import { redirect } from 'next/navigation';
-
-import { getTokenFromCookieStore } from '@/lib/auth';
+import { requireAuth } from '@/lib/auth';
+import { Toaster } from 'sonner';
+import Sidebar from '@/components/sidebar/Sidebar';
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const token = await getTokenFromCookieStore();
-
-  console.log(token);
-  if (!token) {
-    redirect('/account/login');
-  }
+  const user = await requireAuth();
 
   return (
     <div className="app-layout">
       <main>{children}</main>
+      <Sidebar />
+      <Toaster richColors position="top-right" />
     </div>
   );
 }

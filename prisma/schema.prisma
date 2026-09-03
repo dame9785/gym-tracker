@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id           Int    @id @default(autoincrement())
+   id           Int    @id @default(autoincrement())
   firstName    String @db.VarChar(50)
   lastName     String @db.VarChar(50)
   username     String @unique @db.VarChar(50)
@@ -27,9 +27,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  goalTypeId Int?
-  goalType   GoalType? @relation(fields: [goalTypeId], references: [id])
-  goal       Goal?
+  goalType GoalType
+  goal     Goal?
 
   food             Food[]
   workout          Workout[]
@@ -53,19 +52,17 @@ model WeightLog {
   @@index([userId, loggedAt])
 }
 
-model GoalType {
-  id    Int    @id @default(autoincrement())
-  title String @unique
-
-  users User[]
+enum GoalType {
+  WEIGHT_LOSS
+  MUSCLE_GAIN
+  MAINTENANCE
 }
 
 model Goal {
   id     Int @id @default(autoincrement())
   userId Int @unique
 
-  user        User             @relation(fields: [userId], references: [id])
-  calorieGoal CalorieGoalType?
+  user     User @relation(fields: [userId], references: [id])
 
   calories Int?
   protein  Int?
@@ -261,11 +258,7 @@ enum WorkoutSessionStatus {
   NOTCOMPLETED
 }
 
-enum CalorieGoalType {
-  WEIGHT_LOSS
-  MAINTENANCE
-  MUSCLE_GAIN
-}
+
 
 enum MealType {
   BREAKFAST

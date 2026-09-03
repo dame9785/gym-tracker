@@ -1,4 +1,7 @@
-//Goal Type
+import { GoalType } from '@prisma/client';
+
+// Goal Type
+
 export type GoalApiResponse = GoalTypeViewModel[];
 
 export interface GoalTypeViewModel {
@@ -7,10 +10,22 @@ export interface GoalTypeViewModel {
 }
 
 export interface GoalViewModel {
-  calorieGoal: 'WEIGHT_LOSS' | 'MAINTENANCE' | 'MUSCLE_GAIN' | null;
+  calorieGoal: GoalType;
+}
 
-  calories: number | null;
-  protein: number | null;
-  carbs: number | null;
-  fat: number | null;
+// Calorie Calculator
+
+export interface CalorieCalculatorInput {
+  weight: number;
+  height: number;
+  age: number;
+  gender: 'MALE' | 'FEMALE' | 'OTHER';
+  goalType: GoalType;
+}
+
+export interface CalorieCalculatorResult {
+  bmr: number;
+  maintenanceCalories: number;
+  weightLossCalories: number;
+  muscleGainCalories: number;
 }

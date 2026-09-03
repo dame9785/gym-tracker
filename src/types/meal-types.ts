@@ -1,3 +1,4 @@
+import { NutritionGoals } from './calorie-types';
 import { GoalViewModel } from './goal-types';
 
 export type MealType = 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'SNACK';
@@ -11,27 +12,31 @@ export interface MealFood {
   fatPer100g: number;
 }
 
-export interface MealItem {
+export interface MealItemViewModel {
   id: number;
   mealId: number;
   foodId: number;
+
   grams: number;
   calories: number;
   protein: number;
   carbs: number;
   fat: number;
+
   food: MealFood;
 }
 
-export interface Meal {
+export interface MealViewModel {
   id: number;
   userId: number;
   name: string;
   mealType: MealType;
+
   loggedAt: string;
   createdAt: string;
   updatedAt: string;
-  items: MealItem[];
+
+  items: MealItemViewModel[];
 }
 
 export interface NutritionTotals {
@@ -41,42 +46,17 @@ export interface NutritionTotals {
   fat: number;
 }
 
-export interface TodayMealsApiResponse {
+export interface NutritionGoalViewModel {
+  recomendedCalorieIntake: number;
+  recomendedProteinIntake: number;
+  recomendedCarbsIntake: number;
+  recomendedFatIntake: number;
+}
+
+export interface TodayMealsResponse {
   meals: MealViewModel[];
   totals: NutritionTotals;
-  goal: NutritionTotals;
+  dailyIntakeGoals: NutritionGoals;
 }
 
-export interface MealViewModel {
-  mealId: number;
-  foodId: number;
-  grams: number;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-}
-
-export interface MealItemViewModel {
-  id: number;
-  foodId: number;
-  mealId: number;
-  grams: number;
-
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-
-  food: FoodViewModel;
-}
-
-export interface FoodViewModel {
-  id: number;
-  name: string;
-
-  caloriesPer100g: number;
-  proteinPer100g: number;
-  carbsPer100g: number;
-  fatPer100g: number;
-}
+export type DeleteMealItemResponse = void;

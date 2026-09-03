@@ -1,5 +1,5 @@
 //Gender Enum
-import { Gender } from '@prisma/client';
+import { Gender, GoalType } from '@prisma/client';
 
 export interface User {
   id: number;
@@ -31,8 +31,8 @@ export interface UserSettingsViewModel {
   updatedAt: string;
   goalWeight: number;
   goalDate: string;
-  goalTypeId: number | null;
   gender: Gender;
+  goalType: GoalType;
 }
 
 export interface UserViewModel {
@@ -49,6 +49,6 @@ export interface UserViewModel {
   updatedAt: string;
   goalWeight: number;
   goalDate: string;
-  goalTypeId: number | null;
+  goalType: GoalType;
   gender: Gender;
 }

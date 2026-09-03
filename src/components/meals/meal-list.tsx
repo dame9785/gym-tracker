@@ -32,8 +32,8 @@ export default function MealList({ meals }: Props) {
   return (
     <div className="space-y-6">
       {mealTypes.map((mealType) => {
-        // Hämta alla meals av denna typ
-        const mealsForType = meals.filter((meal) => meal.mealType === mealType.key);
+        // Hämta endast meals av denna typ som faktiskt innehåller foods
+        const mealsForType = meals.filter((meal) => meal.mealType === mealType.key && meal.items.length > 0);
 
         if (mealsForType.length === 0) {
           return null;
@@ -42,23 +42,20 @@ export default function MealList({ meals }: Props) {
         // Slå ihop alla foods från meals med samma typ
         const combinedItems = mealsForType.flatMap((meal) => meal.items);
 
-        // Skapa ett sammanslaget meal
         const combinedMeal: MealViewModel = {
           ...mealsForType[0],
           id: mealsForType[0].id,
-
           items: combinedItems,
         };
 
         return (
           <section key={mealType.key}>
-            {/* Meal type */}
             <div className="mb-3 flex items-center gap-2">
               <h2 className="text-lg font-bold text-white">{mealType.title}</h2>
+
               <span className="text-xs text-slate-500">{combinedItems.length} foods</span>
             </div>
 
-            {/* Ett kort med alla foods */}
             <MealCard meal={combinedMeal} />
           </section>
         );

@@ -1,4 +1,5 @@
 import { MealItemViewModel } from '@/types/meal-types';
+import DeleteMealItemButton from '@/components/meals/delete-meal-item-button';
 
 type MealItemProps = {
   item: MealItemViewModel;
@@ -21,18 +22,21 @@ export default function MealItem({ item }: MealItemProps) {
         </span>
 
         <span className="text-sm  font-bold">
-          C <strong>{item.carbs.toFixed(1)}g</strong>
+          C <strong>{item.calories.toFixed(1)}g</strong>
         </span>
 
         <span className="text-sm  font-bold">
           F <strong>{item.fat.toFixed(1)}g</strong>
         </span>
+        <span className="text-sm  font-bold">
+          C <strong>{item.carbs.toFixed(1)}g</strong>
+        </span>
       </div>
 
       {/* Calories + Delete */}
-      {/* <div className="flex items-center gap-4">
-        <DeleteButton foodId={item.id} />
-      </div> */}
+      <div className="flex items-center gap-4">
+        <DeleteMealItemButton mealItemId={item.id} />
+      </div>
     </article>
   );
 }

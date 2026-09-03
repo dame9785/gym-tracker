@@ -20,3 +20,17 @@ export async function createMealAction(dto: AddMealDto) {
 
   return mealService.addFoodToMeal(validation.data, user.userId);
 }
+
+export async function deleteMealItemAction(mealItemId: number) {
+  const user = await requireAuth();
+  try {
+    return mealService.deleteMealItem(mealItemId);
+  } catch (error) {
+    console.error('Delete meal item action failed:', error);
+
+    return {
+      success: false,
+      message: 'Something went wrong. Please try again.',
+    };
+  }
+}

@@ -5,6 +5,7 @@ import MealCalendar from '@/components/meals/meal-calandar';
 import { requireAuth } from '@/lib/auth';
 import Link from 'next/link';
 import ErrorMessage from '@/components/ui/error-message';
+import TotalNuitrationStats from '@/components/meals/total-nuitration-stats';
 
 import { formatDate, addDays } from '@/helpers/date-helper';
 
@@ -33,17 +34,22 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
 
   // Hämta meals för valt datum
   const response = await mealService.getMealsByDate(formattedDate, user.userId);
+  console.log('RESPONSE', response);
 
   // Hantera fel
   if (!response.success || !response.data) {
     return (
       <main>
-        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+        <ErrorMessage
+          title="Unable to load foods"
+          message={response.message ?? 'Something went wrong while loading your foods.'}
+        />
       </main>
     );
   }
 
-  const { totals, meals, goal } = response.data;
+  const { totals, meals, dailyIntakeGoals } = response.data;
+  console.log('MEALS', meals);
 
   // Datum som visas för användaren
   const displayDate = selectedDate.toLocaleDateString('sv-SE', {
@@ -70,7 +76,10 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
           <p className="mt-1 text-sm text-slate-400">Track your meals and daily nutrition.</p>
         </div>
 
-        <Link href="/meals/add" className="rounded-lg bg-orange-500 px-4 py-2 text-center text-sm font-semibold text-black transition hover:bg-orange-400">
+        <Link
+          href="/meals/add"
+          className="rounded-lg bg-orange-500 px-4 py-2 text-center text-sm font-semibold text-black transition hover:bg-orange-400"
+        >
           + Add meal
         </Link>
       </header>
@@ -108,124 +117,15 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
       )}
 
       {/* Nutrition cards */}
-      <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {/* Calories */}
-        <div
-          className="
-            group relative overflow-hidden
-            rounded-2xl border border-zinc-800
-            bg-linear-to-br from-zinc-900 to-zinc-950
-            p-6
-            transition-all duration-300
-            hover:-translate-y-1
-            hover:border-orange-500/40
-            hover:shadow-xl
-            hover:shadow-orange-500/5
-          "
-        >
-          <span className="text-xs text-slate-400">Calories</span>
+      <TotalNuitrationStats totalNuitrationsStats={totals} recomendedIntakeStats={dailyIntakeGoals} />
 
-          <strong className="mt-1 block text-lg font-bold text-white">
-            {totals.calories.toFixed(0)}
-            <span className="mx-1 text-sm text-slate-500">/</span>
-            {goal.calories}
-          </strong>
-
-          <span className="text-[11px] text-slate-500">kcal</span>
-        </div>
-
-        {/* Protein */}
-        <div
-          className="
-            group relative overflow-hidden
-            rounded-2xl border border-zinc-800
-            bg-linear-to-br from-zinc-900 to-zinc-950
-            p-6
-            transition-all duration-300
-            hover:-translate-y-1
-            hover:border-orange-500/40
-            hover:shadow-xl
-            hover:shadow-orange-500/5
-          "
-        >
-          <span className="text-xs text-slate-400">Protein</span>
-
-          <strong className="mt-1 block text-lg font-bold text-white">
-            {totals.protein.toFixed(1)}
-            <span className="mx-1 text-sm text-slate-500">/</span>
-            {goal.protein}
-          </strong>
-
-          <span className="text-[11px] text-slate-500">grams</span>
-        </div>
-
-        {/* Carbs */}
-        <div
-          className="
-            group relative overflow-hidden
-            rounded-2xl border border-zinc-800
-            bg-linear-to-br from-zinc-900 to-zinc-950
-            p-6
-            transition-all duration-300
-            hover:-translate-y-1
-            hover:border-orange-500/40
-            hover:shadow-xl
-            hover:shadow-orange-500/5
-          "
-        >
-          <span className="text-xs text-slate-400">Carbs</span>
-
-          <strong className="mt-1 block text-lg font-bold text-white">
-            {totals.carbs.toFixed(1)}
-            <span className="mx-1 text-sm text-slate-500">/</span>
-            {goal.carbs}
-          </strong>
-
-          <span className="text-[11px] text-slate-500">grams</span>
-        </div>
-
-        {/* Fat */}
-        <div
-          className="
-            group relative overflow-hidden
-            rounded-2xl border border-zinc-800
-            bg-linear-to-br from-zinc-900 to-zinc-950
-            p-6
-            transition-all duration-300
-            hover:-translate-y-1
-            hover:border-orange-500/40
-            hover:shadow-xl
-            hover:shadow-orange-500/5
-          "
-        >
-          <span className="text-xs text-slate-400">Fat</span>
-
-          <strong className="mt-1 block text-lg font-bold text-white">
-            {totals.fat.toFixed(1)}
-            <span className="mx-1 text-sm text-slate-500">/</span>
-            {goal.fat}
-          </strong>
-
-          <span className="text-[11px] text-slate-500">grams</span>
-        </div>
-      </section>
-
-      {/* Meals + Calendar */}
       <section className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
-        {/* LEFT SIDE - MEALS */}
         <div className="min-w-0">
           <div className="mb-3 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Your meals</p>
-
-              <h2 className="text-lg font-semibold text-white">{isToday ? 'Todays meals' : 'Meals'}</h2>
-            </div>
-
             <span className="rounded-md bg-slate-800 px-2 py-1 text-xs text-slate-400">
               {meals.length} {meals.length === 1 ? 'meal' : 'meals'}
             </span>
           </div>
-
           <MealList meals={meals} />
         </div>
 

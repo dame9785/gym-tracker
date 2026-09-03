@@ -14,6 +14,12 @@ type MealWithItems = Prisma.MealGetPayload<{
   };
 }>;
 
+type MealItemWithFood = Prisma.MealItemGetPayload<{
+  include: {
+    food: true;
+  };
+}>;
+
 export default class MealMapper {
   static toViewModel(meal: MealWithItems): MealViewModel {
     return {
@@ -22,6 +28,8 @@ export default class MealMapper {
       mealType: meal.mealType,
       createdAt: meal.createdAt.toISOString(),
       updatedAt: meal.updatedAt.toISOString(),
+      loggedAt: meal.loggedAt.toISOString(),
+      name: meal.name,
       items: meal.items.map(
         (item): MealItemViewModel => ({
           id: item.id,
@@ -44,6 +52,29 @@ export default class MealMapper {
           },
         }),
       ),
+    };
+  }
+
+  static toItemViewModel(item: MealItemWithFood): MealItemViewModel {
+    return {
+      id: item.id,
+      foodId: item.foodId,
+      mealId: item.mealId,
+      grams: item.grams,
+
+      calories: item.calories,
+      protein: item.protein,
+      carbs: item.carbs,
+      fat: item.fat,
+
+      food: {
+        id: item.food.id,
+        name: item.food.name,
+        caloriesPer100g: item.food.caloriesPer100g,
+        proteinPer100g: item.food.proteinPer100g,
+        carbsPer100g: item.food.carbsPer100g,
+        fatPer100g: item.food.fatPer100g,
+      },
     };
   }
 }

@@ -7,7 +7,6 @@ import styles from '@/components/forms/form.module.css';
 import Button from '@/components/button/button';
 
 //Types
-import type { GoalTypeViewModel } from '@/types/goal-types';
 import type { UpdateUserDto } from '@/schemas/auth-schemas';
 import type { UserSettingsViewModel } from '@/types/user-types';
 
@@ -34,18 +33,18 @@ import { toast } from 'sonner';
 
 import { useRouter } from 'next/navigation';
 import { updateUserAction } from '@/actions/user-actions';
+import { GoalType } from '@prisma/client';
 
 //Props
 interface Props {
   user: UserSettingsViewModel;
-  goals: GoalTypeViewModel[];
 }
 
-export default function UpdateUserForm({ user, goals }: Props) {
+export default function UpdateUserForm({ user }: Props) {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
-
+  console.log('User', user);
   const formatDateForInput = (date: string): string => {
     if (!date) {
       return '';
@@ -65,7 +64,7 @@ export default function UpdateUserForm({ user, goals }: Props) {
     goalWeight: user.goalWeight,
     birthDate: formatDateForInput(user.birthDate) ?? '',
     goalDate: formatDateForInput(user.goalDate) ?? '',
-    goalTypeId: user.goalTypeId || 0,
+    goalType: user.goalType,
     gender: user.gender,
   });
 
@@ -319,19 +318,17 @@ export default function UpdateUserForm({ user, goals }: Props) {
             </div>
             <select
               className={styles.formSelect}
-              name="goalTypeId"
-              id="goalTypeId"
-              value={formData.goalTypeId}
+              id="goalType"
+              name="goalType"
+              value={formData.goalType}
               onChange={handleChange}
             >
-              <option value="">Välj mål</option>
-
-              {goals.map((goal) => (
-                <option key={goal.id} value={goal.id}>
-                  {goal.title}
-                </option>
-              ))}
+              <option value="">Select goal type</option>
+              <option value={GoalType.MUSCLE_GAIN}>Muscle Gain</option>
+              <option value={GoalType.WEIGHT_LOSS}>Weight Loss</option>
+              <option value={GoalType.MAINTENANCE}>Maintenance</option>
             </select>
+
             {errors.goalTypeId?.[0] && <p className={styles.fieldErrorMessage}>{errors.goalTypeId[0]}</p>}
           </div>
 

@@ -8,7 +8,6 @@ import {
   FaRulerVertical,
   FaMars,
   FaCakeCandles,
-  FaBullseye,
   FaWeightHanging,
   FaFlagCheckered,
   FaUser,
@@ -33,16 +32,11 @@ import { useState } from 'react';
 
 //Types
 import { registerUserSchema, type RegisterUserDto } from '@/schemas/auth-schemas';
-import type { GoalTypeViewModel } from '@/types/goal-types';
-import { Gender } from '@prisma/client';
+import { Gender, GoalType } from '@prisma/client';
 
 import { registerUserAction } from '@/actions/user-actions';
 
-type Props = {
-  goals: GoalTypeViewModel[];
-};
-
-export default function RegisterForm({ goals }: Props) {
+export default function RegisterForm() {
   const router = useRouter();
 
   /*States*/
@@ -58,7 +52,7 @@ export default function RegisterForm({ goals }: Props) {
     height: 0,
     gender: 'MALE',
     birthDate: new Date().toISOString().split('T')[0],
-    goalTypeId: 0,
+    goalType: 'MAINTENANCE',
     goalWeight: 0,
     goalDate: '',
     password: '',
@@ -355,29 +349,26 @@ export default function RegisterForm({ goals }: Props) {
             {errors.birthDate && <p className={FormStyles.fieldErrorMessage}>{errors.birthDate}</p>}
           </div>
 
-          {/* Goal */}
+          {/* Goal Type*/}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
-              <FaBullseye className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="goal">
-                Mål
+              <FaMars className={FormStyles.formIcon} />
+              <label className={FormStyles.formLabel} htmlFor="goalType">
+                Goal type
               </label>
             </div>
             <select
               className={FormStyles.formSelect}
-              name="goalTypeId"
-              value={formData.goalTypeId}
+              id="goalType"
+              name="goalType"
+              value={formData.goalType}
               onChange={handleChange}
             >
-              <option value="">Välj mål</option>
-
-              {goals.map((goal) => (
-                <option key={goal.id} value={goal.id}>
-                  {goal.title}
-                </option>
-              ))}
+              <option value="">Select goal type</option>
+              <option value={GoalType.MUSCLE_GAIN}>Muscle Gain</option>
+              <option value={GoalType.WEIGHT_LOSS}>Weight Loss</option>
+              <option value={GoalType.MAINTENANCE}>Maintenance</option>
             </select>
-            {errors.goalTypeId && <p className={FormStyles.fieldErrorMessage}>{errors.goalTypeId}</p>}
           </div>
 
           {/* Goal weight*/}

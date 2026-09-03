@@ -6,6 +6,7 @@ type MealCardProps = {
 };
 
 export default function MealCard({ meal }: MealCardProps) {
+  console.log(meal);
   const totalCalories = meal.items.reduce((total, item) => total + item.calories, 0);
 
   return (

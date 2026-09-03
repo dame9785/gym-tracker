@@ -1,14 +1,17 @@
-import type { CalorieCalculatorResult, CalorieGoal } from '@/types/calorie-types';
+import { GoalType } from '@prisma/client';
+import type { CalorieCalculatorResult } from '@/types/calorie-types';
 
-export function getGoalCalories(calorieGoal: CalorieGoal, calorieStats: CalorieCalculatorResult) {
-  switch (calorieGoal) {
-    case 'WEIGHT_LOSS':
+export function getGoalCalories(goalType: GoalType, calorieStats: CalorieCalculatorResult): number {
+  switch (goalType) {
+    case GoalType.WEIGHT_LOSS:
       return calorieStats.weightLossCalories;
 
-    case 'MUSCLE_GAIN':
+    case GoalType.MUSCLE_GAIN:
       return calorieStats.muscleGainCalories;
 
-    case 'MAINTENANCE':
+    case GoalType.MAINTENANCE:
+      return calorieStats.maintenanceCalories;
+
     default:
       return calorieStats.maintenanceCalories;
   }

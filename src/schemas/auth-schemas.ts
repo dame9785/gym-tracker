@@ -54,10 +54,10 @@ export const registerUserSchema = z.object({
   bodyWeight: z.number().min(20, 'Ogiltig kroppsvikt.').max(400, 'Ogiltig kroppsvikt.'),
   height: z.number().min(20, 'Otilåten längd minsta längd 1.20cm').max(400, 'Otilåten längd'),
   goalWeight: z.number().min(20, 'Ogiltig målvikt.').max(400, 'Ogiltig målvikt.'),
-  goalTypeId: z.number().min(1, 'Du måste välja ett mål.'),
   birthDate: birtDateSchema,
   goalDate: goalDateSchema,
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
+  goalType: z.enum(['MUSCLE_GAIN', 'WEIGHT_LOSS', 'MAINTENANCE']),
 });
 
 export const updateUserSchema = registerUserSchema.omit({

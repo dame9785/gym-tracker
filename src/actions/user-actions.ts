@@ -11,6 +11,7 @@ import {
 } from '@/schemas/auth-schemas';
 import { AuthService } from '@/services-server/auth-service';
 import { cookies } from 'next/headers';
+import { success } from 'zod';
 
 const authService = new AuthService();
 
@@ -40,6 +41,16 @@ export async function registerUserAction(dto: RegisterUserDto) {
   }
 
   return authService.register(validation.data);
+}
+
+export async function logoutAction() {
+  const cookieStore = await cookies();
+
+  cookieStore.delete('token');
+  return {
+    success: true,
+    message: 'Cookie delete',
+  };
 }
 
 export async function loginUserAction(dto: LoginDto) {

@@ -42,6 +42,7 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
     setErrors({});
     try {
       const response = await createMealAction(validate.data);
+      console.log('Response');
 
       if (!response.success) {
         if (response.errors) {
@@ -53,7 +54,7 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
       }
 
       toast.success(response.message);
-      router.push('/foods');
+      router.push('/meals');
     } catch (error) {
       console.error('Failed to create food:', error);
       toast.error('Something went wrong. Please try again.');
@@ -63,7 +64,10 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
   };
 
   return (
-    <form onSubmit={handleSumbit} className="mx-auto w-full max-w-xl space-y-6 rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-xl">
+    <form
+      onSubmit={handleSumbit}
+      className="mx-auto w-full max-w-xl space-y-6 rounded-2xl border border-slate-700 bg-slate-900/80 p-6 shadow-xl"
+    >
       {/* Header */}
       <div>
         <p className="text-xs font-semibold tracking-[0.2em] text-orange-400">ADD MEAL</p>
@@ -144,7 +148,9 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
             className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 pr-14 text-white placeholder:text-slate-500 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
           />
 
-          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">grams</span>
+          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+            grams
+          </span>
           {errors.grams?.[0] && (
             <p id="grams-error" className="text-red-500" role="alert">
               {errors.grams[0]}

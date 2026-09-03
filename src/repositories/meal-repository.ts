@@ -1,5 +1,6 @@
 import { MealType } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { Goal } from 'lucide-react';
 
 interface CreateMealItemData {
   mealId: number;
@@ -23,7 +24,7 @@ export class MealRepository {
 
     return prisma.meal.findFirst({
       where: {
-        id: userId,
+        userId,
         mealType,
         loggedAt: {
           gte: startOfDay,
@@ -35,7 +36,6 @@ export class MealRepository {
       },
     });
   }
-
   async createMeal(userId: number, mealType: MealType) {
     return prisma.meal.create({
       data: {
@@ -119,6 +119,39 @@ export class MealRepository {
     return await prisma.meal.delete({
       where: {
         id: id,
+      },
+    });
+  }
+
+  async deleteMealItem(mealItemId: number) {
+    return await prisma.mealItem.delete({
+      where: {
+        id: mealItemId,
+      },
+    });
+  }
+  async getUserTypeGoal(userId: number) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    return user?.goalType;
+  }
+
+  async getById(mealId: number, userId: number) {
+    return await prisma.meal.findUnique({
+      where: {
+        id: mealId,
+        userId: userId,
+      },
+      include: {
+        items: {
+          include: {
+            food: true,
+          },
+        },
       },
     });
   }
