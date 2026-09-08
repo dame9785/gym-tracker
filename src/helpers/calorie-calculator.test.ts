@@ -7,5 +7,3 @@ const result = calculateCalories({
   gender: 'MALE',
   activityLevel: 'MODERATE',
 });
-
-console.log(result);

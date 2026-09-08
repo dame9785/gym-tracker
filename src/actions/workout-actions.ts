@@ -22,7 +22,6 @@ export async function registerWorkoutAction(dto: AddWorkoutDto) {
 }
 
 export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutDto) {
-  console.log('Upate acction');
   try {
     const user = await requireAuth();
 

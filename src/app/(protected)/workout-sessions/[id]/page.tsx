@@ -21,7 +21,10 @@ export default async function WorkoutSessionPage({ params }: PageProps) {
   if (!response.success || !response.data) {
     return (
       <main>
-        <ErrorMessage title="Unable to workout session" message={response.message ?? 'Something went wrong while loading your workout session.'} />
+        <ErrorMessage
+          title="Unable to workout session"
+          message={response.message ?? 'Something went wrong while loading your workout session.'}
+        />
       </main>
     );
   }

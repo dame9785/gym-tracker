@@ -90,16 +90,9 @@ export default function EditWorkoutForm({ workout, exericses }: props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log('1. Submit triggered');
-    console.log('2. Form data:', formData);
-
     const validate = updateWorkoutSchema.safeParse(formData);
 
     if (!validate.success) {
-      console.log('VALIDATION FAILED');
-      console.log(validate.error.flatten().fieldErrors);
-      console.log(validate.error.issues);
-
       setErrors(validate.error.flatten().fieldErrors);
       return;
     }

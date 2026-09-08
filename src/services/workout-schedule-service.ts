@@ -3,7 +3,7 @@ import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
 import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 
 //Next Redirect
-import { ApiErrorResponse, ApiResponse, WorkoutSchedelueCreateResponse } from '@/types/api-types';
+import { ErrorResponse, ApiResponse, WorkoutSchedelueCreateResponse } from '@/types/api-types';
 import { errorResponse } from '@/utils/api-error';
 
 const API_URL = 'http://localhost:3000/api/workout-schedules';
@@ -28,7 +28,11 @@ export default class WorkoutScheduleService {
     }
   }
 
-  static async getByMonth(userToken: string, year: number, month: number): Promise<ApiResponse[CalendarWorkoutViewModel]> {
+  static async getByMonth(
+    userToken: string,
+    year: number,
+    month: number,
+  ): Promise<ApiResponse<CalendarWorkoutViewModel>> {
     try {
       const response = await fetch(`/api/workout-schedules?&year=${year}&month=${month}`, {
         method: 'GET',

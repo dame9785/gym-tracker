@@ -42,7 +42,6 @@ export default function AddMealForm({ foods }: AddMealFormProps) {
     setErrors({});
     try {
       const response = await createMealAction(validate.data);
-      console.log('Response');
 
       if (!response.success) {
         if (response.errors) {

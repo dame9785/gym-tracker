@@ -10,7 +10,6 @@ export class CalorieRepository {
         userId,
       },
       select: {
-        calorieGoal: true,
         calories: true,
         protein: true,
         carbs: true,

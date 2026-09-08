@@ -44,7 +44,6 @@ export default function UpdateUserForm({ user }: Props) {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
-  console.log('User', user);
   const formatDateForInput = (date: string): string => {
     if (!date) {
       return '';

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 //Services
 import { WorkoutScheduleService } from '@/services-server/workout-schedule-service';
 import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
-import { ApiErrorResponse } from '@/types/api-types';
+import { ErrorResponse } from '@/types/api-types';
 import { getCurrentUser } from '@/utils/user-by-token';
 
 const workoutScheduleService = new WorkoutScheduleService();
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           message: 'Unauthorized ',
-        } satisfies ApiErrorResponse,
+        } satisfies ErrorResponse,
         { status: 401 },
       );
     }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message: 'No token found',
-        } satisfies ApiErrorResponse,
+        } satisfies ErrorResponse,
         { status: 401 },
       );
     }
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message: 'Unauthorized ',
-        } satisfies ApiErrorResponse,
+        } satisfies ErrorResponse,
         { status: 401 },
       );
     }

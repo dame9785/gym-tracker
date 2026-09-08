@@ -4,7 +4,7 @@ import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 
 //Repository
 import { WorkoutScheduleRepository } from '@/repositories/workout-schedule-repository';
-import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, WorkoutSchedelueCreateResponse } from '@/types/api-types';
+import { ErrorResponse, ApiResponse, SuccessResponse, WorkoutSchedelueCreateResponse } from '@/types/api-types';
 import { SchedelueWorkoutDto, schedelueWorkoutSchema } from '@/schemas/schedelue-workout-schemas';
 import { ErrorsHelper } from '@/helpers/error-helper';
 

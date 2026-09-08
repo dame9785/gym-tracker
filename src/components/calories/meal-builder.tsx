@@ -105,8 +105,6 @@ export default function MealBuilder() {
         throw new Error(result.message || 'Kunde inte spara måltiden');
       }
 
-      console.log('Måltid sparad:', result.data);
-
       alert('Måltiden sparades!');
 
       // Rensa formuläret
@@ -286,7 +284,11 @@ export default function MealBuilder() {
                     </p>
                   </div>
 
-                  <button type="button" onClick={() => removeFood(item.id)} className="rounded-lg p-2 text-red-400 transition hover:bg-red-500/10">
+                  <button
+                    type="button"
+                    onClick={() => removeFood(item.id)}
+                    className="rounded-lg p-2 text-red-400 transition hover:bg-red-500/10"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>

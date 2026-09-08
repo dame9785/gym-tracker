@@ -1,12 +1,16 @@
 import { CalorieRepository } from '@/repositories/calorie-repository';
 import { ApiResponse, ApiSuccessResponse } from '@/types/api-types';
 import type { CalorieGoal, CurrentNuitrationStats, NutritionLogInput } from '@/types/calorie-types';
+import { success } from 'zod';
 
 const calorieRepository = new CalorieRepository();
 
 export class CalorieService {
   async getCalorieGoal(userId: number) {
-    return calorieRepository.getCalorieGoal(userId);
+    return {
+      success: true,
+      data: await calorieRepository.getCalorieGoal(userId),
+    };
   }
 
   async updateNutritionGoal(
@@ -19,7 +23,10 @@ export class CalorieService {
       fat: number;
     },
   ) {
-    return calorieRepository.updateNutritionGoal(userId, data);
+    return {
+      success: true,
+      data: calorieRepository.updateNutritionGoal(userId, data),
+    };
   }
 
   async getCurrentNutrition(userId: number): Promise<CurrentNuitrationStats | null> {

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 //Services
 import { DashboardService } from '@/services-server/dashboard-service';
-import { ApiErrorResponse } from '@/types/api-types';
+import { ErrorResponse } from '@/types/api-types';
 import { getCurrentUser } from '@/utils/user-by-token';
 
 const dashboardService = new DashboardService();

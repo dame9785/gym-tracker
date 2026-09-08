@@ -30,11 +30,13 @@ export default async function LogWeight({ searchParams }: Props) {
   const user = await requireAuth();
 
   const response = await weightLogService.getAll(page, user.userId);
-  console.log(response);
   if (!response.success || !response.data) {
     return (
       <main>
-        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+        <ErrorMessage
+          title="Unable to load foods"
+          message={response.message ?? 'Something went wrong while loading your foods.'}
+        />
       </main>
     );
   }

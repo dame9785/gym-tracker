@@ -1,4 +1,4 @@
-import { ApiResponse, ApiSuccessResponse } from '@/types/api-types';
+import { ApiResponse } from '@/types/api-types';
 import { ProgressApiResponse } from '@/types/progress-type';
 
 //Utils

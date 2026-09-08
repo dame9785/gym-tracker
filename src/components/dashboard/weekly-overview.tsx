@@ -13,12 +13,11 @@ import WorkoutDayCard from './workout-day-card';
 
 interface WeeklyOverviewProps {
   workouts: WeeklyWorkoutViewModel[];
-  userToken: string;
 }
 
 const week = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag'];
 
-export default function WeeklyOverview({ workouts, userToken }: WeeklyOverviewProps) {
+export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
   const [selectedWorkout, setSelectedWorkout] = useState<WeeklyWorkoutViewModel>();
 
   return (
@@ -38,8 +37,12 @@ export default function WeeklyOverview({ workouts, userToken }: WeeklyOverviewPr
         })}
       </div>
 
-      <Modal isOpen={!!selectedWorkout} onClose={() => setSelectedWorkout(undefined)} title={selectedWorkout?.workoutName}>
-        {selectedWorkout && <SelectedWorkout workout={selectedWorkout} userToken={userToken} />}
+      <Modal
+        isOpen={!!selectedWorkout}
+        onClose={() => setSelectedWorkout(undefined)}
+        title={selectedWorkout?.workoutName}
+      >
+        {selectedWorkout && <SelectedWorkout workout={selectedWorkout} />}
       </Modal>
     </section>
   );

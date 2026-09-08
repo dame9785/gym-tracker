@@ -8,5 +8,8 @@ export const calorieCalculatorSchema = z.object({
 });
 
 export const calorieLogSchema = z.object({
-  calories: z.coerce.number().min(0, 'Kalorier kan inte vara mindre än 0').max(10000, 'Ange ett rimligt antal kalorier'),
+  calories: z.coerce
+    .number()
+    .min(0, 'Kalorier kan inte vara mindre än 0')
+    .max(10000, 'Ange ett rimligt antal kalorier'),
 });

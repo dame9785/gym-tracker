@@ -19,7 +19,10 @@ export default async function ProgressPage() {
   if (!response.success || !response.data) {
     return (
       <main>
-        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+        <ErrorMessage
+          title="Unable to load foods"
+          message={response.message ?? 'Something went wrong while loading your foods.'}
+        />
       </main>
     );
   }

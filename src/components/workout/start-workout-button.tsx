@@ -7,17 +7,16 @@ import { toast } from 'sonner';
 
 interface StartWorkoutButtonProps {
   workoutId: number;
-  userToken: string;
 }
 
-export default function StartWorkoutButton({ workoutId, userToken }: StartWorkoutButtonProps) {
+export default function StartWorkoutButton({ workoutId }: StartWorkoutButtonProps) {
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
 
   const handleStartWorkout = async () => {
     setIsStarting(true);
     try {
-      const response = await WorkoutSessionService.create(workoutId, userToken);
+      const response = await WorkoutSessionService.create(workoutId);
 
       if (!response.success) {
         toast.error('Något gick fel, gick inte starta träningspasset');

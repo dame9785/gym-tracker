@@ -1,11 +1,9 @@
 //Next Redirect
 import {
   ApiResponse,
-  ApiSuccessResponse,
   UpdateWorkoutSessionResponse,
   WorkoutFinishApiResponse,
   WorkoutSessionCreateResponse,
-  WorkoutSessionDetailApiResponse,
   WorkoutSessionUpdatedSetResponse,
 } from '@/types/api-types';
 import { errorResponse } from '@/utils/api-error';
@@ -35,7 +33,11 @@ export default class WorkoutSessionService {
   }
 
   //PUT: Update session
-  static async updateSet(id: number, actualReps: number, actualWeight: number): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
+  static async updateSet(
+    id: number,
+    actualReps: number,
+    actualWeight: number,
+  ): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
     try {
       const response = await fetch(`/api/workout-session-sets/${id}`, {
         method: 'PUT',
@@ -59,20 +61,24 @@ export default class WorkoutSessionService {
 
   //PUT: Finish session
   static async finish(sessionId: number): Promise<ApiResponse<WorkoutFinishApiResponse>> {
+    console.trace('🔥 FINISH CALLED:', sessionId);
     try {
-      const response = await fetch(`${API_URL}/${sessionId}`, {
+      const response = await fetch(`/api/workout-sessions/${sessionId}`, {
         method: 'PUT',
         credentials: 'include',
       });
 
-      if (!response.ok) {
-        return errorResponse('Gick inte hämta data');
-      }
+      console.log('🔥 FINISH STATUS:', response.status);
 
       const result = (await response.json()) as ApiResponse<WorkoutFinishApiResponse>;
+
+      console.log('🔥 FINISH RESULT:', result);
+
       return result;
     } catch (error) {
-      return errorResponse('Gick inte hämta data');
+      console.error('🔥 FINISH ERROR:', error);
+
+      return errorResponse('Could not connect to the server');
     }
   }
 

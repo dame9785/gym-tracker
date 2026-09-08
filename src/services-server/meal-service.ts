@@ -29,12 +29,7 @@ export class MealService {
     }
 
     try {
-      console.log('1. DTO:', dto);
-      console.log('2. UserId:', userId);
-
       const food = await foodRepository.getById(dto.foodId, userId);
-
-      console.log('3. Food:', food);
 
       if (!food) {
         return errorResponse('Could not find food.');
@@ -47,40 +42,17 @@ export class MealService {
       const carbs = food.carbsPer100g * multiplier;
       const fat = food.fatPer100g * multiplier;
 
-      console.log('4. Nutrition:', {
-        calories,
-        protein,
-        carbs,
-        fat,
-      });
-
       const existingMeal = await mealRepository.findTodayMealByType(userId, dto.mealType as MealType);
-
-      console.log('5. Existing meal:', existingMeal);
 
       let mealId: number;
 
       if (existingMeal) {
         mealId = existingMeal.id;
       } else {
-        console.log('6. Creating meal...');
-
         const newMeal = await mealRepository.createMeal(userId, dto.mealType as MealType);
-
-        console.log('7. New meal:', newMeal);
 
         mealId = newMeal.id;
       }
-
-      console.log('8. Adding food item...', {
-        mealId,
-        foodId: food.id,
-        grams: dto.grams,
-        calories,
-        protein,
-        carbs,
-        fat,
-      });
 
       await mealRepository.addItem({
         mealId,
@@ -92,11 +64,7 @@ export class MealService {
         fat,
       });
 
-      console.log('9. Food item added');
-
       const meal = await mealRepository.getById(mealId, userId);
-
-      console.log('10. Meal:', meal);
 
       if (!meal) {
         return errorResponse('Meal could not be found.');
@@ -124,8 +92,6 @@ export class MealService {
       const meals = await mealRepository.getMealsByDate(userId, formattedDate);
 
       const user = await userRepository.findById(userId);
-      console.log('USER', user);
-      console.log('MEAL', meals);
 
       if (!user) {
         return {

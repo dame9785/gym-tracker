@@ -1,11 +1,9 @@
-import { GoalType } from '@prisma/client';
-
 export interface CalorieCalculatorInput {
   weight: number;
   height: number;
   age: number;
   gender: 'MALE' | 'FEMALE' | 'OTHER';
-  goalType: GoalType;
+  activityLevel: 'SEDENTARY' | 'LIGHT' | 'MODERATE' | 'VERY_ACTIVE' | 'EXTRA_ACTIVE';
 }
 
 export interface CalorieCalculatorResult {
@@ -16,8 +14,8 @@ export interface CalorieCalculatorResult {
 }
 
 export interface NutritionGoals {
-  recomendedCaloriesIntake: number;
-  recomendedProteinIntake: number;
-  recomendedCarbsIntake: number;
-  recomendedFatIntake: number;
+  calories: number | null;
+  protein: number | null;
+  carbs: number | null;
+  fat: number | null;
 }

@@ -4,7 +4,7 @@ import { NextResponse, NextRequest } from 'next/server';
 //Services
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
 import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
-import { ApiErrorResponse } from '@/types/api-types';
+import { ErrorResponse } from '@/types/api-types';
 
 const workoutSessionService = new WorkoutSessionService();
 
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message: 'Unauthorized ',
-        } satisfies ApiErrorResponse,
+        } satisfies ErrorResponse,
         { status: 401 },
       );
     }
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message: 'Unauthorized ',
-        } satisfies ApiErrorResponse,
+        } satisfies ErrorResponse,
         { status: 401 },
       );
     }

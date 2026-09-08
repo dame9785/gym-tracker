@@ -1,16 +1,15 @@
 import { WorkoutSessionMapper } from '@/mapping/workout-session-mapping';
 import { WorkoutSessionRepository } from '@/repositories/workout-session-repository';
 import {
-  ApiErrorResponse,
+  ErrorResponse,
   ApiResponse,
-  ApiSuccessResponse,
+  SuccessResponse,
   UpdateWorkoutSessionResponse,
   WorkoutFinishApiResponse,
   WorkoutSessionCreateResponse,
   WorkoutSessionDetailApiResponse,
   WorkoutSessionUpdatedSetResponse,
 } from '@/types/api-types';
-import { ZodNumberFormat } from 'zod';
 
 export class WorkoutSessionService {
   private workoutSessionRepository = new WorkoutSessionRepository();
@@ -22,26 +21,25 @@ export class WorkoutSessionService {
       return {
         success: true,
         data: workoutSession.id,
-      } satisfies ApiSuccessResponse<WorkoutSessionCreateResponse>;
+      } satisfies SuccessResponse<WorkoutSessionCreateResponse>;
     } catch (error) {
       console.error(error);
 
       return {
         success: false,
         message: 'Kunde inte skapa träningspasset.',
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
   }
 
   async getById(id: number, userId: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse>> {
     try {
       const workoutSession = await this.workoutSessionRepository.getById(id, userId);
-      console.log(workoutSession);
       if (!workoutSession) {
         return {
           success: false,
           message: 'Kunde inte avsluta träningspasset.',
-        } satisfies ApiErrorResponse;
+        } satisfies ErrorResponse;
       }
 
       return {
@@ -57,26 +55,29 @@ export class WorkoutSessionService {
       };
     }
   }
-  async updateSet(id: number, actualReps: number, actualWeight: number): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
+  async updateSet(
+    id: number,
+    actualReps: number,
+    actualWeight: number,
+  ): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
     try {
       const updatedSet = await this.workoutSessionRepository.updateSet(id, actualReps, actualWeight);
       if (!updatedSet) {
         return {
           success: false,
           message: 'Gick inte uppdatera, server fel',
-        } satisfies ApiErrorResponse;
+        } satisfies ErrorResponse;
       }
 
       return {
         success: true,
         data: updatedSet,
-      } satisfies ApiSuccessResponse<WorkoutSessionUpdatedSetResponse>;
+      } satisfies SuccessResponse<WorkoutSessionUpdatedSetResponse>;
     } catch (error) {
-      console.log('ERROR', error);
       return {
         success: false,
         message: 'Gick inte uppdatera, server fel',
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
   }
 
@@ -86,34 +87,27 @@ export class WorkoutSessionService {
       return {
         success: true,
         data: workoutSession,
-      } satisfies ApiSuccessResponse<WorkoutFinishApiResponse>;
+      } satisfies SuccessResponse<WorkoutFinishApiResponse>;
     } catch (error) {
       console.error(error);
 
       return {
         success: false,
-        message: 'Kunde inte avsluta träningspasset.',
-      } satisfies ApiErrorResponse;
+        message: 'Something went wrong..',
+      } satisfies ErrorResponse;
     }
   }
 
   //Update workout session status
   async updateWorkoutSessionStatus(workoutSessionId: number): Promise<ApiResponse<UpdateWorkoutSessionResponse>> {
-    console.log('WORKOUTID', workoutSessionId);
     try {
-      // const [workoutSession, updatedWorkoutSession] = await Promise.all([
-      //   this.workoutSessionRepository.create(workoutId, userId),
-      //   this.workoutSessionRepository.updateWorkoutSessionsStatus(workoutId),
-      // ]);
-
       const updatedWorkoutSession = await this.workoutSessionRepository.updateWorkoutSessionsStatus(workoutSessionId);
-      console.log('sessions:', updatedWorkoutSession);
 
       if (!updatedWorkoutSession) {
         return {
           success: false,
           message: 'Kunde inte avsluta träningspasset.',
-        } satisfies ApiErrorResponse;
+        } satisfies ErrorResponse;
       }
       return {
         success: true,
@@ -121,14 +115,14 @@ export class WorkoutSessionService {
           success: true,
           message: 'Status updated',
         },
-      } satisfies ApiSuccessResponse<UpdateWorkoutSessionResponse>;
+      } satisfies SuccessResponse<UpdateWorkoutSessionResponse>;
     } catch (error) {
       console.error(error);
 
       return {
         success: false,
         message: 'Kunde inte avsluta träningspasset.',
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
   }
 }

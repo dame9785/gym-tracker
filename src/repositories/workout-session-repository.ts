@@ -107,7 +107,9 @@ export class WorkoutSessionRepository {
   }
 
   async finish(id: number) {
-    return await prisma.workoutSession.update({
+    console.log('🔥 REPOSITORY FINISH:', id);
+
+    const result = await prisma.workoutSession.update({
       where: {
         id,
       },
@@ -116,6 +118,10 @@ export class WorkoutSessionRepository {
         finishedAt: new Date(),
       },
     });
+
+    console.log('🔥 PRISMA RESULT:', result);
+
+    return result;
   }
 
   async getCompeletedWorkoutSessiosn(userId: number) {
@@ -142,8 +148,6 @@ export class WorkoutSessionRepository {
         status: 'NOTCOMPLETED',
       },
     });
-
-    console.log('UPDATE RESULT:', result);
 
     return result.count > 0;
   }

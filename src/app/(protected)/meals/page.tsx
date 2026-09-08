@@ -34,7 +34,6 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
 
   // Hämta meals för valt datum
   const response = await mealService.getMealsByDate(formattedDate, user.userId);
-  console.log('RESPONSE', response);
 
   // Hantera fel
   if (!response.success || !response.data) {
@@ -49,7 +48,6 @@ export default async function MealsPage({ searchParams }: MealsPageProps) {
   }
 
   const { totals, meals, dailyIntakeGoals } = response.data;
-  console.log('MEALS', meals);
 
   // Datum som visas för användaren
   const displayDate = selectedDate.toLocaleDateString('sv-SE', {
