@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="sv" className={`${roboto.variable} ${roboto.variable} min-h-full antialiased`}>
       <body className="min-h-screen">
-        <main className="ml-64 min-h-screen p-8">{children}</main>
+        <main className="min-h-screen p-8">{children}</main>
         <Toaster richColors position="top-right" />
       </body>
     </html>

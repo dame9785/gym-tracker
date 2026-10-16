@@ -13,7 +13,7 @@ import Button from '@/components/button/button';
 // Icons
 import { FaDumbbell, FaWeight, FaHistory, FaHome } from 'react-icons/fa';
 
-import { BsBarChartLine, BsPersonCircle } from 'react-icons/bs';
+import { BsBarChartLine } from 'react-icons/bs';
 import { IoIosSettings } from 'react-icons/io';
 import { FaPersonRunning, FaUtensils } from 'react-icons/fa6';
 import { MdOutlineLocalFireDepartment } from 'react-icons/md';
