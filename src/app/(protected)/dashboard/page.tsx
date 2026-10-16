@@ -19,6 +19,7 @@ export default async function DashboardPage() {
   }
 
   const dashboardService = new DashboardService();
+
   const response = await dashboardService.getDashboard(user.userId);
   if (!response.success || !response.data) {
     return (
