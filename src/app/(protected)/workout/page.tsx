@@ -53,9 +53,7 @@ export default async function Workouts({ searchParams }: Props) {
           </Link>
         </div>
       </div>
-      <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
-        <WorkoutTable workouts={workouts} />
-      </div>
+      <WorkoutTable workouts={workouts} />
       <Pagination currentPage={currentPage} totalPages={totalPages} />
     </div>
   );
