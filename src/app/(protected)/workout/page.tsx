@@ -1,10 +1,11 @@
 import Link from 'next/link';
+
 import Button from '@/components/button/button';
 import WorkoutTable from '@/components/tables/workout-table';
-import { WorkoutService } from '@/services-server/workout-service';
-
 import Pagination from '@/components/workout/pagination';
 import ErrorMessage from '@/components/ui/error-message';
+
+import { WorkoutService } from '@/services-server/workout-service';
 import { requireAuth } from '@/lib/auth';
 
 type Props = {
@@ -14,19 +15,23 @@ type Props = {
 };
 
 const workoutService = new WorkoutService();
-export default async function Workouts({ searchParams }: Props) {
-  //Pagination params
-  const params = await searchParams;
-  const page = Number(params.page) || 1;
 
-  //Check if user has token or exiperied token.
+export default async function Workouts({ searchParams }: Props) {
+  // Read pagination parameters
+  const params = await searchParams;
+  const parsedPage = Number(params.page);
+  const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+
+  // Require an authenticated user
   const user = await requireAuth();
 
+  // Fetch workouts for the current user
   const response = await workoutService.getAll(page, user.userId);
+
   if (!response.success || !response.data) {
     return (
-      <main>
-        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <ErrorMessage title="Unable to load workouts" message={response.message ?? 'Something went wrong while loading your workouts.'} />
       </main>
     );
   }
@@ -36,25 +41,49 @@ export default async function Workouts({ searchParams }: Props) {
   const currentPage = response.data.pagination.currentPage;
 
   return (
-    <div className="container">
-      <div className="mb-8 p-5">
-        <h1 className="text-4xl font-bold text-white">Workout</h1>
-        <p className="mt-2 text-zinc-400">All workout sessions are displayed here; you can edit or delete them.</p>
-        <div className="mt-5 flex  gap-5">
-          <Link href="/workout/register">
-            <Button type="submit" variant="secondary">
-              Add workout
-            </Button>
-          </Link>
-          <Link href="/workout-schedule">
-            <Button type="submit" variant="primary">
-              Schedule a workout
-            </Button>
-          </Link>
+    <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+      {/* Page header */}
+      <header className="mb-10">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-orange-400">Training library</p>
+
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Workouts</h1>
+
+            <p className="mt-3 text-sm leading-6 text-zinc-400 sm:text-base">Manage your training routines, explore your exercises, and keep your workouts organized.</p>
+          </div>
+
+          {/* Header actions */}
+          <div className="flex flex-col gap-3 min-[420px]:flex-row sm:shrink-0">
+            <Link href="/workout/register">
+              <Button type="button" variant="secondary">
+                Add workout
+              </Button>
+            </Link>
+
+            <Link href="/workout-schedule">
+              <Button type="button" variant="primary">
+                Schedule a workout
+              </Button>
+            </Link>
+          </div>
         </div>
-      </div>
-      <WorkoutTable workouts={workouts} />
-      <Pagination currentPage={currentPage} totalPages={totalPages} />
-    </div>
+
+        {/* Decorative separator */}
+        <div className="mt-8 h-px w-full bg-gradient-to-r from-orange-500/40 via-zinc-800 to-transparent" />
+      </header>
+
+      {/* Workout library */}
+      <section aria-label="Workout library" className="space-y-5">
+        <WorkoutTable workouts={workouts} />
+      </section>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <nav aria-label="Workout pagination" className="mt-10 flex justify-center border-t border-zinc-800/70 pt-6">
+          <Pagination currentPage={currentPage} totalPages={totalPages} />
+        </nav>
+      )}
+    </main>
   );
 }

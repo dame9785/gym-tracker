@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { CalendarDays, ChevronDown, Dumbbell, Pencil, Trash2, X } from 'lucide-react';
+import { CalendarDays, ChevronDown, Dumbbell, Pencil, Search, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import type { WorkoutViewModel } from '@/types/workout-types';
@@ -16,8 +16,22 @@ type Props = {
 export default function WorkoutTable({ workouts }: Props) {
   const router = useRouter();
 
+  // State
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutViewModel | null>(null);
 
+  // Filter workouts based on search query
+  const filteredWorkouts = workouts.filter((workout) => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return (
+      workout.name.toLowerCase().includes(query) ||
+      (workout.description ?? '').toLowerCase().includes(query) ||
+      workout.workoutExercises.some((exercise) => exercise.name.toLowerCase().includes(query))
+    );
+  });
+
+  // Handle delete
   const handleDelete = (id: number) => {
     toast('Are you sure you want to delete this workout?', {
       action: {
@@ -33,6 +47,7 @@ export default function WorkoutTable({ workouts }: Props) {
     });
   };
 
+  // Delete workout
   const removeWorkout = async (id: number): Promise<void> => {
     try {
       const response = await deleteWorkoutAction(id);
@@ -55,7 +70,7 @@ export default function WorkoutTable({ workouts }: Props) {
   return (
     <>
       <section className="w-full">
-        {/* Section header */}
+        {/* Header */}
         <div className="mb-5 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white">Your workouts</h2>
@@ -70,10 +85,44 @@ export default function WorkoutTable({ workouts }: Props) {
           </div>
         </div>
 
+        {/* Search */}
+        <div className="mb-6">
+          <label htmlFor="workout-search" className="sr-only">
+            Search workouts
+          </label>
+
+          <div
+            className="
+              flex items-center gap-3 rounded-xl
+              border border-zinc-800 bg-zinc-900/70
+              px-4 transition-colors
+              focus-within:border-orange-500/50
+            "
+          >
+            <Search className="h-5 w-5 shrink-0 text-zinc-500" />
+
+            <input
+              id="workout-search"
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search workouts or exercises..."
+              className="
+                h-12 w-full bg-transparent text-sm text-white
+                outline-none placeholder:text-zinc-500
+              "
+            />
+          </div>
+
+          <p className="mt-2 text-xs text-zinc-500">
+            Showing {filteredWorkouts.length} of {workouts.length} workouts
+          </p>
+        </div>
+
         {/* Workout cards */}
-        {workouts.length > 0 ? (
+        {filteredWorkouts.length > 0 ? (
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {workouts.map((workout) => (
+            {filteredWorkouts.map((workout) => (
               <article
                 key={workout.id}
                 className="
@@ -90,12 +139,12 @@ export default function WorkoutTable({ workouts }: Props) {
                   <div className="flex min-w-0 items-center gap-3">
                     <div
                       className="
-                      flex h-12 w-12 shrink-0 items-center justify-center
-                      rounded-xl border border-orange-500/20
-                      bg-orange-500/10 text-orange-400
-                      transition-transform duration-200
-                      group-hover:scale-105
-                    "
+                        flex h-12 w-12 shrink-0 items-center justify-center
+                        rounded-xl border border-orange-500/20
+                        bg-orange-500/10 text-orange-400
+                        transition-transform duration-200
+                        group-hover:scale-105
+                      "
                     >
                       <Dumbbell className="h-5 w-5" />
                     </div>
@@ -107,7 +156,7 @@ export default function WorkoutTable({ workouts }: Props) {
                     </div>
                   </div>
 
-                  {/* Edit and delete */}
+                  {/* Actions */}
                   <div className="flex shrink-0 gap-1">
                     <Link
                       href={`/workout/edit/${workout.id}`}
@@ -128,8 +177,9 @@ export default function WorkoutTable({ workouts }: Props) {
                       aria-label={`Delete ${workout.name}`}
                       title="Delete workout"
                       className="
-                        flex h-9 w-9 items-center justify-center rounded-lg
-                        text-zinc-500 transition-colors
+                        flex h-9 w-9 cursor-pointer items-center
+                        justify-center rounded-lg text-zinc-500
+                        transition-colors
                         hover:bg-red-500/10 hover:text-red-400
                       "
                     >
@@ -143,16 +193,16 @@ export default function WorkoutTable({ workouts }: Props) {
                   {workout.description || 'No description added yet.'}
                 </p>
 
-                {/* Exercise section */}
+                {/* Exercises */}
                 <div className="mt-5">
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Exercises</h4>
 
                     <span
                       className="
-                      rounded-full border border-zinc-700
-                      bg-zinc-800 px-2.5 py-1 text-xs text-zinc-400
-                    "
+                        rounded-full border border-zinc-700
+                        bg-zinc-800 px-2.5 py-1 text-xs text-zinc-400
+                      "
                     >
                       {workout.workoutExercises.length} total
                     </span>
@@ -178,6 +228,7 @@ export default function WorkoutTable({ workouts }: Props) {
                         <button
                           type="button"
                           onClick={() => setSelectedWorkout(workout)}
+                          aria-label={`Show all exercises for ${workout.name}`}
                           className="
                             inline-flex cursor-pointer items-center gap-1
                             rounded-lg border border-zinc-700
@@ -201,19 +252,23 @@ export default function WorkoutTable({ workouts }: Props) {
                 {/* Dates */}
                 <div
                   className="
-                  mt-5 space-y-2 border-t border-zinc-800
-                  pt-4 text-xs text-zinc-500
-                "
+                    mt-5 space-y-2 border-t border-zinc-800
+                    pt-4 text-xs text-zinc-500
+                  "
                 >
                   <div className="flex items-center gap-2">
                     <CalendarDays className="h-3.5 w-3.5 text-orange-400" />
+
                     <span>Created:</span>
+
                     <time className="ml-auto text-zinc-400">{new Date(workout.createdAt).toLocaleDateString('sv-SE')}</time>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <CalendarDays className="h-3.5 w-3.5 text-orange-400" />
+
                     <span>Updated:</span>
+
                     <time className="ml-auto text-zinc-400">{new Date(workout.updatedAt).toLocaleDateString('sv-SE')}</time>
                   </div>
                 </div>
@@ -224,29 +279,48 @@ export default function WorkoutTable({ workouts }: Props) {
           /* Empty state */
           <div
             className="
-            flex flex-col items-center justify-center rounded-2xl
-            border border-dashed border-zinc-800 bg-zinc-900/40
-            px-6 py-16 text-center
-          "
+              flex flex-col items-center justify-center rounded-2xl
+              border border-dashed border-zinc-800 bg-zinc-900/40
+              px-6 py-16 text-center
+            "
           >
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-800">
-              <Dumbbell className="h-6 w-6 text-orange-400" />
+              <Search className="h-6 w-6 text-orange-400" />
             </div>
 
-            <h3 className="mt-4 font-semibold text-white">No workouts yet</h3>
+            <h3 className="mt-4 font-semibold text-white">{searchQuery.trim() ? 'No workouts found' : 'No workouts yet'}</h3>
 
-            <p className="mt-2 max-w-sm text-sm text-zinc-500">Create your first workout to start building your workout library.</p>
+            <p className="mt-2 max-w-sm text-sm text-zinc-500">
+              {searchQuery.trim() ? 'Try another search term.' : 'Create your first workout to start building your workout library.'}
+            </p>
 
-            <Link
-              href="/workout/register"
-              className="
-                mt-5 rounded-xl bg-orange-500 px-4 py-2.5
-                text-sm font-semibold text-white transition-colors
-                hover:bg-orange-400
-              "
-            >
-              Create workout
-            </Link>
+            {searchQuery.trim() && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="
+                  mt-5 cursor-pointer rounded-xl
+                  bg-zinc-800 px-4 py-2.5
+                  text-sm font-medium text-white
+                  transition-colors hover:bg-zinc-700
+                "
+              >
+                Clear search
+              </button>
+            )}
+
+            {!searchQuery.trim() && (
+              <Link
+                href="/workout/register"
+                className="
+                  mt-5 rounded-xl bg-orange-500 px-4 py-2.5
+                  text-sm font-semibold text-white transition-colors
+                  hover:bg-orange-400
+                "
+              >
+                Create workout
+              </Link>
+            )}
           </div>
         )}
       </section>
@@ -270,6 +344,7 @@ export default function WorkoutTable({ workouts }: Props) {
             "
             onClick={(event) => event.stopPropagation()}
           >
+            {/* Dialog header */}
             <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-5">
               <div>
                 <h2 id="workout-dialog-title" className="text-lg font-semibold text-white">
@@ -287,13 +362,15 @@ export default function WorkoutTable({ workouts }: Props) {
                 aria-label="Close dialog"
                 className="
                   rounded-lg p-2 text-zinc-400
-                  transition-colors hover:bg-zinc-800 hover:text-white
+                  transition-colors hover:bg-zinc-800
+                  hover:text-white
                 "
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
+            {/* Exercise list */}
             <div className="max-h-[60vh] space-y-2 overflow-y-auto p-6">
               {selectedWorkout.workoutExercises.map((exercise, index) => (
                 <div
@@ -305,10 +382,10 @@ export default function WorkoutTable({ workouts }: Props) {
                 >
                   <span
                     className="
-                    flex h-9 w-9 shrink-0 items-center justify-center
-                    rounded-lg bg-blue-500/10 text-sm font-semibold
-                    text-blue-400
-                  "
+                      flex h-9 w-9 shrink-0 items-center justify-center
+                      rounded-lg bg-blue-500/10 text-sm font-semibold
+                      text-blue-400
+                    "
                   >
                     {index + 1}
                   </span>
@@ -318,6 +395,7 @@ export default function WorkoutTable({ workouts }: Props) {
               ))}
             </div>
 
+            {/* Dialog footer */}
             <div className="border-t border-zinc-800 px-6 py-4">
               <button
                 type="button"
