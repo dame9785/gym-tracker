@@ -35,15 +35,19 @@ export default async function DashboardPage() {
   const dashboard = response.data;
 
   return (
-    <main className="container space-y-8">
+    <div className="w-full space-y-8">
       <DashboardHeader />
+
       <DashboardStats summary={dashboard.weeklySummary} />
+
       <WeeklyOverview workouts={dashboard.weeklyOverview} />
+
       <WorkoutCalendar userToken={userToken} />
+
       <div className="grid gap-6 lg:grid-cols-2">
         <TodayWorkout workout={dashboard.todayWorkout} />
         <WeeklySummary summary={dashboard.weeklySummary} />
       </div>
-    </main>
+    </div>
   );
 }
