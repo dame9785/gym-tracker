@@ -91,14 +91,6 @@ function Sidebar() {
       </div>
 
       <div className="sidebar-bottom">
-        <div className="sidebar-bottom-wrapper flex items-center justify-center">
-          <BsPersonCircle />
-
-          {/* <p>
-            <small>{user.username}</small>
-          </p> */}
-        </div>
-
         <div className="logout-wrapper mt-5 flex justify-center">
           <Button type="button" variant="secondary" onClick={handleLogout}>
             Logga ut
