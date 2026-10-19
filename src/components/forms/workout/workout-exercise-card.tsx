@@ -43,7 +43,7 @@ export default function WorkoutExerciseCard({ index, exercise, exercises, onUpda
         </select>
       </div>
 
-      {/* Set / Reps / Vikt */}
+      {/* Set / Reps / Vikt / seconds */}
       <div className={FormStyles.exerciseGrid}>
         <div className={FormStyles.formGroup}>
           <label htmlFor={`sets-${index}`} className={FormStyles.formLabel}>
@@ -112,13 +112,7 @@ export default function WorkoutExerciseCard({ index, exercise, exercises, onUpda
           Note
         </label>
 
-        <textarea
-          id={`note-${index}`}
-          rows={3}
-          className={FormStyles.formTextarea}
-          value={exercise.note}
-          onChange={(e) => onUpdate(index, 'note', e.target.value)}
-        />
+        <textarea id={`note-${index}`} rows={3} className={FormStyles.formTextarea} value={exercise.note} onChange={(e) => onUpdate(index, 'note', e.target.value)} />
       </div>
       <Button type="button" variant="delete" onClick={() => onRemove(index)}>
         Remove

@@ -70,7 +70,7 @@ export default async function Workouts({ searchParams }: Props) {
         </div>
 
         {/* Decorative separator */}
-        <div className="mt-8 h-px w-full bg-gradient-to-r from-orange-500/40 via-zinc-800 to-transparent" />
+        <div className="mt-8 h-px w-full bg-linear-to-r from-orange-500/40 via-zinc-800 to-transparent" />
       </header>
 
       {/* Workout library */}

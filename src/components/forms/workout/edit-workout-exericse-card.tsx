@@ -43,7 +43,7 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
         </select>
       </div>
 
-      {/* Set / Reps / Vikt */}
+      {/* Set / Reps / Vikt / seconds */}
       <div className={FormStyles.exerciseGrid}>
         <div className={FormStyles.formGroup}>
           <label htmlFor={`sets-${index}`} className={FormStyles.formLabel}>
@@ -53,7 +53,6 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
           <input
             id={`sets-${index}`}
             type="number"
-            min={1}
             className={FormStyles.formInput}
             value={workoutExericse.sets ?? 0}
             onChange={(e) => onUpdate(index, 'sets', Number(e.target.value))}
@@ -68,7 +67,6 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
           <input
             id={`reps-${index}`}
             type="number"
-            min={1}
             className={FormStyles.formInput}
             value={workoutExericse.reps}
             onChange={(e) => onUpdate(index, 'reps', Number(e.target.value))}
@@ -84,25 +82,24 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
             id={`weight-${index}`}
             value={workoutExericse.weight ?? 0}
             type="number"
-            min={0}
             step="0.5"
             className={FormStyles.formInput}
             onChange={(e) => onUpdate(index, 'weight', Number(e.target.value))}
           />
         </div>
-      </div>
-      <div className={FormStyles.formGroup}>
-        <label htmlFor={`reps-${index}`} className={FormStyles.formLabel}>
-          Seconds
-        </label>
+        <div className={FormStyles.formGroup}>
+          <label htmlFor={`seconds-${index}`} className={FormStyles.formLabel}>
+            Seconds
+          </label>
 
-        <input
-          id={`reps-${index}`}
-          type="number"
-          className={FormStyles.formInput}
-          value={workoutExericse.seconds ?? 0}
-          onChange={(e) => onUpdate(index, 'reps', Number(e.target.value))}
-        />
+          <input
+            id={`seconds-${index}`}
+            type="number"
+            className={FormStyles.formInput}
+            value={workoutExericse.seconds ?? 0}
+            onChange={(e) => onUpdate(index, 'seconds', Number(e.target.value))}
+          />
+        </div>
       </div>
 
       {/* Anteckning */}

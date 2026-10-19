@@ -8,9 +8,9 @@ import type { RegisterWorkoutDto } from '@/types/workout-types';
 //Mapping
 import { WorkoutMapper } from '@/mapping/workout-mapping';
 import {
-  ApiErrorResponse,
+  ErrorResponse,
   ApiResponse,
-  ApiSuccessResponse,
+  SuccessResponse,
   WorkoutApiDeleteResponse,
   WorkoutApiGetByIdResponse,
   WorkoutApiRegisterResponse,
@@ -52,18 +52,20 @@ export class WorkoutService {
         success: false,
         message: 'Incorrect email or password.',
         errors: errors,
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
 
     try {
-      const updatedWorkout = await this.workoutRepository.update(id, dto);
+      //Update workout in database
+      await this.workoutRepository.update(id, dto);
+
       const workout = await this.workoutRepository.getById(id, userId);
 
       if (!workout) {
         return {
           success: false,
           message: 'Could not find workout.',
-        } satisfies ApiErrorResponse;
+        } satisfies SuccessResponse;
       }
 
       return {
@@ -97,7 +99,7 @@ export class WorkoutService {
             totalItems: totalNumberWorkouts,
           },
         },
-      } satisfies ApiSuccessResponse<WorkoutApiResponse>;
+      } satisfies SuccessResponse<WorkoutApiResponse>;
     } catch (error) {
       console.error('Fetch workouts failed, server error:', error);
       return errorResponse('An error occurred on the server.');
@@ -113,7 +115,7 @@ export class WorkoutService {
         return {
           success: false,
           message: 'Could not find workout.',
-        } satisfies ApiErrorResponse;
+        } satisfies ErrorResponse;
       }
 
       return {
@@ -123,7 +125,7 @@ export class WorkoutService {
           workout: WorkoutMapper.workoutDtoToViewModel(workout),
           exericses: exerices.map((x) => ExerciseMapper.exerciseModelToViewModel(x)),
         },
-      } satisfies ApiSuccessResponse<WorkoutApiGetByIdResponse>;
+      } satisfies SuccessResponse<WorkoutApiGetByIdResponse>;
     } catch (error) {
       console.error('Fetch workouts by id failed, server error:', error);
       return errorResponse('An error occurred on the server.');
@@ -139,7 +141,7 @@ export class WorkoutService {
           success: true,
           message: 'Exericse deleted successfully.',
         },
-      } satisfies ApiSuccessResponse<WorkoutApiDeleteResponse>;
+      } satisfies SuccessResponse<WorkoutApiDeleteResponse>;
     } catch (error) {
       console.error('Delete workout failed, server error:', error);
       return errorResponse('An error occurred on the server.');

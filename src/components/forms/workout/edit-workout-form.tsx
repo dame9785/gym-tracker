@@ -19,7 +19,7 @@ import EditWorkoutExericeCard from '@/components/forms/workout/edit-workout-exer
 
 //NEXT Redirect
 
-import { UpdateWorkoutDto, UpdateWorkoutExericseDto, updateWorkoutSchema } from '@/schemas/workout-schemas';
+import { UpdateWorkoutDto, UpdateWorkoutExericseDto } from '@/schemas/workout-schemas';
 import { updateWorkoutAction } from '@/actions/workout-actions';
 import Button from '@/components/button/button';
 
@@ -42,12 +42,14 @@ export default function EditWorkoutForm({ workout, exericses }: props) {
       sets: exercise.sets,
       reps: exercise.reps,
       weight: exercise.weight,
-      seconds: exercise.seconds,
+      seconds: exercise.seconds ?? 0,
       note: exercise.note ?? '',
     })),
   });
 
   const updateExercise = (index: number, field: keyof UpdateWorkoutExericseDto, value: number | string) => {
+    console.log('Field:', field, 'Value:', value);
+
     setFormData((prev) => {
       const updated = [...prev.workoutExercises];
 
@@ -90,18 +92,11 @@ export default function EditWorkoutForm({ workout, exericses }: props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const validate = updateWorkoutSchema.safeParse(formData);
-
-    if (!validate.success) {
-      setErrors(validate.error.flatten().fieldErrors);
-      return;
-    }
-
     setIsSaving(true);
     setErrors({});
 
     try {
-      const response = await updateWorkoutAction(workout.id, validate.data);
+      const response = await updateWorkoutAction(workout.id, formData);
 
       if (!response.success) {
         if (response.errors) {

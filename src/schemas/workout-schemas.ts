@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const updateWorkoutExericeSchema = z.object({
-  exerciseId: z.number(),
-  sets: z.number(),
-  reps: z.number(),
-  weight: z.number(),
-  seconds: z.number(),
+  exerciseId: z.coerce.number(),
+  sets: z.coerce.number(),
+  reps: z.coerce.number(),
+  weight: z.coerce.number(),
+  seconds: z.coerce.number(),
   note: z.string().trim(),
 });
 
