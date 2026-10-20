@@ -75,11 +75,6 @@ export interface WorkoutApiResponse {
   pagination: PaginationViewModel;
 }
 
-export interface WorkoutApiDeleteResponse {
-  success: true;
-  message: string;
-}
-
 export interface WorkoutApiGetByIdResponse {
   workout: WorkoutViewModel;
   exericses: ExerciseViewModel[];

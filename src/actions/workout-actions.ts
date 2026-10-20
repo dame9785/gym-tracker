@@ -3,7 +3,7 @@
 import { requireAuth } from '@/lib/auth';
 import { AddWorkoutDto, registerWorkoutSchema, UpdateWorkoutDto, updateWorkoutSchema } from '@/schemas/workout-schemas';
 import { WorkoutService } from '@/services-server/workout-service';
-import { UpdateWorkoutActionResult } from '@/types/workout-types';
+import { DeleteWorkoutActionResult, UpdateWorkoutActionResult } from '@/types/workout-types';
 
 const workoutService = new WorkoutService();
 export async function registerWorkoutAction(dto: AddWorkoutDto) {
@@ -58,10 +58,9 @@ export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutD
   }
 }
 
-export async function deleteWorkoutAction(id: number) {
+export async function deleteWorkoutAction(id: number): Promise<DeleteWorkoutActionResult> {
   try {
     const user = await requireAuth();
-
     return await workoutService.delete(id, user.userId);
   } catch (error) {
     console.error('Delete exercise action failed:', error);

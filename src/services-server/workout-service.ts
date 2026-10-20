@@ -3,19 +3,11 @@ import { WorkoutRepository } from '@/repositories/workout-repository';
 import { ExerciseRepository } from '@/repositories/exercise-repository';
 
 //Types
-import type { RegisterWorkoutDto, UpdateWorkoutActionResult } from '@/types/workout-types';
+import type { DeleteWorkoutActionResult, RegisterWorkoutDto, UpdateWorkoutActionResult } from '@/types/workout-types';
 
 //Mapping
 import { WorkoutMapper } from '@/mapping/workout-mapping';
-import {
-  ErrorResponse,
-  ApiResponse,
-  SuccessResponse,
-  WorkoutApiDeleteResponse,
-  WorkoutApiGetByIdResponse,
-  WorkoutApiRegisterResponse,
-  WorkoutApiResponse,
-} from '@/types/api-types';
+import { ErrorResponse, ApiResponse, SuccessResponse, WorkoutApiGetByIdResponse, WorkoutApiRegisterResponse, WorkoutApiResponse } from '@/types/api-types';
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
 import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
@@ -120,16 +112,13 @@ export class WorkoutService {
     }
   }
 
-  async delete(id: number, userId: number): Promise<ApiResponse<WorkoutApiDeleteResponse>> {
+  async delete(id: number, userId: number): Promise<DeleteWorkoutActionResult> {
     try {
       await this.workoutRepository.delete(id, userId);
       return {
         success: true,
-        data: {
-          success: true,
-          message: 'Exericse deleted successfully.',
-        },
-      } satisfies SuccessResponse<WorkoutApiDeleteResponse>;
+        message: 'Exericse deleted successfully.',
+      } satisfies DeleteWorkoutActionResult;
     } catch (error) {
       console.error('Delete workout failed, server error:', error);
       return errorResponse('An error occurred on the server.');

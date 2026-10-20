@@ -156,3 +156,8 @@ export interface UpdateWorkoutActionResult {
   message: string;
   errors?: Partial<Record<keyof UpdateWorkoutDto, string[] | undefined>>;
 }
+
+export interface DeleteWorkoutActionResult {
+  success: boolean;
+  message: string;
+}
