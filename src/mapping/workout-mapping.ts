@@ -4,9 +4,6 @@ import type { WorkoutViewModel, EditWorkoutViewModel } from '@/types/workout-typ
 //Prisma
 import { Prisma } from '@prisma/client';
 
-//Mapping
-import { ExerciseMapper } from '@/mapping/exericse-mapping';
-
 type WorkoutWithExercises = Prisma.WorkoutGetPayload<{
   include: {
     exercises: {
@@ -29,8 +26,9 @@ export class WorkoutMapper {
         exerciseId: we.exerciseId,
         name: we.exercise.name,
         sets: we.sets,
-        reps: we.reps,
+        reps: we.reps ?? 0,
         weight: we.weight ?? 0,
+        seconds: we.seconds ?? 0,
         note: we.note ?? '',
         order: we.order,
       })),
@@ -44,10 +42,12 @@ export class WorkoutMapper {
       description: workout.description ?? '',
       workoutExercises: workout.exercises.map((we) => ({
         exerciseId: we.exerciseId,
-        name: we.exercise.name, // om du har med name i ViewModel
+        name: we.exercise.name,
         sets: we.sets,
-        reps: we.reps,
-        weight: we.weight,
+        reps: we.reps ?? 0,
+        weight: we.weight ?? 0,
+        seconds: we.seconds ?? 0,
+        note: we.note ?? '',
         order: we.order,
       })),
     };

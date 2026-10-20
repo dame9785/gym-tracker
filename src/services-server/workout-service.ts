@@ -3,7 +3,7 @@ import { WorkoutRepository } from '@/repositories/workout-repository';
 import { ExerciseRepository } from '@/repositories/exercise-repository';
 
 //Types
-import type { RegisterWorkoutDto } from '@/types/workout-types';
+import type { RegisterWorkoutDto, UpdateWorkoutActionResult } from '@/types/workout-types';
 
 //Mapping
 import { WorkoutMapper } from '@/mapping/workout-mapping';
@@ -15,11 +15,10 @@ import {
   WorkoutApiGetByIdResponse,
   WorkoutApiRegisterResponse,
   WorkoutApiResponse,
-  WorkoutApiUpdateResponse,
 } from '@/types/api-types';
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
-import { UpdateWorkoutDto, updateWorkoutSchema } from '@/schemas/workout-schemas';
-import { ErrorsHelper } from '@/helpers/error-helper';
+import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
+
 import { errorResponse } from '@/utils/api-error';
 
 export class WorkoutService {
@@ -41,20 +40,7 @@ export class WorkoutService {
     }
   }
 
-  async update(id: number, dto: UpdateWorkoutDto, userId: number): Promise<ApiResponse<WorkoutApiUpdateResponse>> {
-    const validation = updateWorkoutSchema.safeParse(dto);
-
-    if (!validation.success) {
-      const fieldErrors = ErrorsHelper.getFormErrors<WorkoutApiUpdateResponse>(validation.error.issues);
-      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
-
-      return {
-        success: false,
-        message: 'Incorrect email or password.',
-        errors: errors,
-      } satisfies ErrorResponse;
-    }
-
+  async update(id: number, dto: UpdateWorkoutDto, userId: number): Promise<UpdateWorkoutActionResult> {
     try {
       //Update workout in database
       await this.workoutRepository.update(id, dto);
@@ -65,13 +51,14 @@ export class WorkoutService {
         return {
           success: false,
           message: 'Could not find workout.',
-        } satisfies SuccessResponse;
+        } satisfies ErrorResponse;
       }
 
       return {
         success: true,
+        message: 'Workout updated successfully.',
         data: WorkoutMapper.workoutDtoToViewModel(workout),
-      } satisfies ApiResponse<WorkoutApiUpdateResponse>;
+      } satisfies UpdateWorkoutActionResult;
     } catch (error) {
       console.error('Update workout failed, server error:', error);
       return errorResponse('An error occurred on the server.');
@@ -109,6 +96,7 @@ export class WorkoutService {
   async getById(id: number, userId: number): Promise<ApiResponse<WorkoutApiGetByIdResponse>> {
     try {
       const workout = await this.workoutRepository.getById(id, userId);
+
       const exerices = await this.exericseRepository.getAllExersise(userId);
 
       if (!workout) {

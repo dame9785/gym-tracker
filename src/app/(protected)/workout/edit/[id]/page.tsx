@@ -21,6 +21,7 @@ export default async function EditWorkout({ params }: PageProps) {
   }
 
   const response = await workoutService.getById(Number(id), user.userId);
+
   if (!response.success || !response.data) {
     return (
       <main>

@@ -105,6 +105,7 @@ export class WorkoutRepository {
             sets: exercise.sets,
             reps: exercise.reps,
             weight: exercise.weight,
+            seconds: exercise.seconds,
             note: exercise.note,
             order,
           },

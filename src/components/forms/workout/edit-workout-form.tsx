@@ -42,14 +42,12 @@ export default function EditWorkoutForm({ workout, exericses }: props) {
       sets: exercise.sets,
       reps: exercise.reps,
       weight: exercise.weight,
-      seconds: exercise.seconds ?? 0,
+      seconds: exercise.seconds,
       note: exercise.note ?? '',
     })),
   });
 
   const updateExercise = (index: number, field: keyof UpdateWorkoutExericseDto, value: number | string) => {
-    console.log('Field:', field, 'Value:', value);
-
     setFormData((prev) => {
       const updated = [...prev.workoutExercises];
 
