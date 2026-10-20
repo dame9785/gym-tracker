@@ -80,8 +80,6 @@ export interface WorkoutApiGetByIdResponse {
   exericses: ExerciseViewModel[];
 }
 
-export type WorkoutApiRegisterResponse = WorkoutViewModel;
-
 export interface DashboardApiResponse {
   weeklyOverview: WeeklyWorkoutViewModel[];
   todayWorkout?: WeeklyWorkoutViewModel;

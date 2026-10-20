@@ -1,11 +1,9 @@
 //Types
 import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
-import type { WorkoutSessionExerciseViewModel, RegisterWorkoutExerciseDto, WorkoutExerciseViewModel } from '@/types/exercise-types';
+import type { WorkoutSessionExerciseViewModel, WorkoutExerciseViewModel } from '@/types/exercise-types';
 
 //Prisma
 import { $Enums, WorkoutSessionStatus } from '@prisma/client';
-
-export type WorkoutDto = RegisterWorkoutDto | EditWorkoutDto;
 
 export interface DeleteWorkoutResponse {
   success: boolean;
@@ -48,12 +46,6 @@ export interface EditWorkoutDto {
   name: string;
   description: string;
   workoutExericses: WorkoutExerciseViewModel[];
-}
-
-export interface RegisterWorkoutDto {
-  name: string;
-  description: string;
-  workoutExercises: RegisterWorkoutExerciseDto[];
 }
 
 export interface CreateWorkoutExerciseDto {
@@ -148,6 +140,13 @@ export interface WorkoutSchedelueViewModel {
   createdAt: Date;
   workoutId: number;
   date: Date;
+}
+
+export interface RegisterWorkoutActionResult {
+  success: boolean;
+  message: string;
+  data?: WorkoutViewModel;
+  errors?: Partial<Record<keyof UpdateWorkoutDto, string[] | undefined>>;
 }
 
 export interface UpdateWorkoutActionResult {

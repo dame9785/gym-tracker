@@ -3,13 +3,13 @@ import { WorkoutRepository } from '@/repositories/workout-repository';
 import { ExerciseRepository } from '@/repositories/exercise-repository';
 
 //Types
-import type { DeleteWorkoutActionResult, RegisterWorkoutDto, UpdateWorkoutActionResult } from '@/types/workout-types';
+import type { DeleteWorkoutActionResult, RegisterWorkoutActionResult, UpdateWorkoutActionResult } from '@/types/workout-types';
 
 //Mapping
 import { WorkoutMapper } from '@/mapping/workout-mapping';
-import { ErrorResponse, ApiResponse, SuccessResponse, WorkoutApiGetByIdResponse, WorkoutApiRegisterResponse, WorkoutApiResponse } from '@/types/api-types';
+import { ErrorResponse, ApiResponse, SuccessResponse, WorkoutApiGetByIdResponse, WorkoutApiResponse } from '@/types/api-types';
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
-import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
+import { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
 import { errorResponse } from '@/utils/api-error';
 
@@ -17,7 +17,7 @@ export class WorkoutService {
   private workoutRepository = new WorkoutRepository();
   private exericseRepository = new ExerciseRepository();
 
-  async create(dto: RegisterWorkoutDto, userId: number): Promise<ApiResponse<WorkoutApiRegisterResponse>> {
+  async create(dto: AddWorkoutDto, userId: number): Promise<RegisterWorkoutActionResult> {
     try {
       const workout = await this.workoutRepository.create(dto, userId);
 
@@ -25,7 +25,7 @@ export class WorkoutService {
         success: true,
         message: 'Workout created successfully.',
         data: WorkoutMapper.workoutDtoToViewModel(workout),
-      } satisfies ApiResponse<WorkoutApiRegisterResponse>;
+      } satisfies RegisterWorkoutActionResult;
     } catch (error) {
       console.error('Create workout failed, server error:', error);
       return errorResponse('An error occurred on the server.');

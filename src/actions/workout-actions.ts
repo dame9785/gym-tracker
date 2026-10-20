@@ -3,10 +3,10 @@
 import { requireAuth } from '@/lib/auth';
 import { AddWorkoutDto, registerWorkoutSchema, UpdateWorkoutDto, updateWorkoutSchema } from '@/schemas/workout-schemas';
 import { WorkoutService } from '@/services-server/workout-service';
-import { DeleteWorkoutActionResult, UpdateWorkoutActionResult } from '@/types/workout-types';
+import { DeleteWorkoutActionResult, RegisterWorkoutActionResult, UpdateWorkoutActionResult } from '@/types/workout-types';
 
 const workoutService = new WorkoutService();
-export async function registerWorkoutAction(dto: AddWorkoutDto) {
+export async function registerWorkoutAction(dto: AddWorkoutDto): Promise<RegisterWorkoutActionResult> {
   const user = await requireAuth();
 
   const validation = registerWorkoutSchema.safeParse(dto);
@@ -19,7 +19,8 @@ export async function registerWorkoutAction(dto: AddWorkoutDto) {
     };
   }
 
-  return workoutService.create(validation.data, user.userId);
+  const result = workoutService.create(validation.data, user.userId);
+  return result;
 }
 
 export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutDto): Promise<UpdateWorkoutActionResult> {
