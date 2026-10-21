@@ -10,6 +10,8 @@ import { deleteExerciseAction } from '@/actions/exercise-actions';
 // Types
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
+import Image from 'next/image';
+
 type Props = {
   exercises: ExerciseViewModel[];
 };
@@ -65,6 +67,7 @@ export default function ExerciseTable({ exercises }: Props) {
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Exericse</th>
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Muscle group</th>
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">Equipment</th>
+            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-zinc-500">Image</th>
             <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-zinc-500">Measures</th>
           </tr>
         </thead>
@@ -107,9 +110,11 @@ export default function ExerciseTable({ exercises }: Props) {
 
               {/* Equipment */}
               <td className="px-6 py-5">
-                <span className="inline-flex rounded-full border border-zinc-700 bg-zinc-800/70 px-3 py-1 text-xs font-mediumtext-zinc-400">
-                  {exercise.equipment}
-                </span>
+                <span className="inline-flex rounded-full border border-zinc-700 bg-zinc-800/70 px-3 py-1 text-xs font-mediumtext-zinc-400">{exercise.equipment}</span>
+              </td>
+
+              <td className="px-6 py-5">
+                <Image src={exercise.imagePath ?? '/placeholder.png'} alt={exercise.name} width={300} height={200} />
               </td>
 
               {/* Actions */}

@@ -9,6 +9,7 @@ export interface ExerciseViewModel {
   name: string;
   muscleGroup: string;
   equipment: string | null;
+  imagePath: string | null;
 }
 
 export interface RegisterExerciseDto {

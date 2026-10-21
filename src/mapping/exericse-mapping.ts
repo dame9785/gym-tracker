@@ -7,6 +7,7 @@ export class ExerciseMapper {
       name: exercise.name,
       muscleGroup: exercise.muscleGroup,
       equipment: exercise.equipment,
+      imagePath: exercise.imagePath,
     };
   }
 }

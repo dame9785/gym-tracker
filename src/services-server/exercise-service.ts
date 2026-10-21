@@ -8,7 +8,6 @@ import type { RegisterExerciseDto } from '@/types/exercise-types';
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
 import {
   ApiResponse,
-  ApiSuccessResponse,
   ExerciseApiDeleteResponse,
   ExerciseApiGetByIdResponse,
   ExerciseApiRegisterResponse,
