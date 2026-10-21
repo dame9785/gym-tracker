@@ -12,12 +12,6 @@ export interface ExerciseViewModel {
   imagePath: string | null;
 }
 
-export interface RegisterExerciseDto {
-  name: string;
-  muscleGroup: string;
-  equipment: string;
-}
-
 export interface EditWorkoutExerciseDto {
   exerciseId: number;
   name: string;

@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import WorkoutDetails from '@/components/workout/workout-details';
 
 // Services
-import WorkoutService from '@/services/workout-service';
+import { WorkoutService } from '@/services-server/workout-service';
 import { getTokenFromCookieStore } from '@/lib/auth';
 import ErrorMessage from '@/components/ui/error-message';
 
@@ -23,7 +23,9 @@ export default async function WorkoutPage({ params }: PageProps) {
   }
 
   const workoutId = Number(id);
-  const response = await WorkoutService.getById(workoutId, userToken);
+
+  const workoutService = new WorkoutService();
+  const response = await workoutService.getById(workoutId, Number(userToken));
 
   if (!response.success || !response.data) {
     return (

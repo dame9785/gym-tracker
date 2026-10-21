@@ -2,12 +2,11 @@
 
 import { requireAuth } from '@/lib/auth';
 import { ExerciseService } from '@/services-server/exercise-service';
-import { registerExerciseSchema, updateExerciseSchema } from '@/schemas/exercise-schema';
-import type { RegisterExerciseDto } from '@/types/exercise-types';
+import { registerExerciseSchema, RegisterExericseDto, updateExerciseSchema } from '@/schemas/exercise-schema';
 
 const exerciseService = new ExerciseService();
 
-export async function registerExerciseAction(dto: RegisterExerciseDto) {
+export async function registerExerciseAction(dto: RegisterExericseDto) {
   const user = await requireAuth();
 
   const validation = registerExerciseSchema.safeParse(dto);
@@ -39,7 +38,7 @@ export async function deleteExerciseAction(id: number) {
 }
 
 // UPDATE
-export async function updateExerciseAction(id: number, dto: RegisterExerciseDto) {
+export async function updateExerciseAction(id: number, dto: RegisterExericseDto) {
   try {
     const user = await requireAuth();
 

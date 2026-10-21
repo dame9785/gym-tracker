@@ -1,8 +1,6 @@
 //Prisma
 import { prisma } from '@/lib/prisma';
-
-//Types
-import type { RegisterExerciseDto } from '@/types/exercise-types';
+import { RegisterExericseDto } from '@/schemas/exercise-schema';
 
 export class ExerciseRepository {
   async getAllExersise(userId: number) {
@@ -16,12 +14,13 @@ export class ExerciseRepository {
     });
   }
 
-  async register(dto: RegisterExerciseDto, userId: number) {
+  async register(dto: RegisterExericseDto, userId: number) {
     return await prisma.exercise.create({
       data: {
         name: dto.name,
         muscleGroup: dto.muscleGroup,
         equipment: dto.equipment,
+        imagePath: dto.imagePath ?? null,
         userId,
       },
     });
@@ -42,7 +41,7 @@ export class ExerciseRepository {
     return result;
   }
 
-  async update(id: number, dto: RegisterExerciseDto, userId: number) {
+  async update(id: number, dto: RegisterExericseDto, userId: number) {
     return await prisma.exercise.updateMany({
       where: {
         id,
