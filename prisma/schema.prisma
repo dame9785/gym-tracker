@@ -75,6 +75,7 @@ model Exercise {
   name        String
   muscleGroup String
   equipment   String? @db.VarChar(50)
+  imagePath   String?
 
   userId Int
   user   User @relation(fields: [userId], references: [id])

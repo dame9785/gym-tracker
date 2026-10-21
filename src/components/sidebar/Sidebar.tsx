@@ -54,7 +54,7 @@ function Sidebar() {
 
             <li className="li flex items-center">
               <FaWeight className="fa-icon" />
-              <Link href="/log-weight">Log weight</Link>
+              <Link href="/log-weight">Weight</Link>
             </li>
 
             <li className="li flex items-center">
@@ -64,7 +64,7 @@ function Sidebar() {
 
             <li className="li flex items-center">
               <FaPersonRunning className="fa-icon" />
-              <Link href="/exercise">Övningar</Link>
+              <Link href="/exercise">Exercises</Link>
             </li>
 
             <li className="li flex items-center">
