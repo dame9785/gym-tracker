@@ -4,9 +4,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-// CSS
-import './sidebar.css';
-
 // Components
 import Button from '@/components/button/button';
 
