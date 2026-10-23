@@ -4,7 +4,7 @@ import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 
 import { errorResponse } from '@/utils/api-error';
 
-const API_URL = 'http://localhost:3000/api/workout-schedules';
+const API_URL = '/api/workout-schedules';
 
 export default class WorkoutScheduleService {
   static async create(dto: RegisterWorkoutScheduleDto) {
