@@ -1,0 +1,45 @@
+{
+  "uploaded": [
+    {
+      "relativePath": "dead-bug.jpg",
+      "blobPath": "exercises/dead-bug.jpg",
+      "url": "https://km2enl0expixao6h.public.blob.vercel-storage.com/exercises/dead-bug.jpg"
+    },
+    {
+      "relativePath": "glute-bridge.jpg",
+      "blobPath": "exercises/glute-bridge.jpg",
+      "url": "https://km2enl0expixao6h.public.blob.vercel-storage.com/exercises/glute-bridge.jpg"
+    },
+    {
+      "relativePath": "kettlebell-lateral-raise.jpg",
+      "blobPath": "exercises/kettlebell-lateral-raise.jpg",
+      "url": "https://km2enl0expixao6h.public.blob.vercel-storage.com/exercises/kettlebell-lateral-raise.jpg"
+    },
+    {
+      "relativePath": "kettlebell-row.jpg",
+      "blobPath": "exercises/kettlebell-row.jpg",
+      "url": "https://km2enl0expixao6h.public.blob.vercel-storage.com/exercises/kettlebell-row.jpg"
+    },
+    {
+      "relativePath": "kettlebell-shoulder-press.jpg",
+      "blobPath": "exercises/kettlebell-shoulder-press.jpg",
+      "url": "https://km2enl0expixao6h.public.blob.vercel-storage.com/exercises/kettlebell-shoulder-press.jpg"
+    },
+    {
+      "relativePath": "plank.jpg",
+      "blobPath": "exercises/plank.jpg",
+      "url": "https://km2enl0expixao6h.public.blob.vercel-storage.com/exercises/plank.jpg"
+    },
+    {
+      "relativePath": "push-ups.jpg",
+      "blobPath": "exercises/push-ups.jpg",
+      "url": "https://km2enl0expixao6h.public.blob.vercel-storage.com/exercises/push-ups.jpg"
+    },
+    {
+      "relativePath": "squat.jpg",
+      "blobPath": "exercises/squat.jpg",
+      "url": "https://km2enl0expixao6h.public.blob.vercel-storage.com/exercises/squat.jpg"
+    }
+  ],
+  "errors": []
+}
