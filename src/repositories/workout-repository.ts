@@ -1,12 +1,9 @@
-//Types
-import { RegisterWorkoutDto } from '@/types/workout-types';
-
 //Prisma
 import { prisma } from '@/lib/prisma';
-import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
+import { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
 export class WorkoutRepository {
-  async create(dto: RegisterWorkoutDto, userId: number) {
+  async create(dto: AddWorkoutDto, userId: number) {
     return await prisma.$transaction(async (tx) => {
       const workout = await tx.workout.create({
         data: {

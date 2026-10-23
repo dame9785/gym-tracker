@@ -4,7 +4,7 @@ import { HistoryRepository } from '@/repositories/history-repository';
 import { WorkoutRepository } from '@/repositories/workout-repository';
 
 //Types
-import { ApiErrorResponse, ApiResponse, HistoryApiResponse } from '@/types/api-types';
+import { ErrorResponse, ApiResponse, HistoryApiResponse } from '@/types/api-types';
 
 export class HistoryService {
   private historyRepository = new HistoryRepository();
@@ -51,7 +51,7 @@ export class HistoryService {
       return {
         success: false,
         message: 'Could not load workout history.',
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
   }
 }

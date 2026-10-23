@@ -4,7 +4,7 @@ import { mapWeeklyOverview } from '@/mapping/dashboard-mapping';
 //Repository
 import { DashboardRepository } from '@/repositories/dashboard-repository';
 import { WorkoutSessionRepository } from '@/repositories/workout-session-repository';
-import { ApiErrorResponse, ApiResponse, ApiSuccessResponse, DashboardApiResponse } from '@/types/api-types';
+import { ErrorResponse, DashboardResult } from '@/types/api-types';
 
 //Utils
 import { calculateStreak } from '@/utils/calculate-streak';
@@ -13,7 +13,7 @@ export class DashboardService {
   private dashboardRepository = new DashboardRepository();
   private workoutSessionRepository = new WorkoutSessionRepository();
 
-  async getDashboard(userId: number): Promise<ApiResponse<DashboardApiResponse>> {
+  async getDashboard(userId: number): Promise<DashboardResult | ErrorResponse> {
     try {
       const [weeklyOverview, getCompletedWorkoutSessions] = await Promise.all([
         this.dashboardRepository.getWeeklyOverview(userId),
@@ -37,20 +37,17 @@ export class DashboardService {
       };
 
       return {
-        success: true,
-        data: {
-          weeklyOverview: weeklyOverviewViewModel,
-          weeklySummary: weeklySummary,
-          todayWorkout: todayWorkout,
-        },
-      } satisfies ApiSuccessResponse<DashboardApiResponse>;
+        weeklyOverview: weeklyOverviewViewModel,
+        weeklySummary: weeklySummary,
+        todayWorkout: todayWorkout,
+      } satisfies DashboardResult;
     } catch (error) {
       console.error(error);
 
       return {
         success: false,
         message: 'Något gick fel.',
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
   }
 

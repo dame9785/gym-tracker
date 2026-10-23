@@ -1,12 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-
 import WorkoutScheduleService from '@/services/workout-schedule-service';
 
 import type { CalendarWorkoutViewModel } from '@/types/calender-types';
-import { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 interface WorkoutCalendarProps {
   userToken: string;
@@ -45,22 +42,14 @@ export default function WorkoutCalendar({ userToken }: WorkoutCalendarProps) {
     return workouts.filter((workout) => {
       const workoutDate = new Date(workout.date);
 
-      return (
-        workoutDate.getFullYear() === day.getFullYear() &&
-        workoutDate.getMonth() === day.getMonth() &&
-        workoutDate.getDate() === day.getDate()
-      );
+      return workoutDate.getFullYear() === day.getFullYear() && workoutDate.getMonth() === day.getMonth() && workoutDate.getDate() === day.getDate();
     });
   };
 
   const isToday = (day: Date) => {
     const today = new Date();
 
-    return (
-      day.getFullYear() === today.getFullYear() &&
-      day.getMonth() === today.getMonth() &&
-      day.getDate() === today.getDate()
-    );
+    return day.getFullYear() === today.getFullYear() && day.getMonth() === today.getMonth() && day.getDate() === today.getDate();
   };
 
   const goToToday = () => {
@@ -129,10 +118,7 @@ export default function WorkoutCalendar({ userToken }: WorkoutCalendarProps) {
           const dayWorkouts = day ? getWorkoutsForDay(day) : [];
 
           return (
-            <div
-              key={index}
-              className={`min-h-24 border-b border-r border-white/10 p-2 ${day && isToday(day) ? 'ring-2 ring-inset ring-orange-500' : ''}`}
-            >
+            <div key={index} className={`min-h-24 border-b border-r border-white/10 p-2 ${day && isToday(day) ? 'ring-2 ring-inset ring-orange-500' : ''}`}>
               {day && (
                 <>
                   <span

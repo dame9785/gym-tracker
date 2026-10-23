@@ -51,7 +51,7 @@ export class WorkoutSessionRepository {
               workoutSessionExerciseId: sessionExercise.id,
               setNumber,
 
-              targetReps: workoutExercise.reps,
+              targetReps: workoutExercise.reps ?? 0,
               targetWeight: workoutExercise.weight,
 
               actualReps: null,

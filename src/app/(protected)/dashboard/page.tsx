@@ -10,7 +10,6 @@ import { DashboardService } from '@/services-server/dashboard-service';
 import { redirect } from 'next/navigation';
 
 export default async function DashboardPage() {
-  // Kontrollera att användaren är inloggad
   const user = await requireAuth();
   const userToken = await getTokenFromCookieStore();
 
@@ -19,34 +18,26 @@ export default async function DashboardPage() {
   }
 
   const dashboardService = new DashboardService();
+  const result = await dashboardService.getDashboard(user.userId);
 
-  const response = await dashboardService.getDashboard(user.userId);
-  if (!response.success || !response.data) {
-    return (
-      <main>
-        <ErrorMessage
-          title="Unable to load foods"
-          message={response.message ?? 'Something went wrong while loading your foods.'}
-        />
-      </main>
-    );
+  // Kontrollera om tjänsten returnerade ett fel
+  if (!('weeklySummary' in result)) {
+    return <ErrorMessage message={result.message} />;
   }
-
-  const dashboard = response.data;
 
   return (
     <div className="w-full space-y-8">
       <DashboardHeader />
 
-      <DashboardStats summary={dashboard.weeklySummary} />
+      <DashboardStats summary={result.weeklySummary} />
 
-      <WeeklyOverview workouts={dashboard.weeklyOverview} />
+      <WeeklyOverview workouts={result.weeklyOverview} />
 
       <WorkoutCalendar userToken={userToken} />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <TodayWorkout workout={dashboard.todayWorkout} />
-        <WeeklySummary summary={dashboard.weeklySummary} />
+        <TodayWorkout workout={result.todayWorkout} />
+        <WeeklySummary summary={result.weeklySummary} />
       </div>
     </div>
   );

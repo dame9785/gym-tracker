@@ -4,7 +4,7 @@ import { WeightLogRepository } from '@/repositories/weight-log-repository';
 //Mapping
 import { LogWeightMapper } from '@/mapping/log-weight-mapping';
 import { AddWeightDto, addWeightSchema, UpdateWeightDto, updateWeightSchema } from '@/schemas/weight-log.schemas';
-import { ApiResponse, ApiSuccessResponse, DeleteLogWeightResponse, EditLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
+import { ApiResponse, SuccessResponse, DeleteLogWeightResponse, EditLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
 
 import { errorResponse } from '@/utils/api-error';
 
@@ -37,7 +37,7 @@ export class WeightLogService {
             totalItems: totalLogs,
           },
         },
-      } satisfies ApiSuccessResponse<UserLogWeightResponse>;
+      } satisfies SuccessResponse<UserLogWeightResponse>;
     } catch (error) {
       return errorResponse('An error occurred on the server.');
     }
@@ -54,7 +54,7 @@ export class WeightLogService {
         success: true,
         message: 'Weight log deleted successfully',
         data: [],
-      } satisfies ApiSuccessResponse<DeleteLogWeightResponse>;
+      } satisfies SuccessResponse<DeleteLogWeightResponse>;
     } catch (error) {
       return errorResponse('An error occurred on the server.');
     }
@@ -76,7 +76,7 @@ export class WeightLogService {
         success: true,
         message: 'Weight log created successfully.',
         data: viewModel,
-      } satisfies ApiSuccessResponse<LogWeightResponse>;
+      } satisfies SuccessResponse<LogWeightResponse>;
     } catch (error) {
       console.error('Weight-log created failed:', error);
       return errorResponse('An error occurred on the server.');
@@ -103,7 +103,7 @@ export class WeightLogService {
         success: true,
         data: viewModel,
         message: 'Weight log updated successfully.',
-      } satisfies ApiSuccessResponse<EditLogWeightResponse>;
+      } satisfies SuccessResponse<EditLogWeightResponse>;
     } catch (error) {
       return errorResponse('An error occurred on the server.');
     }
@@ -119,7 +119,7 @@ export class WeightLogService {
       return {
         success: true,
         data: LogWeightMapper.mapLogItemToViewModel(data),
-      } satisfies ApiSuccessResponse<LogWeightResponse>;
+      } satisfies SuccessResponse<LogWeightResponse>;
     } catch (error) {
       console.error('getById error:', error);
       return errorResponse('An error occurred on the server.');

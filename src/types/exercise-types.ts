@@ -38,6 +38,7 @@ export interface WorkoutExerciseViewModel {
   reps: number;
   order: number;
   weight: number | null;
+  seconds: number;
 }
 
 export interface WorkoutSessionExerciseViewModel {

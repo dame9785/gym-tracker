@@ -4,14 +4,14 @@ import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 
 //Repository
 import { WorkoutScheduleRepository } from '@/repositories/workout-schedule-repository';
-import { ErrorResponse, ApiResponse, SuccessResponse, WorkoutSchedelueCreateResponse } from '@/types/api-types';
+import { ErrorResponse } from '@/types/api-types';
 import { SchedelueWorkoutDto, schedelueWorkoutSchema } from '@/schemas/schedelue-workout-schemas';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
 export class WorkoutScheduleService {
   private workoutScheduleRepository = new WorkoutScheduleRepository();
 
-  async create(dto: RegisterWorkoutScheduleDto, userId: number): Promise<ApiResponse<WorkoutSchedelueCreateResponse>> {
+  async create(dto: RegisterWorkoutScheduleDto, userId: number) {
     try {
       const workoutSchedule = await this.workoutScheduleRepository.create(dto, userId);
 
@@ -25,23 +25,19 @@ export class WorkoutScheduleService {
           success: false,
           message: 'Felaktig email eller lösenord.',
           errors: errors,
-        } satisfies ApiErrorResponse;
+        } satisfies ErrorResponse;
       }
 
       return {
-        success: true,
-        message: 'Träningspass planerat.',
-        data: {
-          workoutSchedule: workoutSchedule,
-        },
-      } satisfies ApiSuccessResponse<WorkoutSchedelueCreateResponse>;
+        workoutSchedule,
+      };
     } catch (error) {
       console.error('WorkoutScheduleService.create ERROR:', error);
 
       return {
         success: false,
         message: 'Något gick fel, server fel',
-      } satisfies ApiErrorResponse;
+      } satisfies ErrorResponse;
     }
   }
 

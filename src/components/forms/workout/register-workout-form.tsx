@@ -13,13 +13,11 @@ import WorkoutExerciseCard from '@/components/forms/workout/workout-exercise-car
 //Helpers
 import { hasDuplicateExercises } from '@/helpers/check-dupplicate-exericse-helper';
 
-//Types
-import type { RegisterWorkoutDto } from '@/types/workout-types';
 import type { ExerciseViewModel, RegisterWorkoutExerciseDto } from '@/types/exercise-types';
 
 //Toast alert sonner
 import { toast } from 'sonner';
-import { registerWorkoutSchema } from '@/schemas/workout-schemas';
+import { AddWorkoutDto, registerWorkoutSchema } from '@/schemas/workout-schemas';
 
 import { registerWorkoutAction } from '@/actions/workout-actions';
 
@@ -30,7 +28,7 @@ type Props = {
 export default function AddWorkoutForm({ exericses }: Props) {
   const router = useRouter();
   const [errors, setErrors] = useState<Record<string, string[]>>({});
-  const [formData, setFormData] = useState<RegisterWorkoutDto>({
+  const [formData, setFormData] = useState<AddWorkoutDto>({
     name: '',
     description: '',
     workoutExercises: [],

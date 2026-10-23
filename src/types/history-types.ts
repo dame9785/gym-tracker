@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import type { WorkoutSessionViewModel } from '@/types/workout-types';
 
 export interface HistoryViewModel {
   totalWorkouts: number;

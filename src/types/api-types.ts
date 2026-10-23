@@ -1,4 +1,3 @@
-import { GoalTypeViewModel } from './goal-types';
 import { UserViewModel } from './user-types';
 import { LogItemViewModel } from './log-weight-types';
 import { ExerciseViewModel } from './exercise-types';
@@ -80,7 +79,7 @@ export interface WorkoutApiGetByIdResponse {
   exericses: ExerciseViewModel[];
 }
 
-export interface DashboardApiResponse {
+export interface DashboardResult {
   weeklyOverview: WeeklyWorkoutViewModel[];
   todayWorkout?: WeeklyWorkoutViewModel;
   weeklySummary: WeeklySummaryViewModel;
@@ -105,8 +104,6 @@ export type WorkoutSessionCreateResponse = number;
 export type WorkoutSessionUpdatedSetResponse = UpdatedSetViewModel;
 
 export type WorkoutSessionDetailApiResponse = WorkoutSessionViewModel;
-
-export type WorkoutSchedelueCreateResponse = WorkoutSchedelueViewModel;
 
 export interface UpdateWorkoutSessionResponse {
   message: string;

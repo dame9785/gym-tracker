@@ -89,9 +89,9 @@ export class WeightLogRepository {
   }
 
   async update(logWeightId: number, userId: number, dto: UpdateWeightDto) {
-    const weightLog = prisma.weightLog.findFirst({
+    const weightLog = await prisma.weightLog.findFirst({
       where: {
-        logWeightId,
+        id: logWeightId,
         userId,
       },
     });
@@ -100,9 +100,9 @@ export class WeightLogRepository {
       return null;
     }
 
-    return await prisma.weightLog.update({
+    return prisma.weightLog.update({
       where: {
-        id: logWeightId,
+        id: weightLog.id,
       },
       data: {
         weight: dto.weight,

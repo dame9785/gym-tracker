@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 //Services
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
-import { ApiErrorResponse } from '@/types/api-types';
 
 const workoutSessionService = new WorkoutSessionService();
 
@@ -30,7 +29,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       {
         success: false,
         message: 'Ett oväntat fel inträffade.',
-      } satisfies ApiErrorResponse,
+      },
       {
         status: 500,
       },

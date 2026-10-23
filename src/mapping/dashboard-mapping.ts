@@ -26,9 +26,10 @@ export function mapWeeklyOverview(workouts: WeeklyOverview[]): WeeklyWorkoutView
       exerciseId: workoutExercise.exercise.id,
       name: workoutExercise.exercise.name,
       sets: workoutExercise.sets,
-      reps: workoutExercise.reps,
-      weight: workoutExercise.weight,
+      reps: workoutExercise.reps ?? 0,
+      weight: workoutExercise.weight ?? 0,
       order: workoutExercise.order,
+      seconds: workoutExercise.seconds ?? 0,
     }));
 
     const latestSession = workout.workout.sessions[0];

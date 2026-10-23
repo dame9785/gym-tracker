@@ -3,11 +3,9 @@
 import { CalendarDays, CheckCircle2, Clock3, Dumbbell, Play, RotateCcw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-// Types
-import { WeeklyWorkoutViewModel } from '@/types/dashboard-types';
-
 // Services
-import WorkoutSessionService from '@/services/workout-session-service';
+import { WorkoutSessionService } from '@/services-server/workout-session-service';
+import { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 interface TodayWorkoutProps {
   workout?: WeeklyWorkoutViewModel;
@@ -29,10 +27,10 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
       return;
     }
 
-    const result = await workoutSessionService.create(workout.id);
+    const result = await workoutSessionService.create(workout.id, 1); //TODO: Dont use static user Id
 
     if (result.success) {
-      router.push(`/workout-sessions/${result.workoutSession.id}`);
+      router.push(`/workout-sessions/${result.data}`);
     }
   };
 
@@ -58,7 +56,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Today</p>
 
-          <h2 className="mt-1 text-xl font-bold text-white">Today's Workout</h2>
+          <h2 className="mt-1 text-xl font-bold text-white">Todays Workout</h2>
         </div>
 
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800">

@@ -1,9 +1,6 @@
 //Repository
 import { ExerciseRepository } from '../repositories/exercise-repository';
 
-//Types
-import type { RegisterExerciseDto } from '@/types/exercise-types';
-
 //Mapper
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
 import {
@@ -13,8 +10,9 @@ import {
   ExerciseApiRegisterResponse,
   ExerciseApiResponse,
   ExerciseApiUpdateResponse,
+  SuccessResponse,
 } from '@/types/api-types';
-import { registerExerciseSchema } from '@/schemas/exercise-schema';
+import { registerExerciseSchema, RegisterExericseDto } from '@/schemas/exercise-schema';
 import { errorResponse } from '@/utils/api-error';
 
 export class ExerciseService {
@@ -43,14 +41,14 @@ export class ExerciseService {
           success: true,
           message: 'Exericse deleted successfully',
         },
-      } satisfies ApiSuccessResponse<ExerciseApiDeleteResponse>;
+      } satisfies SuccessResponse<ExerciseApiDeleteResponse>;
     } catch (error) {
       console.error('Delete exericse failed, server error:', error);
       return errorResponse('An error occurred on the server.');
     }
   }
 
-  async registerExercise(dto: RegisterExerciseDto, userId: number): Promise<ApiResponse<ExerciseApiRegisterResponse>> {
+  async registerExercise(dto: RegisterExericseDto, userId: number): Promise<ApiResponse<ExerciseApiRegisterResponse>> {
     const validation = registerExerciseSchema.safeParse(dto);
 
     if (!validation.success) {
@@ -66,7 +64,7 @@ export class ExerciseService {
         success: true,
         message: 'Exercise created successfully.',
         data: ExerciseMapper.exerciseModelToViewModel(exercise),
-      } satisfies ApiSuccessResponse<ExerciseApiRegisterResponse>;
+      } satisfies SuccessResponse<ExerciseApiRegisterResponse>;
     } catch (error) {
       console.error('Create exercise failed, server error:', error);
 
@@ -85,14 +83,14 @@ export class ExerciseService {
         success: true,
         message: 'Exericse fetched successfully.',
         data: ExerciseMapper.exerciseModelToViewModel(exericse),
-      } satisfies ApiSuccessResponse<ExerciseApiGetByIdResponse>;
+      } satisfies SuccessResponse<ExerciseApiGetByIdResponse>;
     } catch (error) {
       console.error('Fetch exericse by id failed, server error:', error);
       return errorResponse('An error occurred on the server.');
     }
   }
 
-  async update(id: number, dto: RegisterExerciseDto, userId: number): Promise<ApiResponse<void>> {
+  async update(id: number, dto: RegisterExericseDto, userId: number): Promise<ApiResponse<void>> {
     const validation = registerExerciseSchema.safeParse(dto);
 
     if (!validation.success) {
@@ -111,7 +109,7 @@ export class ExerciseService {
       return {
         success: true,
         message: 'Exercise updated successfully.',
-      } satisfies ApiSuccessResponse<ExerciseApiUpdateResponse>;
+      } satisfies SuccessResponse<ExerciseApiUpdateResponse>;
     } catch (error) {
       console.error('Update exercise failed, server error:', error);
 
