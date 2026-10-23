@@ -60,7 +60,7 @@ export class WorkoutService {
   async getAll(page: number, userId: number): Promise<ApiResponse<WorkoutApiResponse>> {
     const totalNumberWorkouts = await this.workoutRepository.getTotalNumberOfWorkouts(userId);
 
-    const pageSize = 5;
+    const pageSize = 100;
     const totalPages = Math.ceil(totalNumberWorkouts / pageSize);
 
     try {
