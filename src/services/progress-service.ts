@@ -4,7 +4,7 @@ import { ProgressApiResponse } from '@/types/progress-type';
 //Utils
 import { errorResponse } from '@/utils/api-error';
 
-const API_URL = 'http://localhost:3000/api/progress';
+const API_URL = '/api/progress';
 
 export default class ProgressService {
   static async getProgress(userToken: string): Promise<ApiResponse<ProgressApiResponse>> {

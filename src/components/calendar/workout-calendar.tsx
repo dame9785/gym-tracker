@@ -61,8 +61,7 @@ export default function WorkoutCalendar({ userToken }: WorkoutCalendarProps) {
       try {
         const result = await WorkoutScheduleService.getByMonth(userToken, currentYear, currentMonth);
 
-        console.log('Calendar workouts result:', result);
-        console.log('Is array:', Array.isArray(result));
+        console.log('RESULT', result);
 
         setWorkouts(Array.isArray(result) ? result : []);
       } catch (error) {
