@@ -28,16 +28,33 @@ export default class WorkoutScheduleService {
 
   static async getByMonth(userToken: string, year: number, month: number): Promise<CalendarWorkoutViewModel[]> {
     try {
-      const response = await fetch(`/api/workout-schedules?&year=${year}&month=${month}`, {
+      const response = await fetch(`/api/workout-schedules?year=${year}&month=${month}`, {
         method: 'GET',
         headers: {
           Cookie: `token=${userToken}`,
         },
       });
 
-      const data = (await response.json()) as CalendarWorkoutViewModel[];
-      return data;
+      if (!response.ok) {
+        throw new Error(`Failed to fetch workout schedules: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // API returns an object containing workoutSchedules
+      if (Array.isArray(data.workoutSchedules)) {
+        return data.workoutSchedules;
+      }
+
+      // Also support an API that returns an array directly
+      if (Array.isArray(data)) {
+        return data;
+      }
+
+      console.error('Unexpected workout schedule response:', data);
+      return [];
     } catch (error) {
+      console.error('Failed to fetch workout schedules:', error);
       return [];
     }
   }
