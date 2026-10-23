@@ -58,9 +58,17 @@ export default function WorkoutCalendar({ userToken }: WorkoutCalendarProps) {
 
   useEffect(() => {
     const loadWorkouts = async () => {
-      const result = await WorkoutScheduleService.getByMonth(userToken, currentYear, currentMonth);
+      try {
+        const result = await WorkoutScheduleService.getByMonth(userToken, currentYear, currentMonth);
 
-      setWorkouts(result);
+        console.log('Calendar workouts result:', result);
+        console.log('Is array:', Array.isArray(result));
+
+        setWorkouts(Array.isArray(result) ? result : []);
+      } catch (error) {
+        console.error('Failed to load calendar workouts:', error);
+        setWorkouts([]);
+      }
     };
 
     loadWorkouts();
