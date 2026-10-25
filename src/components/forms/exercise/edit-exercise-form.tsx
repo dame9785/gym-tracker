@@ -12,6 +12,7 @@ import FormStyles from '@/components/forms/form.module.css';
 import type { ExerciseViewModel } from '@/types/exercise-types';
 import { updateExerciseSchema, type UpdateExericseDto } from '@/schemas/exercise-schema';
 import { ErrorsHelper } from '@/helpers/error-helper';
+import ImageUpload from '@/components/ui/image-upload';
 
 type Props = {
   exericse: ExerciseViewModel;
@@ -194,37 +195,29 @@ export default function EditExercise({ exericse }: Props) {
         </div>
 
         <div className={FormStyles.formGroup}>
-          <label className={FormStyles.formLabel} htmlFor="image">
-            Exercise image
+          <label className={FormStyles.formLabel}>
+            Exercise image <span className="text-zinc-500">(optional)</span>
           </label>
 
-          {imagePreview ? (
-            <div className="mb-3">
-              <p className="mb-2 text-sm">New image preview</p>
-              <img src={imagePreview} alt="Preview of the new exercise image" className="h-48 w-full rounded-lg border border-gray-300 object-contain" />
-            </div>
-          ) : exericse.imagePath ? (
-            <div className="mb-3">
-              <p className="mb-2 text-sm">Current image</p>
-              <img src={exericse.imagePath} alt={`Current image of ${exericse.name}`} className="h-48 w-full rounded-lg border border-gray-300 object-contain" />
-            </div>
-          ) : (
-            <p className="mb-3 text-sm">No image selected yet.</p>
-          )}
+          <ImageUpload
+            file={selectedImage}
+            onFileChange={setSelectedImage}
+            currentImageUrl={exericse.imagePath}
+            currentImageAlt={`Current image of ${exericse.name}`}
+            disabled={isSaving}
+          />
 
-          <input className={FormStyles.formInput} id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} />
-
-          <p className="mt-1 text-sm text-gray-500">JPG, PNG or WebP. Maximum 5 MB. Leave empty to keep the current image.</p>
+          <p className="mt-2 text-sm text-zinc-500">Leave the current image unchanged by not selecting a new one.</p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex justify-center gap-3">
           <Button type="submit" variant="primary" disabled={isSaving}>
-            {isSaving ? 'Updating...' : 'Update exercise'}
+            {isSaving ? 'Creating...' : 'Create exercise'}
           </Button>
 
           <Link href="/exercise">
             <Button type="button" variant="secondary">
-              Gå tillbaka
+              Go back
             </Button>
           </Link>
         </div>

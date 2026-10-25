@@ -12,6 +12,10 @@ import { registerExerciseAction } from '@/actions/exercise-actions';
 import { registerExerciseSchema, type RegisterExericseDto } from '@/schemas/exercise-schema';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
+import { FaCloudUploadAlt, FaImage, FaTimes } from 'react-icons/fa';
+
+import ImageUpload from '@/components/ui/image-upload';
+
 export default function RegisterForm() {
   const router = useRouter();
 
@@ -70,6 +74,17 @@ export default function RegisterForm() {
 
     setSelectedImage(file);
     setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+
+    const input = document.getElementById('image') as HTMLInputElement | null;
+
+    if (input) {
+      input.value = '';
+    }
   };
 
   useEffect(() => {
@@ -186,32 +201,14 @@ export default function RegisterForm() {
         </div>
 
         <div className={FormStyles.formGroup}>
-          <label className={FormStyles.formLabel} htmlFor="image">
-            Select an image (optional)
+          <label className={FormStyles.formLabel}>
+            Exercise image <span className="text-zinc-500">(optional)</span>
           </label>
 
-          <input
-            className={FormStyles.formInput}
-            id="image"
-            name="image"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={handleImageChange}
-            disabled={isSaving}
-          />
-
-          <p className="text-sm text-zinc-500">JPEG, PNG or WebP. Maximum 5 MB.</p>
-
-          {imagePreview && (
-            <div className="mt-3">
-              <p className="mb-2 text-sm text-zinc-400">Image preview</p>
-
-              <img src={imagePreview} alt="Selected exercise" width={200} className="rounded-xl border border-zinc-700 object-cover" />
-            </div>
-          )}
+          <ImageUpload file={selectImage} onFileChange={setSelectedImage} disabled={isSaving} />
         </div>
 
-        <div className="grid grid-2">
+        <div className="flex justify-center gap-3">
           <Button type="submit" variant="primary" disabled={isSaving}>
             {isSaving ? 'Creating...' : 'Create exercise'}
           </Button>
