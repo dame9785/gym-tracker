@@ -12,7 +12,7 @@ import {
   ExerciseApiUpdateResponse,
   SuccessResponse,
 } from '@/types/api-types';
-import { registerExerciseSchema, RegisterExericseDto } from '@/schemas/exercise-schema';
+import { registerExerciseSchema, RegisterExericseDto, updateExerciseSchema, UpdateExericseDto } from '@/schemas/exercise-schema';
 import { errorResponse } from '@/utils/api-error';
 
 export class ExerciseService {
@@ -90,17 +90,16 @@ export class ExerciseService {
     }
   }
 
-  async update(id: number, dto: RegisterExericseDto, userId: number): Promise<ApiResponse<void>> {
-    const validation = registerExerciseSchema.safeParse(dto);
+  async update(id: number, dto: UpdateExericseDto, userId: number): Promise<ApiResponse<void>> {
+    const validation = updateExerciseSchema.safeParse(dto);
 
     if (!validation.success) {
       const errors = validation.error.flatten().fieldErrors;
-
       return errorResponse('Validation failed', errors);
     }
 
     try {
-      const result = await this.exerciseRepository.update(id, dto, userId);
+      const result = await this.exerciseRepository.update(id, validation.data, userId);
 
       if (result.count === 0) {
         return errorResponse('Exercise not found or unauthorized.');
@@ -112,7 +111,6 @@ export class ExerciseService {
       } satisfies SuccessResponse<ExerciseApiUpdateResponse>;
     } catch (error) {
       console.error('Update exercise failed, server error:', error);
-
       return errorResponse('An error occurred on the server.');
     }
   }

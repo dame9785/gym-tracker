@@ -1,29 +1,35 @@
 'use client';
 
-import FormStyles from '@/components/forms/form.module.css';
-
-import { registerExerciseAction } from '@/actions/exercise-actions';
-
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
+import FormStyles from '@/components/forms/form.module.css';
 import Button from '@/components/button/button';
-import { registerExerciseSchema, RegisterExericseDto } from '@/schemas/exercise-schema';
+
+import { registerExerciseAction } from '@/actions/exercise-actions';
+import { registerExerciseSchema, type RegisterExericseDto } from '@/schemas/exercise-schema';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
 export default function RegisterForm() {
-  const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
-  const [errors, setErrors] = useState<Partial<Record<keyof RegisterExericseDto, string>>>({});
 
+  const [isSaving, setIsSaving] = useState(false);
   const [selectImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const [errors, setErrors] = useState<Partial<Record<keyof RegisterExericseDto, string>>>({});
+
+  const [formData, setFormData] = useState<RegisterExericseDto>({
+    name: '',
+    muscleGroup: '',
+    equipment: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -41,13 +47,22 @@ export default function RegisterForm() {
     if (!file) {
       setSelectedImage(null);
       setImagePreview(null);
+      return;
     }
 
-    if (!file?.type.startsWith('image/')) {
-      toast.error('Please select an image file.');
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Only JPEG, PNG and WebP images are allowed.');
       e.target.value = '';
+      setSelectedImage(null);
+      setImagePreview(null);
+      return;
+    }
 
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('The image must be 5 MB or smaller.');
+      e.target.value = '';
       setSelectedImage(null);
       setImagePreview(null);
       return;
@@ -65,26 +80,17 @@ export default function RegisterForm() {
     };
   }, [imagePreview]);
 
-  const [formData, setFormData] = useState<RegisterExericseDto>({
-    name: '',
-    muscleGroup: '',
-    equipment: '',
-  });
-
-  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const exerciseDto = {
+    const validation = registerExerciseSchema.safeParse({
       name: formData.name,
       muscleGroup: formData.muscleGroup,
       equipment: formData.equipment,
-    };
-
-    const validation = registerExerciseSchema.safeParse(exerciseDto);
+    });
 
     if (!validation.success) {
       setErrors(ErrorsHelper.getFormErrors<RegisterExericseDto>(validation.error.issues));
-
       return;
     }
 
@@ -92,10 +98,20 @@ export default function RegisterForm() {
     setErrors({});
 
     try {
-      const response = await registerExerciseAction(validation.data);
+      const submission = new FormData();
+
+      submission.set('name', validation.data.name);
+      submission.set('muscleGroup', validation.data.muscleGroup);
+      submission.set('equipment', validation.data.equipment ?? '');
+
+      if (selectImage) {
+        submission.set('image', selectImage);
+      }
+
+      const response = await registerExerciseAction(submission);
 
       if (!response.success) {
-        if (response.errors) {
+        if ('errors' in response && response.errors) {
           setErrors(ErrorsHelper.getFormErrorsFromApi<RegisterExericseDto>(response.errors));
         }
 
@@ -105,6 +121,7 @@ export default function RegisterForm() {
 
       toast.success(response.message);
       router.push('/exercise');
+      router.refresh();
     } catch (error) {
       console.error('Failed to create exercise:', error);
       toast.error('Something went wrong. Please try again.');
@@ -119,46 +136,86 @@ export default function RegisterForm() {
         Add
         <span> exercise</span>
       </h1>
-      <form className={FormStyles.form} onSubmit={handleSumbit}>
+
+      <form className={FormStyles.form} onSubmit={handleSubmit}>
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="name">
             Name of the exercise
           </label>
-          <input className={FormStyles.formInput} id="name" name="name" type="text" placeholder="Example. squat" onChange={handleChange}></input>
+
+          <input className={FormStyles.formInput} id="name" name="name" type="text" placeholder="Example: squat" value={formData.name} onChange={handleChange} required />
+
           {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
         </div>
+
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="muscleGroup">
             Muscle group
           </label>
-          <input className={FormStyles.formInput} id="muscleGroup" name="muscleGroup" type="text" placeholder="Example. arms" onChange={handleChange}></input>
+
+          <input
+            className={FormStyles.formInput}
+            id="muscleGroup"
+            name="muscleGroup"
+            type="text"
+            placeholder="Example: arms"
+            value={formData.muscleGroup}
+            onChange={handleChange}
+            required
+          />
+
           {errors.muscleGroup && <p className={FormStyles.fieldErrorMessage}>{errors.muscleGroup}</p>}
         </div>
+
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="equipment">
             Equipment
           </label>
-          <input className={FormStyles.formInput} id="equipment" name="equipment" type="text" placeholder="Example. Kettlebell" onChange={handleChange}></input>
+
+          <input
+            className={FormStyles.formInput}
+            id="equipment"
+            name="equipment"
+            type="text"
+            placeholder="Example: Kettlebell"
+            value={formData.equipment ?? ''}
+            onChange={handleChange}
+          />
+
           {errors.equipment && <p className={FormStyles.fieldErrorMessage}>{errors.equipment}</p>}
         </div>
+
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="image">
-            Select an image
+            Select an image (optional)
           </label>
 
-          <input className={FormStyles.formInput} id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} />
+          <input
+            className={FormStyles.formInput}
+            id="image"
+            name="image"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleImageChange}
+            disabled={isSaving}
+          />
+
+          <p className="text-sm text-zinc-500">JPEG, PNG or WebP. Maximum 5 MB.</p>
 
           {imagePreview && (
-            <div>
-              <p>Image preview</p>
-              <img src={imagePreview} alt="Selected exercise" width={200} />
+            <div className="mt-3">
+              <p className="mb-2 text-sm text-zinc-400">Image preview</p>
+
+              <img src={imagePreview} alt="Selected exercise" width={200} className="rounded-xl border border-zinc-700 object-cover" />
             </div>
           )}
         </div>
+
         <div className="grid grid-2">
           <Button type="submit" variant="primary" disabled={isSaving}>
-            {isSaving ? 'Updating...' : 'Create exericse'}
+            {isSaving ? 'Creating...' : 'Create exercise'}
           </Button>
+
           <Link href="/exercise">
             <Button type="button" variant="secondary">
               Go back
