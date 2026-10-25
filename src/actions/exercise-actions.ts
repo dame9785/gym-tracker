@@ -2,12 +2,113 @@
 
 import { requireAuth } from '@/lib/auth';
 import { ExerciseService } from '@/services-server/exercise-service';
-import { registerExerciseSchema, RegisterExericseDto, updateExerciseSchema } from '@/schemas/exercise-schema';
+import { registerExerciseSchema, updateExerciseSchema } from '@/schemas/exercise-schema';
 
 import { put, del } from '@vercel/blob';
 import { randomUUID } from 'node:crypto';
 
 const exerciseService = new ExerciseService();
+
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+const EXTENSION_BY_TYPE: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+};
+
+function parseSecondaryMuscles(value: FormDataEntryValue | null): string[] {
+  if (value === null || value === '') {
+    return [];
+  }
+
+  if (typeof value !== 'string') {
+    throw new Error('Invalid secondary muscle groups.');
+  }
+
+  const parsed: unknown = JSON.parse(value);
+
+  if (!Array.isArray(parsed) || !parsed.every((muscle) => typeof muscle === 'string')) {
+    throw new Error('Invalid secondary muscle groups.');
+  }
+
+  return parsed;
+}
+
+function getOptionalString(formData: FormData, key: string): string | undefined {
+  const value = formData.get(key);
+
+  if (value === null) {
+    return undefined;
+  }
+
+  if (typeof value !== 'string') {
+    throw new Error(`Invalid value for ${key}.`);
+  }
+
+  return value;
+}
+
+function getBlobToken(): string {
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+
+  if (!token) {
+    throw new Error('BLOB_READ_WRITE_TOKEN is not configured.');
+  }
+
+  return token;
+}
+
+async function uploadExerciseImage(image: File): Promise<string> {
+  if (!ALLOWED_IMAGE_TYPES.includes(image.type)) {
+    throw new Error('Only JPEG, PNG and WebP images are allowed.');
+  }
+
+  if (image.size > MAX_IMAGE_SIZE) {
+    throw new Error('The image must be 5 MB or smaller.');
+  }
+
+  const token = getBlobToken();
+  const extension = EXTENSION_BY_TYPE[image.type];
+
+  const blob = await put(`exercises/${randomUUID()}.${extension}`, image, {
+    access: 'public',
+    token,
+    contentType: image.type,
+  });
+
+  return blob.url;
+}
+
+async function cleanupUploadedImage(url: string | undefined) {
+  if (!url || !process.env.BLOB_READ_WRITE_TOKEN) {
+    return;
+  }
+
+  try {
+    await del(url, {
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    });
+  } catch (error) {
+    console.error('Failed to clean up uploaded image:', error);
+  }
+}
+
+function getImageFile(formData: FormData): File | null {
+  const image = formData.get('image');
+
+  if (image === null) {
+    return null;
+  }
+
+  if (!(image instanceof File)) {
+    throw new Error('Invalid image file.');
+  }
+
+  return image.size > 0 ? image : null;
+}
 
 export async function registerExerciseAction(formData: FormData) {
   let uploadedImageUrl: string | undefined;
@@ -16,9 +117,13 @@ export async function registerExerciseAction(formData: FormData) {
     const user = await requireAuth();
 
     const dto = {
-      name: String(formData.get('name') ?? ''),
-      muscleGroup: String(formData.get('muscleGroup') ?? ''),
-      equipment: String(formData.get('equipment') ?? ''),
+      name: getOptionalString(formData, 'name') ?? '',
+      primaryMuscle: getOptionalString(formData, 'primaryMuscle') ?? '',
+      secondaryMuscles: parseSecondaryMuscles(formData.get('secondaryMuscles')),
+      equipment: getOptionalString(formData, 'equipment') ?? '',
+      description: getOptionalString(formData, 'description') ?? '',
+      instructions: getOptionalString(formData, 'instructions') ?? '',
+      techniqueTips: getOptionalString(formData, 'techniqueTips') ?? '',
     };
 
     const validation = registerExerciseSchema.safeParse(dto);
@@ -31,83 +136,36 @@ export async function registerExerciseAction(formData: FormData) {
       };
     }
 
-    const image = formData.get('image');
+    const image = getImageFile(formData);
 
-    if (image !== null && !(image instanceof File)) {
-      return {
-        success: false,
-        message: 'Invalid image file.',
-      };
-    }
-
-    if (image instanceof File && image.size > 5 * 1024 * 1024) {
-      return {
-        success: false,
-        message: 'The image must be 5 MB or smaller.',
-      };
-    }
-
-    if (image instanceof File && !['image/jpeg', 'image/png', 'image/webp'].includes(image.type)) {
-      return {
-        success: false,
-        message: 'Only JPEG, PNG and WebP images are allowed.',
-      };
-    }
-
-    let imagePath: string | undefined;
-
-    if (image instanceof File && image.size > 0) {
-      const token = process.env.BLOB_READ_WRITE_TOKEN;
-
-      if (!token) {
-        throw new Error('BLOB_READ_WRITE_TOKEN is not configured.');
-      }
-
-      const extensionByType: Record<string, string> = {
-        'image/jpeg': 'jpg',
-        'image/png': 'png',
-        'image/webp': 'webp',
-      };
-
-      const blob = await put(`exercises/${randomUUID()}.${extensionByType[image.type]}`, image, {
-        access: 'public',
-        token,
-        contentType: image.type,
-      });
-
-      uploadedImageUrl = blob.url;
-      imagePath = blob.url;
+    if (image) {
+      uploadedImageUrl = await uploadExerciseImage(image);
     }
 
     const result = await exerciseService.registerExercise(
       {
         ...validation.data,
-        ...(imagePath ? { imagePath } : {}),
+        ...(uploadedImageUrl ? { imagePath: uploadedImageUrl } : {}),
       },
       user.userId,
     );
 
-    if (!result.success && uploadedImageUrl) {
-      await del(uploadedImageUrl, { token: process.env.BLOB_READ_WRITE_TOKEN });
+    if (!result.success) {
+      await cleanupUploadedImage(uploadedImageUrl);
     }
 
     return result;
   } catch (error) {
     console.error('Register exercise action failed:', error);
 
-    if (uploadedImageUrl && process.env.BLOB_READ_WRITE_TOKEN) {
-      try {
-        await del(uploadedImageUrl, {
-          token: process.env.BLOB_READ_WRITE_TOKEN,
-        });
-      } catch (cleanupError) {
-        console.error('Failed to clean up uploaded image:', cleanupError);
-      }
-    }
+    await cleanupUploadedImage(uploadedImageUrl);
 
     return {
       success: false,
-      message: 'Could not create exercise. Please try again.',
+      message:
+        error instanceof Error && (error.message.startsWith('Only ') || error.message.startsWith('The image'))
+          ? error.message
+          : 'Could not create exercise. Please try again.',
     };
   }
 }
@@ -127,18 +185,27 @@ export async function deleteExerciseAction(id: number) {
   }
 }
 
-// UPDATE
 export async function updateExerciseAction(id: number, formData: FormData) {
-  let uploadedImageUrl: string | null = null;
+  let uploadedImageUrl: string | undefined;
 
   try {
     const user = await requireAuth();
 
-    const dto = {
-      name: formData.get('name'),
-      muscleGroup: formData.get('muscleGroup'),
-      equipment: formData.get('equipment'),
-    };
+    const dto: Record<string, unknown> = {};
+
+    const stringFields = ['name', 'primaryMuscle', 'equipment', 'description', 'instructions', 'techniqueTips'] as const;
+
+    for (const field of stringFields) {
+      const value = getOptionalString(formData, field);
+
+      if (value !== undefined) {
+        dto[field] = value;
+      }
+    }
+
+    if (formData.has('secondaryMuscles')) {
+      dto.secondaryMuscles = parseSecondaryMuscles(formData.get('secondaryMuscles'));
+    }
 
     const validation = updateExerciseSchema.safeParse(dto);
 
@@ -150,75 +217,37 @@ export async function updateExerciseAction(id: number, formData: FormData) {
       };
     }
 
-    const image = formData.get('image');
+    const image = getImageFile(formData);
 
-    let imagePath: string | undefined;
-
-    if (image instanceof File && image.size > 0) {
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-
-      if (!allowedTypes.includes(image.type)) {
-        return {
-          success: false,
-          message: 'Only JPG, PNG and WebP images are allowed.',
-        };
-      }
-
-      if (image.size > 5 * 1024 * 1024) {
-        return {
-          success: false,
-          message: 'The image must not exceed 5 MB.',
-        };
-      }
-
-      const { put } = await import('@vercel/blob');
-      const { randomUUID } = await import('node:crypto');
-
-      const extension = {
-        'image/jpeg': 'jpg',
-        'image/png': 'png',
-        'image/webp': 'webp',
-      }[image.type];
-
-      const blob = await put(`exercises/${randomUUID()}.${extension}`, image, {
-        access: 'public',
-        contentType: image.type,
-      });
-
-      uploadedImageUrl = blob.url;
-      imagePath = blob.url;
+    if (image) {
+      uploadedImageUrl = await uploadExerciseImage(image);
     }
 
     const result = await exerciseService.update(
       id,
       {
         ...validation.data,
-        ...(imagePath ? { imagePath } : {}),
+        ...(uploadedImageUrl ? { imagePath: uploadedImageUrl } : {}),
       },
       user.userId,
     );
 
-    if (!result.success && uploadedImageUrl) {
-      const { del } = await import('@vercel/blob');
-      await del(uploadedImageUrl);
+    if (!result.success) {
+      await cleanupUploadedImage(uploadedImageUrl);
     }
 
     return result;
   } catch (error) {
     console.error('Update exercise action failed:', error);
 
-    if (uploadedImageUrl) {
-      try {
-        const { del } = await import('@vercel/blob');
-        await del(uploadedImageUrl);
-      } catch (cleanupError) {
-        console.error('Failed to clean up uploaded image:', cleanupError);
-      }
-    }
+    await cleanupUploadedImage(uploadedImageUrl);
 
     return {
       success: false,
-      message: 'Something went wrong. Please try again.',
+      message:
+        error instanceof Error && (error.message.startsWith('Only ') || error.message.startsWith('The image'))
+          ? error.message
+          : 'Something went wrong. Please try again.',
     };
   }
 }

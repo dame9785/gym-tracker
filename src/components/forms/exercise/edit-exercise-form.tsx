@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 import Button from '@/components/button/button';
 import { updateExerciseAction } from '@/actions/exercise-actions';
 import FormStyles from '@/components/forms/form.module.css';
-
 import type { ExerciseViewModel } from '@/types/exercise-types';
 import { updateExerciseSchema, type UpdateExericseDto } from '@/schemas/exercise-schema';
 import { ErrorsHelper } from '@/helpers/error-helper';
@@ -18,8 +17,9 @@ type Props = {
   exericse: ExerciseViewModel;
 };
 
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const MUSCLE_GROUPS = ['Chest', 'Back', 'Shoulders', 'Biceps', 'Triceps', 'Forearms', 'Quadriceps', 'Hamstrings', 'Glutes', 'Calves', 'Core', 'Full body'];
 
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export default function EditExercise({ exericse }: Props) {
@@ -33,8 +33,12 @@ export default function EditExercise({ exericse }: Props) {
 
   const [formData, setFormData] = useState<UpdateExericseDto>({
     name: exericse.name,
-    muscleGroup: exericse.muscleGroup,
-    equipment: exericse.equipment || '',
+    primaryMuscle: exericse.primaryMuscle,
+    secondaryMuscles: exericse.secondaryMuscles,
+    equipment: exericse.equipment ?? '',
+    description: exericse.description,
+    instructions: exericse.instructions,
+    techniqueTips: exericse.techniqueTips ?? '',
   });
 
   useEffect(() => {
@@ -45,7 +49,7 @@ export default function EditExercise({ exericse }: Props) {
     };
   }, [imagePreview]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
@@ -59,8 +63,24 @@ export default function EditExercise({ exericse }: Props) {
     }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleSecondaryMuscleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const secondaryMuscles = Array.from(e.target.selectedOptions, (option) => option.value);
+
+    setFormData((prev) => ({
+      ...prev,
+      secondaryMuscles,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      secondaryMuscles: undefined,
+    }));
+  };
+
+  const handleImageChange = (file: File | null) => {
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
 
     if (!file) {
       setSelectedImage(null);
@@ -69,18 +89,12 @@ export default function EditExercise({ exericse }: Props) {
     }
 
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      toast.error('Välj en JPG-, PNG- eller WebP-bild.');
-      e.target.value = '';
-      setSelectedImage(null);
-      setImagePreview(null);
+      toast.error('Choose a JPG, PNG, or WebP image.');
       return;
     }
 
     if (file.size > MAX_IMAGE_SIZE) {
-      toast.error('Bilden får vara högst 5 MB.');
-      e.target.value = '';
-      setSelectedImage(null);
-      setImagePreview(null);
+      toast.error('The image must be 5 MB or smaller.');
       return;
     }
 
@@ -91,13 +105,15 @@ export default function EditExercise({ exericse }: Props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const exerciseDto = {
+    const validation = updateExerciseSchema.safeParse({
       name: formData.name,
-      muscleGroup: formData.muscleGroup,
-      equipment: formData.equipment,
-    };
-
-    const validation = updateExerciseSchema.safeParse(exerciseDto);
+      primaryMuscle: formData.primaryMuscle,
+      secondaryMuscles: formData.secondaryMuscles ?? [],
+      equipment: formData.equipment ?? '',
+      description: formData.description,
+      instructions: formData.instructions,
+      techniqueTips: formData.techniqueTips ?? '',
+    });
 
     if (!validation.success) {
       setErrors(ErrorsHelper.getFormErrors<UpdateExericseDto>(validation.error.issues));
@@ -109,10 +125,35 @@ export default function EditExercise({ exericse }: Props) {
 
     try {
       const submission = new FormData();
+      const validated = validation.data;
 
-      submission.set('name', validation.data.name);
-      submission.set('muscleGroup', validation.data.muscleGroup);
-      submission.set('equipment', validation.data.equipment ?? '');
+      if (validated.name !== undefined) {
+        submission.set('name', validated.name);
+      }
+
+      if (validated.primaryMuscle !== undefined) {
+        submission.set('primaryMuscle', validated.primaryMuscle);
+      }
+
+      if (validated.secondaryMuscles !== undefined) {
+        submission.set('secondaryMuscles', JSON.stringify(validated.secondaryMuscles));
+      }
+
+      if (validated.equipment !== undefined) {
+        submission.set('equipment', validated.equipment);
+      }
+
+      if (validated.description !== undefined) {
+        submission.set('description', validated.description);
+      }
+
+      if (validated.instructions !== undefined) {
+        submission.set('instructions', validated.instructions);
+      }
+
+      if (validated.techniqueTips !== undefined) {
+        submission.set('techniqueTips', validated.techniqueTips);
+      }
 
       if (selectedImage) {
         submission.set('image', selectedImage);
@@ -131,6 +172,7 @@ export default function EditExercise({ exericse }: Props) {
 
       toast.success(response.message);
       router.push('/exercise');
+      router.refresh();
     } catch (error) {
       console.error('Failed to update exercise:', error);
       toast.error('Something went wrong. Please try again.');
@@ -138,6 +180,8 @@ export default function EditExercise({ exericse }: Props) {
       setIsSaving(false);
     }
   };
+
+  const availableSecondaryMuscles = MUSCLE_GROUPS.filter((muscle) => muscle !== formData.primaryMuscle);
 
   return (
     <div className={FormStyles.formContainer}>
@@ -150,48 +194,95 @@ export default function EditExercise({ exericse }: Props) {
           <label className={FormStyles.formLabel} htmlFor="name">
             Name of the exercise
           </label>
-
-          <input className={FormStyles.formInput} id="name" name="name" type="text" required placeholder="Example: squat" value={formData.name} onChange={handleChange} />
-
+          <input className={FormStyles.formInput} id="name" name="name" type="text" required value={formData.name ?? ''} onChange={handleChange} />
           {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
         </div>
 
         <div className={FormStyles.formGroup}>
-          <label className={FormStyles.formLabel} htmlFor="muscleGroup">
-            Muscle group
+          <label className={FormStyles.formLabel} htmlFor="primaryMuscle">
+            Primary muscle group
           </label>
+          <select className={FormStyles.formInput} id="primaryMuscle" name="primaryMuscle" required value={formData.primaryMuscle ?? ''} onChange={handleChange}>
+            <option value="" disabled>
+              Select primary muscle group
+            </option>
+            {MUSCLE_GROUPS.map((muscle) => (
+              <option key={muscle} value={muscle}>
+                {muscle}
+              </option>
+            ))}
+          </select>
+          {errors.primaryMuscle && <p className={FormStyles.fieldErrorMessage}>{errors.primaryMuscle}</p>}
+        </div>
 
-          <input
+        <div className={FormStyles.formGroup}>
+          <label className={FormStyles.formLabel} htmlFor="secondaryMuscles">
+            Secondary muscle groups
+          </label>
+          <select
             className={FormStyles.formInput}
-            id="muscleGroup"
-            name="muscleGroup"
-            type="text"
-            required
-            placeholder="Example: arms"
-            value={formData.muscleGroup}
-            onChange={handleChange}
-          />
-
-          {errors.muscleGroup && <p className={FormStyles.fieldErrorMessage}>{errors.muscleGroup}</p>}
+            id="secondaryMuscles"
+            name="secondaryMuscles"
+            multiple
+            value={formData.secondaryMuscles ?? []}
+            onChange={handleSecondaryMuscleChange}
+          >
+            {availableSecondaryMuscles.map((muscle) => (
+              <option key={muscle} value={muscle}>
+                {muscle}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-sm text-zinc-500">Hold Ctrl (Windows) or Command (Mac) to select multiple groups.</p>
+          {errors.secondaryMuscles && <p className={FormStyles.fieldErrorMessage}>{errors.secondaryMuscles}</p>}
         </div>
 
         <div className={FormStyles.formGroup}>
           <label className={FormStyles.formLabel} htmlFor="equipment">
             Equipment
           </label>
-
           <input
             className={FormStyles.formInput}
             id="equipment"
             name="equipment"
             type="text"
-            required
+            value={formData.equipment ?? ''}
+            onChange={handleChange}
             placeholder="Example: Kettlebell"
-            value={formData.equipment}
+          />
+          {errors.equipment && <p className={FormStyles.fieldErrorMessage}>{errors.equipment}</p>}
+        </div>
+
+        <div className={FormStyles.formGroup}>
+          <label className={FormStyles.formLabel} htmlFor="description">
+            Description
+          </label>
+          <textarea className={FormStyles.formInput} id="description" name="description" required rows={4} value={formData.description ?? ''} onChange={handleChange} />
+          {errors.description && <p className={FormStyles.fieldErrorMessage}>{errors.description}</p>}
+        </div>
+
+        <div className={FormStyles.formGroup}>
+          <label className={FormStyles.formLabel} htmlFor="instructions">
+            Instructions
+          </label>
+          <textarea
+            className={FormStyles.formInput}
+            id="instructions"
+            name="instructions"
+            required
+            rows={5}
+            value={formData.instructions ?? ''}
             onChange={handleChange}
           />
+          {errors.instructions && <p className={FormStyles.fieldErrorMessage}>{errors.instructions}</p>}
+        </div>
 
-          {errors.equipment && <p className={FormStyles.fieldErrorMessage}>{errors.equipment}</p>}
+        <div className={FormStyles.formGroup}>
+          <label className={FormStyles.formLabel} htmlFor="techniqueTips">
+            Technique tips (optional)
+          </label>
+          <textarea className={FormStyles.formInput} id="techniqueTips" name="techniqueTips" rows={4} value={formData.techniqueTips ?? ''} onChange={handleChange} />
+          {errors.techniqueTips && <p className={FormStyles.fieldErrorMessage}>{errors.techniqueTips}</p>}
         </div>
 
         <div className={FormStyles.formGroup}>
@@ -201,7 +292,7 @@ export default function EditExercise({ exericse }: Props) {
 
           <ImageUpload
             file={selectedImage}
-            onFileChange={setSelectedImage}
+            onFileChange={handleImageChange}
             currentImageUrl={exericse.imagePath}
             currentImageAlt={`Current image of ${exericse.name}`}
             disabled={isSaving}
@@ -212,7 +303,7 @@ export default function EditExercise({ exericse }: Props) {
 
         <div className="flex justify-center gap-3">
           <Button type="submit" variant="primary" disabled={isSaving}>
-            {isSaving ? 'Creating...' : 'Create exercise'}
+            {isSaving ? 'Saving...' : 'Update exercise'}
           </Button>
 
           <Link href="/exercise">

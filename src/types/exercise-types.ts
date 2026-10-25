@@ -7,9 +7,13 @@ export interface Exercise {
 export interface ExerciseViewModel {
   id: number;
   name: string;
-  muscleGroup: string;
+  primaryMuscle: string;
+  secondaryMuscles: string[];
   equipment: string | null;
   imagePath: string | null;
+  description: string;
+  instructions: string;
+  techniqueTips: string | null;
 }
 
 export interface EditWorkoutExerciseDto {
@@ -44,8 +48,12 @@ export interface WorkoutExerciseViewModel {
 export interface WorkoutSessionExerciseViewModel {
   id: number;
   name: string;
-  muscleGroup: string;
+  primaryMuscle: string;
+  secondaryMuscles: string[];
   equipment: string | null;
+  description: string;
+  instructions: string;
+  techniqueTips: string | null;
   order: number;
   note: string | null;
   sets: WorkoutSessionSetViewModel[];

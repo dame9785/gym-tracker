@@ -1,7 +1,5 @@
-//Repository
 import { ExerciseRepository } from '../repositories/exercise-repository';
 
-//Mapper
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
 import {
   ApiResponse,
@@ -21,12 +19,13 @@ export class ExerciseService {
   async getAllExersise(userId: number): Promise<ApiResponse<ExerciseApiResponse>> {
     try {
       const exercises = await this.exerciseRepository.getAllExersise(userId);
+
       return {
         success: true,
-        data: exercises.map((x) => ExerciseMapper.exerciseModelToViewModel(x)),
+        data: exercises.map((exercise) => ExerciseMapper.exerciseModelToViewModel(exercise)),
       };
     } catch (error) {
-      console.error('Get all exericsces failed, server error:', error);
+      console.error('Get all exercises failed:', error);
       return errorResponse('An error occurred on the server.');
     }
   }
@@ -34,16 +33,17 @@ export class ExerciseService {
   async delete(id: number, userId: number): Promise<ApiResponse<ExerciseApiDeleteResponse>> {
     try {
       await this.exerciseRepository.delete(id, userId);
+
       return {
         success: true,
-        message: 'Exericse deleted successfully',
+        message: 'Exercise deleted successfully.',
         data: {
           success: true,
-          message: 'Exericse deleted successfully',
+          message: 'Exercise deleted successfully.',
         },
       } satisfies SuccessResponse<ExerciseApiDeleteResponse>;
     } catch (error) {
-      console.error('Delete exericse failed, server error:', error);
+      console.error('Delete exercise failed:', error);
       return errorResponse('An error occurred on the server.');
     }
   }
@@ -52,9 +52,7 @@ export class ExerciseService {
     const validation = registerExerciseSchema.safeParse(dto);
 
     if (!validation.success) {
-      const errors = validation.error.flatten().fieldErrors;
-
-      return errorResponse('Validation failed', errors);
+      return errorResponse('Validation failed.', validation.error.flatten().fieldErrors);
     }
 
     try {
@@ -66,51 +64,51 @@ export class ExerciseService {
         data: ExerciseMapper.exerciseModelToViewModel(exercise),
       } satisfies SuccessResponse<ExerciseApiRegisterResponse>;
     } catch (error) {
-      console.error('Create exercise failed, server error:', error);
-
+      console.error('Create exercise failed:', error);
       return errorResponse('An error occurred on the server.');
     }
   }
 
   async getById(id: number, userId: number): Promise<ApiResponse<ExerciseApiGetByIdResponse>> {
     try {
-      const exericse = await this.exerciseRepository.getById(id, userId);
-      if (!exericse) {
-        return errorResponse('Could not find exericse log.');
+      const exercise = await this.exerciseRepository.getById(id, userId);
+
+      if (!exercise) {
+        return errorResponse('Could not find exercise.');
       }
 
       return {
         success: true,
-        message: 'Exericse fetched successfully.',
-        data: ExerciseMapper.exerciseModelToViewModel(exericse),
+        message: 'Exercise fetched successfully.',
+        data: ExerciseMapper.exerciseModelToViewModel(exercise),
       } satisfies SuccessResponse<ExerciseApiGetByIdResponse>;
     } catch (error) {
-      console.error('Fetch exericse by id failed, server error:', error);
+      console.error('Fetch exercise by id failed:', error);
       return errorResponse('An error occurred on the server.');
     }
   }
 
-  async update(id: number, dto: UpdateExericseDto, userId: number): Promise<ApiResponse<void>> {
+  async update(id: number, dto: UpdateExericseDto, userId: number): Promise<ApiResponse<ExerciseApiUpdateResponse>> {
     const validation = updateExerciseSchema.safeParse(dto);
 
     if (!validation.success) {
-      const errors = validation.error.flatten().fieldErrors;
-      return errorResponse('Validation failed', errors);
+      return errorResponse('Validation failed.', validation.error.flatten().fieldErrors);
     }
 
     try {
-      const result = await this.exerciseRepository.update(id, validation.data, userId);
-
-      if (result.count === 0) {
-        return errorResponse('Exercise not found or unauthorized.');
-      }
+      await this.exerciseRepository.update(id, validation.data, userId);
 
       return {
         success: true,
         message: 'Exercise updated successfully.',
       } satisfies SuccessResponse<ExerciseApiUpdateResponse>;
     } catch (error) {
-      console.error('Update exercise failed, server error:', error);
+      console.error('Update exercise failed:', error);
+
+      if (error instanceof Error && error.message === 'Exercise not found or unauthorized') {
+        return errorResponse('Exercise not found or unauthorized.');
+      }
+
       return errorResponse('An error occurred on the server.');
     }
   }

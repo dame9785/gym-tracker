@@ -2,13 +2,12 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-
 import { useRouter } from 'next/navigation';
-
-import { ExerciseViewModel } from '@/types/exercise-types';
 import { Dumbbell, Pencil, Trash2 } from 'lucide-react';
-import { deleteExerciseAction } from '@/actions/exercise-actions';
 import { toast } from 'sonner';
+
+import { deleteExerciseAction } from '@/actions/exercise-actions';
+import type { ExerciseViewModel } from '@/types/exercise-types';
 
 type Props = {
   exercise: ExerciseViewModel;
@@ -63,10 +62,10 @@ export default function ExericseCard({ exercise }: Props) {
         {/* Image overlay */}
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-black/20" />
 
-        {/* Muscle group */}
+        {/* Primary muscle group */}
         <div className="absolute left-3 top-3 max-w-[80%]">
           <span className="inline-block rounded-full border border-blue-500/40 bg-blue-950/80 px-3 py-1.5 text-xs font-medium text-blue-300 backdrop-blur-sm">
-            {exercise.muscleGroup}
+            {exercise.primaryMuscle}
           </span>
         </div>
       </div>
@@ -77,11 +76,20 @@ export default function ExericseCard({ exercise }: Props) {
           {exercise.name}
         </h2>
 
+        {/* Secondary muscle groups */}
+        {exercise.secondaryMuscles.length > 0 && (
+          <p className="mt-2 line-clamp-2 text-sm text-zinc-400">
+            <span className="font-medium text-zinc-300">Secondary:</span> {exercise.secondaryMuscles.join(', ')}
+          </p>
+        )}
+
+        {/* Description */}
+        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-zinc-400">{exercise.description}</p>
+
         <div className="mt-4 flex items-center justify-between gap-3">
           {/* Equipment */}
           <span className="inline-flex min-w-0 items-center gap-2 rounded-full border border-zinc-700 bg-zinc-800/70 px-3 py-2 text-xs font-medium text-zinc-300">
             <Dumbbell className="h-4 w-4 shrink-0 text-orange-400" />
-
             <span className="truncate">{exercise.equipment || 'Bodyweight'}</span>
           </span>
 

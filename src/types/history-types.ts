@@ -21,7 +21,15 @@ export type WorkoutSessionWithRelations = Prisma.WorkoutSessionGetPayload<{
       include: {
         workoutExercise: {
           include: {
-            exercise: true;
+            exercise: {
+              include: {
+                muscles: {
+                  include: {
+                    muscleGroup: true;
+                  };
+                };
+              };
+            };
           };
         };
         sets: true;
@@ -44,11 +52,14 @@ export type WorkoutSessionWithExercisesViewModel = {
 export type WorkoutSessionExerciseViewModel = {
   id: number;
   name: string;
-  muscleGroup: string;
+  primaryMuscle: string;
+  secondaryMuscles: string[];
   equipment: string | null;
+  description: string;
+  instructions: string;
+  techniqueTips: string | null;
   order: number;
   note: string | null;
-
   sets: WorkoutSessionSetViewModel[];
 };
 
