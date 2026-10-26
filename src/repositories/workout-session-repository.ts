@@ -79,7 +79,15 @@ export class WorkoutSessionRepository {
           include: {
             workoutExercise: {
               include: {
-                exercise: true,
+                exercise: {
+                  include: {
+                    muscles: {
+                      include: {
+                        muscleGroup: true,
+                      },
+                    },
+                  },
+                },
               },
             },
             sets: {
