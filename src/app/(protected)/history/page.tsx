@@ -25,6 +25,7 @@ export default async function HistoryPage({ searchParams }: Props) {
   const page = Number(params.page) || 1;
 
   const response = await historyService.getHistory(page, user.userId);
+  console.log(response);
   if (!response.success || !response.data) {
     return (
       <main>

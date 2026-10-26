@@ -48,6 +48,7 @@ export class HistoryService {
         },
       } satisfies ApiResponse<HistoryApiResponse>;
     } catch (error) {
+      console.error('Error while fetching history data', error);
       return {
         success: false,
         message: 'Could not load workout history.',

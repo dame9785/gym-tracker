@@ -7,7 +7,7 @@ export class HistoryRepository {
 
     const sessions = await prisma.workoutSession.findMany({
       where: {
-        userId: userId,
+        userId,
         status: 'COMPLETED',
       },
       include: {
@@ -16,7 +16,15 @@ export class HistoryRepository {
           include: {
             workoutExercise: {
               include: {
-                exercise: true,
+                exercise: {
+                  include: {
+                    muscles: {
+                      include: {
+                        muscleGroup: true,
+                      },
+                    },
+                  },
+                },
               },
             },
             sets: true,
