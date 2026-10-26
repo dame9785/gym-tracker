@@ -10,20 +10,14 @@ import { requireAuth } from '@/lib/auth';
 const exerciseService = new ExerciseService();
 
 type PageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 };
 
 export default async function ExerciseDetailsPage({ params }: PageProps) {
   const user = await requireAuth();
-  const { id } = await params;
+  const { slug } = await params;
 
-  const exerciseId = Number(id);
-
-  if (!Number.isSafeInteger(exerciseId) || exerciseId <= 0) {
-    notFound();
-  }
-
-  const response = await exerciseService.getById(exerciseId, user.userId);
+  const response = await exerciseService.getBySlug(slug, user.userId);
 
   if (!response.success || !response.data) {
     if (response.message === 'Could not find exercise.') {
@@ -58,7 +52,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
     <main className="min-h-screen p-4 text-white sm:p-6 lg:p-8">
       <div className="mx-auto max-w-6xl">
         {/* Back navigation */}
-        <Link href="/exercise" className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition hover:text-orange-400">
+        <Link href="/exercises" className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition hover:text-orange-400">
           <ArrowLeft className="h-4 w-4" />
           Back to exercises
         </Link>
@@ -98,7 +92,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
                 <div className="rounded-xl border border-blue-500/20 bg-blue-500/[0.05] p-5">
                   <p className="mb-4 text-xs font-bold uppercase tracking-wider text-blue-300">Primary muscle</p>
 
-                  <span className="mb-3 mt-5 inline-flex items-center gap-2 rounded-full border border-blue-400/50 bg-blue-950/90 px-4 py-2 text-sm font-semibold text-blue-100 shadow-lg shadow-black/20 backdrop-blur-md">
+                  <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-blue-400/50 bg-blue-950/90 px-4 py-2 text-sm font-semibold text-blue-100 shadow-lg shadow-black/20 backdrop-blur-md">
                     <Activity className="h-4 w-4 text-blue-300" />
                     {exercise.primaryMuscle}
                   </span>
@@ -112,7 +106,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
                       {exercise.secondaryMuscles.map((muscle) => (
                         <span
                           key={muscle}
-                          className="inline-flex items-center gap-2 mt-5 rounded-full border border-violet-400/40 bg-violet-500/15 px-4 py-2 text-sm font-semibold text-violet-200 shadow-sm shadow-violet-950/20 transition-colors hover:border-violet-400/70 hover:bg-violet-500/25"
+                          className="mt-5 inline-flex items-center gap-2 rounded-full border border-violet-400/40 bg-violet-500/15 px-4 py-2 text-sm font-semibold text-violet-200 shadow-sm shadow-violet-950/20 transition-colors hover:border-violet-400/70 hover:bg-violet-500/25"
                         >
                           <Activity className="h-4 w-4 text-violet-300" />
                           {muscle}
@@ -208,7 +202,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
               </Link>
 
               <Link
-                href={`/exercise/${exercise.id}`}
+                href={`/exercises/edit/${exercise.slug}`}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-400"
               >
                 <Pencil className="h-4 w-4" />

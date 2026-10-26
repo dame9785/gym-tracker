@@ -96,6 +96,7 @@ model ExerciseMuscle {
 model Exercise {
   id            Int     @id @default(autoincrement())
   name          String
+  slug          String? @unique @db.VarChar(191)
   equipment     String? @db.VarChar(50)
   imagePath     String?
   description   String  @db.Text

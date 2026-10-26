@@ -170,6 +170,17 @@ export class ExerciseRepository {
     });
   }
 
+  async getBySlug(slug: string, userId: number) {
+    return prisma.exercise.findFirst({
+      where: { slug, userId },
+      include: {
+        muscles: {
+          include: { muscleGroup: true },
+        },
+      },
+    });
+  }
+
   private buildMuscleRelations(input: MuscleInput) {
     const primaryMuscle = input.primaryMuscle.trim();
 

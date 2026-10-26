@@ -88,6 +88,25 @@ export class ExerciseService {
     }
   }
 
+  async getBySlug(slug: string, userId: number): Promise<ApiResponse<ExerciseApiGetByIdResponse>> {
+    try {
+      const exercise = await this.exerciseRepository.getBySlug(slug, userId);
+
+      if (!exercise) {
+        return errorResponse('Could not find exercise.');
+      }
+
+      return {
+        success: true,
+        message: 'Exercise fetched successfully.',
+        data: ExerciseMapper.exerciseModelToViewModel(exercise),
+      } satisfies SuccessResponse<ExerciseApiGetByIdResponse>;
+    } catch (error) {
+      console.error('Fetch exercise by slug failed:', error);
+      return errorResponse('An error occurred on the server.');
+    }
+  }
+
   async update(id: number, dto: UpdateExericseDto, userId: number): Promise<ApiResponse<ExerciseApiUpdateResponse>> {
     const validation = updateExerciseSchema.safeParse(dto);
 

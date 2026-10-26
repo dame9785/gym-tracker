@@ -7,6 +7,7 @@ export interface Exercise {
 export interface ExerciseViewModel {
   id: number;
   name: string;
+  slug: string | null;
   primaryMuscle: string;
   secondaryMuscles: string[];
   equipment: string | null;

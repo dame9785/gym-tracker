@@ -17,7 +17,7 @@ const navigationItems = [
   { label: 'Workouts', href: '/workout', icon: FaDumbbell },
   { label: 'Weight', href: '/log-weight', icon: FaWeight },
   { label: 'Progress', href: '/progress', icon: BsBarChartLine },
-  { label: 'Exercises', href: '/exercise', icon: FaPersonRunning },
+  { label: 'Exercises', href: '/exercises', icon: FaPersonRunning },
   { label: 'History', href: '/history', icon: FaHistory },
   { label: 'Settings', href: '/account/setting', icon: IoIosSettings },
 ];

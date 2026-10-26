@@ -1,6 +1,6 @@
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
-import ExericseCard from '@/components/exericse/exercise-card';
+import ExericseCard from '@/components/exericses/exercise-card';
 
 type Props = {
   exercises: ExerciseViewModel[];

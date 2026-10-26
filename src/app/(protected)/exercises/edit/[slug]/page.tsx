@@ -5,7 +5,7 @@ import { requireAuth } from '@/lib/auth';
 import { ExerciseService } from '@/services-server/exercise-service';
 type PageProps = {
   params: Promise<{
-    id: string;
+    slug: string;
   }>;
 };
 
@@ -15,9 +15,9 @@ export default async function EditExercises({ params }: PageProps) {
   //Check if user has token or exiperied token.
   const user = await requireAuth();
 
-  const { id } = await params;
+  const { slug } = await params;
 
-  const response = await exericseService.getById(Number(id), user.userId);
+  const response = await exericseService.getBySlug(slug, user.userId);
   if (!response.success || !response.data) {
     return (
       <main>

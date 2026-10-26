@@ -206,7 +206,7 @@ export default function EditExercise({ exericse }: Props) {
       {/* Page header */}
       <div className="mb-8 flex items-start gap-4">
         <Link
-          href="/exercise"
+          href="/exercises"
           aria-label="Back to exercises"
           className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-orange-500/50 hover:text-orange-400"
         >

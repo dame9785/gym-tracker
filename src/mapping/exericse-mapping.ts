@@ -20,6 +20,7 @@ export class ExerciseMapper {
     return {
       id: exercise.id,
       name: exercise.name,
+      slug: exercise.slug,
       primaryMuscle: primaryMuscle?.muscleGroup.name ?? '',
       secondaryMuscles,
       equipment: exercise.equipment,
