@@ -1,6 +1,3 @@
-'use client';
-
-import { Dumbbell } from 'lucide-react';
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
 import ExericseCard from '@/components/exericse/exercise-card';
