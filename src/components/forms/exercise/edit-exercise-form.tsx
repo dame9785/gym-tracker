@@ -498,7 +498,7 @@ export default function EditExercise({ exericse }: Props) {
         {/* Form actions */}
         <div className="sticky bottom-3 z-10 flex flex-col-reverse gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/95 p-3 shadow-2xl shadow-black/20 backdrop-blur-xl sm:flex-row sm:justify-end">
           <Link
-            href="/exercise"
+            href="/exercises"
             className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-zinc-700 px-5 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800"
           >
             <ArrowLeft className="h-4 w-4" />
