@@ -148,13 +148,30 @@ export default function WorkoutDetails({ workout, session }: Props) {
                       </div>
 
                       {session && sessionExercise && (
-                        <div className="mt-3 rounded-xl border border-emerald-400/15 bg-emerald-500/[0.05] p-3">
-                          <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-emerald-400">Faktiskt utfört</p>
+                        <div className="mt-3 rounded-xl border border-emerald-400/15 bg-emerald-500/[0.05] p-3 sm:p-4">
+                          <div className="mb-3">
+                            <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Resultat från senaste passet</p>
+                            <p className="mt-1 text-xs text-zinc-500">Dina faktiskt registrerade träningsresultat</p>
+                          </div>
 
-                          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                            <ValueCard title="Reps performed" value={`${exerciseActualReps} reps`} actual />
-                            <ValueCard title="Weight performed" value={`${exerciseCompletedSets.length}/${exercise.sets}`} actual />
-                            <ValueCard title="Actual time" value={exerciseActualSeconds > 0 ? formatDuration(exerciseActualSeconds) : '—'} actual />
+                          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                            <ValueCard title="Utförda repetitioner" value={`${exerciseActualReps} reps`} actual />
+
+                            <ValueCard
+                              title="Vikt per set"
+                              value={
+                                exerciseCompletedSets.length > 0
+                                  ? exerciseCompletedSets.map((set) => (set.actualWeight !== null ? `${set.actualWeight} kg` : 'Ej angiven')).join(' · ')
+                                  : 'Inga slutförda set'
+                              }
+                              actual
+                            />
+
+                            <ValueCard
+                              title="Total arbetstid"
+                              value={exerciseActualSeconds > 0 ? formatDuration(exerciseActualSeconds) : 'Ingen tid registrerad'}
+                              actual
+                            />
                           </div>
                         </div>
                       )}
