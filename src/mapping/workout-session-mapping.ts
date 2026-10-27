@@ -44,6 +44,7 @@ export class WorkoutSessionMapper {
 
         return {
           id: exercise.id,
+          exerciseId: exerciseModel.id,
           name: exerciseModel.name,
           primaryMuscle: primaryMuscle?.muscleGroup.name ?? '',
           secondaryMuscles,
@@ -53,6 +54,7 @@ export class WorkoutSessionMapper {
           techniqueTips: exerciseModel.techniqueTips,
           order: exercise.order,
           note: exercise.workoutExercise.note,
+          workoutExerciseId: exercise.workoutExerciseId,
 
           sets: exercise.sets.map((set) => ({
             id: set.id,
@@ -89,6 +91,7 @@ export class WorkoutSessionMapper {
 
         return {
           id: exercise.id,
+          exerciseId: exerciseModel.id,
           name: exerciseModel.name,
           primaryMuscle: primaryMuscle?.muscleGroup.name ?? '',
           secondaryMuscles,
@@ -98,6 +101,7 @@ export class WorkoutSessionMapper {
           techniqueTips: exerciseModel.techniqueTips,
           order: exercise.order,
           note: exercise.workoutExercise.note,
+          workoutExerciseId: exercise.workoutExerciseId,
 
           sets: exercise.sets.map((set) => ({
             id: set.id,

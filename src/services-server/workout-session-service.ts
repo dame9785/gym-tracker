@@ -147,4 +147,65 @@ export class WorkoutSessionService {
       };
     }
   }
+
+  async getPreviousCompletedByWorkoutId(workoutId: number, userId: number, currentSessionId: number) {
+    try {
+      const session = await this.workoutSessionRepository.getPreviousCompletedByWorkoutId(workoutId, userId, currentSessionId);
+
+      if (!session) {
+        return {
+          success: true as const,
+          data: null,
+        };
+      }
+
+      return {
+        success: true as const,
+        data: WorkoutSessionMapper.mapWorkoutSession(session),
+      };
+    } catch (error) {
+      console.error(error);
+
+      return {
+        success: false as const,
+        message: 'Kunde inte hämta föregående träningspass.',
+      };
+    }
+  }
+
+  async debugCompletedSessions(userId: number) {
+    try {
+      const sessions = await this.workoutSessionRepository.debugCompletedSessions(userId);
+
+      return {
+        success: true as const,
+        data: sessions,
+      };
+    } catch (error) {
+      console.error('Failed to fetch completed sessions:', error);
+
+      return {
+        success: false as const,
+        message: 'Kunde inte hämta avslutade träningspass.',
+      };
+    }
+  }
+
+  async getPreviousCompletedSessions(userId: number, currentSessionId: number, currentFinishedAt: Date) {
+    try {
+      const sessions = await this.workoutSessionRepository.getPreviousCompletedSessions(userId, currentSessionId, currentFinishedAt);
+
+      return {
+        success: true as const,
+        data: sessions.map((session) => WorkoutSessionMapper.mapWorkoutSession(session)),
+      };
+    } catch (error) {
+      console.error('Failed to fetch previous completed sessions:', error);
+
+      return {
+        success: false as const,
+        message: 'Kunde inte hämta tidigare träningspass.',
+      };
+    }
+  }
 }

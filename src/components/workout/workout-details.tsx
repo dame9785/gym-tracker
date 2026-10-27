@@ -3,9 +3,10 @@ import type { WorkoutViewModel, WorkoutSessionViewModel } from '@/types/workout-
 interface Props {
   workout: WorkoutViewModel;
   session: WorkoutSessionViewModel | null;
+  previousSessions: WorkoutSessionViewModel[];
 }
 
-export default function WorkoutDetails({ workout, session }: Props) {
+export default function WorkoutDetails({ workout, session, previousSessions }: Props) {
   const exercises = [...workout.workoutExercises].sort((a, b) => a.order - b.order);
 
   const totalSets = exercises.reduce((total, exercise) => total + exercise.sets, 0);
@@ -24,6 +25,16 @@ export default function WorkoutDetails({ workout, session }: Props) {
     return `${minutes} min ${remainingSeconds} sek`;
   };
 
+  const formatDate = (date: Date | string | null) => {
+    if (!date) return 'Okänt datum';
+
+    return new Intl.DateTimeFormat('sv-SE', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(new Date(date));
+  };
+
   const sessionExercises = session?.exercises ?? [];
 
   const completedSets = sessionExercises.reduce((total, exercise) => total + exercise.sets.filter((set) => set.completed).length, 0);
@@ -37,6 +48,42 @@ export default function WorkoutDetails({ workout, session }: Props) {
     (total, exercise) => total + exercise.sets.reduce((setTotal, set) => setTotal + (set.completed ? (set.actualSeconds ?? 0) : 0), 0),
     0,
   );
+
+  const getCompletedReps = (exercise: WorkoutSessionViewModel['exercises'][number] | undefined): number | null => {
+    const completedSets = (exercise?.sets ?? []).filter((set) => set.completed);
+
+    if (completedSets.length === 0 || completedSets.some((set) => set.actualReps === null)) {
+      return null;
+    }
+
+    return completedSets.reduce((total, set) => total + set.actualReps!, 0);
+  };
+
+  const getCompletedSeconds = (exercise: WorkoutSessionViewModel['exercises'][number] | undefined): number | null => {
+    const completedSets = (exercise?.sets ?? []).filter((set) => set.completed);
+
+    if (completedSets.length === 0 || completedSets.some((set) => set.actualSeconds === null)) {
+      return null;
+    }
+
+    return completedSets.reduce((total, set) => total + set.actualSeconds!, 0);
+  };
+
+  const getAverageWeight = (exercise: WorkoutSessionViewModel['exercises'][number] | undefined): number | null => {
+    const completedSets = (exercise?.sets ?? []).filter((set) => set.completed);
+
+    if (completedSets.length === 0) {
+      return null;
+    }
+
+    const setsWithWeight = completedSets.filter((set) => set.actualWeight !== null);
+
+    if (setsWithWeight.length === 0) {
+      return null;
+    }
+
+    return setsWithWeight.reduce((total, set) => total + (set.actualWeight ?? 0), 0) / setsWithWeight.length;
+  };
 
   return (
     <section className="mx-auto w-full max-w-5xl space-y-8 pb-10">
@@ -108,7 +155,7 @@ export default function WorkoutDetails({ workout, session }: Props) {
         ) : (
           <div className="space-y-4">
             {exercises.map((exercise, index) => {
-              const sessionExercise = sessionExercises.find((item) => item.name === exercise.name);
+              const sessionExercise = sessionExercises.find((item) => item.exerciseId === exercise.exerciseId);
 
               const exerciseSets = sessionExercise?.sets ?? [];
               const exerciseCompletedSets = exerciseSets.filter((set) => set.completed);
@@ -116,6 +163,38 @@ export default function WorkoutDetails({ workout, session }: Props) {
               const exerciseActualReps = exerciseCompletedSets.reduce((total, set) => total + (set.actualReps ?? 0), 0);
 
               const exerciseActualSeconds = exerciseCompletedSets.reduce((total, set) => total + (set.actualSeconds ?? 0), 0);
+
+              const previousSessionWithExercise = previousSessions.find((previousSession) =>
+                previousSession.exercises.some((item) => item.exerciseId === exercise.exerciseId && item.sets.some((set) => set.completed)),
+              );
+
+              const previousSessionExercise = previousSessionWithExercise?.exercises.find(
+                (item) => item.exerciseId === exercise.exerciseId && item.sets.some((set) => set.completed),
+              );
+
+              // Tillfällig felsökning
+              console.log('PROGRESSION DEBUG', {
+                exercise: exercise.name,
+                current: sessionExercise?.sets.map((set) => ({
+                  completed: set.completed,
+                  actualReps: set.actualReps,
+                  actualSeconds: set.actualSeconds,
+                  actualWeight: set.actualWeight,
+                })),
+                previous: previousSessionExercise?.sets.map((set) => ({
+                  completed: set.completed,
+                  actualReps: set.actualReps,
+                  actualSeconds: set.actualSeconds,
+                  actualWeight: set.actualWeight,
+                })),
+              });
+
+              const currentAverageWeight = getAverageWeight(sessionExercise);
+              const previousAverageWeight = getAverageWeight(previousSessionExercise);
+
+              const previousReps = previousSessionExercise ? getCompletedReps(previousSessionExercise) : null;
+
+              const previousSeconds = previousSessionExercise ? getCompletedSeconds(previousSessionExercise) : null;
 
               return (
                 <article
@@ -175,6 +254,30 @@ export default function WorkoutDetails({ workout, session }: Props) {
                           </div>
                         </div>
                       )}
+                      {session && (
+                        <div className="mt-3 rounded-xl border border-blue-400/15 bg-blue-500/[0.05] p-3 sm:p-4">
+                          <div className="mb-3">
+                            <p className="text-xs font-bold uppercase tracking-wider text-blue-400">Progression</p>
+                            <p className="mt-1 text-xs text-zinc-500">
+                              {previousSessionWithExercise
+                                ? `Senast utförd: ${formatDate(previousSessionWithExercise.finishedAt)}`
+                                : 'Ingen tidigare registrering av övningen'}
+                            </p>
+                          </div>
+
+                          {!previousSessionExercise ? (
+                            <p className="text-sm text-zinc-300">Ingen tidigare registrering av övningen.</p>
+                          ) : (
+                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                              <ProgressCard title="Repetitioner" current={getCompletedReps(sessionExercise)} previous={previousReps} unit="reps" />
+
+                              <ProgressCard title="Genomsnittlig vikt" current={currentAverageWeight} previous={previousAverageWeight} unit="kg" />
+
+                              <ProgressCard title="Arbetstid" current={getCompletedSeconds(sessionExercise)} previous={previousSeconds} unit="sek" />
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -217,6 +320,35 @@ function ValueCard({ title, value, actual = false }: { title: string; value: str
     <div className="rounded-xl border border-white/5 bg-black/20 p-3">
       <p className={`text-[10px] font-bold uppercase tracking-wider ${actual ? 'text-emerald-400/80' : 'text-zinc-500'}`}>{title}</p>
       <p className="mt-1.5 text-sm font-semibold text-zinc-200">{value}</p>
+    </div>
+  );
+}
+
+function ProgressCard({ title, current, previous, unit }: { title: string; current: number | null; previous: number | null; unit: string }) {
+  const formatValue = (value: number) => (Number.isInteger(value) ? String(value) : value.toLocaleString('sv-SE'));
+
+  if (current === null || previous === null) {
+    return <ValueCard title={title} value="Otillräckliga data" actual />;
+  }
+
+  const difference = Number((current - previous).toFixed(2));
+  const unchanged = difference === 0;
+
+  const result = unchanged ? 'Oförändrat' : `${difference > 0 ? '+' : '−'}${formatValue(Math.abs(difference))} ${unit}`;
+
+  return (
+    <div className="rounded-xl border border-white/5 bg-black/20 p-3">
+      <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{title}</p>
+
+      <p className={`mt-1.5 text-sm font-bold ${unchanged ? 'text-zinc-300' : difference > 0 ? 'text-emerald-400' : 'text-amber-400'}`}>{result}</p>
+
+      <p className="mt-1 text-xs text-zinc-500">
+        Nu: {formatValue(current)} {unit}
+      </p>
+
+      <p className="mt-1 text-xs text-zinc-500">
+        Föregående: {formatValue(previous)} {unit}
+      </p>
     </div>
   );
 }

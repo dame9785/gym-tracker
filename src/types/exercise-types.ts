@@ -48,6 +48,8 @@ export interface WorkoutExerciseViewModel {
 
 export interface WorkoutSessionExerciseViewModel {
   id: number;
+  exerciseId: number; // ID från Exercise-tabellen
+  workoutExerciseId: number;
   name: string;
   primaryMuscle: string;
   secondaryMuscles: string[];

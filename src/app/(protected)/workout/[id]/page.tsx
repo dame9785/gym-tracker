@@ -10,6 +10,7 @@ import { WorkoutSessionService } from '@/services-server/workout-session-service
 
 // Auth
 import { requireAuth } from '@/lib/auth';
+import type { WorkoutSessionViewModel } from '@/types/workout-types';
 
 interface PageProps {
   params: Promise<{
@@ -48,9 +49,19 @@ export default async function WorkoutPage({ params }: PageProps) {
 
   const session = sessionResponse.success && sessionResponse.data ? sessionResponse.data : null;
 
+  let previousSessions: WorkoutSessionViewModel[] = [];
+
+  if (session?.finishedAt) {
+    const previousSessionsResponse = await workoutSessionService.getPreviousCompletedSessions(user.userId, session.id, new Date(session.finishedAt));
+
+    if (previousSessionsResponse.success) {
+      previousSessions = previousSessionsResponse.data;
+    }
+  }
+
   return (
     <div className="container">
-      <WorkoutDetails workout={workout} session={session} />
+      <WorkoutDetails workout={workout} session={session} previousSessions={previousSessions} />
     </div>
   );
 }

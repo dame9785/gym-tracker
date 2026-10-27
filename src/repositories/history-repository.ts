@@ -120,4 +120,28 @@ export class HistoryRepository {
     });
     return workoutSessions;
   }
+
+  async debugCompletedSessions(userId: number) {
+    return prisma.workoutSession.findMany({
+      where: {
+        userId,
+        status: 'COMPLETED',
+      },
+      select: {
+        id: true,
+        workoutId: true,
+        status: true,
+        startedAt: true,
+        finishedAt: true,
+        workout: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        finishedAt: 'desc',
+      },
+    });
+  }
 }

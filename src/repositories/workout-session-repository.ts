@@ -230,4 +230,138 @@ export class WorkoutSessionRepository {
       },
     });
   }
+
+  async getPreviousCompletedByWorkoutId(workoutId: number, userId: number, currentSessionId: number) {
+    const sessions = await prisma.workoutSession.findMany({
+      where: {
+        workoutId,
+        userId,
+        status: 'COMPLETED',
+      },
+      select: {
+        id: true,
+        workoutId: true,
+        userId: true,
+        status: true,
+        startedAt: true,
+        finishedAt: true,
+      },
+      orderBy: {
+        finishedAt: 'desc',
+      },
+    });
+
+    console.log('ALL SESSIONS FOR WORKOUT:', sessions);
+    console.log('Completed sessions for workout:', sessions);
+    console.log('Current session ID to exclude:', currentSessionId);
+
+    return prisma.workoutSession.findFirst({
+      where: {
+        workoutId,
+        userId,
+        status: 'COMPLETED',
+        id: {
+          not: currentSessionId,
+        },
+      },
+      orderBy: {
+        finishedAt: 'desc',
+      },
+      include: {
+        exercises: {
+          orderBy: {
+            order: 'asc',
+          },
+          include: {
+            workoutExercise: {
+              include: {
+                exercise: {
+                  include: {
+                    muscles: {
+                      include: {
+                        muscleGroup: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            sets: {
+              orderBy: {
+                setNumber: 'asc',
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+  async debugCompletedSessions(userId: number) {
+    return prisma.workoutSession.findMany({
+      where: {
+        userId,
+        status: 'COMPLETED',
+      },
+      select: {
+        id: true,
+        workoutId: true,
+        userId: true,
+        status: true,
+        startedAt: true,
+        finishedAt: true,
+        workout: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        finishedAt: 'desc',
+      },
+    });
+  }
+
+  async getPreviousCompletedSessions(userId: number, currentSessionId: number, currentFinishedAt: Date) {
+    return prisma.workoutSession.findMany({
+      where: {
+        userId,
+        status: 'COMPLETED',
+        id: { not: currentSessionId },
+        finishedAt: {
+          not: null,
+          lt: currentFinishedAt,
+        },
+      },
+      orderBy: {
+        finishedAt: 'desc',
+      },
+      include: {
+        exercises: {
+          orderBy: {
+            order: 'asc',
+          },
+          include: {
+            workoutExercise: {
+              include: {
+                exercise: {
+                  include: {
+                    muscles: {
+                      include: {
+                        muscleGroup: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            sets: {
+              orderBy: {
+                setNumber: 'asc',
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
