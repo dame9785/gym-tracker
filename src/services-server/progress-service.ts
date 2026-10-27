@@ -1,8 +1,8 @@
 import { ProgressRepository } from '@/repositories/progress-repository';
-import { ErrorResponse, ApiResponse, SuccessResponse } from '@/types/api-types';
-import { ExerciseProgress, ProgressApiResponse } from '@/types/progress-type';
+import { type ApiResponse, type ErrorResponse, type SuccessResponse } from '@/types/api-types';
+import type { ExerciseProgress, ProgressApiResponse } from '@/types/progress-type';
 
-export class ProgressService {
+export default class ProgressService {
   private progressRepository = new ProgressRepository();
 
   async getProgress(userId: number): Promise<ApiResponse<ProgressApiResponse>> {
@@ -39,19 +39,19 @@ export class ProgressService {
         }
       }
 
-      const exerciseProgress = Array.from(exerciseMap.values());
-
       return {
         success: true,
         data: {
           weightProgress,
-          exerciseProgress,
+          exerciseProgress: Array.from(exerciseMap.values()),
         },
       } satisfies SuccessResponse<ProgressApiResponse>;
     } catch (error) {
+      console.error('Failed to load progress:', error);
+
       return {
         success: false,
-        message: 'Server fel, gick ej hämta progress data',
+        message: 'Kunde inte hämta träningsprogress.',
       } satisfies ErrorResponse;
     }
   }
