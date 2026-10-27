@@ -35,6 +35,7 @@ export class WorkoutSessionService {
   async getById(id: number, userId: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse>> {
     try {
       const workoutSession = await this.workoutSessionRepository.getById(id, userId);
+      console.dir(workoutSession, { depth: null, colors: true });
       if (!workoutSession) {
         return {
           success: false,
@@ -55,13 +56,9 @@ export class WorkoutSessionService {
       };
     }
   }
-  async updateSet(
-    id: number,
-    actualReps: number,
-    actualWeight: number,
-  ): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
+  async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
     try {
-      const updatedSet = await this.workoutSessionRepository.updateSet(id, actualReps, actualWeight);
+      const updatedSet = await this.workoutSessionRepository.updateSet(id, actualReps, actualWeight, actualSeconds);
       if (!updatedSet) {
         return {
           success: false,
@@ -123,6 +120,31 @@ export class WorkoutSessionService {
         success: false,
         message: 'Kunde inte avsluta träningspasset.',
       } satisfies ErrorResponse;
+    }
+  }
+
+  async getLatestCompletedByWorkoutId(workoutId: number, userId: number) {
+    try {
+      const session = await this.workoutSessionRepository.getLatestCompletedByWorkoutId(workoutId, userId);
+
+      if (!session) {
+        return {
+          success: true as const,
+          data: null,
+        };
+      }
+
+      return {
+        success: true as const,
+        data: WorkoutSessionMapper.mapWorkoutSession(session),
+      };
+    } catch (error) {
+      console.error(error);
+
+      return {
+        success: false as const,
+        message: 'Kunde inte hämta den senaste avslutade träningssessionen.',
+      };
     }
   }
 }

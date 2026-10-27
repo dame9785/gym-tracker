@@ -67,8 +67,10 @@ export type WorkoutSessionSetViewModel = {
   id: number;
   setNumber: number;
   targetReps: number;
+  targetSeconds: number | null;
   targetWeight: number | null;
   actualReps: number | null;
+  actualSeconds: number | null;
   actualWeight: number | null;
   completed: boolean;
   completedAt: Date | null;

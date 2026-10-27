@@ -52,9 +52,11 @@ export class WorkoutSessionRepository {
               setNumber,
 
               targetReps: workoutExercise.reps ?? 0,
+              targetSeconds: workoutExercise.seconds ?? null,
               targetWeight: workoutExercise.weight,
 
               actualReps: null,
+              actualSeconds: null,
               actualWeight: null,
             },
           });
@@ -66,7 +68,7 @@ export class WorkoutSessionRepository {
   }
 
   async getById(id: number, userId: number) {
-    return await prisma.workoutSession.findFirst({
+    const data = await prisma.workoutSession.findFirst({
       where: {
         id,
         userId,
@@ -99,9 +101,11 @@ export class WorkoutSessionRepository {
         },
       },
     });
+
+    return data;
   }
 
-  async updateSet(id: number, actualReps: number, actualWeight: number) {
+  async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number) {
     return await prisma.workoutSessionSet.update({
       where: {
         id,
@@ -109,6 +113,7 @@ export class WorkoutSessionRepository {
       data: {
         actualReps,
         actualWeight,
+        actualSeconds,
         completed: true,
       },
     });
@@ -158,5 +163,71 @@ export class WorkoutSessionRepository {
     });
 
     return result.count > 0;
+  }
+
+  async getLatestByWorkoutId(workoutId: number, userId: number) {
+    return prisma.workoutSession.findFirst({
+      where: {
+        workoutId,
+        userId,
+      },
+      orderBy: {
+        startedAt: 'desc',
+      },
+      include: {
+        exercises: {
+          orderBy: {
+            order: 'asc',
+          },
+          include: {
+            sets: {
+              orderBy: {
+                setNumber: 'asc',
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async getLatestCompletedByWorkoutId(workoutId: number, userId: number) {
+    return prisma.workoutSession.findFirst({
+      where: {
+        workoutId,
+        userId,
+        status: 'COMPLETED',
+      },
+      orderBy: {
+        finishedAt: 'desc',
+      },
+      include: {
+        exercises: {
+          orderBy: {
+            order: 'asc',
+          },
+          include: {
+            workoutExercise: {
+              include: {
+                exercise: {
+                  include: {
+                    muscles: {
+                      include: {
+                        muscleGroup: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            sets: {
+              orderBy: {
+                setNumber: 'asc',
+              },
+            },
+          },
+        },
+      },
+    });
   }
 }

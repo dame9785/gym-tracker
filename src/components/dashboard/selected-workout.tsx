@@ -86,9 +86,7 @@ export default function SelectedWorkout({ workout }: Props) {
             <div>
               <p className="text-xs text-zinc-500">Date</p>
 
-              <p className="mt-0.5 text-lg font-bold text-white">
-                {new Date(workout.date).toLocaleDateString('sv-SE')}
-              </p>
+              <p className="mt-0.5 text-lg font-bold text-white">{new Date(workout.date).toLocaleDateString('sv-SE')}</p>
             </div>
           </div>
         </div>
@@ -150,6 +148,8 @@ export default function SelectedWorkout({ workout }: Props) {
                     {exercise.sets} sets
                     <span className="mx-2 text-zinc-700">•</span>
                     {exercise.reps} reps
+                    <span className="mx-2 text-zinc-700">•</span>
+                    {exercise.seconds} seconds
                   </p>
                 </div>
               </div>

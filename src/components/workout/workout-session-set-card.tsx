@@ -12,7 +12,7 @@ interface WorkoutSessionSetCardProps {
 
 export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProps) {
   const [actualReps, setActualReps] = useState(set.actualReps ?? set.targetReps);
-
+  const [actualSeconds, setActualSeconds] = useState(set.actualSeconds ?? set.targetSeconds ?? 0);
   const [actualWeight, setActualWeight] = useState(set.actualWeight ?? set.targetWeight ?? 0);
 
   const [isSaving, setIsSaving] = useState(false);
@@ -23,7 +23,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
     setIsSaved(false);
 
     try {
-      const response = await WorkoutSessionService.updateSet(set.id, actualReps, actualWeight);
+      const response = await WorkoutSessionService.updateSet(set.id, actualReps, actualWeight, actualSeconds);
       if (!response.success) {
         toast.error('Gick inte uppdatera set, försök igen');
         return;
@@ -42,7 +42,9 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
         {/* Set information */}
         <div className="flex min-w-[170px] items-center gap-3 lg:pb-2">
-          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${isSaved ? 'bg-green-500/10 text-green-400' : 'bg-blue-500/10 text-blue-400'}`}>
+          <div
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${isSaved ? 'bg-green-500/10 text-green-400' : 'bg-blue-500/10 text-blue-400'}`}
+          >
             {set.setNumber}
           </div>
 
@@ -52,12 +54,13 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
             <p className="text-xs text-zinc-500">
               Mål: {set.targetReps} reps
               {set.targetWeight !== null && ` • ${set.targetWeight} kg`}
+              {set.targetSeconds !== null && ` • ${set.targetSeconds} sek`}
             </p>
           </div>
         </div>
 
         {/* Inputs */}
-        <div className="grid flex-1 grid-cols-2 gap-3">
+        <div className="grid flex-1 grid-cols-3 gap-3">
           {/* Reps */}
           <div>
             <label htmlFor={`reps-${set.id}`} className="mb-1.5 block text-xs font-medium text-zinc-500">
@@ -91,6 +94,25 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
               value={actualWeight}
               onChange={(e) => {
                 setActualWeight(Number(e.target.value));
+                setIsSaved(false);
+              }}
+              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+            />
+          </div>
+
+          <div>
+            <label htmlFor={`seconds-${set.id}`} className="mb-1.5 block text-xs font-medium text-zinc-500">
+              Seconds (sec)
+            </label>
+
+            <input
+              id={`seconds-${set.id}`}
+              type="number"
+              min="0"
+              step="0.1"
+              value={actualSeconds}
+              onChange={(e) => {
+                setActualSeconds(Number(e.target.value));
                 setIsSaved(false);
               }}
               className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"

@@ -17,7 +17,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const dto = await request.json();
 
-    const result = await workoutSessionService.updateSet(Number(id), dto.actualReps, dto.actualWeight);
+    const result = await workoutSessionService.updateSet(Number(id), dto.actualReps, dto.actualWeight, dto.actualSeconds);
 
     return NextResponse.json(result, {
       status: result.success ? 200 : 400,

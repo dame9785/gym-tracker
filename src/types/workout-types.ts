@@ -96,6 +96,8 @@ export interface WorkoutSessionSetViewModel {
   targetWeight: number | null;
   actualReps: number | null;
   actualWeight: number | null;
+  actualSeconds: number | null;
+  targetSeconds: number | null;
   completed: boolean;
 }
 

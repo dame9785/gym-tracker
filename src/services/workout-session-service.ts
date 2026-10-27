@@ -26,7 +26,7 @@ export default class WorkoutSessionService {
   }
 
   // PUT: Update session set
-  static async updateSet(id: number, actualReps: number, actualWeight: number): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
+  static async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
     try {
       const response = await fetch(`/api/workout-session-sets/${id}`, {
         method: 'PUT',
@@ -37,6 +37,7 @@ export default class WorkoutSessionService {
         body: JSON.stringify({
           actualReps,
           actualWeight,
+          actualSeconds,
         }),
       });
 

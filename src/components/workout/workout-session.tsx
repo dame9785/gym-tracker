@@ -59,9 +59,7 @@ export default function WorkoutSession({ workoutSession }: WorkoutSessionProps) 
         <div className="mt-1 flex items-center justify-between gap-4">
           <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Workout #{workoutSession.id}</h1>
 
-          <span className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400">
-            Pågår
-          </span>
+          <span className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400">Pågår</span>
         </div>
 
         <p className="mt-2 text-sm text-zinc-500">Registrera dina faktiska reps och vikter för varje set.</p>

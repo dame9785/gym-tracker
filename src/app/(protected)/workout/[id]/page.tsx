@@ -2,11 +2,14 @@ import { redirect } from 'next/navigation';
 
 // Components
 import WorkoutDetails from '@/components/workout/workout-details';
+import ErrorMessage from '@/components/ui/error-message';
 
 // Services
 import { WorkoutService } from '@/services-server/workout-service';
-import { getTokenFromCookieStore } from '@/lib/auth';
-import ErrorMessage from '@/components/ui/error-message';
+import { WorkoutSessionService } from '@/services-server/workout-session-service';
+
+// Auth
+import { requireAuth } from '@/lib/auth';
 
 interface PageProps {
   params: Promise<{
@@ -17,29 +20,37 @@ interface PageProps {
 export default async function WorkoutPage({ params }: PageProps) {
   const { id } = await params;
 
-  const userToken = await getTokenFromCookieStore();
-  if (!userToken) {
-    redirect('/account/login');
-  }
+  const user = await requireAuth();
 
   const workoutId = Number(id);
 
+  if (!Number.isInteger(workoutId) || workoutId <= 0) {
+    redirect('/workouts');
+  }
+
   const workoutService = new WorkoutService();
-  const response = await workoutService.getById(workoutId, Number(userToken));
+  const workoutSessionService = new WorkoutSessionService();
+
+  const [response, sessionResponse] = await Promise.all([
+    workoutService.getById(workoutId, user.userId),
+    workoutSessionService.getLatestCompletedByWorkoutId(workoutId, user.userId),
+  ]);
 
   if (!response.success || !response.data) {
     return (
       <main>
-        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+        <ErrorMessage title="Unable to load workout" message={response.message ?? 'Something went wrong while loading your workout.'} />
       </main>
     );
   }
 
   const workout = response.data.workout;
 
+  const session = sessionResponse.success && sessionResponse.data ? sessionResponse.data : null;
+
   return (
     <div className="container">
-      <WorkoutDetails workout={workout} />
+      <WorkoutDetails workout={workout} session={session} />
     </div>
   );
 }
