@@ -58,6 +58,12 @@ enum GoalType {
   MAINTENANCE
 }
 
+enum ProgressionMetric {
+  WEIGHT
+  REPS
+  TIME
+}
+
 model Goal {
   id     Int @id @default(autoincrement())
   userId Int @unique

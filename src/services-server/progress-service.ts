@@ -21,6 +21,7 @@ export default class ProgressService {
             exerciseMap.set(exercise.id, {
               exerciseId: exercise.id,
               exerciseName: exercise.name,
+              equipment: exercise.equipment,
               history: [],
             });
           }

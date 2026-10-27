@@ -57,6 +57,7 @@ export class ProgressRepository {
                   select: {
                     id: true,
                     name: true,
+                    equipment: true,
                   },
                 },
               },
