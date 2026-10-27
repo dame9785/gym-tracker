@@ -101,6 +101,50 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
     return setsWithWeight.reduce((total, set) => total + (set.actualWeight ?? 0), 0) / setsWithWeight.length;
   };
 
+  const workoutProgress = exercises.map((exercise) => {
+    const currentExercise = sessionExercises.find((item) => item.exerciseId === exercise.exerciseId);
+
+    const previousSession = previousSessions.find((item) =>
+      item.exercises.some((exerciseSession) => exerciseSession.exerciseId === exercise.exerciseId && exerciseSession.sets.some((set) => set.completed)),
+    );
+
+    const previousExercise = previousSession?.exercises.find((item) => item.exerciseId === exercise.exerciseId && item.sets.some((set) => set.completed));
+
+    if (!currentExercise || !previousExercise) {
+      return { status: 'missing' as const };
+    }
+
+    const values = [
+      getProgressStatus(getCompletedReps(currentExercise), getCompletedReps(previousExercise)),
+      getProgressStatus(getAverageWeight(currentExercise), getAverageWeight(previousExercise)),
+      getProgressStatus(getCompletedSeconds(currentExercise), getCompletedSeconds(previousExercise), true),
+    ];
+
+    const comparable = values.filter((value) => value !== 'missing');
+
+    if (comparable.length === 0) {
+      return { status: 'missing' as const };
+    }
+
+    if (comparable.includes('lower')) {
+      return { status: 'lower' as const };
+    }
+
+    if (comparable.includes('improved')) {
+      return { status: 'improved' as const };
+    }
+
+    return { status: 'unchanged' as const };
+  });
+
+  const improvedExercises = workoutProgress.filter((item) => item.status === 'improved').length;
+
+  const unchangedExercises = workoutProgress.filter((item) => item.status === 'unchanged').length;
+
+  const lowerExercises = workoutProgress.filter((item) => item.status === 'lower').length;
+
+  const missingExercises = workoutProgress.filter((item) => item.status === 'missing').length;
+
   return (
     <section className="mx-auto w-full max-w-5xl space-y-8 pb-10">
       <header className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-500/15 via-zinc-900 to-zinc-950 p-6 shadow-2xl sm:p-8">
@@ -135,23 +179,8 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <StatCard title="Övningar" value={String(totalExercises)} />
         <StatCard title="Planerade set" value={String(totalSets)} />
-        <StatCard title="Planerad arbetstid" value={totalSeconds > 0 ? formatDuration(totalSeconds) : '—'} />
+        <StatCard title="Total tid för tidsövningar" value={totalSeconds > 0 ? formatDuration(totalSeconds) : '—'} />
       </div>
-
-      {session && (
-        <div>
-          <div className="mb-4">
-            <p className="mb-1 text-xs font-bold uppercase tracking-[0.18em] text-emerald-400">Senaste avslutade pass</p>
-            <h2 className="text-2xl font-bold text-white">Dina faktiska resultat</h2>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <StatCard title="Utförda reps" value={String(actualReps)} />
-            <StatCard title="  set" value={`${completedSets}`} />
-            <StatCard title="Faktisk arbetstid" value={actualSeconds > 0 ? formatDuration(actualSeconds) : '—'} />
-          </div>
-        </div>
-      )}
 
       <div>
         <div className="mb-5 flex items-end justify-between gap-4">
@@ -248,7 +277,7 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
                               {lowerCount > 0 && <span className="text-xs text-amber-300">{lowerCount} lägre</span>}
                             </div>
                           )}
-                          <p className="mt-1 text-xs text-zinc-500">
+                          <p className="mt-0.5 text-xs text-zinc-500">
                             Övning {index + 1} av {totalExercises}
                           </p>
                         </div>
@@ -258,20 +287,40 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
                         </span>
                       </div>
 
-                      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                        <ValueCard title="Planned reps" value={exercise.reps != null ? `${exercise.reps} reps` : 'Ej angivet'} />
-                        <ValueCard title="Planned weight" value={exercise.weight != null ? `${exercise.weight} kg` : 'Kroppsvikt / ej angivet'} />
-                        <ValueCard title="Planned time" value={exercise.seconds != null ? formatDuration(exercise.seconds) : 'Ej tidsbestämd'} />
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {exercise.reps != null && (
+                          <span className="rounded-lg bg-white/[0.04] px-3 py-2 text-sm text-zinc-300">
+                            <span className="text-zinc-500">Reps:</span> <span className="font-semibold text-white">{exercise.reps}</span>
+                          </span>
+                        )}
+
+                        {exercise.weight != null ? (
+                          <span className="rounded-lg bg-white/[0.04] px-3 py-2 text-sm text-zinc-300">
+                            <span className="text-zinc-500">Planerad vikt:</span> <span className="font-semibold text-white">{exercise.weight} kg</span>
+                          </span>
+                        ) : (
+                          <span className="rounded-lg bg-white/[0.04] px-3 py-2 text-sm text-zinc-400">Kroppsvikt / ej angivet</span>
+                        )}
+
+                        {exercise.seconds != null && (
+                          <span className="rounded-lg bg-white/[0.04] px-3 py-2 text-sm text-zinc-300">
+                            <span className="text-zinc-500">Tid:</span> <span className="font-semibold text-white">{formatDuration(exercise.seconds)}</span>
+                          </span>
+                        )}
+
+                        <span className="rounded-lg bg-white/[0.04] px-3 py-2 text-sm text-zinc-300">
+                          <span className="text-zinc-500">Set:</span> <span className="font-semibold text-white">{exercise.sets}</span>
+                        </span>
                       </div>
 
                       {session && sessionExercise && (
-                        <div className="mt-3 rounded-xl border border-emerald-400/15 bg-emerald-500/[0.05] p-3 sm:p-4">
-                          <div className="mb-3">
+                        <div className="mt-3 rounded-xl border border-emerald-400/15 bg-emerald-500/[0.05] p-3">
+                          <div className="mb-2">
                             <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Resultat från senaste passet</p>
-                            <p className="mt-1 text-xs text-zinc-500">Dina faktiskt registrerade träningsresultat</p>
+                            <p className="mt-0.5 text-xs text-zinc-500">Dina faktiskt registrerade träningsresultat</p>
                           </div>
 
-                          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                             <ValueCard title="Utförda repetitioner" value={`${exerciseActualReps} reps`} actual />
 
                             <ValueCard
@@ -293,10 +342,10 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
                         </div>
                       )}
                       {session && (
-                        <div className="mt-3 rounded-xl border border-blue-400/15 bg-blue-500/[0.05] p-3 sm:p-4">
-                          <div className="mb-3">
+                        <div className="mt-3 rounded-xl border border-blue-400/15 bg-blue-500/[0.05] p-3">
+                          <div className="mb-2">
                             <p className="text-xs font-bold uppercase tracking-wider text-blue-400">Progression</p>
-                            <p className="mt-1 text-xs text-zinc-500">
+                            <p className="mt-0.5 text-xs text-zinc-500">
                               {previousSessionWithExercise
                                 ? `Senast utförd: ${formatDate(previousSessionWithExercise.finishedAt)}`
                                 : 'Ingen tidigare registrering av övningen'}
@@ -306,7 +355,7 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
                           {!previousSessionExercise ? (
                             <p className="text-sm text-zinc-300">Ingen tidigare registrering av övningen.</p>
                           ) : (
-                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                               <ProgressCard title="Repetitioner" current={getCompletedReps(sessionExercise)} previous={previousReps} unit="reps" />
 
                               <ProgressCard title="Genomsnittlig vikt" current={currentAverageWeight} previous={previousAverageWeight} unit="kg" />
@@ -327,11 +376,10 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
 
                   <div className="h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
 
-                  <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
-                    <p className="text-xs text-zinc-500">
-                      {exercise.sets} ×{' '}
-                      {exercise.seconds != null ? formatDuration(exercise.seconds) : exercise.reps != null ? `${exercise.reps} reps` : 'Ej specificerat'}
-                    </p>
+                  <div className="flex items-center justify-between gap-3 px-4 py-2.5 sm:px-5">
+                    <span className="text-xs text-zinc-500">
+                      Övning {index + 1} av {totalExercises}
+                    </span>
 
                     {exercise.seconds != null && (
                       <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-400">
@@ -361,9 +409,9 @@ function StatCard({ title, value }: { title: string; value: string }) {
 
 function ValueCard({ title, value, actual = false }: { title: string; value: string; actual?: boolean }) {
   return (
-    <div className="rounded-xl border border-white/5 bg-black/20 p-3">
+    <div className="rounded-lg border border-white/5 bg-black/20 p-2.5">
       <p className={`text-[10px] font-bold uppercase tracking-wider ${actual ? 'text-emerald-400/80' : 'text-zinc-500'}`}>{title}</p>
-      <p className="mt-1.5 text-sm font-semibold text-zinc-200">{value}</p>
+      <p className="mt-1 text-sm font-semibold text-zinc-200">{value}</p>
     </div>
   );
 }
@@ -385,9 +433,9 @@ function ProgressCard({
 
   if (current === null || previous === null) {
     return (
-      <div className="rounded-xl border border-white/5 bg-black/20 p-3">
+      <div className="rounded-lg border border-white/5 bg-black/20 p-2.5">
         <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{title}</p>
-        <p className="mt-2 text-sm font-semibold text-zinc-400">Otillräckliga data</p>
+        <p className="mt-1.5 text-sm font-semibold text-zinc-400">Otillräckliga data</p>
       </div>
     );
   }
@@ -410,22 +458,22 @@ function ProgressCard({
       };
 
   return (
-    <div className="rounded-xl border border-white/5 bg-black/20 p-3">
+    <div className="rounded-lg border border-white/5 bg-black/20 p-2.5">
       <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{title}</p>
 
       <p className={`mt-2 text-sm font-bold ${status.color}`}>
         {status.icon} {status.label}
       </p>
 
-      <p className="mt-2 text-sm text-zinc-300">
+      <p className="mt-1.5 text-sm text-zinc-300">
         Skillnad: {unchanged ? '0' : `${difference > 0 ? '+' : '−'}${formatValue(Math.abs(difference))}`} {unit}
       </p>
 
-      <p className="mt-1 text-xs text-zinc-500">
+      <p className="mt-0.5 text-xs text-zinc-500">
         Nu: {formatValue(current)} {unit}
       </p>
 
-      <p className="mt-1 text-xs text-zinc-500">
+      <p className="mt-0.5 text-xs text-zinc-500">
         Föregående: {formatValue(previous)} {unit}
       </p>
     </div>
