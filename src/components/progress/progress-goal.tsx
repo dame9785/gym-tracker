@@ -13,6 +13,7 @@ export default function GoalProgress({ weightData }: Props) {
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400">
             <Target className="h-5 w-5" />
           </div>
+
           <div>
             <h2 className="font-semibold text-white">Målprogression</h2>
             <p className="text-sm text-zinc-400">Ingen viktdata tillgänglig ännu.</p>
@@ -40,9 +41,23 @@ export default function GoalProgress({ weightData }: Props) {
   const totalChange = goal - start;
   const currentChange = current - start;
   const remaining = Math.abs(goal - current);
-  const isGoalReached = totalChange === 0 || (totalChange > 0 ? current >= goal : current <= goal);
+  const distanceFromStart = Math.abs(current - start);
 
-  const percentage = totalChange === 0 ? 100 : Math.min(100, Math.max(0, (currentChange / totalChange) * 100));
+  const isWeightGainGoal = goal > start;
+  const isWeightLossGoal = goal < start;
+
+  const isBelowStart = isWeightGainGoal && current < start;
+  const isAboveStart = isWeightLossGoal && current > start;
+
+  const isGoalReached = totalChange === 0 || (isWeightGainGoal && current >= goal) || (isWeightLossGoal && current <= goal);
+
+  const percentage = totalChange === 0 ? 100 : isGoalReached ? 100 : Math.min(100, Math.max(0, (currentChange / totalChange) * 100));
+
+  // Visar nuvarande vikt i förhållande till startvikten.
+  // Den orange indikatorn visas bara när vikten gått åt fel håll.
+  const recoveryPercentage = start > 0 ? Math.min(100, Math.max(0, (current / start) * 100)) : 0;
+
+  const needsReturnToStart = isBelowStart || isAboveStart;
 
   const formatWeight = (value: number) =>
     value.toLocaleString('sv-SE', {
@@ -54,11 +69,13 @@ export default function GoalProgress({ weightData }: Props) {
 
   return (
     <section className="mb-10 overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 p-6 sm:p-8">
+      {/* Header */}
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400">
             <Target className="h-6 w-6" />
           </div>
+
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-purple-400">Ditt mål</p>
             <h2 className="mt-1 text-xl font-bold text-white sm:text-2xl">Målprogression</h2>
@@ -72,6 +89,7 @@ export default function GoalProgress({ weightData }: Props) {
         </div>
       </div>
 
+      {/* Weight cards */}
       <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
           <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Startvikt</p>
@@ -99,6 +117,7 @@ export default function GoalProgress({ weightData }: Props) {
         </div>
       </div>
 
+      {/* Main goal progress */}
       <div className="mt-7">
         <div className="mb-2 flex items-center justify-between gap-3">
           <p className="text-sm font-medium text-zinc-300">{isGoalReached ? 'Målet är uppnått!' : 'Framsteg mot målet'}</p>
@@ -117,8 +136,34 @@ export default function GoalProgress({ weightData }: Props) {
         </div>
       </div>
 
+      {/* Return-to-start progress */}
+      {needsReturnToStart && (
+        <div className="mt-6 rounded-xl border border-amber-500/15 bg-amber-500/[0.03] p-4">
+          <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-medium text-zinc-300">Tillbaka till startvikten</p>
+            <p className="text-sm font-semibold text-amber-400">{formatWeight(distanceFromStart)} kg kvar</p>
+          </div>
+
+          <div
+            className="h-2 overflow-hidden rounded-full bg-zinc-800"
+            role="progressbar"
+            aria-label="Nuvarande vikt i förhållande till startvikten"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(recoveryPercentage)}
+          >
+            <div className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400 transition-all duration-700" style={{ width: `${recoveryPercentage}%` }} />
+          </div>
+
+          <p className="mt-2 text-xs text-zinc-500">
+            Nuvarande vikt: {formatWeight(current)} kg av {formatWeight(start)} kg.
+          </p>
+        </div>
+      )}
+
+      {/* Goal information */}
       <div className="mt-5 flex flex-col gap-2 border-t border-white/5 pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-zinc-400">
+        <div className="space-y-1 text-sm text-zinc-400">
           {isGoalReached ? (
             <span className="flex items-center gap-2 text-emerald-400">
               <CheckCircle2 className="h-4 w-4" />
@@ -126,10 +171,16 @@ export default function GoalProgress({ weightData }: Props) {
             </span>
           ) : (
             <>
-              Kvar till målet: <span className="font-semibold text-white">{formatWeight(remaining)} kg</span>
+              <p>
+                Kvar till målet: <span className="font-semibold text-white">{formatWeight(remaining)} kg</span>
+              </p>
+
+              {isBelowStart && <p className="text-amber-400">Du ligger {formatWeight(distanceFromStart)} kg under din startvikt.</p>}
+
+              {isAboveStart && <p className="text-amber-400">Du ligger {formatWeight(distanceFromStart)} kg över din startvikt.</p>}
             </>
           )}
-        </p>
+        </div>
 
         <p className="text-xs text-zinc-500">{totalChange > 0 ? 'Mål: öka i vikt' : totalChange < 0 ? 'Mål: minska i vikt' : 'Startvikten är samma som målet'}</p>
       </div>

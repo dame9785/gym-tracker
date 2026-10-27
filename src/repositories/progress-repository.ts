@@ -4,47 +4,36 @@ import { prisma } from '@/lib/prisma';
 export class ProgressRepository {
   async getWeightProgress(userId: number) {
     const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
+      where: { id: userId },
       select: {
         goalWeight: true,
         weightLogs: {
-          orderBy: {
-            loggedAt: 'asc',
-          },
-          take: 1,
+          orderBy: { loggedAt: 'asc' },
           select: {
             weight: true,
+            loggedAt: true,
           },
         },
       },
     });
 
-    if (!user) {
+    if (!user || user.weightLogs.length === 0) {
       return null;
     }
 
-    const latestWeightLog = await prisma.weightLog.findFirst({
-      where: {
-        userId,
-      },
-      orderBy: {
-        loggedAt: 'desc',
-      },
-      select: {
-        weight: true,
-      },
-    });
+    const history = user.weightLogs.map((log) => ({
+      weight: Number(log.weight),
+      loggedAt: log.loggedAt.toISOString(),
+    }));
 
-    if (user.weightLogs.length === 0 || !latestWeightLog) {
-      return null;
-    }
+    const firstWeightLog = user.weightLogs[0];
+    const latestWeightLog = user.weightLogs[user.weightLogs.length - 1];
 
     return {
-      startWeight: Number(user.weightLogs[0].weight),
+      startWeight: Number(firstWeightLog.weight),
       currentWeight: Number(latestWeightLog.weight),
       goalWeight: Number(user.goalWeight),
+      history,
     };
   }
 

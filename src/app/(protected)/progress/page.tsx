@@ -7,6 +7,8 @@ import { requireAuth } from '@/lib/auth';
 import ProgressService from '@/services-server/progress-service';
 import ErrorMessage from '@/components/ui/error-message';
 
+import WeightProgressChart from '@/components/progress/weight-progress-chart';
+
 export default async function ProgressPage() {
   const user = await requireAuth();
 
@@ -28,6 +30,14 @@ export default async function ProgressPage() {
       <WeightProgress weightData={response.data.weightProgress} />
 
       <GoalProgress weightData={response.data.weightProgress} />
+
+      {response.data.weightProgress && (
+        <WeightProgressChart
+          history={response.data.weightProgress.history}
+          startWeight={response.data.weightProgress.startWeight}
+          goalWeight={response.data.weightProgress.goalWeight}
+        />
+      )}
 
       <ExerciseProgress exerciseProgress={response.data.exerciseProgress} />
     </main>

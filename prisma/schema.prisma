@@ -192,13 +192,16 @@ model WorkoutSessionExercise {
   @@index([workoutExerciseId])
 }
 
+
 model WorkoutSessionSet {
   id                       Int       @id @default(autoincrement())
   workoutSessionExerciseId Int
   setNumber                Int
   targetReps               Int
+  targetSeconds            Int?
   targetWeight             Float?
   actualReps               Int?
+  actualSeconds            Int?
   actualWeight             Float?
   completed                Boolean   @default(false)
   completedAt              DateTime?
@@ -207,6 +210,7 @@ model WorkoutSessionSet {
 
   @@index([workoutSessionExerciseId])
 }
+
 
 model CalorieLog {
   id       Int      @id @default(autoincrement())

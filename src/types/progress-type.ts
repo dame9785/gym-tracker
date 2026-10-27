@@ -7,6 +7,12 @@ export interface WeightProgress {
   currentWeight: number;
   startWeight: number;
   goalWeight: number;
+  history: WeightProgressEntry[];
+}
+
+export interface WeightProgressEntry {
+  weight: number;
+  loggedAt: string;
 }
 
 export interface ExerciseProgress {
