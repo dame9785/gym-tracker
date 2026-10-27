@@ -172,23 +172,6 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
                 (item) => item.exerciseId === exercise.exerciseId && item.sets.some((set) => set.completed),
               );
 
-              // Tillfällig felsökning
-              console.log('PROGRESSION DEBUG', {
-                exercise: exercise.name,
-                current: sessionExercise?.sets.map((set) => ({
-                  completed: set.completed,
-                  actualReps: set.actualReps,
-                  actualSeconds: set.actualSeconds,
-                  actualWeight: set.actualWeight,
-                })),
-                previous: previousSessionExercise?.sets.map((set) => ({
-                  completed: set.completed,
-                  actualReps: set.actualReps,
-                  actualSeconds: set.actualSeconds,
-                  actualWeight: set.actualWeight,
-                })),
-              });
-
               const currentAverageWeight = getAverageWeight(sessionExercise);
               const previousAverageWeight = getAverageWeight(previousSessionExercise);
 
