@@ -6,6 +6,22 @@ interface Props {
   previousSessions: WorkoutSessionViewModel[];
 }
 
+type ProgressStatus = 'improved' | 'unchanged' | 'lower' | 'missing';
+
+function getProgressStatus(current: number | null, previous: number | null, higherIsBetter = true): ProgressStatus {
+  if (current === null || previous === null) {
+    return 'missing';
+  }
+
+  if (current === previous) {
+    return 'unchanged';
+  }
+
+  const improved = higherIsBetter ? current > previous : current < previous;
+
+  return improved ? 'improved' : 'lower';
+}
+
 export default function WorkoutDetails({ workout, session, previousSessions }: Props) {
   const exercises = [...workout.workoutExercises].sort((a, b) => a.order - b.order);
 
@@ -179,6 +195,24 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
 
               const previousSeconds = previousSessionExercise ? getCompletedSeconds(previousSessionExercise) : null;
 
+              const currentReps = getCompletedReps(sessionExercise);
+              const currentSeconds = getCompletedSeconds(sessionExercise);
+
+              const repsStatus = getProgressStatus(currentReps, previousReps);
+              const weightStatus = getProgressStatus(currentAverageWeight, previousAverageWeight);
+              const secondsStatus = getProgressStatus(currentSeconds, previousSeconds, true);
+
+              const statuses = [repsStatus, weightStatus, secondsStatus];
+              const comparableCount = statuses.filter((status) => status !== 'missing').length;
+
+              const improvedCount = statuses.filter((status) => status === 'improved').length;
+
+              const lowerCount = statuses.filter((status) => status === 'lower').length;
+
+              const unchangedCount = statuses.filter((status) => status === 'unchanged').length;
+
+              const summary = comparableCount === 0 ? 'Ingen jämförbar data' : `${improvedCount} av ${comparableCount} mätvärden förbättrade`;
+
               return (
                 <article
                   key={`${exercise.exerciseId}-${exercise.order}`}
@@ -193,6 +227,27 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                         <div className="min-w-0">
                           <h3 className="break-words text-base font-bold text-white sm:text-lg">{exercise.name}</h3>
+                          {session && (
+                            <div className="mt-2 flex flex-wrap items-center gap-2">
+                              <span
+                                className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-semibold ${
+                                  comparableCount === 0
+                                    ? 'border-white/10 bg-white/5 text-zinc-400'
+                                    : lowerCount > 0
+                                      ? 'border-amber-400/20 bg-amber-400/10 text-amber-300'
+                                      : improvedCount > 0
+                                        ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'
+                                        : 'border-white/10 bg-white/5 text-zinc-300'
+                                }`}
+                              >
+                                {comparableCount === 0 ? '—' : lowerCount > 0 ? '↓' : improvedCount > 0 ? '↑' : '—'} {summary}
+                              </span>
+
+                              {unchangedCount > 0 && comparableCount > 0 && <span className="text-xs text-zinc-500">{unchangedCount} oförändrade</span>}
+
+                              {lowerCount > 0 && <span className="text-xs text-amber-300">{lowerCount} lägre</span>}
+                            </div>
+                          )}
                           <p className="mt-1 text-xs text-zinc-500">
                             Övning {index + 1} av {totalExercises}
                           </p>
@@ -256,7 +311,13 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
 
                               <ProgressCard title="Genomsnittlig vikt" current={currentAverageWeight} previous={previousAverageWeight} unit="kg" />
 
-                              <ProgressCard title="Arbetstid" current={getCompletedSeconds(sessionExercise)} previous={previousSeconds} unit="sek" />
+                              <ProgressCard
+                                title="Arbetstid"
+                                current={getCompletedSeconds(sessionExercise)}
+                                previous={previousSeconds}
+                                unit="sek"
+                                higherIsBetter={true}
+                              />
                             </div>
                           )}
                         </div>
@@ -307,23 +368,58 @@ function ValueCard({ title, value, actual = false }: { title: string; value: str
   );
 }
 
-function ProgressCard({ title, current, previous, unit }: { title: string; current: number | null; previous: number | null; unit: string }) {
+function ProgressCard({
+  title,
+  current,
+  previous,
+  unit,
+  higherIsBetter = true,
+}: {
+  title: string;
+  current: number | null;
+  previous: number | null;
+  unit: string;
+  higherIsBetter?: boolean;
+}) {
   const formatValue = (value: number) => (Number.isInteger(value) ? String(value) : value.toLocaleString('sv-SE'));
 
   if (current === null || previous === null) {
-    return <ValueCard title={title} value="Otillräckliga data" actual />;
+    return (
+      <div className="rounded-xl border border-white/5 bg-black/20 p-3">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{title}</p>
+        <p className="mt-2 text-sm font-semibold text-zinc-400">Otillräckliga data</p>
+      </div>
+    );
   }
 
   const difference = Number((current - previous).toFixed(2));
   const unchanged = difference === 0;
 
-  const result = unchanged ? 'Oförändrat' : `${difference > 0 ? '+' : '−'}${formatValue(Math.abs(difference))} ${unit}`;
+  const improved = higherIsBetter ? difference > 0 : difference < 0;
+
+  const status = unchanged
+    ? {
+        label: 'Oförändrat',
+        color: 'text-zinc-300',
+        icon: '—',
+      }
+    : {
+        label: improved ? 'Förbättring' : 'Lägre resultat',
+        color: improved ? 'text-emerald-400' : 'text-amber-400',
+        icon: improved ? '↑' : '↓',
+      };
 
   return (
     <div className="rounded-xl border border-white/5 bg-black/20 p-3">
       <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">{title}</p>
 
-      <p className={`mt-1.5 text-sm font-bold ${unchanged ? 'text-zinc-300' : difference > 0 ? 'text-emerald-400' : 'text-amber-400'}`}>{result}</p>
+      <p className={`mt-2 text-sm font-bold ${status.color}`}>
+        {status.icon} {status.label}
+      </p>
+
+      <p className="mt-2 text-sm text-zinc-300">
+        Skillnad: {unchanged ? '0' : `${difference > 0 ? '+' : '−'}${formatValue(Math.abs(difference))}`} {unit}
+      </p>
 
       <p className="mt-1 text-xs text-zinc-500">
         Nu: {formatValue(current)} {unit}
