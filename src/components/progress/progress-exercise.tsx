@@ -243,20 +243,24 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                   </div>
 
                   <div className="mt-8">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">Träningshistorik</h3>
+                    <div className="mb-5">
+                      <h3 className="text-lg font-semibold text-white">Träningshistorik</h3>
+                      <p className="mt-1 text-sm text-zinc-500">Dina resultat och set för varje träningsdag.</p>
+                    </div>
 
-                        <p className="mt-1 text-sm text-zinc-500">Dina registrerade resultat per träningsdag.</p>
+                    <div className="mb-5 grid grid-cols-2 gap-3">
+                      <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+                        <p className="text-sm text-zinc-400">Träningsdagar</p>
+                        <p className="mt-2 text-2xl font-bold text-white">{trainingDays}</p>
                       </div>
 
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-white">{trainingDays}</p>
-                        <p className="text-xs text-zinc-500">Träningsdagar</p>
+                      <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+                        <p className="text-sm text-zinc-400">Totalt antal set</p>
+                        <p className="mt-2 text-2xl font-bold text-orange-400">{history.length}</p>
                       </div>
                     </div>
 
-                    <div className="mt-4 space-y-4">
+                    <div className="space-y-4">
                       {Array.from(
                         history.reduce((groups, entry) => {
                           const dateKey = new Date(entry.loggedAt).toLocaleDateString('sv-SE');
@@ -270,45 +274,63 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                       )
                         .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
                         .map(([dateKey, entries]) => (
-                          <div key={dateKey} className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50">
-                            <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
-                              <h4 className="font-semibold text-white">
-                                {new Date(`${dateKey}T12:00:00`).toLocaleDateString('sv-SE', {
-                                  day: 'numeric',
-                                  month: 'long',
-                                  year: 'numeric',
-                                })}
-                              </h4>
+                          <div key={dateKey} className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/40 transition-colors hover:border-zinc-700">
+                            <div className="flex items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-900/70 px-4 py-4 sm:px-5">
+                              <div>
+                                <h4 className="font-semibold text-white">
+                                  {new Date(`${dateKey}T12:00:00`).toLocaleDateString('sv-SE', {
+                                    weekday: 'short',
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric',
+                                  })}
+                                </h4>
+                                <p className="mt-1 text-xs text-zinc-500">
+                                  {entries.length} {entries.length === 1 ? 'set registrerat' : 'set registrerade'}
+                                </p>
+                              </div>
 
-                              <span className="rounded-lg bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300">{entries.length} set</span>
+                              <span className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-orange-500/20 bg-orange-500/10 px-3 py-2 text-sm font-semibold text-orange-300">
+                                <Repeat2 className="h-4 w-4" />
+                                {entries.length} set
+                              </span>
                             </div>
 
                             <div className="divide-y divide-zinc-800/70">
                               {entries.map((entry, index) => {
                                 const isWeightRecord = newWeightRecords.has(entry);
-
                                 const isRepsRecord = newRepsRecords.has(entry);
 
                                 return (
-                                  <div key={`${entry.loggedAt}-${index}`} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-                                    <div>
-                                      <p className="font-medium text-white">{isPlank ? `${entry.seconds ?? 0} sekunder` : `${entry.weight} kg × ${entry.reps} reps`}</p>
+                                  <div
+                                    key={`${entry.loggedAt}-${index}`}
+                                    className="flex items-center justify-between gap-3 px-4 py-4 transition-colors hover:bg-zinc-800/20 sm:px-5"
+                                  >
+                                    <div className="flex min-w-0 items-center gap-3">
+                                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/80 text-sm font-semibold text-zinc-300">
+                                        {index + 1}
+                                      </div>
 
-                                      <p className="mt-1 text-xs text-zinc-500">Set {index + 1}</p>
+                                      <div className="min-w-0">
+                                        <p className="font-semibold text-white">
+                                          {isPlank ? `${entry.seconds ?? 0} sekunder` : `${entry.weight ?? 0} kg × ${entry.reps} reps`}
+                                        </p>
+                                        <p className="mt-1 text-xs text-zinc-500">Set {index + 1}</p>
+                                      </div>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-2">
+                                    <div className="flex shrink-0 flex-col items-end gap-2">
                                       {!isPlank && isWeightRecord && (
                                         <span className="rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-300">
                                           <TrendingUp className="mr-1 inline h-3 w-3" />
-                                          Nytt viktrekord
+                                          Viktrekord
                                         </span>
                                       )}
 
                                       {!isPlank && isRepsRecord && (
                                         <span className="rounded-md bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-300">
                                           <Repeat2 className="mr-1 inline h-3 w-3" />
-                                          Nytt repsrekord
+                                          Repsrekord
                                         </span>
                                       )}
                                     </div>
