@@ -50,6 +50,20 @@ GymTracker is a full-stack workout tracking application built with Next.js, Reac
 | Vercel | Application hosting and deployment |
 | Vercel Blob | Exercise image storage |
 
+## 📸 Screenshots
+
+### 🏠 Dashboard
+![GymTracker Dashboard](./screenshots/Dashboard.png)
+
+### 💪 Exercise Management
+![Exercise Management](./screenshots/Exericses.png)
+
+### ⚖️ Weight Tracking
+![Weight Tracking](./screenshots/WeightLog.png)
+
+### 🏋️ Workout Details
+![Workout Details](./screenshots/Workout-item.png)
+
 ## Prerequisites
 
 Install the following before setting up the project:
