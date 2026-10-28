@@ -16,48 +16,49 @@
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" />
   <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
 </p>
+
+---
+
+## 📑 Table of Contents
+
+- [✨ Features](#features)
+- [🛠️ Technology Stack](#technology-stack)
+- [📋 Prerequisites](#prerequisites)
+- [🚀 Getting Started](#getting-started)
+- [🔐 Environment Variables](#environment-variables)
+- [🗄️ Database Setup](#database-setup)
+- [🔄 Database Migrations](#database-migrations)
+- [📦 Baseline SQL](#baseline-sql)
+- [💻 Available Scripts](#available-scripts)
+- [📁 Project Structure](#project-structure)
+- [☁️ Deployment](#deployment)
+- [🔍 Troubleshooting](#troubleshooting)
+- [📸 Screenshots](#screenshots)
+- [📄 License](#license)
 
 ---
 
 ## ✨ Features
 
+- 🔐 User registration and authentication
+- 🛡️ Protected application routes
+- 🏋️ Workout creation and management
+- 💪 Exercise management and exercise images
+- 📅 Workout scheduling
+- ⏱️ Workout sessions and exercise tracking
+- 🔢 Tracking of repetitions, sets, and duration
+- 📊 Dashboard with weekly training information
+- 📜 Workout history
+- 📈 Progress tracking
+- ⚖️ Weight and calorie logging
+- 🗄️ MySQL database with Prisma ORM
+- ✅ Server-side validation with Zod
+- 🧱 Service and repository architecture
+- 📱 Responsive user interface
 
-## Table of Contents
-
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Database Setup](#database-setup)
-- [Database Migrations](#database-migrations)
-- [Baseline SQL](#baseline-sql)
-- [Available Scripts](#available-scripts)
-- [Project Structure](#project-structure)
-- [Deployment](#deployment)
-- [Troubleshooting](#troubleshooting)
-- [Screenshots](#screenshots)
-
-## Features
-
-- User registration and authentication
-- Protected application routes
-- Workout creation and management
-- Exercise management and exercise images
-- Workout scheduling
-- Workout sessions and exercise tracking
-- Tracking of repetitions, sets, and duration
-- Dashboard with weekly training information
-- Workout history
-- Progress tracking
-- Weight and calorie logging
-- MySQL database with Prisma ORM
-- Server-side validation with Zod
-- Service and repository architecture
-- Responsive user interface
-
-## Technology Stack
+## 🛠️ Technology Stack
 
 | Technology | Purpose |
 | --- | --- |
@@ -71,7 +72,7 @@
 | Vercel | Application hosting and deployment |
 | Vercel Blob | Exercise image storage |
 
-## Prerequisites
+## 📋 Prerequisites
 
 Install the following before setting up the project:
 
@@ -83,7 +84,9 @@ Install the following before setting up the project:
 
 A code editor such as Visual Studio Code is recommended.
 
-## Getting Started
+## 🚀 Getting Started
+
+Follow these steps to set up GymTracker locally.
 
 ### 1. Clone the repository
 
@@ -124,7 +127,7 @@ CREATE DATABASE gymtracker_local;
 
 Configure `DATABASE_URL` in `.env` to point to this database.
 
-**Important:** Use a local development database for development and testing. Do not point your local environment at the production database unless you have a specific, approved reason to do so.
+> **Important:** Use a local development database for development and testing. Do not point your local environment at the production database unless you have a specific, approved reason to do so.
 
 ### 5. Apply database migrations
 
@@ -154,7 +157,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Environment Variables
+## 🔐 Environment Variables
 
 The application requires environment variables for database access and may require additional configuration for authentication, image storage, and deployment.
 
@@ -178,7 +181,7 @@ A local `.env.production.local` file is not automatically uploaded to Vercel. Ch
 
 Never include real credentials in this README.
 
-## Database Setup
+## 🗄️ Database Setup
 
 The project uses Prisma ORM with a MySQL-compatible database.
 
@@ -214,7 +217,7 @@ npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma 
 
 This generates SQL representing the schema. It does not apply the SQL to a database.
 
-## Database Migrations
+## 🔄 Database Migrations
 
 All committed database changes must be represented in the active Prisma migration history.
 
@@ -282,7 +285,7 @@ Do not run `npx prisma migrate reset` against a database containing data that mu
 - Do not manually apply SQL and then assume Prisma's migration history has been updated.
 - Use a separate test database when verifying migration changes.
 
-## Baseline SQL
+## 📦 Baseline SQL
 
 A separate baseline SQL snapshot is stored in:
 
@@ -313,7 +316,7 @@ Do not manually apply the baseline SQL and then run the entire existing migratio
 
 The baseline snapshot is retained as a separate reference and is not a replacement for the active migration history.
 
-## Available Scripts
+## 💻 Available Scripts
 
 | Command | Description |
 | --- | --- |
@@ -322,7 +325,7 @@ The baseline snapshot is retained as a separate reference and is not a replaceme
 | `npm run start` | Start the production server |
 | `npm run lint` | Run ESLint |
 
-## Project Structure
+## 📁 Project Structure
 
 The project uses a layered architecture to separate routing, business logic, data access, and validation.
 
@@ -360,7 +363,7 @@ This is a high-level overview. Exact file and directory names may differ as the 
 - **Prisma:** Database schema and migration history.
 - **Public assets and Blob storage:** Exercise images and other static or uploaded media.
 
-## Deployment
+## ☁️ Deployment
 
 The application is deployed using Vercel.
 
@@ -377,7 +380,7 @@ A successful application build does not, by itself, prove that the database migr
 
 Do not assume that Vercel automatically runs `prisma migrate deploy` unless that behavior has been configured and verified in the deployment process.
 
-## Troubleshooting
+## 🔍 Troubleshooting
 
 ### Prisma cannot connect to the database
 
@@ -421,17 +424,21 @@ Use a separate test database to reproduce the issue where possible.
 ## 📸 Screenshots
 
 ### 🏠 Dashboard
+
 ![GymTracker Dashboard](./screenshots/Dashboard.png)
 
 ### 💪 Exercise Management
+
 ![Exercise Management](./screenshots/Exericses.png)
 
 ### ⚖️ Weight Tracking
+
 ![Weight Tracking](./screenshots/WeightLog.png)
 
 ### 🏋️ Workout Details
+
 ![Workout Details](./screenshots/Workout-item.png)
 
-## License
+## 📄 License
 
 Add license information here if the project is distributed under a specific license.
