@@ -1,127 +1,129 @@
-# 🏋️ GymTracker
-
-GymTracker is a full-stack fitness tracking application built with Next.js, TypeScript, Prisma and MySQL.
-
-The application allows users to manage their fitness goals, workouts and workout sessions while tracking their progress over time.
-
-## Database migrations
-
-GymTracker uses Prisma ORM with MySQL.
-
-### Existing databases
-
-The local MySQL database and the TiDB Cloud production database use the existing migration history in `prisma/migrations`. Keep these migrations available so Prisma can validate the migration history of existing databases.
-
-### Baseline migration
-
-A baseline SQL file is being prepared under `prisma/migrations-baseline`. It has been tested against a separate database, and its schema matches `prisma/schema.prisma`.
-
-The baseline is not yet the active Prisma migration directory. Do not replace the existing migrations or mark the baseline as applied in an existing database until the transition has been verified.
-
-### Creating future migrations
-
-After changing `prisma/schema.prisma`, create and test a migration against the local development database:
-
-```bash
-npx prisma migrate dev --name describe_your_change
-```
-
-Deploy approved migrations to the production database using:
+Run the following command to apply the existing migrations to the database:
 
 ```bash
 npx prisma migrate deploy
 ```
 
-Always verify the target database and take an appropriate backup before applying migrations. Never use `prisma migrate reset` on a database containing data that must be preserved.
+This applies migrations from `prisma/migrations` in chronological order. The active migration history has been tested against a clean database, and its resulting schema has been verified against `prisma/schema.prisma`.
 
-## ✨ Features
+### 6. Generate Prisma Client
 
-- 🔐 User authentication
-- 👤 User profile and settings
-- 🎯 Fitness goals
-- 🏋️ Workout management
-- 📅 Workout scheduling
-- 📊 Dashboard with weekly overview
-- ✅ Workout session tracking
-- 📈 Progress tracking
-- 🔒 Protected routes with middleware
-- 🗄️ MySQL database with Prisma ORM
-- 🔌 REST API endpoints
-- 🧩 Service and repository architecture
-- 📱 Responsive UI
+```bash
+npx prisma generate
+```
 
-## 📸 Screenshots
+### 7. Start the development server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Database Migrations
+
+The active Prisma migration directory is:
+
+```text
+prisma/migrations/
+```
+
+### Creating a migration
+
+After changing `prisma/schema.prisma`, create and test a migration against your local development database:
+
+```bash
+npx prisma migrate dev --name describe_your_change
+```
+
+Review the generated migration SQL and test the application before committing the changes.
+
+### Deploying migrations
+
+Apply approved migrations to the intended database using:
+
+```bash
+npx prisma migrate deploy
+```
+
+For production, configure the database connection through your deployment platform's environment variables. Vercel uses its configured environment variables; a local `.env.production.local` file is not automatically uploaded to Vercel.
+
+Always verify the target database and back up any database containing data that must be preserved.
+
+Never run `npx prisma migrate reset` on a database containing data that must be preserved.
+
+## Baseline SQL
+
+A separate baseline SQL snapshot is stored under:
+
+```text
+prisma/migrations-baseline/
+```
+
+This snapshot has been tested against a separate database, and its schema matches `prisma/schema.prisma`.
+
+The baseline directory is not the active Prisma migration directory. It is not applied by `npx prisma migrate deploy`.
+
+For a normal fresh installation, use the active migrations as described above.
+
+Do not manually apply the baseline SQL and then run the full migration history against the same database without first establishing a proper Prisma baseline procedure. Doing so can cause migration conflicts.
+
+Existing databases must retain their migration history in `prisma/migrations`.
+
+## Available Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Generate Prisma Client and build the Next.js application |
+| `npm run start` | Start the production server |
+| `npm run lint` | Run ESLint |
+
+## Features
+
+- Workout management
+- Workout scheduling
+- Dashboard with weekly overview
+- Workout session tracking
+- Progress tracking
+- Protected routes and authentication
+- MySQL database with Prisma ORM
+- API endpoints
+- Service and repository architecture
+- Responsive user interface
+
+## Architecture
+
+The application follows a layered architecture separating API routes, services, repositories and data models.
+
+```text
+app/
+  api/
+    auth/
+    workouts/
+    workout-sessions/
+  dashboard/
+  login/
+  register/
+
+services-server/
+repositories/
+types/
+schemas/
+prisma/
+  schema.prisma
+  migrations/
+  migrations-baseline/
+```
+
+## Screenshots
 
 <p align="center">
   <img src="./screenshots/Dashboard.png" width="48%" />
   <img src="./screenshots/WeightLog.png" width="48%" />
 </p>
-<br />
+
 <p align="center">
   <img src="./screenshots/Exericses.png" width="48%" />
   <img src="./screenshots/Workout-item.png" width="48%" />
 </p>
-
-## 🛠️ Tech Stack
-
-### Frontend
-
-- Next.js
-- React
-- TypeScript
-- CSS Modules
-- React Icons
-
-### Backend
-
-- Next.js API Routes
-- TypeScript
-- Prisma ORM
-- MySQL
-- JWT authentication
-
-### Development
-
-- Node.js
-- npm
-- Git
-- GitHub
-
-## 🏗️ Architecture
-
-The project follows a layered architecture separating API routes, services, repositories and data models.
-
-```text
-app/
-├── api/
-│   ├── auth/
-│   ├── workouts/
-│   ├── workout-sessions/
-│   └── ...
-│
-├── dashboard/
-├── login/
-└── register/
-
-services-server/
-├── auth-service.ts
-├── workout-service.ts
-├── workout-session-service.ts
-└── ...
-
-repositories/
-├── auth-repository.ts
-├── workout-repository.ts
-├── workout-session-repository.ts
-└── ...
-
-types/
-├── api-types.ts
-├── user-types.ts
-├── workout-types.ts
-└── ...
-
-schemas/
-├── auth-schemas.ts
-└── ...
-```
