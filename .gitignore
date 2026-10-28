@@ -44,3 +44,13 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Prisma baseline work: local backups and temporary test files
+/backups/
+/prisma/migrations-backup-*/
+/prisma/migrations-baseline-test-copy/
+/prisma/migrations-baseline-verify/
+/prisma/migrations-test/
+/prisma/baseline-review.sql
+/prisma/baseline-test-expected.sql
+/prisma/schema.baseline-test.prisma
