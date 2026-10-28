@@ -27,5 +27,6 @@ export interface ExerciseProgress {
 export interface ExerciseProgressEntry {
   weight: number;
   reps: number;
+  seconds?: number;
   loggedAt: string;
 }

@@ -1,4 +1,3 @@
-//Prisma
 import { prisma } from '@/lib/prisma';
 
 export class ProgressRepository {
@@ -70,6 +69,8 @@ export class ProgressRepository {
               select: {
                 actualReps: true,
                 actualWeight: true,
+                actualSeconds: true,
+                completed: true,
               },
             },
           },

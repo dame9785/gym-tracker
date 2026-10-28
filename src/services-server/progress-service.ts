@@ -29,10 +29,30 @@ export default class ProgressService {
           const exerciseProgress = exerciseMap.get(exercise.id)!;
 
           for (const set of sessionExercise.sets) {
-            if (set.actualWeight !== null && set.actualReps !== null && session.finishedAt !== null) {
+            if (session.finishedAt === null) {
+              continue;
+            }
+
+            const isPlank = /plank/i.test(exercise.name);
+
+            // Plankan använder sekunder. Övriga övningar använder
+            // vikt och repetitioner.
+            if (isPlank) {
+              exerciseProgress.history.push({
+                weight: set.actualWeight ?? 0,
+                reps: set.actualReps ?? 0,
+                seconds: set.actualSeconds ?? 0,
+                loggedAt: session.finishedAt.toISOString(),
+              });
+
+              continue;
+            }
+
+            if (set.actualWeight !== null && set.actualReps !== null) {
               exerciseProgress.history.push({
                 weight: set.actualWeight,
                 reps: set.actualReps,
+                seconds: set.actualSeconds ?? 0,
                 loggedAt: session.finishedAt.toISOString(),
               });
             }

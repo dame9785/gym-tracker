@@ -39,7 +39,7 @@ export default async function ProgressPage() {
         />
       )}
 
-      <ExerciseProgress exerciseProgress={response.data.exerciseProgress} />
+      <ExerciseProgress exerciseProgress={response.data.exerciseProgress} metric="weight" />
     </main>
   );
 }
