@@ -188,6 +188,7 @@ export async function loginUserAction(dto: LoginDto): Promise<UserActionResult<{
       },
     };
   } catch (error: unknown) {
+    console.error('[loginUserAction] Login failed:', error);
     return {
       success: false,
       message: getErrorMessage(error),
