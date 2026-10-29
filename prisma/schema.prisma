@@ -171,6 +171,7 @@ model WorkoutSession {
   id         Int                  @id @default(autoincrement())
   userId     Int
   workoutId  Int
+  activeKey  String?              @unique @db.VarChar(191)
   startedAt  DateTime             @default(now())
   finishedAt DateTime?
   status     WorkoutSessionStatus @default(ACTIVE)

@@ -6,18 +6,8 @@ import { WorkoutRepository } from './workout-repository';
 
 export class WorkoutSessionRepository {
   private workoutRepository = new WorkoutRepository();
-  async create(workoutId: number, userId: number) {
-    const activeSession = await prisma.workoutSession.findFirst({
-      where: {
-        userId,
-        workoutId,
-        status: 'ACTIVE',
-      },
-    });
 
-    if (activeSession) {
-      return activeSession;
-    }
+  async create(workoutId: number, userId: number) {
     const workout = await this.workoutRepository.getById(workoutId, userId);
 
     if (!workout) {
@@ -28,43 +18,75 @@ export class WorkoutSessionRepository {
       throw new Error('Workout innehåller inga övningar.');
     }
 
-    return await prisma.$transaction(async (tx) => {
-      const workoutSession = await tx.workoutSession.create({
-        data: {
-          userId,
-          workoutId,
-        },
-      });
+    const activeKey = `${userId}:${workoutId}`;
 
-      for (const workoutExercise of workout.exercises) {
-        const sessionExercise = await tx.workoutSessionExercise.create({
+    // Snabb kontroll innan vi försöker skapa en ny session.
+    const existingSession = await prisma.workoutSession.findFirst({
+      where: {
+        userId,
+        workoutId,
+        status: 'ACTIVE',
+      },
+    });
+
+    if (existingSession) {
+      return existingSession;
+    }
+
+    try {
+      return await prisma.$transaction(async (tx) => {
+        const workoutSession = await tx.workoutSession.create({
           data: {
-            workoutSessionId: workoutSession.id,
-            workoutExerciseId: workoutExercise.id,
-            order: workoutExercise.order,
+            userId,
+            workoutId,
+            activeKey,
           },
         });
 
-        for (let setNumber = 1; setNumber <= workoutExercise.sets; setNumber++) {
-          await tx.workoutSessionSet.create({
+        for (const workoutExercise of workout.exercises) {
+          const sessionExercise = await tx.workoutSessionExercise.create({
             data: {
-              workoutSessionExerciseId: sessionExercise.id,
-              setNumber,
-
-              targetReps: workoutExercise.reps ?? 0,
-              targetSeconds: workoutExercise.seconds ?? null,
-              targetWeight: workoutExercise.weight,
-
-              actualReps: null,
-              actualSeconds: null,
-              actualWeight: null,
+              workoutSessionId: workoutSession.id,
+              workoutExerciseId: workoutExercise.id,
+              order: workoutExercise.order,
             },
           });
+
+          for (let setNumber = 1; setNumber <= workoutExercise.sets; setNumber++) {
+            await tx.workoutSessionSet.create({
+              data: {
+                workoutSessionExerciseId: sessionExercise.id,
+                setNumber,
+                targetReps: workoutExercise.reps ?? 0,
+                targetSeconds: workoutExercise.seconds ?? null,
+                targetWeight: workoutExercise.weight,
+                actualReps: null,
+                actualSeconds: null,
+                actualWeight: null,
+              },
+            });
+          }
         }
+
+        return workoutSession;
+      });
+    } catch (error) {
+      // Ett parallellt anrop kan ha hunnit skapa sessionen först.
+      const activeSession = await prisma.workoutSession.findFirst({
+        where: {
+          userId,
+          workoutId,
+          status: 'ACTIVE',
+          activeKey,
+        },
+      });
+
+      if (activeSession) {
+        return activeSession;
       }
 
-      return workoutSession;
-    });
+      throw error;
+    }
   }
 
   async getById(id: number, userId: number) {
@@ -153,6 +175,7 @@ export class WorkoutSessionRepository {
         data: {
           status: 'COMPLETED',
           finishedAt: new Date(),
+          activeKey: null,
         },
       });
 
@@ -192,6 +215,7 @@ export class WorkoutSessionRepository {
       },
       data: {
         status: 'NOTCOMPLETED',
+        activeKey: null,
       },
     });
 
@@ -303,30 +327,6 @@ export class WorkoutSessionRepository {
             },
           },
         },
-      },
-    });
-  }
-  async debugCompletedSessions(userId: number) {
-    return prisma.workoutSession.findMany({
-      where: {
-        userId,
-        status: 'COMPLETED',
-      },
-      select: {
-        id: true,
-        workoutId: true,
-        userId: true,
-        status: true,
-        startedAt: true,
-        finishedAt: true,
-        workout: {
-          select: {
-            name: true,
-          },
-        },
-      },
-      orderBy: {
-        finishedAt: 'desc',
       },
     });
   }
