@@ -1,0 +1,1089 @@
+{
+  "@img/colour@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lovell/colour",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@img\\colour",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@img\\colour\\LICENSE.md"
+  },
+  "@img/sharp-win32-x64@0.34.5": {
+    "licenses": "Apache-2.0 AND LGPL-3.0-or-later",
+    "repository": "https://github.com/lovell/sharp",
+    "publisher": "Lovell Fuller",
+    "email": "npm@lovell.info",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@img\\sharp-win32-x64",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@img\\sharp-win32-x64\\LICENSE"
+  },
+  "@next/env@16.2.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/next.js",
+    "publisher": "Next.js Team",
+    "email": "support@vercel.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@next\\env",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@next\\env\\README.md"
+  },
+  "@next/swc-win32-x64-msvc@16.2.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/next.js",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@next\\swc-win32-x64-msvc",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@next\\swc-win32-x64-msvc\\README.md"
+  },
+  "@prisma/client@6.19.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/prisma/prisma",
+    "publisher": "Tim Suchanek",
+    "email": "suchanek@prisma.io",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\client",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\client\\LICENSE"
+  },
+  "@prisma/config@6.19.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/prisma/prisma",
+    "publisher": "Alberto Schiabel",
+    "email": "schiabel@prisma.io",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\config",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\config\\LICENSE"
+  },
+  "@prisma/debug@6.19.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/prisma/prisma",
+    "publisher": "Tim Suchanek",
+    "email": "suchanek@prisma.io",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\engines\\node_modules\\@prisma\\debug",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\engines\\node_modules\\@prisma\\debug\\LICENSE"
+  },
+  "@prisma/engines-version@7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/prisma/engines-wrapper",
+    "publisher": "Tim Suchanek",
+    "email": "suchanek@prisma.io",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\engines-version",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\engines-version\\LICENSE"
+  },
+  "@prisma/engines@6.19.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/prisma/prisma",
+    "publisher": "Tim Suchanek",
+    "email": "suchanek@prisma.io",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\engines",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\engines\\LICENSE"
+  },
+  "@prisma/fetch-engine@6.19.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/prisma/prisma",
+    "publisher": "Tim Suchanek",
+    "email": "suchanek@prisma.io",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\fetch-engine",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\fetch-engine\\LICENSE"
+  },
+  "@prisma/get-platform@6.19.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/prisma/prisma",
+    "publisher": "Tim Suchanek",
+    "email": "suchanek@prisma.io",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\get-platform",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@prisma\\get-platform\\LICENSE"
+  },
+  "@reduxjs/toolkit@2.12.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/reduxjs/redux-toolkit",
+    "publisher": "Mark Erikson",
+    "email": "mark@isquaredsoftware.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@reduxjs\\toolkit",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@reduxjs\\toolkit\\LICENSE"
+  },
+  "@standard-schema/spec@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/standard-schema/standard-schema",
+    "publisher": "Colin McDonnell",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@standard-schema\\spec",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@standard-schema\\spec\\LICENSE"
+  },
+  "@standard-schema/utils@0.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/standard-schema/standard-schema",
+    "publisher": "Fabian Hiller",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@standard-schema\\utils",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@standard-schema\\utils\\LICENSE"
+  },
+  "@swc/helpers@0.5.15": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/swc-project/swc",
+    "publisher": "강동윤",
+    "email": "kdy1997.dev@gmail.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@swc\\helpers",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@swc\\helpers\\LICENSE"
+  },
+  "@types/d3-array@3.2.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-array",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-array\\LICENSE"
+  },
+  "@types/d3-color@3.1.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-color",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-color\\LICENSE"
+  },
+  "@types/d3-ease@3.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-ease",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-ease\\LICENSE"
+  },
+  "@types/d3-interpolate@3.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-interpolate",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-interpolate\\LICENSE"
+  },
+  "@types/d3-path@3.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-path",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-path\\LICENSE"
+  },
+  "@types/d3-scale@4.0.9": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-scale",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-scale\\LICENSE"
+  },
+  "@types/d3-shape@3.1.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-shape",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-shape\\LICENSE"
+  },
+  "@types/d3-time@3.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-time",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-time\\LICENSE"
+  },
+  "@types/d3-timer@3.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-timer",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\d3-timer\\LICENSE"
+  },
+  "@types/react@19.2.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\react",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\react\\LICENSE"
+  },
+  "@types/use-sync-external-store@0.0.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\use-sync-external-store",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@types\\use-sync-external-store\\LICENSE"
+  },
+  "@vercel/blob@2.8.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/vercel/storage",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@vercel\\blob",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@vercel\\blob\\license.md"
+  },
+  "@vercel/cli-config@0.3.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/vercel/vercel",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@vercel\\cli-config",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@vercel\\cli-config\\LICENSE"
+  },
+  "@vercel/cli-exec@1.0.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/vercel/vercel",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@vercel\\cli-exec",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@vercel\\cli-exec\\LICENSE"
+  },
+  "@vercel/oidc@3.8.10": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/vercel/vercel",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@vercel\\oidc",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@vercel\\oidc\\LICENSE"
+  },
+  "async-retry@1.3.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/async-retry",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\async-retry",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\async-retry\\LICENSE.md"
+  },
+  "baseline-browser-mapping@2.10.42": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/web-platform-dx/baseline-browser-mapping",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\baseline-browser-mapping",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\baseline-browser-mapping\\LICENSE.txt"
+  },
+  "bcryptjs@3.0.3": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/bcrypt.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode@dcode.io",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\bcryptjs",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\bcryptjs\\LICENSE"
+  },
+  "buffer-equal-constant-time@1.0.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/goinstant/buffer-equal-constant-time",
+    "publisher": "GoInstant Inc., a salesforce.com company",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\buffer-equal-constant-time",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\buffer-equal-constant-time\\LICENSE.txt"
+  },
+  "c12@3.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/c12",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\c12",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\c12\\LICENSE"
+  },
+  "caniuse-lite@1.0.30001802": {
+    "licenses": "CC-BY-4.0",
+    "repository": "https://github.com/browserslist/caniuse-lite",
+    "publisher": "Ben Briggs",
+    "email": "beneb.info@gmail.com",
+    "url": "http://beneb.info",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\caniuse-lite",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\caniuse-lite\\LICENSE"
+  },
+  "chokidar@4.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/paulmillr/chokidar",
+    "publisher": "Paul Miller",
+    "url": "https://paulmillr.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\chokidar",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\chokidar\\LICENSE"
+  },
+  "citty@0.1.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/citty",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\citty",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\citty\\LICENSE"
+  },
+  "citty@0.2.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/citty",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\nypm\\node_modules\\citty",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\nypm\\node_modules\\citty\\LICENSE"
+  },
+  "client-only@0.0.1": {
+    "licenses": "MIT",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\client-only"
+  },
+  "clsx@2.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lukeed/clsx",
+    "publisher": "Luke Edwards",
+    "email": "luke.edwards05@gmail.com",
+    "url": "https://lukeed.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\clsx",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\clsx\\license"
+  },
+  "confbox@0.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/confbox",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\confbox",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\confbox\\LICENSE"
+  },
+  "consola@3.4.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/consola",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\consola",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\consola\\LICENSE"
+  },
+  "cross-spawn@7.0.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/moxystudio/node-cross-spawn",
+    "publisher": "André Cruz",
+    "email": "andre@moxy.studio",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\cross-spawn",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\cross-spawn\\LICENSE"
+  },
+  "csstype@3.2.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/frenic/csstype",
+    "publisher": "Fredrik Nicol",
+    "email": "fredrik.nicol@gmail.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\csstype",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\csstype\\LICENSE"
+  },
+  "d3-array@3.2.4": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-array",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-array",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-array\\LICENSE"
+  },
+  "d3-color@3.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-color",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-color",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-color\\LICENSE"
+  },
+  "d3-ease@3.0.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/d3/d3-ease",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-ease",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-ease\\LICENSE"
+  },
+  "d3-format@3.1.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-format",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-format",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-format\\LICENSE"
+  },
+  "d3-interpolate@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-interpolate",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-interpolate",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-interpolate\\LICENSE"
+  },
+  "d3-path@3.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-path",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-path",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-path\\LICENSE"
+  },
+  "d3-scale@4.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-scale",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-scale",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-scale\\LICENSE"
+  },
+  "d3-shape@3.2.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-shape",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-shape",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-shape\\LICENSE"
+  },
+  "d3-time-format@4.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-time-format",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-time-format",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-time-format\\LICENSE"
+  },
+  "d3-time@3.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-time",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-time",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-time\\LICENSE"
+  },
+  "d3-timer@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-timer",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-timer",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\d3-timer\\LICENSE"
+  },
+  "decimal.js-light@2.5.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/MikeMcl/decimal.js-light",
+    "publisher": "Michael Mclaughlin",
+    "email": "M8ch88l@gmail.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\decimal.js-light",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\decimal.js-light\\LICENCE.md"
+  },
+  "deepmerge-ts@7.1.5": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/RebeccaStevens/deepmerge-ts",
+    "publisher": "Rebecca Stevens",
+    "email": "rebecca.stevens@outlook.co.nz",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\deepmerge-ts",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\deepmerge-ts\\LICENSE"
+  },
+  "defu@6.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/defu",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\defu",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\defu\\LICENSE"
+  },
+  "destr@2.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/destr",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\destr",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\destr\\LICENSE"
+  },
+  "detect-libc@2.1.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/lovell/detect-libc",
+    "publisher": "Lovell Fuller",
+    "email": "npm@lovell.info",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\detect-libc",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\detect-libc\\LICENSE"
+  },
+  "dotenv@16.6.1": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/motdotla/dotenv",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\dotenv",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\dotenv\\LICENSE"
+  },
+  "ecdsa-sig-formatter@1.0.11": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/Brightspace/node-ecdsa-sig-formatter",
+    "publisher": "D2L Corporation",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\ecdsa-sig-formatter",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\ecdsa-sig-formatter\\LICENSE"
+  },
+  "effect@3.21.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Effect-TS/effect",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\effect",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\effect\\LICENSE"
+  },
+  "empathic@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lukeed/empathic",
+    "publisher": "Luke Edwards",
+    "email": "luke.edwards05@gmail.com",
+    "url": "https://lukeed.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\empathic",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\empathic\\license"
+  },
+  "es-toolkit@1.50.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/toss/es-toolkit",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\es-toolkit",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\es-toolkit\\LICENSE"
+  },
+  "eventemitter3@5.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/primus/eventemitter3",
+    "publisher": "Arnout Kazemier",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\eventemitter3",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\eventemitter3\\LICENSE"
+  },
+  "execa@5.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/execa",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\execa",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\execa\\license"
+  },
+  "exsolve@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/exsolve",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\exsolve",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\exsolve\\LICENSE"
+  },
+  "fast-check@3.23.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dubzzz/fast-check",
+    "publisher": "Nicolas DUBIEN",
+    "email": "github@dubien.org",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\fast-check",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\fast-check\\LICENSE"
+  },
+  "get-stream@6.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/get-stream",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\get-stream",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\get-stream\\license"
+  },
+  "giget@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/giget",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\giget",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\giget\\LICENSE"
+  },
+  "gym-tracker@0.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\LICENSE"
+  },
+  "human-signals@2.1.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/ehmicky/human-signals",
+    "publisher": "ehmicky",
+    "email": "ehmicky@gmail.com",
+    "url": "https://github.com/ehmicky",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\human-signals",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\human-signals\\LICENSE"
+  },
+  "immer@11.1.15": {
+    "licenses": "MIT",
+    "repository": "https://github.com/immerjs/immer",
+    "publisher": "Michel Weststrate",
+    "email": "info@michel.codes",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\immer",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\immer\\LICENSE"
+  },
+  "internmap@2.0.3": {
+    "licenses": "ISC",
+    "repository": "https://github.com/mbostock/internmap",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\internmap",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\internmap\\LICENSE"
+  },
+  "is-buffer@2.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/feross/is-buffer",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\is-buffer",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\is-buffer\\LICENSE"
+  },
+  "is-node-process@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mswjs/is-node-process",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\is-node-process",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\is-node-process\\README.md"
+  },
+  "is-stream@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/is-stream",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\is-stream",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\is-stream\\license"
+  },
+  "isexe@2.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/isexe",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\isexe",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\isexe\\LICENSE"
+  },
+  "jiti@2.7.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/jiti",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jiti",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jiti\\LICENSE"
+  },
+  "jose@5.10.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/panva/jose",
+    "publisher": "Filip Skokan",
+    "email": "panva.ip@gmail.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jose",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jose\\LICENSE.md"
+  },
+  "jsonwebtoken@9.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/auth0/node-jsonwebtoken",
+    "publisher": "auth0",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jsonwebtoken",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jsonwebtoken\\LICENSE"
+  },
+  "jwa@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianloveswords/node-jwa",
+    "publisher": "Brian J. Brennan",
+    "email": "brianloveswords@gmail.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jwa",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jwa\\LICENSE"
+  },
+  "jws@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianloveswords/node-jws",
+    "publisher": "Brian J Brennan",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jws",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jws\\LICENSE"
+  },
+  "lodash.includes@4.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.includes",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.includes\\LICENSE"
+  },
+  "lodash.isboolean@3.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.isboolean",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.isboolean\\LICENSE"
+  },
+  "lodash.isinteger@4.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.isinteger",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.isinteger\\LICENSE"
+  },
+  "lodash.isnumber@3.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.isnumber",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.isnumber\\LICENSE"
+  },
+  "lodash.isplainobject@4.0.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.isplainobject",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.isplainobject\\LICENSE"
+  },
+  "lodash.isstring@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.isstring",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.isstring\\LICENSE"
+  },
+  "lodash.once@4.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.once",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lodash.once\\LICENSE"
+  },
+  "lucide-react@1.26.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/lucide-icons/lucide",
+    "publisher": "Eric Fennis",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lucide-react",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\lucide-react\\LICENSE"
+  },
+  "merge-stream@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/grncdr/merge-stream",
+    "publisher": "Stephen Sugden",
+    "email": "me@stephensugden.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\merge-stream",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\merge-stream\\LICENSE"
+  },
+  "mimic-fn@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/mimic-fn",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\mimic-fn",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\mimic-fn\\license"
+  },
+  "ms@2.1.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/ms",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\ms",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\ms\\license.md"
+  },
+  "nanoid@3.3.15": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ai/nanoid",
+    "publisher": "Andrey Sitnik",
+    "email": "andrey@sitnik.ru",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\nanoid",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\nanoid\\LICENSE"
+  },
+  "next@16.2.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/next.js",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\next",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\next\\license.md"
+  },
+  "node-fetch-native@1.6.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/node-fetch-native",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\node-fetch-native",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\node-fetch-native\\LICENSE"
+  },
+  "npm-run-path@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/npm-run-path",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\npm-run-path",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\npm-run-path\\license"
+  },
+  "nypm@0.6.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/nypm",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\nypm",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\nypm\\LICENSE"
+  },
+  "ohash@2.0.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/ohash",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\ohash",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\ohash\\LICENSE"
+  },
+  "onetime@5.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/onetime",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\onetime",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\onetime\\license"
+  },
+  "os-paths@4.4.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rivy/js.os-paths",
+    "publisher": "Roy Ivy III",
+    "email": "rivy.dev@gmail.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\os-paths",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\os-paths\\LICENSE"
+  },
+  "path-key@3.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/path-key",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\path-key",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\path-key\\license"
+  },
+  "pathe@2.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/pathe",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\pathe",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\pathe\\LICENSE"
+  },
+  "perfect-debounce@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/perfect-debounce",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\perfect-debounce",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\perfect-debounce\\LICENSE"
+  },
+  "picocolors@1.1.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/alexeyraspopov/picocolors",
+    "publisher": "Alexey Raspopov",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\picocolors",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\picocolors\\LICENSE"
+  },
+  "pkg-types@2.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/pkg-types",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\pkg-types",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\pkg-types\\LICENSE"
+  },
+  "postcss@8.4.31": {
+    "licenses": "MIT",
+    "repository": "https://github.com/postcss/postcss",
+    "publisher": "Andrey Sitnik",
+    "email": "andrey@sitnik.ru",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\next\\node_modules\\postcss",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\next\\node_modules\\postcss\\LICENSE"
+  },
+  "prisma@6.19.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/prisma/prisma",
+    "publisher": "Tim Suchanek",
+    "email": "suchanek@prisma.io",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\prisma",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\prisma\\LICENSE"
+  },
+  "pure-rand@6.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dubzzz/pure-rand",
+    "publisher": "Nicolas DUBIEN",
+    "email": "github@dubien.org",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\pure-rand",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\pure-rand\\LICENSE"
+  },
+  "rc9@2.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/rc9",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\rc9",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\rc9\\LICENSE"
+  },
+  "react-dom@19.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\react-dom",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\react-dom\\LICENSE"
+  },
+  "react-icons@5.7.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/react-icons/react-icons",
+    "publisher": "Goran Gajic",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\react-icons",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\react-icons\\LICENSE"
+  },
+  "react-is@16.13.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\react-is",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\react-is\\LICENSE"
+  },
+  "react-redux@9.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/reduxjs/react-redux",
+    "publisher": "Dan Abramov",
+    "email": "dan.abramov@me.com",
+    "url": "https://github.com/gaearon",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\react-redux",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\react-redux\\LICENSE.md"
+  },
+  "react@19.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\react",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\react\\LICENSE"
+  },
+  "readdirp@4.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/paulmillr/readdirp",
+    "publisher": "Thorsten Lorenz",
+    "email": "thlorenz@gmx.de",
+    "url": "thlorenz.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\readdirp",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\readdirp\\LICENSE"
+  },
+  "recharts@3.10.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/recharts/recharts",
+    "publisher": "recharts group",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\recharts",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\recharts\\LICENSE"
+  },
+  "redux-thunk@3.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/reduxjs/redux-thunk",
+    "publisher": "Dan Abramov",
+    "email": "dan.abramov@me.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\redux-thunk",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\redux-thunk\\LICENSE.md"
+  },
+  "redux@5.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/reduxjs/redux",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\redux",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\redux\\LICENSE.md"
+  },
+  "reselect@5.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/reduxjs/reselect",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\reselect",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\reselect\\LICENSE"
+  },
+  "retry@0.13.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tim-kos/node-retry",
+    "publisher": "Tim Koschützki",
+    "email": "tim@debuggable.com",
+    "url": "http://debuggable.com/",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\retry",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\retry\\License"
+  },
+  "safe-buffer@5.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/feross/safe-buffer",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\safe-buffer",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\safe-buffer\\LICENSE"
+  },
+  "scheduler@0.27.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\scheduler",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\scheduler\\LICENSE"
+  },
+  "semver@7.8.5": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/node-semver",
+    "publisher": "GitHub Inc.",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jsonwebtoken\\node_modules\\semver",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\jsonwebtoken\\node_modules\\semver\\LICENSE"
+  },
+  "sharp@0.34.5": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/lovell/sharp",
+    "publisher": "Lovell Fuller",
+    "email": "npm@lovell.info",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\sharp",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\sharp\\LICENSE"
+  },
+  "shebang-command@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/shebang-command",
+    "publisher": "Kevin Mårtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "github.com/kevva",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\shebang-command",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\shebang-command\\license"
+  },
+  "shebang-regex@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/shebang-regex",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\shebang-regex",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\shebang-regex\\license"
+  },
+  "signal-exit@3.0.7": {
+    "licenses": "ISC",
+    "repository": "https://github.com/tapjs/signal-exit",
+    "publisher": "Ben Coe",
+    "email": "ben@npmjs.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\signal-exit",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\signal-exit\\LICENSE.txt"
+  },
+  "sonner@2.0.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/emilkowalski/sonner",
+    "publisher": "Emil Kowalski",
+    "email": "e@emilkowal.ski",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\sonner",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\sonner\\LICENSE.md"
+  },
+  "source-map-js@1.2.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/7rulnik/source-map-js",
+    "publisher": "Valentin 7rulnik Semirulnik",
+    "email": "v7rulnik@gmail.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\source-map-js",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\source-map-js\\LICENSE"
+  },
+  "strip-final-newline@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/strip-final-newline",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\strip-final-newline",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\strip-final-newline\\license"
+  },
+  "styled-jsx@5.1.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/styled-jsx",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\styled-jsx",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\styled-jsx\\license.md"
+  },
+  "throttleit@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/throttleit",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\throttleit",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\throttleit\\license"
+  },
+  "tiny-invariant@1.3.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/alexreardon/tiny-invariant",
+    "publisher": "Alex Reardon",
+    "email": "alexreardon@gmail.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\tiny-invariant",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\tiny-invariant\\LICENSE"
+  },
+  "tinyexec@1.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tinylibs/tinyexec",
+    "publisher": "James Garbutt",
+    "url": "https://github.com/43081j",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\tinyexec",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\tinyexec\\LICENSE"
+  },
+  "tslib@2.8.1": {
+    "licenses": "0BSD",
+    "repository": "https://github.com/Microsoft/tslib",
+    "publisher": "Microsoft Corp.",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\tslib",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\tslib\\LICENSE.txt"
+  },
+  "typescript@5.9.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/microsoft/TypeScript",
+    "publisher": "Microsoft Corp.",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\typescript",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\typescript\\LICENSE.txt"
+  },
+  "undici@6.29.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/undici",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\undici",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\undici\\LICENSE"
+  },
+  "use-sync-external-store@1.6.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\use-sync-external-store",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\use-sync-external-store\\LICENSE"
+  },
+  "victory-vendor@37.3.6": {
+    "licenses": "MIT AND ISC",
+    "repository": "https://github.com/FormidableLabs/victory",
+    "publisher": "Formidable",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\victory-vendor",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\victory-vendor\\README.md"
+  },
+  "which@2.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-which",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\which",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\which\\LICENSE"
+  },
+  "xdg-app-paths@5.5.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rivy/js.xdg-app-paths",
+    "publisher": "Roy Ivy III",
+    "email": "rivy.dev@gmail.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\xdg-app-paths",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\xdg-app-paths\\LICENSE"
+  },
+  "xdg-portable@7.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rivy/js.xdg-portable",
+    "publisher": "Roy Ivy III",
+    "email": "rivy.dev@gmail.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\xdg-portable",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\xdg-portable\\LICENSE"
+  },
+  "zod@4.1.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/colinhacks/zod",
+    "publisher": "Colin McDonnell",
+    "email": "zod@colinhacks.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@vercel\\cli-config\\node_modules\\zod",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\@vercel\\cli-config\\node_modules\\zod\\LICENSE"
+  },
+  "zod@4.6.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/colinhacks/zod",
+    "publisher": "Colin McDonnell",
+    "email": "zod@colinhacks.com",
+    "path": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\zod",
+    "licenseFile": "C:\\Users\\dame9\\Documents\\Projects\\gym-tracker\\node_modules\\zod\\LICENSE"
+  }
+}
