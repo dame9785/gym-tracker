@@ -1,14 +1,11 @@
 import { redirect } from 'next/navigation';
 
-// Components
 import WorkoutDetails from '@/components/workout/workout-details';
 import ErrorMessage from '@/components/ui/error-message';
 
-// Services
 import { WorkoutService } from '@/services-server/workout-service';
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
 
-// Auth
 import { requireAuth } from '@/lib/auth';
 import type { WorkoutSessionViewModel } from '@/types/workout-types';
 
@@ -20,9 +17,7 @@ interface PageProps {
 
 export default async function WorkoutPage({ params }: PageProps) {
   const { id } = await params;
-
   const user = await requireAuth();
-
   const workoutId = Number(id);
 
   if (!Number.isSafeInteger(workoutId) || workoutId <= 0) {
@@ -32,36 +27,37 @@ export default async function WorkoutPage({ params }: PageProps) {
   const workoutService = new WorkoutService();
   const workoutSessionService = new WorkoutSessionService();
 
-  const [response, sessionResponse] = await Promise.all([
-    workoutService.getById(workoutId, user.userId),
-    workoutSessionService.getLatestCompletedByWorkoutId(workoutId, user.userId),
-  ]);
+  let workout;
+  let sessionResponse;
 
-  if (!response.success || !response.data) {
+  try {
+    [workout, sessionResponse] = await Promise.all([
+      workoutService.getById(workoutId, user.userId),
+      workoutSessionService.getLatestCompletedByWorkoutId(workoutId, user.userId),
+    ]);
+  } catch {
     return (
       <main>
-        <ErrorMessage title="Unable to load workout" message={response.message ?? 'Something went wrong while loading your workout.'} />
+        <ErrorMessage title="Unable to load workout" message="Something went wrong while loading your workout." />
       </main>
     );
   }
 
-  const workout = response.data.workout;
-
-  const session = sessionResponse.success && sessionResponse.data ? sessionResponse.data : null;
+  const session = sessionResponse;
 
   let previousSessions: WorkoutSessionViewModel[] = [];
 
   if (session?.finishedAt) {
-    const previousSessionsResponse = await workoutSessionService.getPreviousCompletedSessions(user.userId, session.id, new Date(session.finishedAt));
-
-    if (previousSessionsResponse.success) {
-      previousSessions = previousSessionsResponse.data ?? [];
+    try {
+      previousSessions = await workoutSessionService.getPreviousCompletedSessions(user.userId, session.id, new Date(session.finishedAt));
+    } catch (error) {
+      console.error('Failed to load previous workout sessions:', error);
     }
   }
 
   return (
     <div className="container">
-      <WorkoutDetails workout={workout} session={session} previousSessions={previousSessions} />
+      <WorkoutDetails workout={workout.workout} session={session} previousSessions={previousSessions} />
     </div>
   );
 }

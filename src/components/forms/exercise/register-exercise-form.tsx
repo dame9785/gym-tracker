@@ -105,7 +105,9 @@ export default function RegisterForm() {
 
       if (!response.success) {
         if ('errors' in response && response.errors) {
-          setErrors(ErrorsHelper.getFormErrorsFromApi<RegisterExericseDto>(response.errors));
+          const definedErrors = Object.fromEntries(Object.entries(response.errors).filter((entry): entry is [string, string[]] => Array.isArray(entry[1])));
+
+          setErrors(ErrorsHelper.getFormErrorsFromApi<RegisterExericseDto>(definedErrors));
         }
 
         toast.error(response.message);

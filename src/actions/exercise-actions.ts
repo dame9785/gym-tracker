@@ -7,6 +7,8 @@ import { registerExerciseSchema, updateExerciseSchema } from '@/schemas/exercise
 import { put, del } from '@vercel/blob';
 import { randomUUID } from 'node:crypto';
 
+import type { ExerciseViewModel } from '@/types/exercise-types';
+
 const exerciseService = new ExerciseService();
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -19,6 +21,20 @@ const EXTENSION_BY_TYPE: Record<string, string> = {
   'image/webp': 'webp',
 };
 
+export interface ExerciseActionError {
+  success: false;
+  message: string;
+  errors?: Record<string, string[] | undefined>;
+}
+
+export interface ExerciseActionSuccess<T = undefined> {
+  success: true;
+  message?: string;
+  data?: T;
+}
+
+export type ExerciseActionResult<T = undefined> = ExerciseActionSuccess<T> | ExerciseActionError;
+
 function parseSecondaryMuscles(value: FormDataEntryValue | null): string[] {
   if (value === null || value === '') {
     return [];
@@ -28,9 +44,15 @@ function parseSecondaryMuscles(value: FormDataEntryValue | null): string[] {
     throw new Error('Invalid secondary muscle groups.');
   }
 
-  const parsed: unknown = JSON.parse(value);
+  let parsed: unknown;
 
-  if (!Array.isArray(parsed) || !parsed.every((muscle) => typeof muscle === 'string')) {
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    throw new Error('Invalid secondary muscle groups.');
+  }
+
+  if (!Array.isArray(parsed) || !parsed.every((muscle: unknown) => typeof muscle === 'string')) {
     throw new Error('Invalid secondary muscle groups.');
   }
 
@@ -82,7 +104,7 @@ async function uploadExerciseImage(image: File): Promise<string> {
   return blob.url;
 }
 
-async function cleanupUploadedImage(url: string | undefined) {
+async function cleanupUploadedImage(url: string | undefined): Promise<void> {
   if (!url || !process.env.BLOB_READ_WRITE_TOKEN) {
     return;
   }
@@ -91,7 +113,7 @@ async function cleanupUploadedImage(url: string | undefined) {
     await del(url, {
       token: process.env.BLOB_READ_WRITE_TOKEN,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to clean up uploaded image:', error);
   }
 }
@@ -110,7 +132,25 @@ function getImageFile(formData: FormData): File | null {
   return image.size > 0 ? image : null;
 }
 
-export async function registerExerciseAction(formData: FormData) {
+function getActionErrorMessage(error: unknown, fallback: string): string {
+  if (!(error instanceof Error)) {
+    return fallback;
+  }
+
+  const safeMessages = ['Only JPEG, PNG and WebP images are allowed.', 'The image must be 5 MB or smaller.', 'Invalid secondary muscle groups.', 'Invalid image file.'];
+
+  if (safeMessages.includes(error.message) || error.message.startsWith('Invalid value for ')) {
+    return error.message;
+  }
+
+  if (error.message.startsWith('Validation failed:')) {
+    return error.message;
+  }
+
+  return fallback;
+}
+
+export async function registerExerciseAction(formData: FormData): Promise<ExerciseActionResult<ExerciseViewModel>> {
   let uploadedImageUrl: string | undefined;
 
   try {
@@ -142,7 +182,7 @@ export async function registerExerciseAction(formData: FormData) {
       uploadedImageUrl = await uploadExerciseImage(image);
     }
 
-    const result = await exerciseService.registerExercise(
+    const exercise = await exerciseService.registerExercise(
       {
         ...validation.data,
         ...(uploadedImageUrl ? { imagePath: uploadedImageUrl } : {}),
@@ -150,27 +190,24 @@ export async function registerExerciseAction(formData: FormData) {
       user.userId,
     );
 
-    if (!result.success) {
-      await cleanupUploadedImage(uploadedImageUrl);
-    }
-
-    return result;
-  } catch (error) {
+    return {
+      success: true,
+      message: 'Exercise created successfully.',
+      data: exercise,
+    };
+  } catch (error: unknown) {
     console.error('Register exercise action failed:', error);
 
     await cleanupUploadedImage(uploadedImageUrl);
 
     return {
       success: false,
-      message:
-        error instanceof Error && (error.message.startsWith('Only ') || error.message.startsWith('The image'))
-          ? error.message
-          : 'Could not create exercise. Please try again.',
+      message: getActionErrorMessage(error, 'Could not create exercise. Please try again.'),
     };
   }
 }
 
-export async function deleteExerciseAction(id: number) {
+export async function deleteExerciseAction(id: number): Promise<ExerciseActionResult> {
   try {
     const user = await requireAuth();
 
@@ -181,8 +218,13 @@ export async function deleteExerciseAction(id: number) {
       };
     }
 
-    return await exerciseService.delete(id, user.userId);
-  } catch (error) {
+    const result = await exerciseService.delete(id, user.userId);
+
+    return {
+      success: true,
+      message: result.message,
+    };
+  } catch (error: unknown) {
     console.error('Delete exercise action failed:', error);
 
     return {
@@ -192,7 +234,7 @@ export async function deleteExerciseAction(id: number) {
   }
 }
 
-export async function updateExerciseAction(id: number, formData: FormData) {
+export async function updateExerciseAction(id: number, formData: FormData): Promise<ExerciseActionResult> {
   let uploadedImageUrl: string | undefined;
 
   try {
@@ -237,7 +279,7 @@ export async function updateExerciseAction(id: number, formData: FormData) {
       uploadedImageUrl = await uploadExerciseImage(image);
     }
 
-    const result = await exerciseService.update(
+    await exerciseService.update(
       id,
       {
         ...validation.data,
@@ -246,22 +288,18 @@ export async function updateExerciseAction(id: number, formData: FormData) {
       user.userId,
     );
 
-    if (!result.success) {
-      await cleanupUploadedImage(uploadedImageUrl);
-    }
-
-    return result;
-  } catch (error) {
+    return {
+      success: true,
+      message: 'Exercise updated successfully.',
+    };
+  } catch (error: unknown) {
     console.error('Update exercise action failed:', error);
 
     await cleanupUploadedImage(uploadedImageUrl);
 
     return {
       success: false,
-      message:
-        error instanceof Error && (error.message.startsWith('Only ') || error.message.startsWith('The image'))
-          ? error.message
-          : 'Something went wrong. Please try again.',
+      message: getActionErrorMessage(error, 'Something went wrong. Please try again.'),
     };
   }
 }

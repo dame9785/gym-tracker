@@ -62,11 +62,15 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ success: false, message: 'Invalid set values.' } satisfies ErrorResponse, { status: 400 });
     }
 
-    const result = await workoutSessionService.updateSet(setId, actualReps, actualWeight, actualSeconds, payload.userId);
+    const updatedSet = await workoutSessionService.updateSet(setId, actualReps, actualWeight, actualSeconds, payload.userId);
 
-    return NextResponse.json(result, {
-      status: result.success ? 200 : 400,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        data: updatedSet,
+      },
+      { status: 200 },
+    );
   } catch (error) {
     console.error('PUT /api/workout-session-sets/[id] error:', error);
 

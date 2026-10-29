@@ -27,16 +27,21 @@ export default async function WorkoutSessionPage({ params }: PageProps) {
     );
   }
 
-  const response = await workoutSessionService.getById(sessionId, user.userId);
+  let workoutSession: Awaited<ReturnType<typeof workoutSessionService.getById>> | null = null;
 
-  if (!response.success || !response.data) {
+  try {
+    workoutSession = await workoutSessionService.getById(sessionId, user.userId);
+  } catch (error) {
+    console.error('Failed to load workout session:', error);
+  }
+
+  if (!workoutSession) {
     return (
       <main>
-        <ErrorMessage title="Unable to workout session" message={response.message ?? 'Something went wrong while loading your workout session.'} />
+        <ErrorMessage title="Unable to load workout session" message="Something went wrong while loading your workout session." />
       </main>
     );
   }
 
-  const workoutSession = response.data;
   return <WorkoutSession workoutSession={workoutSession} />;
 }

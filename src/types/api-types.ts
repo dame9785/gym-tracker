@@ -1,15 +1,30 @@
-import { UserViewModel } from './user-types';
-import { LogItemViewModel } from './log-weight-types';
-import { ExerciseViewModel } from './exercise-types';
-import { WeeklyWorkoutViewModel, WorkoutSessionFinishViewModel, WorkoutSessionViewModel, WorkoutViewModel } from './workout-types';
-import { WeeklySummaryViewModel } from './dashboard-types';
-import { HistoryViewModel } from './history-types';
+import type { LogItemViewModel } from './log-weight-types';
+import type { ExerciseViewModel } from './exercise-types';
+import type { WeeklyWorkoutViewModel, WorkoutSessionFinishViewModel, WorkoutSessionViewModel, WorkoutViewModel } from './workout-types';
+import type { WeeklySummaryViewModel } from './dashboard-types';
+import type { HistoryViewModel } from './history-types';
 
-export type SuccessResponse<T = undefined> = {
-  success: true;
-  message?: string;
-  data?: T;
-};
+// --------------------------------------------------
+// Generic API responses
+// --------------------------------------------------
+
+export type SuccessResponse<T = undefined> = [T] extends [undefined]
+  ? {
+      success: true;
+      message?: string;
+      data?: undefined;
+    }
+  : [T] extends [void]
+    ? {
+        success: true;
+        message?: string;
+        data?: T;
+      }
+    : {
+        success: true;
+        message?: string;
+        data: T;
+      };
 
 export interface ErrorResponse {
   success: false;
@@ -19,25 +34,17 @@ export interface ErrorResponse {
 
 export type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
 
-// Login
-export interface LoginResponse {
-  userId: number;
-  token: string;
-}
+// --------------------------------------------------
+// Authentication
+// --------------------------------------------------
 
-export type UserResponse = UserViewModel;
+// --------------------------------------------------
+// Weight logs
+// --------------------------------------------------
 
 export type LogWeightResponse = LogItemViewModel;
 
 export type EditLogWeightResponse = LogItemViewModel;
-
-export type UpdateUserResponse = UserViewModel;
-
-// Register
-export interface RegisterResponse {
-  userId: number;
-  token: string;
-}
 
 export interface UserLogWeightResponse {
   logList: LogItemViewModel[];
@@ -48,18 +55,13 @@ export interface UserLogWeightResponse {
 
 export type DeleteLogWeightResponse = [];
 
-export type ExerciseApiResponse = ExerciseViewModel[];
+// --------------------------------------------------
+// Exercises
+// --------------------------------------------------
 
-export interface ExerciseApiDeleteResponse {
-  success: true;
-  message: string;
-}
-
-export type ExerciseApiRegisterResponse = ExerciseViewModel;
-
-export type ExerciseApiGetByIdResponse = ExerciseViewModel;
-
-export type ExerciseApiUpdateResponse = void;
+// --------------------------------------------------
+// Workouts
+// --------------------------------------------------
 
 export interface WorkoutApiResponse {
   workouts: WorkoutViewModel[];
@@ -71,23 +73,39 @@ export interface WorkoutApiGetByIdResponse {
   exericses: ExerciseViewModel[];
 }
 
+// --------------------------------------------------
+// Dashboard
+// --------------------------------------------------
+
 export interface DashboardResult {
   weeklyOverview: WeeklyWorkoutViewModel[];
   todayWorkout?: WeeklyWorkoutViewModel;
   weeklySummary: WeeklySummaryViewModel;
 }
 
+// --------------------------------------------------
+// History
+// --------------------------------------------------
+
 export interface HistoryApiResponse {
   history: HistoryViewModel;
   pagination: PaginationViewModel;
 }
 
-interface PaginationViewModel {
+// --------------------------------------------------
+// Pagination
+// --------------------------------------------------
+
+export interface PaginationViewModel {
   currentPage: number;
   totalPages: number;
   pageSize: number;
   totalItems: number;
 }
+
+// --------------------------------------------------
+// Workout sessions
+// --------------------------------------------------
 
 export type WorkoutFinishApiResponse = WorkoutSessionFinishViewModel;
 
@@ -102,14 +120,16 @@ export interface UpdateWorkoutSessionResponse {
   success: boolean;
 }
 
-interface UpdatedSetViewModel {
+export interface UpdatedSetViewModel {
   id: number;
   actualReps: number | null;
   actualWeight: number | null;
+  actualSeconds: number | null;
   setNumber: number;
   workoutSessionExerciseId: number;
   targetReps: number;
   targetWeight: number | null;
+  targetSeconds: number | null;
   completed: boolean;
   completedAt: Date | null;
 }

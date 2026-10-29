@@ -1,107 +1,66 @@
-// Prisma
 import { Prisma } from '@prisma/client';
-
-// Repository
-import { UserRepository } from '@/repositories/user-repository';
-
-// JWT
-import { generateToken } from '@/lib/jwt';
-
-// Password hashing
 import bcrypt from 'bcryptjs';
 
-// Mapping
-import { UserMapper } from '../mapping/user-mapping';
-
-// Helpers
+import { UserRepository } from '@/repositories/user-repository';
+import { generateToken } from '@/lib/jwt';
+import { UserMapper } from '@/mapping/user-mapping';
 import { ErrorsHelper } from '@/helpers/error-helper';
-
-// Types
-import type { ApiResponse, ErrorResponse, LoginResponse, RegisterResponse, SuccessResponse, UpdateUserResponse, UserResponse } from '@/types/api-types';
 import { loginSchema, registerUserSchema, updateUserSchema, type LoginDto, type RegisterUserDto, type UpdateUserDto } from '@/schemas/auth-schemas';
-import { errorResponse } from '@/utils/api-error';
-import { UserViewModel } from '@/types/user-types';
+import type { LoginResponse, RegisterResponse, UpdateUserResponse, UserResponse } from '@/types/user-types';
 
 export class AuthService {
-  private userRepository = new UserRepository();
+  private readonly userRepository: UserRepository = new UserRepository();
 
-  //Login User
+  /**
+   * Authenticates a user and returns a JWT.
+   * Throws an error if validation or authentication fails.
+   */
+  async login(dto: LoginDto): Promise<LoginResponse> {
+    const validation = loginSchema.safeParse(dto);
 
-  async login(dto: LoginDto): Promise<ApiResponse<LoginResponse>> {
-    try {
-      const validation = loginSchema.safeParse(dto);
+    if (!validation.success) {
+      const fieldErrors = ErrorsHelper.getFormErrors<LoginDto>(validation.error.issues);
 
-      if (!validation.success) {
-        const fieldErrors = ErrorsHelper.getFormErrors<LoginDto>(validation.error.issues);
-
-        const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
-
-        return {
-          success: false,
-          message: 'Valideringsfel.',
-          errors,
-        } satisfies ErrorResponse;
-      }
-
-      const { email, password } = validation.data;
-      const user = await this.userRepository.findByEmail(email);
-
-      if (!user) {
-        return {
-          success: false,
-          message: 'Felaktig email eller lösenord.',
-        } satisfies ErrorResponse;
-      }
-
-      const passwordValid = await bcrypt.compare(password, user.passwordHash);
-
-      if (!passwordValid) {
-        return {
-          success: false,
-          message: 'Felaktig email eller lösenord.',
-        } satisfies ErrorResponse;
-      }
-
-      const token = generateToken(user.id);
-
-      return {
-        success: true,
-        message: 'Inloggning lyckades',
-        data: {
-          token,
-          userId: user.id,
-        },
-      } satisfies SuccessResponse<LoginResponse>;
-    } catch (error) {
-      console.error('AuthService.login failed:', error);
-
-      return {
-        success: false,
-        message: 'Ett internt serverfel inträffade.',
-      };
+      throw new Error(`Validation failed: ${JSON.stringify(fieldErrors)}`);
     }
+
+    const { email, password } = validation.data;
+    const user = await this.userRepository.findByEmail(email);
+
+    if (!user) {
+      throw new Error('Invalid email or password.');
+    }
+
+    const passwordValid = await bcrypt.compare(password, user.passwordHash);
+
+    if (!passwordValid) {
+      throw new Error('Invalid email or password.');
+    }
+
+    return {
+      token: generateToken(user.id),
+      userId: user.id,
+    };
   }
 
-  // Register User
-  async register(dto: RegisterUserDto): Promise<ApiResponse<RegisterResponse>> {
-    const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
-
-    //Validation
+  /**
+   * Registers a new user and returns their ID and JWT.
+   * Throws an error if validation fails or the account already exists.
+   */
+  async register(dto: RegisterUserDto): Promise<RegisterResponse> {
     const validation = registerUserSchema.safeParse(dto);
+
     if (!validation.success) {
       const fieldErrors = ErrorsHelper.getFormErrors<RegisterUserDto>(validation.error.issues);
-      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
 
-      return {
-        success: false,
-        message: 'Felaktig email eller lösenord.',
-        errors: errors,
-      } satisfies ErrorResponse;
+      throw new Error(`Validation failed: ${JSON.stringify(fieldErrors)}`);
     }
 
     const data = validation.data;
 
     const [existingEmail, existingUsername] = await Promise.all([this.userRepository.emailExists(data.email), this.userRepository.usernameExists(data.username)]);
+
+    const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
 
     if (existingEmail) {
       fieldErrors.email = 'E-postadressen används redan.';
@@ -111,84 +70,66 @@ export class AuthService {
       fieldErrors.username = 'Användarnamnet används redan.';
     }
 
-    if (existingUsername || existingEmail) {
-      return {
-        success: false,
-        message: 'Användare eller e-postadress används redan.',
-        errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
-      } satisfies ErrorResponse;
+    if (existingEmail || existingUsername) {
+      throw new Error(`User already exists: ${JSON.stringify(fieldErrors)}`);
     }
 
     try {
       const passwordHash = await bcrypt.hash(data.password, 10);
       const userData = UserMapper.createUserDtoToDbModel(data, passwordHash);
+
       const user = await this.userRepository.create(userData);
 
       return {
-        success: true,
-        message: 'Användaren registrerades.',
-        data: {
-          userId: user.id,
-          token: generateToken(user.id),
-        },
-      } satisfies SuccessResponse<RegisterResponse>;
-    } catch (error) {
-      console.error('AuthService.register failed:', error);
-
+        userId: user.id,
+        token: generateToken(user.id),
+      };
+    } catch (error: unknown) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const fieldErrors = ErrorsHelper.getUniqueConstraintFieldErrors<RegisterUserDto>(error);
 
-        return {
-          success: false,
-          message: 'Valideringen misslyckades.',
-          errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
-        };
+        throw new Error(`User already exists: ${JSON.stringify(fieldErrors)}`);
       }
 
-      return {
-        success: false,
-        message: 'Kunde inte skapa användaren.',
-      };
+      throw error;
     }
   }
 
-  //Get User By Id
-  async getUserById(id: number): Promise<ApiResponse<UserResponse>> {
+  /**
+   * Returns a user by ID.
+   * Throws an error if the user does not exist.
+   */
+  async getUserById(id: number): Promise<UserResponse> {
     const user = await this.userRepository.findById(id);
 
     if (!user) {
-      return { success: false, message: 'Gick inte hämta användaren' } satisfies ErrorResponse;
+      throw new Error('User not found.');
     }
 
-    const userViewModel = UserMapper.userDbToViewModel(user);
-    return {
-      success: true,
-      data: userViewModel,
-    } satisfies SuccessResponse<UserResponse>;
+    return UserMapper.userDbToViewModel(user);
   }
 
-  // Update User
-  // Update User
-  async updateUser(dto: UpdateUserDto, userId: number): Promise<ApiResponse<UserViewModel>> {
-    // Validation
+  /**
+   * Updates a user's profile and returns the updated user.
+   * Throws an error if validation or updating fails.
+   */
+  async updateUser(dto: UpdateUserDto, userId: number): Promise<UpdateUserResponse> {
     const validation = updateUserSchema.safeParse(dto);
 
     if (!validation.success) {
-      const errors = validation.error.flatten().fieldErrors;
+      const fieldErrors = validation.error.flatten().fieldErrors;
 
-      return errorResponse('Validation failed', errors);
+      throw new Error(`Validation failed: ${JSON.stringify(fieldErrors)}`);
     }
 
-    // Använd validerad data efter Zod-valideringen
     const data = validation.data;
 
-    // Kontrollera om email eller username redan används
     const [existingEmail, existingUsername] = await Promise.all([
       this.userRepository.emailExists(data.email, userId),
       this.userRepository.usernameExists(data.username, userId),
     ]);
 
-    const fieldErrors: Record<string, string> = {};
+    const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
 
     if (existingEmail) {
       fieldErrors.email = 'E-postadressen är upptagen.';
@@ -199,39 +140,19 @@ export class AuthService {
     }
 
     if (existingEmail || existingUsername) {
-      return {
-        success: false,
-        message: 'Användare eller e-postadress används redan.',
-        errors: Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]])),
-      } satisfies ErrorResponse;
+      throw new Error(`User already exists: ${JSON.stringify(fieldErrors)}`);
     }
 
-    try {
-      const updateData = UserMapper.userDtoToDbModel(data);
+    const updateData = UserMapper.userDtoToDbModel(data);
 
-      await this.userRepository.update(userId, updateData);
+    await this.userRepository.update(userId, updateData);
 
-      const updatedUser = await this.userRepository.findById(userId);
+    const updatedUser = await this.userRepository.findById(userId);
 
-      if (!updatedUser) {
-        return {
-          success: false,
-          message: 'Användaren kunde inte hittas.',
-        } satisfies ErrorResponse;
-      }
-
-      return {
-        success: true,
-        message: 'Användaren uppdaterades.',
-        data: UserMapper.userDbToViewModel(updatedUser),
-      } satisfies SuccessResponse<UpdateUserResponse>;
-    } catch (error) {
-      console.error('AuthService.updateUser failed:', error);
-
-      return {
-        success: false,
-        message: 'Användaren kunde inte uppdateras.',
-      } satisfies ErrorResponse;
+    if (!updatedUser) {
+      throw new Error('User not found after update.');
     }
+
+    return UserMapper.userDbToViewModel(updatedUser);
   }
 }

@@ -1,37 +1,51 @@
-//Components
+import { notFound } from 'next/navigation';
+
 import EditExerciseForm from '@/components/forms/exercise/edit-exercise-form';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
 import { ExerciseService } from '@/services-server/exercise-service';
+import type { ExerciseResult } from '@/types/exercise-types';
+
 type PageProps = {
   params: Promise<{
-    slug: string;
+    id: string;
   }>;
 };
 
-const exericseService = new ExerciseService();
+const exerciseService = new ExerciseService();
 
-export default async function EditExercises({ params }: PageProps) {
-  //Check if user has token or exiperied token.
+export default async function EditExercises({ params }: PageProps): Promise<React.ReactElement> {
   const user = await requireAuth();
+  const { id } = await params;
 
-  const { slug } = await params;
+  const exerciseId = Number(id);
 
-  const response = await exericseService.getBySlug(slug, user.userId);
-  if (!response.success || !response.data) {
+  if (!Number.isSafeInteger(exerciseId) || exerciseId <= 0) {
+    notFound();
+  }
+
+  let exercise: ExerciseResult;
+
+  try {
+    exercise = await exerciseService.getById(exerciseId, user.userId);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Something went wrong while loading this exercise.';
+
+    if (message === 'Exercise not found.' || message === 'Could not find exercise.' || message.toLowerCase().includes('not found')) {
+      notFound();
+    }
+
     return (
       <main>
-        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+        <ErrorMessage title="Unable to load exercise" message={message} />
       </main>
     );
   }
 
-  const exericse = response.data;
-
   return (
     <div className="container">
-      <div className="form-wrapper flex justify-center items-center m-[5em]">
-        <EditExerciseForm exericse={exericse} />
+      <div className="form-wrapper m-[5em] flex items-center justify-center">
+        <EditExerciseForm exericse={exercise} />
       </div>
     </div>
   );

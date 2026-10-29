@@ -4,27 +4,29 @@ import { requireAuth } from '@/lib/auth';
 import { WorkoutService } from '@/services-server/workout-service';
 
 const workoutService = new WorkoutService();
+
 export default async function WorkoutSchedulePage() {
   const user = await requireAuth();
 
-  const response = await workoutService.getAll(1, user.userId);
+  let workoutData: Awaited<ReturnType<typeof workoutService.getAll>> | null = null;
 
-  if (!response.success || !response.data) {
+  try {
+    workoutData = await workoutService.getAll(1, user.userId);
+  } catch (error) {
+    console.error('Failed to load workouts for scheduling:', error);
+  }
+
+  if (!workoutData) {
     return (
       <main>
-        <ErrorMessage
-          title="Unable to load foods"
-          message={response.message ?? 'Something went wrong while loading your foods.'}
-        />
+        <ErrorMessage title="Unable to load workouts" message="Something went wrong while loading your workouts." />
       </main>
     );
   }
 
-  const workouts = response.data.workouts;
-
   return (
     <div className="container">
-      <ScheduleWorkoutForm workouts={workouts} />
+      <ScheduleWorkoutForm workouts={workoutData.workouts} />
     </div>
   );
 }

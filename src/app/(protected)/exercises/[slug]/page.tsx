@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import ErrorMessage from '@/components/ui/error-message';
 import { ExerciseService } from '@/services-server/exercise-service';
 import { requireAuth } from '@/lib/auth';
+import type { ExerciseResult } from '@/types/exercise-types';
 
 const exerciseService = new ExerciseService();
 
@@ -13,21 +14,25 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function ExerciseDetailsPage({ params }: PageProps) {
+export default async function ExerciseDetailsPage({ params }: PageProps): Promise<React.ReactElement> {
   const user = await requireAuth();
   const { slug } = await params;
 
-  const response = await exerciseService.getBySlug(slug, user.userId);
+  let exercise: ExerciseResult;
 
-  if (!response.success || !response.data) {
-    if (response.message === 'Could not find exercise.') {
+  try {
+    exercise = await exerciseService.getBySlug(slug, user.userId);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Something went wrong while loading this exercise.';
+
+    if (message === 'Exercise not found.' || message === 'Could not find exercise.') {
       notFound();
     }
 
     return (
       <main className="min-h-screen p-4 text-white sm:p-6 lg:p-8">
         <div className="mx-auto max-w-5xl">
-          <ErrorMessage title="Unable to load exercise" message={response.message ?? 'Something went wrong while loading this exercise.'} />
+          <ErrorMessage title="Unable to load exercise" message={message} />
 
           <Link href="/exercises" className="mt-5 inline-flex items-center gap-2 text-sm text-orange-400 transition hover:text-orange-300">
             <ArrowLeft className="h-4 w-4" />
@@ -37,8 +42,6 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
       </main>
     );
   }
-
-  const exercise = response.data;
 
   const instructions = exercise.instructions
     ? exercise.instructions
@@ -51,15 +54,12 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
   return (
     <main className="min-h-screen p-4 text-white sm:p-6 lg:p-8">
       <div className="mx-auto max-w-6xl">
-        {/* Back navigation */}
         <Link href="/exercises" className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition hover:text-orange-400">
           <ArrowLeft className="h-4 w-4" />
           Back to exercises
         </Link>
 
-        {/* Main exercise card */}
         <article className="overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900 to-zinc-950 shadow-2xl shadow-black/20">
-          {/* Hero image */}
           <div className="relative h-64 bg-zinc-900 sm:h-80 lg:h-[420px]">
             <Image src={exercise.imagePath || '/placeholder.png'} alt={exercise.name} fill priority sizes="(max-width: 768px) 100vw, 1152px" className="object-cover" />
 
@@ -79,9 +79,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Page content */}
           <div className="p-5 sm:p-8">
-            {/* Muscle groups */}
             <section>
               <div className="mb-4 flex items-center gap-2">
                 <Activity className="h-5 w-5 text-orange-400" />
@@ -120,7 +118,6 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
               </div>
             </section>
 
-            {/* Description */}
             <section className="mt-8">
               <div className="mb-4 flex items-center gap-2">
                 <FileText className="h-5 w-5 text-orange-400" />
@@ -132,7 +129,6 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
               </div>
             </section>
 
-            {/* Instructions */}
             <section className="mt-8">
               <div className="mb-4 flex items-center gap-2">
                 <ListChecks className="h-5 w-5 text-orange-400" />
@@ -158,7 +154,6 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
               )}
             </section>
 
-            {/* Technique tips */}
             {exercise.techniqueTips && (
               <section className="mt-8">
                 <div className="mb-4 flex items-center gap-2">
@@ -172,7 +167,6 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
               </section>
             )}
 
-            {/* Equipment */}
             <section className="mt-8">
               <div className="mb-4 flex items-center gap-2">
                 <Dumbbell className="h-5 w-5 text-orange-400" />
@@ -191,7 +185,6 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
               </div>
             </section>
 
-            {/* Actions */}
             <div className="mt-8 flex flex-col gap-3 border-t border-zinc-800 pt-6 sm:flex-row sm:justify-end">
               <Link
                 href="/exercises"
@@ -202,7 +195,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
               </Link>
 
               <Link
-                href={`/exercises/edit/${exercise.slug}`}
+                href={`/exercises/edit/${exercise.slug ?? exercise.id}`}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-400"
               >
                 <Pencil className="h-4 w-4" />

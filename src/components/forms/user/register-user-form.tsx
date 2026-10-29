@@ -110,10 +110,7 @@ export default function RegisterForm() {
       const response = await registerUserAction(validate.data);
 
       if (!response.success) {
-        if (response.errors) {
-          setErrors(response.errors);
-        }
-
+        setErrors(response.errors ?? {});
         toast.error(response.message);
         return;
       }
@@ -156,7 +153,7 @@ export default function RegisterForm() {
               placeholder="E-post..."
               onChange={handleChange}
             />
-            {errors.email && <p className={FormStyles.fieldErrorMessage}>{errors.email}</p>}
+            {errors.email?.[0] && <p className={FormStyles.fieldErrorMessage}>{errors.email[0]}</p>}
           </div>
 
           {/* USERNAME */}
@@ -177,7 +174,7 @@ export default function RegisterForm() {
               placeholder="Användarnamn..."
               onChange={handleChange}
             />
-            {errors.username && <p className={FormStyles.fieldErrorMessage}>{errors.username}</p>}
+            {errors.username?.[0] && <p className={FormStyles.fieldErrorMessage}>{errors.username[0]}</p>}
           </div>
 
           {/* NAME */}
@@ -315,13 +312,7 @@ export default function RegisterForm() {
                 Kön
               </label>
             </div>
-            <select
-              className={FormStyles.formSelect}
-              id="gender"
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-            >
+            <select className={FormStyles.formSelect} id="gender" name="gender" value={formData.gender} onChange={handleChange}>
               <option value="">Välj kön</option>
               <option value={Gender.MALE}>Man</option>
               <option value={Gender.FEMALE}>Kvinna</option>
@@ -357,13 +348,7 @@ export default function RegisterForm() {
                 Goal type
               </label>
             </div>
-            <select
-              className={FormStyles.formSelect}
-              id="goalType"
-              name="goalType"
-              value={formData.goalType}
-              onChange={handleChange}
-            >
+            <select className={FormStyles.formSelect} id="goalType" name="goalType" value={formData.goalType} onChange={handleChange}>
               <option value="">Select goal type</option>
               <option value={GoalType.MUSCLE_GAIN}>Muscle Gain</option>
               <option value={GoalType.WEIGHT_LOSS}>Weight Loss</option>
@@ -400,14 +385,7 @@ export default function RegisterForm() {
                 Måldatum
               </label>
             </div>
-            <input
-              className={FormStyles.formInput}
-              value={formData.goalDate}
-              name="goalDate"
-              type="date"
-              id="goalDate"
-              onChange={handleChange}
-            />
+            <input className={FormStyles.formInput} value={formData.goalDate} name="goalDate" type="date" id="goalDate" onChange={handleChange} />
             {errors.goalDate && <p className={FormStyles.fieldErrorMessage}>{errors.goalDate}</p>}
           </div>
         </div>

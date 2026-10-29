@@ -179,7 +179,9 @@ export default function EditExercise({ exericse }: Props) {
 
       if (!response.success) {
         if (response.errors) {
-          setErrors(ErrorsHelper.getFormErrorsFromApi<UpdateExericseDto>(response.errors));
+          const definedErrors = Object.fromEntries(Object.entries(response.errors).filter((entry): entry is [string, string[]] => Array.isArray(entry[1])));
+
+          setErrors(ErrorsHelper.getFormErrorsFromApi<UpdateExericseDto>(definedErrors));
         }
 
         toast.error(response.message);

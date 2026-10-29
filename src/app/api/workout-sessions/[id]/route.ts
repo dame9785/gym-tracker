@@ -4,15 +4,13 @@ import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
 import type { ErrorResponse } from '@/types/api-types';
 
-type RouteContext = {
-  params: Promise<{
-    id: string;
-  }>;
-};
-
 const workoutSessionService = new WorkoutSessionService();
 
-export async function PUT(_request: NextRequest, { params }: RouteContext) {
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
+export async function PUT(_request: NextRequest, { params }: RouteContext): Promise<NextResponse> {
   try {
     const token = await getTokenFromCookieStore();
 
@@ -41,22 +39,26 @@ export async function PUT(_request: NextRequest, { params }: RouteContext) {
     const { id } = await params;
     const sessionId = Number(id);
 
-    if (!Number.isInteger(sessionId) || sessionId <= 0) {
+    if (!Number.isSafeInteger(sessionId) || sessionId <= 0) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Invalid workout session id.',
+          message: 'Invalid workout session ID.',
         } satisfies ErrorResponse,
         { status: 400 },
       );
     }
 
-    const result = await workoutSessionService.finish(sessionId, payload.userId);
+    const workoutSession = await workoutSessionService.finish(sessionId, payload.userId);
 
-    return NextResponse.json(result, {
-      status: result.success ? 200 : 400,
-    });
-  } catch (error) {
+    return NextResponse.json(
+      {
+        success: true,
+        data: workoutSession,
+      },
+      { status: 200 },
+    );
+  } catch (error: unknown) {
     console.error('PUT /api/workout-sessions/[id] error:', error);
 
     return NextResponse.json(

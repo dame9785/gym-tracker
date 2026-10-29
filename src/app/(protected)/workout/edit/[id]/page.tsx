@@ -12,30 +12,37 @@ type PageProps = {
 const workoutService = new WorkoutService();
 
 export default async function EditWorkout({ params }: PageProps) {
-  //Check if user has token or exiperied token.
   const user = await requireAuth();
-
   const { id } = await params;
-  if (!id) {
-    throw new Error('Something went wrong');
-  }
+  const workoutId = Number(id);
 
-  const response = await workoutService.getById(Number(id), user.userId);
-
-  if (!response.success || !response.data) {
+  if (!Number.isSafeInteger(workoutId) || workoutId <= 0) {
     return (
       <main>
-        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+        <ErrorMessage title="Unable to load workout" message="Invalid workout ID." />
       </main>
     );
   }
 
-  const workout = response.data.workout;
-  const exericses = response.data.exericses;
+  let workoutData: Awaited<ReturnType<typeof workoutService.getById>> | null = null;
+
+  try {
+    workoutData = await workoutService.getById(workoutId, user.userId);
+  } catch (error) {
+    console.error('Failed to load workout for editing:', error);
+  }
+
+  if (!workoutData) {
+    return (
+      <main>
+        <ErrorMessage title="Unable to load workout" message="Something went wrong while loading your workout." />
+      </main>
+    );
+  }
 
   return (
     <div className="container">
-      <EditWorkoutForm workout={workout} exericses={exericses} />
+      <EditWorkoutForm workout={workoutData.workout} exericses={workoutData.exercises} />
     </div>
   );
 }

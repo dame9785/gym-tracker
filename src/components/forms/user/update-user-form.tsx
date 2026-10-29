@@ -17,18 +17,7 @@ import { updateUserSchema } from '@/schemas/auth-schemas';
 import { useState } from 'react';
 
 //FONTAWSOME ICONS
-import {
-  FaEnvelope,
-  FaWeightScale,
-  FaPhone,
-  FaRulerVertical,
-  FaCakeCandles,
-  FaWeightHanging,
-  FaFlagCheckered,
-  FaUser,
-  FaSignature,
-  FaBullseye,
-} from 'react-icons/fa6';
+import { FaEnvelope, FaWeightScale, FaPhone, FaRulerVertical, FaCakeCandles, FaWeightHanging, FaFlagCheckered, FaUser, FaSignature, FaBullseye } from 'react-icons/fa6';
 import { toast } from 'sonner';
 
 import { useRouter } from 'next/navigation';
@@ -92,10 +81,7 @@ export default function UpdateUserForm({ user }: Props) {
       const response = await updateUserAction(validate.data);
 
       if (!response.success) {
-        if (response.errors) {
-          setErrors(response.errors);
-        }
-
+        setErrors(response.errors ?? {});
         toast.error(response.message);
         return;
       }
@@ -232,14 +218,7 @@ export default function UpdateUserForm({ user }: Props) {
                 Måldatum
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="goalDate"
-              type="date"
-              id="goalDate"
-              value={formData.goalDate}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="goalDate" type="date" id="goalDate" value={formData.goalDate} onChange={handleChange} />
             {errors.goalDate?.[0] && <p className={styles.fieldErrorMessage}>{errors.goalDate[0]}</p>}
           </div>
         </div>
@@ -295,15 +274,7 @@ export default function UpdateUserForm({ user }: Props) {
                 Född
               </label>
             </div>
-            <input
-              className={styles.formInput}
-              name="birthDate"
-              type="date"
-              id="birthDate"
-              placeholder="1997-09-26"
-              value={formData.birthDate}
-              onChange={handleChange}
-            />
+            <input className={styles.formInput} name="birthDate" type="date" id="birthDate" placeholder="1997-09-26" value={formData.birthDate} onChange={handleChange} />
             {errors.birthDate?.[0] && <p className={styles.fieldErrorMessage}>{errors.birthDate[0]}</p>}
           </div>
 
@@ -315,13 +286,7 @@ export default function UpdateUserForm({ user }: Props) {
                 Mål
               </label>
             </div>
-            <select
-              className={styles.formSelect}
-              id="goalType"
-              name="goalType"
-              value={formData.goalType}
-              onChange={handleChange}
-            >
+            <select className={styles.formSelect} id="goalType" name="goalType" value={formData.goalType} onChange={handleChange}>
               <option value="">Select goal type</option>
               <option value={GoalType.MUSCLE_GAIN}>Muscle Gain</option>
               <option value={GoalType.WEIGHT_LOSS}>Weight Loss</option>

@@ -1,38 +1,25 @@
 'use client';
 
-// React
 import { useState } from 'react';
-
-// Next.js
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
-// Types
-import type { LoginDto } from '@/schemas/auth-schemas';
-
-// Icons
 import { FaEnvelope, FaLock, FaDumbbell } from 'react-icons/fa6';
-
-// CSS
-import styles from '@/components/forms/form.module.css';
-
-import { loginUserAction } from '@/actions/user-actions';
-
-// Components
-import Button from '@/components/button/button';
-
-// Toast
 import { toast } from 'sonner';
+
+import type { LoginDto } from '@/schemas/auth-schemas';
+import { loginUserAction } from '@/actions/user-actions';
+import Button from '@/components/button/button';
+import styles from '@/components/forms/form.module.css';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
-  //Routing
+
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     const dto = {
@@ -40,7 +27,6 @@ export default function LoginForm() {
       password,
     } satisfies LoginDto;
 
-    // Start loading only after validation succeeds
     setIsSaving(true);
     setErrors({});
 
@@ -48,17 +34,14 @@ export default function LoginForm() {
       const response = await loginUserAction(dto);
 
       if (!response.success) {
-        if (response.errors) {
-          setErrors(response.errors);
-        }
-
+        setErrors(response.errors ?? {});
         toast.error(response.message);
         return;
       }
 
       toast.success(response.message);
       router.push('/dashboard');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to login:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
@@ -82,7 +65,7 @@ export default function LoginForm() {
           <FaEnvelope className={styles.formIcon} />
 
           <label className={styles.formLabel} htmlFor="email">
-            E-mail
+            Email
           </label>
         </div>
 
@@ -91,22 +74,22 @@ export default function LoginForm() {
           type="email"
           name="email"
           id="email"
-          placeholder="E-mail..."
+          placeholder="Email..."
           autoComplete="email"
           value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
+          onChange={(e) => setEmail(e.target.value)}
         />
-        {errors.email && <p className={styles.fieldErrorMessage}>{errors.email}</p>}
+
+        {errors.email && <p className={styles.fieldErrorMessage}>{errors.email.join(', ')}</p>}
       </div>
 
       {/* Password */}
       <div className={styles.formGroup}>
         <div className={styles.labelWrapper}>
           <FaLock className={styles.formIcon} />
+
           <label className={styles.formLabel} htmlFor="password">
-            Lösenord
+            Password
           </label>
         </div>
 
@@ -115,27 +98,26 @@ export default function LoginForm() {
           type="password"
           name="password"
           id="password"
-          placeholder="Lösenord..."
+          placeholder="Password..."
           autoComplete="current-password"
           value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        {errors.password && <p className={styles.fieldErrorMessage}>{errors.password}</p>}
+
+        {errors.password && <p className={styles.fieldErrorMessage}>{errors.password.join(', ')}</p>}
       </div>
 
       {/* Login button */}
       <div className="grid grid-1">
         <Button type="submit" variant="primary" disabled={isSaving}>
-          {isSaving ? 'Creating account...' : 'Save'}
+          {isSaving ? 'Logging in...' : 'Log in'}
         </Button>
       </div>
 
       {/* Register */}
-      <div className="flex justify-center mt-10">
-        <Link href="/account/register" className="border-b border-solid p-2 border-amber-500 hover:text-amber-600">
-          Registrera konto
+      <div className="mt-10 flex justify-center">
+        <Link href="/account/register" className="border-b border-solid border-amber-500 p-2 hover:text-amber-600">
+          Create an account
         </Link>
       </div>
     </form>

@@ -6,7 +6,7 @@ import type { ErrorResponse } from '@/types/api-types';
 
 const workoutSessionService = new WorkoutSessionService();
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const token = await getTokenFromCookieStore();
 
@@ -63,12 +63,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await workoutSessionService.create(dto.workoutId, payload.userId);
+    const sessionId = await workoutSessionService.create(dto.workoutId, payload.userId);
 
-    return NextResponse.json(result, {
-      status: result.success ? 201 : 400,
-    });
-  } catch (error) {
+    return NextResponse.json(
+      {
+        success: true,
+        data: sessionId,
+      },
+      { status: 201 },
+    );
+  } catch (error: unknown) {
     console.error('Failed to create workout session:', error);
 
     return NextResponse.json(

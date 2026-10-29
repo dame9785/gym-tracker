@@ -1,206 +1,77 @@
 import { WorkoutSessionMapper } from '@/mapping/workout-session-mapping';
 import { WorkoutSessionRepository } from '@/repositories/workout-session-repository';
 
-import {
-  type ApiResponse,
-  type ErrorResponse,
-  type SuccessResponse,
-  type UpdateWorkoutSessionResponse,
-  type WorkoutFinishApiResponse,
-  type WorkoutSessionCreateResponse,
-  type WorkoutSessionDetailApiResponse,
-  type WorkoutSessionUpdatedSetResponse,
-} from '@/types/api-types';
-
+import type { WorkoutFinishApiResponse, WorkoutSessionDetailApiResponse, WorkoutSessionUpdatedSetResponse } from '@/types/api-types';
 export class WorkoutSessionService {
   private workoutSessionRepository = new WorkoutSessionRepository();
 
-  async create(workoutId: number, userId: number): Promise<ApiResponse<WorkoutSessionCreateResponse>> {
-    try {
-      const workoutSession = await this.workoutSessionRepository.create(workoutId, userId);
+  async create(workoutId: number, userId: number): Promise<number> {
+    const workoutSession = await this.workoutSessionRepository.create(workoutId, userId);
 
-      return {
-        success: true,
-        data: workoutSession.id,
-      } satisfies SuccessResponse<WorkoutSessionCreateResponse>;
-    } catch (error: unknown) {
-      console.error(error);
+    return workoutSession.id;
+  }
 
-      return {
-        success: false,
-        message: 'Kunde inte skapa träningspasset.',
-      } satisfies ErrorResponse;
+  async getById(id: number, userId: number): Promise<WorkoutSessionDetailApiResponse> {
+    const workoutSession = await this.workoutSessionRepository.getById(id, userId);
+
+    if (!workoutSession) {
+      throw new Error('The workout session was not found or you do not have permission to access it.');
+    }
+
+    return WorkoutSessionMapper.mapWorkoutSession(workoutSession);
+  }
+
+  async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number, userId: number): Promise<WorkoutSessionUpdatedSetResponse> {
+    const updatedSet = await this.workoutSessionRepository.updateSet(id, actualReps, actualWeight, actualSeconds, userId);
+
+    if (!updatedSet) {
+      throw new Error('The set was not found or you do not have permission to update it.');
+    }
+
+    return updatedSet;
+  }
+
+  async finish(id: number, userId: number): Promise<WorkoutFinishApiResponse> {
+    const workoutSession = await this.workoutSessionRepository.finish(id, userId);
+
+    if (!workoutSession) {
+      throw new Error('The workout session was not found or you do not have permission to finish it.');
+    }
+
+    return workoutSession;
+  }
+
+  async updateWorkoutSessionStatus(workoutSessionId: number, userId: number): Promise<void> {
+    const updated = await this.workoutSessionRepository.updateWorkoutSessionsStatus(workoutSessionId, userId);
+
+    if (!updated) {
+      throw new Error('The workout session was not found or you do not have permission to update its status.');
     }
   }
 
-  async getById(id: number, userId: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse>> {
-    try {
-      const workoutSession = await this.workoutSessionRepository.getById(id, userId);
+  async getLatestCompletedByWorkoutId(workoutId: number, userId: number): Promise<WorkoutSessionDetailApiResponse | null> {
+    const session = await this.workoutSessionRepository.getLatestCompletedByWorkoutId(workoutId, userId);
 
-      if (!workoutSession) {
-        return {
-          success: false,
-          message: 'Träningspasset hittades inte eller saknar behörighet.',
-        } satisfies ErrorResponse;
-      }
-
-      return {
-        success: true,
-        data: WorkoutSessionMapper.mapWorkoutSession(workoutSession),
-      } satisfies SuccessResponse<WorkoutSessionDetailApiResponse>;
-    } catch (error: unknown) {
-      console.error(error);
-
-      return {
-        success: false,
-        message: 'Kunde inte hämta träningspasset.',
-      } satisfies ErrorResponse;
+    if (!session) {
+      return null;
     }
+
+    return WorkoutSessionMapper.mapWorkoutSession(session);
   }
 
-  async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number, userId: number): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
-    try {
-      const updatedSet = await this.workoutSessionRepository.updateSet(id, actualReps, actualWeight, actualSeconds, userId);
+  async getPreviousCompletedByWorkoutId(workoutId: number, userId: number, currentSessionId: number): Promise<WorkoutSessionDetailApiResponse | null> {
+    const session = await this.workoutSessionRepository.getPreviousCompletedByWorkoutId(workoutId, userId, currentSessionId);
 
-      if (!updatedSet) {
-        return {
-          success: false,
-          message: 'Setet hittades inte eller saknar behörighet.',
-        } satisfies ErrorResponse;
-      }
-
-      return {
-        success: true,
-        data: updatedSet,
-      } satisfies SuccessResponse<WorkoutSessionUpdatedSetResponse>;
-    } catch (error: unknown) {
-      console.error('Failed to update workout session set:', error);
-
-      return {
-        success: false,
-        message: 'Gick inte att uppdatera setet.',
-      } satisfies ErrorResponse;
+    if (!session) {
+      return null;
     }
+
+    return WorkoutSessionMapper.mapWorkoutSession(session);
   }
 
-  async finish(id: number, userId: number): Promise<ApiResponse<WorkoutFinishApiResponse>> {
-    try {
-      const workoutSession = await this.workoutSessionRepository.finish(id, userId);
+  async getPreviousCompletedSessions(userId: number, currentSessionId: number, currentFinishedAt: Date): Promise<WorkoutSessionDetailApiResponse[]> {
+    const sessions = await this.workoutSessionRepository.getPreviousCompletedSessions(userId, currentSessionId, currentFinishedAt);
 
-      if (!workoutSession) {
-        return {
-          success: false,
-          message: 'Träningspasset hittades inte eller saknar behörighet.',
-        } satisfies ErrorResponse;
-      }
-
-      return {
-        success: true,
-        data: workoutSession,
-      } satisfies SuccessResponse<WorkoutFinishApiResponse>;
-    } catch (error: unknown) {
-      console.error('Failed to finish workout session:', error);
-
-      return {
-        success: false,
-        message: 'Kunde inte avsluta träningspasset.',
-      } satisfies ErrorResponse;
-    }
-  }
-
-  async updateWorkoutSessionStatus(workoutSessionId: number, userId: number): Promise<ApiResponse<UpdateWorkoutSessionResponse>> {
-    try {
-      const updated = await this.workoutSessionRepository.updateWorkoutSessionsStatus(workoutSessionId, userId);
-
-      if (!updated) {
-        return {
-          success: false,
-          message: 'Träningspasset hittades inte eller saknar behörighet.',
-        } satisfies ErrorResponse;
-      }
-
-      return {
-        success: true,
-        data: {
-          success: true,
-          message: 'Status updated',
-        },
-      } satisfies SuccessResponse<UpdateWorkoutSessionResponse>;
-    } catch (error: unknown) {
-      console.error('Failed to update workout session status:', error);
-
-      return {
-        success: false,
-        message: 'Kunde inte uppdatera träningspassets status.',
-      } satisfies ErrorResponse;
-    }
-  }
-
-  async getLatestCompletedByWorkoutId(workoutId: number, userId: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse | null>> {
-    try {
-      const session = await this.workoutSessionRepository.getLatestCompletedByWorkoutId(workoutId, userId);
-
-      if (!session) {
-        return {
-          success: true,
-          data: null,
-        };
-      }
-
-      return {
-        success: true,
-        data: WorkoutSessionMapper.mapWorkoutSession(session),
-      };
-    } catch (error: unknown) {
-      console.error(error);
-
-      return {
-        success: false,
-        message: 'Kunde inte hämta den senaste avslutade träningssessionen.',
-      };
-    }
-  }
-
-  async getPreviousCompletedByWorkoutId(workoutId: number, userId: number, currentSessionId: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse | null>> {
-    try {
-      const session = await this.workoutSessionRepository.getPreviousCompletedByWorkoutId(workoutId, userId, currentSessionId);
-
-      if (!session) {
-        return {
-          success: true,
-          data: null,
-        };
-      }
-
-      return {
-        success: true,
-        data: WorkoutSessionMapper.mapWorkoutSession(session),
-      };
-    } catch (error: unknown) {
-      console.error(error);
-
-      return {
-        success: false,
-        message: 'Kunde inte hämta föregående träningspass.',
-      };
-    }
-  }
-
-  async getPreviousCompletedSessions(userId: number, currentSessionId: number, currentFinishedAt: Date): Promise<ApiResponse<WorkoutSessionDetailApiResponse[]>> {
-    try {
-      const sessions = await this.workoutSessionRepository.getPreviousCompletedSessions(userId, currentSessionId, currentFinishedAt);
-
-      return {
-        success: true,
-        data: sessions.map((session) => WorkoutSessionMapper.mapWorkoutSession(session)),
-      };
-    } catch (error: unknown) {
-      console.error('Failed to fetch previous completed sessions:', error);
-
-      return {
-        success: false,
-        message: 'Kunde inte hämta tidigare träningspass.',
-      };
-    }
+    return sessions.map((session) => WorkoutSessionMapper.mapWorkoutSession(session));
   }
 }

@@ -78,21 +78,23 @@ export interface WorkoutSessionFinishViewModel {
   status: $Enums.WorkoutSessionStatus;
 }
 
-export interface RegisterWorkoutActionResult {
-  success: boolean;
-  message: string;
-  data?: WorkoutViewModel;
-  errors?: Partial<Record<keyof UpdateWorkoutDto, string[] | undefined>>;
-}
+export type WorkoutActionResult<T = undefined> =
+  | {
+      success: true;
+      message: string;
+      data: T;
+    }
+  | {
+      success: false;
+      message: string;
+      errors?: Partial<Record<keyof UpdateWorkoutDto, string[]>>;
+    };
 
-export interface UpdateWorkoutActionResult {
-  success: boolean;
-  data?: WorkoutViewModel;
-  message: string;
-  errors?: Partial<Record<keyof UpdateWorkoutDto, string[] | undefined>>;
-}
+export type RegisterWorkoutActionResult = WorkoutActionResult<WorkoutViewModel>;
 
-export interface DeleteWorkoutActionResult {
+export type UpdateWorkoutActionResult = WorkoutActionResult<WorkoutViewModel>;
+
+export type DeleteWorkoutActionResult = {
   success: boolean;
   message: string;
-}
+};

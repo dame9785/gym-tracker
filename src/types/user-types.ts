@@ -36,3 +36,29 @@ export interface UserViewModel {
   goalType: GoalType;
   gender: Gender;
 }
+
+export interface LoginResponse {
+  userId: number;
+  token: string;
+}
+
+export type UserResponse = UserViewModel;
+
+export interface RegisterResponse {
+  userId: number;
+  token: string;
+}
+
+export type UpdateUserResponse = UserViewModel;
+
+export type UserActionResult<T = undefined> =
+  | {
+      success: true;
+      message: string;
+      data: T;
+    }
+  | {
+      success: false;
+      message: string;
+      errors?: Record<string, string[]>;
+    };

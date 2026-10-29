@@ -51,3 +51,12 @@ export interface WorkoutSessionExerciseViewModel {
   note: string | null;
   sets: WorkoutSessionSetViewModel[];
 }
+
+export type ExerciseResult = ExerciseViewModel;
+
+export type ExerciseListResult = ExerciseViewModel[];
+
+export interface DeleteExerciseResult {
+  success: true;
+  message: string;
+}

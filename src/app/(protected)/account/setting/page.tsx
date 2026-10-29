@@ -1,34 +1,33 @@
 import UpdateUserForm from '@/components/forms/user/update-user-form';
-import { AuthService } from '@/services-server/auth-service';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
+import { AuthService } from '@/services-server/auth-service';
 
 const authService = new AuthService();
 
-export default async function UserSettings() {
-  // Kontrollera att användaren är inloggad
+export default async function UserSettings(): Promise<React.ReactElement> {
   const user = await requireAuth();
 
-  /* Fetch all goal types & Current User*/
-  const userResponse = await authService.getUserById(user.userId);
+  let loggedInUser: Awaited<ReturnType<typeof authService.getUserById>> | null = null;
 
-  if (!userResponse.success || !userResponse.data) {
+  try {
+    loggedInUser = await authService.getUserById(user.userId);
+  } catch {
+    // The error is handled below.
+  }
+
+  if (!loggedInUser) {
     return (
       <main>
-        <ErrorMessage
-          title="Unable to load foods"
-          message={userResponse.message ?? 'Something went wrong while loading your foods.'}
-        />
+        <ErrorMessage title="Unable to load user" message="Something went wrong while loading your account." />
       </main>
     );
   }
 
-  const loggedInUserr = userResponse.data;
-
   return (
     <div className="container">
       <div className="form-wrapper m-[5em] flex items-center justify-center">
-        <UpdateUserForm user={loggedInUserr} />
+        <UpdateUserForm user={loggedInUser} />
       </div>
     </div>
   );
