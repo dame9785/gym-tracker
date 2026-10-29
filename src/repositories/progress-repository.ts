@@ -3,11 +3,15 @@ import { prisma } from '@/lib/prisma';
 export class ProgressRepository {
   async getWeightProgress(userId: number) {
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: {
+        id: userId,
+      },
       select: {
         goalWeight: true,
         weightLogs: {
-          orderBy: { loggedAt: 'asc' },
+          orderBy: {
+            loggedAt: 'asc',
+          },
           select: {
             weight: true,
             loggedAt: true,
@@ -37,7 +41,7 @@ export class ProgressRepository {
   }
 
   async getExerciseProgress(userId: number) {
-    const sessions = await prisma.workoutSession.findMany({
+    return prisma.workoutSession.findMany({
       where: {
         userId,
         status: 'COMPLETED',
@@ -47,7 +51,6 @@ export class ProgressRepository {
       },
       select: {
         finishedAt: true,
-
         exercises: {
           select: {
             workoutExercise: {
@@ -61,7 +64,6 @@ export class ProgressRepository {
                 },
               },
             },
-
             sets: {
               where: {
                 completed: true,
@@ -70,14 +72,11 @@ export class ProgressRepository {
                 actualReps: true,
                 actualWeight: true,
                 actualSeconds: true,
-                completed: true,
               },
             },
           },
         },
       },
     });
-
-    return sessions;
   }
 }

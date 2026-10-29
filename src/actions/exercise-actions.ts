@@ -218,11 +218,11 @@ export async function deleteExerciseAction(id: number): Promise<ExerciseActionRe
       };
     }
 
-    const result = await exerciseService.delete(id, user.userId);
+    await exerciseService.delete(id, user.userId);
 
     return {
       success: true,
-      message: result.message,
+      message: 'Exercise deleted successfully.',
     };
   } catch (error: unknown) {
     console.error('Delete exercise action failed:', error);

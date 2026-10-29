@@ -1,10 +1,9 @@
-import { ExerciseRepository } from '../repositories/exercise-repository';
-
+import { ExerciseRepository } from '@/repositories/exercise-repository';
 import { ExerciseMapper } from '@/mapping/exericse-mapping';
 
-import type { DeleteExerciseResult, ExerciseListResult, ExerciseResult } from '@/types/exercise-types';
+import type { ExerciseListResult, ExerciseResult } from '@/types/exercise-types';
 
-import { registerExerciseSchema, type RegisterExericseDto, updateExerciseSchema, type UpdateExericseDto } from '@/schemas/exercise-schema';
+import { registerExerciseSchema, updateExerciseSchema, type RegisterExericseDto, type UpdateExericseDto } from '@/schemas/exercise-schema';
 
 export class ExerciseService {
   private exerciseRepository = new ExerciseRepository();
@@ -15,13 +14,8 @@ export class ExerciseService {
     return exercises.map((exercise) => ExerciseMapper.exerciseModelToViewModel(exercise));
   }
 
-  async delete(id: number, userId: number): Promise<DeleteExerciseResult> {
+  async delete(id: number, userId: number): Promise<void> {
     await this.exerciseRepository.delete(id, userId);
-
-    return {
-      success: true,
-      message: 'Exercise deleted successfully.',
-    };
   }
 
   async registerExercise(dto: RegisterExericseDto, userId: number): Promise<ExerciseResult> {

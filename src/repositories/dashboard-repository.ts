@@ -8,16 +8,16 @@ export class DashboardRepository {
     startOfWeek.setDate(today.getDate() - today.getDay() + 1);
     startOfWeek.setHours(0, 0, 0, 0);
 
+    // Sunday belongs to the same week as the preceding Monday.
     const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
+    endOfWeek.setDate(startOfWeek.getDate() + 7);
 
-    return await prisma.workoutSchedule.findMany({
+    return prisma.workoutSchedule.findMany({
       where: {
-        userId: userId,
+        userId,
         date: {
           gte: startOfWeek,
-          lte: endOfWeek,
+          lt: endOfWeek,
         },
       },
       include: {
@@ -33,7 +33,7 @@ export class DashboardRepository {
             },
             sessions: {
               where: {
-                userId: 1,
+                userId,
               },
               orderBy: {
                 startedAt: 'desc',

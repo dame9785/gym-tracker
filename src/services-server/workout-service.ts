@@ -34,13 +34,7 @@ export class WorkoutService {
   }
 
   async update(id: number, dto: UpdateWorkoutDto, userId: number): Promise<WorkoutViewModel> {
-    const updated = await this.workoutRepository.update(id, dto, userId);
-
-    if (!updated) {
-      throw new Error('Could not find workout.');
-    }
-
-    const workout = await this.workoutRepository.getById(id, userId);
+    const workout = await this.workoutRepository.update(id, dto, userId);
 
     if (!workout) {
       throw new Error('Could not find workout.');

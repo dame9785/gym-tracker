@@ -4,8 +4,8 @@ import WeeklyOverview from '@/components/dashboard/weekly-overview';
 import TodayWorkout from '@/components/dashboard/today-workout';
 import WeeklySummary from '@/components/dashboard/weekly-summary';
 import WorkoutCalendar from '@/components/calendar/workout-calendar';
+
 import { getTokenFromCookieStore, requireAuth } from '@/lib/auth';
-import ErrorMessage from '@/components/ui/error-message';
 import { DashboardService } from '@/services-server/dashboard-service';
 import { redirect } from 'next/navigation';
 
@@ -19,11 +19,6 @@ export default async function DashboardPage() {
 
   const dashboardService = new DashboardService();
   const result = await dashboardService.getDashboard(user.userId);
-
-  // Kontrollera om tjänsten returnerade ett fel
-  if (!('weeklySummary' in result)) {
-    return <ErrorMessage message={result.message} />;
-  }
 
   return (
     <div className="w-full space-y-8">

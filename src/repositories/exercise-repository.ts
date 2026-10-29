@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { RegisterExericseDto, UpdateExericseDto } from '@/schemas/exercise-schema';
+import type { RegisterExericseDto, UpdateExericseDto } from '@/schemas/exercise-schema';
 import { MuscleRole, Prisma } from '@prisma/client';
 
 type MuscleInput = {
@@ -57,7 +57,7 @@ export class ExerciseRepository {
     });
   }
 
-  async delete(id: number, userId: number) {
+  async delete(id: number, userId: number): Promise<void> {
     const result = await prisma.exercise.deleteMany({
       where: { id, userId },
     });
@@ -65,12 +65,10 @@ export class ExerciseRepository {
     if (result.count === 0) {
       throw new Error('Exercise not found or unauthorized');
     }
-
-    return result;
   }
 
-  async update(id: number, dto: UpdateExericseDto, userId: number) {
-    return prisma.$transaction(async (tx) => {
+  async update(id: number, dto: UpdateExericseDto, userId: number): Promise<void> {
+    await prisma.$transaction(async (tx) => {
       const existing = await tx.exercise.findFirst({
         where: { id, userId },
         include: {
@@ -148,18 +146,6 @@ export class ExerciseRepository {
           });
         }
       }
-
-      return tx.exercise.findFirstOrThrow({
-        where: {
-          id,
-          userId,
-        },
-        include: {
-          muscles: {
-            include: { muscleGroup: true },
-          },
-        },
-      });
     });
   }
 

@@ -1,14 +1,11 @@
-//Prisma
 import { prisma } from '@/lib/prisma';
-import { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
+import type { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
 export class WorkoutRepository {
   async create(dto: AddWorkoutDto, userId: number) {
     return prisma.$transaction(async (tx) => {
-      // Get unique exercise IDs from the submitted workout.
       const exerciseIds = [...new Set(dto.workoutExercises.map((exercise) => exercise.exerciseId))];
 
-      // Verify that every exercise belongs to this user.
       if (exerciseIds.length > 0) {
         const ownedExercises = await tx.exercise.findMany({
           where: {
@@ -25,7 +22,6 @@ export class WorkoutRepository {
         }
       }
 
-      // Create the workout only after ownership validation.
       const workout = await tx.workout.create({
         data: {
           userId,
@@ -34,7 +30,6 @@ export class WorkoutRepository {
         },
       });
 
-      // Add the workout exercises.
       let order = 1;
 
       for (const exercise of dto.workoutExercises) {
@@ -54,7 +49,6 @@ export class WorkoutRepository {
         order++;
       }
 
-      // Return the workout with its exercises.
       return tx.workout.findUniqueOrThrow({
         where: {
           id: workout.id,
@@ -75,18 +69,18 @@ export class WorkoutRepository {
 
   async getAll(userId: number, page: number, pageSize: number) {
     const skip = (page - 1) * pageSize;
-    return await prisma.workout.findMany({
-      where: {
-        userId: userId,
-      },
 
+    return prisma.workout.findMany({
+      where: {
+        userId,
+      },
       include: {
         exercises: {
           include: {
             exercise: true,
           },
           orderBy: {
-            id: 'desc',
+            order: 'asc',
           },
         },
       },
@@ -100,7 +94,6 @@ export class WorkoutRepository {
 
   async update(id: number, dto: UpdateWorkoutDto, userId: number) {
     return prisma.$transaction(async (tx) => {
-      // Verify that the workout belongs to the authenticated user.
       const workout = await tx.workout.findFirst({
         where: {
           id,
@@ -115,7 +108,6 @@ export class WorkoutRepository {
         return null;
       }
 
-      // Verify that all exercises belong to the authenticated user.
       const exerciseIds = [...new Set(dto.workoutExercises.map((exercise) => exercise.exerciseId))];
 
       if (exerciseIds.length > 0) {
@@ -170,15 +162,31 @@ export class WorkoutRepository {
         order++;
       }
 
-      return { id };
+      // Return the updated workout with its exercises.
+      return tx.workout.findFirst({
+        where: {
+          id,
+          userId,
+        },
+        include: {
+          exercises: {
+            include: {
+              exercise: true,
+            },
+            orderBy: {
+              order: 'asc',
+            },
+          },
+        },
+      });
     });
   }
 
   async getById(id: number, userId: number) {
-    return await prisma.workout.findFirst({
+    return prisma.workout.findFirst({
       where: {
         id,
-        userId: userId,
+        userId,
       },
       include: {
         exercises: {
@@ -193,8 +201,8 @@ export class WorkoutRepository {
     });
   }
 
-  async delete(id: number, userId: number) {
-    return await prisma.workout.delete({
+  async delete(id: number, userId: number): Promise<void> {
+    await prisma.workout.delete({
       where: {
         userId,
         id,
@@ -202,10 +210,10 @@ export class WorkoutRepository {
     });
   }
 
-  async getTotalNumberOfWorkouts(userId: number) {
+  async getTotalNumberOfWorkouts(userId: number): Promise<number> {
     return prisma.workout.count({
       where: {
-        userId: userId,
+        userId,
       },
     });
   }

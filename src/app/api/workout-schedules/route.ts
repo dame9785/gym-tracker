@@ -1,24 +1,21 @@
-//Next Request & Next Response
 import { NextRequest, NextResponse } from 'next/server';
 
-//Services
 import { WorkoutScheduleService } from '@/services-server/workout-schedule-service';
 import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
-import { ErrorResponse } from '@/types/api-types';
+import type { ErrorResponse } from '@/types/api-types';
 import { getCurrentUser } from '@/utils/user-by-token';
 
 const workoutScheduleService = new WorkoutScheduleService();
 
 export async function GET(request: NextRequest) {
   try {
-    //Get current User from Cookie store
     const currentUserId = await getCurrentUser();
 
     if (!currentUserId) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Unauthorized ',
+          message: 'Unauthorized.',
         } satisfies ErrorResponse,
         { status: 401 },
       );
@@ -32,8 +29,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Ogiltiga parametrar.',
-        },
+          message: 'Invalid parameters.',
+        } satisfies ErrorResponse,
         { status: 400 },
       );
     }
@@ -42,8 +39,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Månaden måste vara mellan 1 och 12.',
-        },
+          message: 'Month must be between 1 and 12.',
+        } satisfies ErrorResponse,
         { status: 400 },
       );
     }
@@ -57,14 +54,14 @@ export async function GET(request: NextRequest) {
       },
       { status: 200 },
     );
-  } catch (error) {
-    console.error('GET /api/workout-schedule ERROR:', error);
+  } catch (error: unknown) {
+    console.error('GET /api/workout-schedules error:', error);
 
     return NextResponse.json(
       {
         success: false,
-        message: 'Ett oväntat fel inträffade.',
-      },
+        message: 'An unexpected error occurred.',
+      } satisfies ErrorResponse,
       { status: 500 },
     );
   }
@@ -78,41 +75,54 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: 'No token found',
+          message: 'Unauthorized.',
         } satisfies ErrorResponse,
         { status: 401 },
       );
     }
 
-    const payLoad = await getUserFromToken(token);
+    const payload = await getUserFromToken(token);
 
-    if (!payLoad) {
+    if (!payload) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Unauthorized ',
+          message: 'Unauthorized.',
         } satisfies ErrorResponse,
         { status: 401 },
       );
     }
-    const userId = payLoad.userId;
 
-    const dto = await request.json();
-    const result = await workoutScheduleService.create(dto, userId);
+    const userId = payload.userId;
+    const dto: unknown = await request.json();
 
-    if (!result.success) {
-      return NextResponse.json(result, { status: 500 });
+    const workoutSchedule = await workoutScheduleService.create(dto as Parameters<typeof workoutScheduleService.create>[0], userId);
+
+    return NextResponse.json(
+      {
+        success: true,
+        workoutSchedule,
+      },
+      { status: 201 },
+    );
+  } catch (error: unknown) {
+    console.error('POST /api/workout-schedules error:', error);
+
+    if (error instanceof Error && error.message.startsWith('Validation failed:')) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Invalid workout schedule data.',
+        } satisfies ErrorResponse,
+        { status: 400 },
+      );
     }
-
-    return NextResponse.json(result, { status: 201 });
-  } catch (error) {
-    console.error(error);
 
     return NextResponse.json(
       {
         success: false,
-        message: 'Ett oväntat fel inträffade.',
-      },
+        message: 'An unexpected error occurred.',
+      } satisfies ErrorResponse,
       { status: 500 },
     );
   }
