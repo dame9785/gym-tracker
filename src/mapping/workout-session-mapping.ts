@@ -40,7 +40,7 @@ export class WorkoutSessionMapper {
 
         const primaryMuscle = exerciseModel.muscles.find((muscle) => muscle.role === MuscleRole.PRIMARY);
 
-        const secondaryMuscles = exerciseModel.muscles.filter((muscle) => muscle.role === MuscleRole.SECONDARY).map((muscle) => muscle.muscleGroup.name);
+        const secondaryMuscles: string[] = exerciseModel.muscles.filter((muscle) => muscle.role === MuscleRole.SECONDARY).map((muscle) => muscle.muscleGroup.name);
 
         return {
           id: exercise.id,
@@ -87,7 +87,7 @@ export class WorkoutSessionMapper {
 
         const primaryMuscle = exerciseModel.muscles.find((muscle) => muscle.role === MuscleRole.PRIMARY);
 
-        const secondaryMuscles = exerciseModel.muscles.filter((muscle) => muscle.role === MuscleRole.SECONDARY).map((muscle) => muscle.muscleGroup.name);
+        const secondaryMuscles: string[] = exerciseModel.muscles.filter((muscle) => muscle.role === MuscleRole.SECONDARY).map((muscle) => muscle.muscleGroup.name);
 
         return {
           id: exercise.id,

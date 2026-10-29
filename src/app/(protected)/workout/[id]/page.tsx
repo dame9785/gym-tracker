@@ -55,7 +55,7 @@ export default async function WorkoutPage({ params }: PageProps) {
     const previousSessionsResponse = await workoutSessionService.getPreviousCompletedSessions(user.userId, session.id, new Date(session.finishedAt));
 
     if (previousSessionsResponse.success) {
-      previousSessions = previousSessionsResponse.data;
+      previousSessions = previousSessionsResponse.data ?? [];
     }
   }
 
