@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "prisma generate",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:migrate:status": "prisma migrate status"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
