@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ArrowDownRight, ArrowUpRight, Dumbbell, Repeat2, TrendingUp, Weight } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Dumbbell, Repeat2, TrendingUp, Weight, Trophy } from 'lucide-react';
 
 import type { ExerciseProgress as ExerciseProgressType } from '@/types/progress-type';
 import ExerciseChart from './progress-exercise-chart';
@@ -34,44 +34,60 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
 
   const weightChange = first && current ? current.weight - first.weight : null;
 
-  const weightChangePercent = first && current && first.weight !== 0 && weightChange !== null ? (weightChange / first.weight) * 100 : null;
+  const weightChangePercent = first && current && first.weight > 0 && weightChange !== null ? (weightChange / first.weight) * 100 : null;
 
-  const bestWeight = history.reduce((best, entry) => Math.max(best, entry.weight), 0);
+  const bestWeight = history.reduce((best, entry) => (entry.weight > 0 ? Math.max(best, entry.weight) : best), 0);
 
-  const bestReps = history.reduce((best, entry) => Math.max(best, entry.reps), 0);
+  const bestReps = history.reduce((best, entry) => (entry.reps > 0 ? Math.max(best, entry.reps) : best), 0);
 
-  const bestSeconds = history.reduce((best, entry) => Math.max(best, entry.seconds ?? 0), 0);
+  const bestSeconds = history.reduce((best, entry) => ((entry.seconds ?? 0) > 0 ? Math.max(best, entry.seconds ?? 0) : best), 0);
 
   const trainingDays = new Set(history.map((entry) => new Date(entry.loggedAt).toLocaleDateString('sv-SE'))).size;
 
-  const bestWeightEntry = history.find((entry) => entry.weight === bestWeight);
+  const bestWeightEntry = history.find((entry) => entry.weight > 0 && entry.weight === bestWeight);
 
-  const bestRepsEntry = history.find((entry) => entry.reps === bestReps);
+  const bestRepsEntry = history.find((entry) => entry.reps > 0 && entry.reps === bestReps);
 
-  const { newWeightRecords, newRepsRecords } = history.reduce(
+  const bestSecondsEntry = history.find((entry) => (entry.seconds ?? 0) > 0 && entry.seconds === bestSeconds);
+
+  // Mark records only when they exceed a previous valid result.
+  const { newWeightRecords, newRepsRecords, newSecondsRecords } = history.reduce(
     (records, entry) => {
-      if (records.hasPrevious && entry.weight > records.highestWeight) {
+      const seconds = entry.seconds ?? 0;
+
+      if (entry.weight > 0 && records.highestWeight !== null && entry.weight > records.highestWeight) {
         records.newWeightRecords.add(entry);
       }
 
-      if (records.hasPrevious && entry.reps > records.highestReps) {
+      if (entry.reps > 0 && records.highestReps !== null && entry.reps > records.highestReps) {
         records.newRepsRecords.add(entry);
       }
 
-      records.highestWeight = Math.max(records.highestWeight, entry.weight);
+      if (seconds > 0 && records.highestSeconds !== null && seconds > records.highestSeconds) {
+        records.newSecondsRecords.add(entry);
+      }
 
-      records.highestReps = Math.max(records.highestReps, entry.reps);
+      if (entry.weight > 0) {
+        records.highestWeight = records.highestWeight === null ? entry.weight : Math.max(records.highestWeight, entry.weight);
+      }
 
-      records.hasPrevious = true;
+      if (entry.reps > 0) {
+        records.highestReps = records.highestReps === null ? entry.reps : Math.max(records.highestReps, entry.reps);
+      }
+
+      if (seconds > 0) {
+        records.highestSeconds = records.highestSeconds === null ? seconds : Math.max(records.highestSeconds, seconds);
+      }
 
       return records;
     },
     {
-      highestWeight: Number.NEGATIVE_INFINITY,
-      highestReps: Number.NEGATIVE_INFINITY,
-      hasPrevious: false,
+      highestWeight: null as number | null,
+      highestReps: null as number | null,
+      highestSeconds: null as number | null,
       newWeightRecords: new Set<(typeof history)[number]>(),
       newRepsRecords: new Set<(typeof history)[number]>(),
+      newSecondsRecords: new Set<(typeof history)[number]>(),
     },
   );
 
@@ -125,16 +141,18 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                     />
 
                     <StatCard
-                      label={isPlank ? 'Bästa tid' : 'Bästa registrerade vikt'}
+                      label={isPlank ? 'Personligt tidsrekord' : 'Bästa vikt'}
                       value={isPlank ? `${bestSeconds} sek` : `${bestWeight} kg`}
                       detail={
                         isPlank
-                          ? 'Längsta registrerade planktiden'
+                          ? bestSecondsEntry
+                            ? `Uppnått ${new Date(bestSecondsEntry.loggedAt).toLocaleDateString('sv-SE')}`
+                            : 'Inget rekord ännu'
                           : bestWeightEntry
-                            ? `Uppnådd ${new Date(bestWeightEntry.loggedAt).toLocaleDateString('sv-SE')}`
-                            : 'Ingen registrering ännu'
+                            ? `Uppnått ${new Date(bestWeightEntry.loggedAt).toLocaleDateString('sv-SE')}`
+                            : 'Ingen giltig vikt registrerad'
                       }
-                      icon={<TrendingUp className="h-4 w-4" />}
+                      icon={<Trophy className="h-4 w-4" />}
                     />
 
                     <StatCard
@@ -145,7 +163,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                           ? 'Dagar med registrerad träning'
                           : bestRepsEntry
                             ? `Uppnått ${new Date(bestRepsEntry.loggedAt).toLocaleDateString('sv-SE')}`
-                            : 'Ingen registrering ännu'
+                            : 'Inga giltiga repetitioner registrerade'
                       }
                       icon={<Repeat2 className="h-4 w-4" />}
                     />
@@ -204,7 +222,6 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                       <div>
                         <h3 className="text-lg font-semibold text-white">Utveckling över tid</h3>
-
                         <p className="mt-1 text-sm text-zinc-500">{isPlank ? 'Följ hur länge du kan hålla plankan.' : 'Välj vilket resultat du vill följa i grafen.'}</p>
                       </div>
 
@@ -300,6 +317,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                               {entries.map((entry, index) => {
                                 const isWeightRecord = newWeightRecords.has(entry);
                                 const isRepsRecord = newRepsRecords.has(entry);
+                                const isSecondsRecord = newSecondsRecords.has(entry);
 
                                 return (
                                   <div
@@ -320,19 +338,11 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                                     </div>
 
                                     <div className="flex shrink-0 flex-col items-end gap-2">
-                                      {!isPlank && isWeightRecord && (
-                                        <span className="rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-300">
-                                          <TrendingUp className="mr-1 inline h-3 w-3" />
-                                          Viktrekord
-                                        </span>
-                                      )}
+                                      {isPlank && isSecondsRecord && <RecordBadge label="Tidsrekord" />}
 
-                                      {!isPlank && isRepsRecord && (
-                                        <span className="rounded-md bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-300">
-                                          <Repeat2 className="mr-1 inline h-3 w-3" />
-                                          Repsrekord
-                                        </span>
-                                      )}
+                                      {!isPlank && isWeightRecord && <RecordBadge label="Viktrekord" />}
+
+                                      {!isPlank && isRepsRecord && <RecordBadge label="Repsrekord" variant="green" />}
                                     </div>
                                   </div>
                                 );
@@ -357,6 +367,17 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
         </p>
       )}
     </section>
+  );
+}
+
+function RecordBadge({ label, variant = 'purple' }: { label: string; variant?: 'purple' | 'green' }) {
+  const colors = variant === 'green' ? 'bg-emerald-500/10 text-emerald-300' : 'bg-purple-500/10 text-purple-300';
+
+  return (
+    <span className={`rounded-md px-2 py-1 text-xs font-medium ${colors}`}>
+      <Trophy className="mr-1 inline h-3 w-3" />
+      {label}
+    </span>
   );
 }
 

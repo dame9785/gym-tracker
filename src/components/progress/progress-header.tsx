@@ -1,15 +1,17 @@
 import { Dumbbell } from 'lucide-react';
 
-export default function HistoryHeader() {
+export default function ProgressHeader() {
   return (
-    <div className="mb-10 flex items-center gap-4">
-      <div className="rounded-2xl bg-orange-500 p-3">
-        <Dumbbell className="h-8 w-8 text-white" />
+    <header className="flex items-center gap-4">
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-orange-500/20 bg-orange-500/10 text-orange-400">
+        <Dumbbell className="h-6 w-6" />
       </div>
-      <div>
-        <h1 className="text-4xl font-bold text-white">Your progress</h1>
-        <p className="text-zinc-400">Track your fitness journey</p>
+
+      <div className="min-w-0">
+        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Din utveckling</h1>
+
+        <p className="mt-1 text-sm leading-6 text-zinc-400">Följ dina träningsresultat och se dina framsteg över tid.</p>
       </div>
-    </div>
+    </header>
   );
 }
