@@ -15,8 +15,6 @@ export interface WeightProgressEntry {
   loggedAt: string;
 }
 
-export type ExerciseProgressMetric = 'weight' | 'reps' | 'time';
-
 export interface ExerciseProgress {
   exerciseId: number;
   exerciseName: string;

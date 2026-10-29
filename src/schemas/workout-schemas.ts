@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const updateWorkoutExericeSchema = z.object({
+const updateWorkoutExericeSchema = z.object({
   exerciseId: z.coerce.number(),
   sets: z.coerce.number(),
   reps: z.coerce.number(),

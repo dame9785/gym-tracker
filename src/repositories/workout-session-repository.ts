@@ -105,36 +105,68 @@ export class WorkoutSessionRepository {
     return data;
   }
 
-  async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number) {
-    return await prisma.workoutSessionSet.update({
-      where: {
-        id,
-      },
-      data: {
-        actualReps,
-        actualWeight,
-        actualSeconds,
-        completed: true,
-      },
+  async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number, userId: number) {
+    return prisma.$transaction(async (tx) => {
+      const result = await tx.workoutSessionSet.updateMany({
+        where: {
+          id,
+          workoutSessionExercise: {
+            workoutSession: {
+              userId,
+            },
+          },
+        },
+        data: {
+          actualReps,
+          actualWeight,
+          actualSeconds,
+          completed: true,
+          completedAt: new Date(),
+        },
+      });
+
+      if (result.count === 0) {
+        return null;
+      }
+
+      return tx.workoutSessionSet.findFirst({
+        where: {
+          id,
+          workoutSessionExercise: {
+            workoutSession: {
+              userId,
+            },
+          },
+        },
+      });
     });
   }
 
-  async finish(id: number) {
-    console.log('🔥 REPOSITORY FINISH:', id);
+  async finish(id: number, userId: number) {
+    return prisma.$transaction(async (tx) => {
+      const result = await tx.workoutSession.updateMany({
+        where: {
+          id,
+          userId,
+          status: 'ACTIVE',
+        },
+        data: {
+          status: 'COMPLETED',
+          finishedAt: new Date(),
+        },
+      });
 
-    const result = await prisma.workoutSession.update({
-      where: {
-        id,
-      },
-      data: {
-        status: 'COMPLETED',
-        finishedAt: new Date(),
-      },
+      if (result.count === 0) {
+        return null;
+      }
+
+      return tx.workoutSession.findFirst({
+        where: {
+          id,
+          userId,
+        },
+      });
     });
-
-    console.log('🔥 PRISMA RESULT:', result);
-
-    return result;
   }
 
   async getCompeletedWorkoutSessiosn(userId: number) {
@@ -151,10 +183,11 @@ export class WorkoutSessionRepository {
     return sessions;
   }
 
-  async updateWorkoutSessionsStatus(workoutSessionId: number): Promise<boolean> {
+  async updateWorkoutSessionsStatus(workoutSessionId: number, userId: number): Promise<boolean> {
     const result = await prisma.workoutSession.updateMany({
       where: {
         id: workoutSessionId,
+        userId,
         status: 'ACTIVE',
       },
       data: {
@@ -232,29 +265,6 @@ export class WorkoutSessionRepository {
   }
 
   async getPreviousCompletedByWorkoutId(workoutId: number, userId: number, currentSessionId: number) {
-    const sessions = await prisma.workoutSession.findMany({
-      where: {
-        workoutId,
-        userId,
-        status: 'COMPLETED',
-      },
-      select: {
-        id: true,
-        workoutId: true,
-        userId: true,
-        status: true,
-        startedAt: true,
-        finishedAt: true,
-      },
-      orderBy: {
-        finishedAt: 'desc',
-      },
-    });
-
-    console.log('ALL SESSIONS FOR WORKOUT:', sessions);
-    console.log('Completed sessions for workout:', sessions);
-    console.log('Current session ID to exclude:', currentSessionId);
-
     return prisma.workoutSession.findFirst({
       where: {
         workoutId,

@@ -3,8 +3,6 @@
 import { CalendarDays, CheckCircle2, Clock3, Dumbbell, Play, RotateCcw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-// Services
-import { WorkoutSessionService } from '@/services-server/workout-session-service';
 import { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 interface TodayWorkoutProps {
@@ -13,7 +11,6 @@ interface TodayWorkoutProps {
 
 export default function TodayWorkout({ workout }: TodayWorkoutProps) {
   const router = useRouter();
-  const workoutSessionService = new WorkoutSessionService();
 
   const hasWorkout = !!workout;
 
@@ -27,10 +24,27 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
       return;
     }
 
-    const result = await workoutSessionService.create(workout.id, 1); //TODO: Dont use static user Id
+    try {
+      const response = await fetch('/api/workout-sessions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workoutId: workout.id,
+        }),
+      });
 
-    if (result.success) {
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        console.error('Failed to start workout:', result.message);
+        return;
+      }
+
       router.push(`/workout-sessions/${result.data}`);
+    } catch (error) {
+      console.error('Failed to start workout:', error);
     }
   };
 

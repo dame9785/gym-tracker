@@ -17,7 +17,17 @@ export default async function WorkoutSessionPage({ params }: PageProps) {
   //Check if user has token or exiperied token.
   const user = await requireAuth();
 
-  const response = await workoutSessionService.getById(Number(id), user.userId);
+  const sessionId = Number(id);
+
+  if (!Number.isSafeInteger(sessionId) || sessionId <= 0) {
+    return (
+      <main>
+        <ErrorMessage title="Invalid workout session" message="The workout session ID is invalid." />
+      </main>
+    );
+  }
+
+  const response = await workoutSessionService.getById(sessionId, user.userId);
 
   if (!response.success || !response.data) {
     return (

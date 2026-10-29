@@ -1,17 +1,9 @@
 'use server';
 
 import { requireAuth } from '@/lib/auth';
-import {
-  LoginDto,
-  loginSchema,
-  RegisterUserDto,
-  registerUserSchema,
-  UpdateUserDto,
-  updateUserSchema,
-} from '@/schemas/auth-schemas';
+import { LoginDto, loginSchema, RegisterUserDto, registerUserSchema, UpdateUserDto, updateUserSchema } from '@/schemas/auth-schemas';
 import { AuthService } from '@/services-server/auth-service';
 import { cookies } from 'next/headers';
-import { success } from 'zod';
 
 const authService = new AuthService();
 
@@ -32,6 +24,7 @@ export async function updateUserAction(dto: UpdateUserDto) {
 
 export async function registerUserAction(dto: RegisterUserDto) {
   const validation = registerUserSchema.safeParse(dto);
+
   if (!validation.success) {
     return {
       success: false,
@@ -40,7 +33,43 @@ export async function registerUserAction(dto: RegisterUserDto) {
     };
   }
 
-  return authService.register(validation.data);
+  try {
+    const response = await authService.register(validation.data);
+
+    if (!response.success) {
+      return response;
+    }
+
+    if (!response.data) {
+      return {
+        success: false,
+        message: 'Registration failed.',
+      };
+    }
+
+    const cookieStore = await cookies();
+
+    cookieStore.set('token', response.data.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return {
+      success: true,
+      message: response.message,
+      data: {
+        userId: response.data.userId,
+      },
+    };
+  } catch {
+    return {
+      success: false,
+      message: 'Something went wrong.',
+    };
+  }
 }
 
 export async function logoutAction() {
@@ -95,6 +124,7 @@ export async function loginUserAction(dto: LoginDto) {
       },
     };
   } catch (error) {
+    console.error('Error while trying to login');
     return {
       success: false,
       message: 'Something went wrong..',

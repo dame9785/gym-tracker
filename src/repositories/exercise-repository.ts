@@ -2,8 +2,6 @@ import { prisma } from '@/lib/prisma';
 import { RegisterExericseDto, UpdateExericseDto } from '@/schemas/exercise-schema';
 import { MuscleRole, Prisma } from '@prisma/client';
 
-type TransactionClient = Prisma.TransactionClient;
-
 type MuscleInput = {
   primaryMuscle: string;
   secondaryMuscles: string[];
@@ -108,7 +106,10 @@ export class ExerciseRepository {
       };
 
       await tx.exercise.update({
-        where: { id },
+        where: {
+          id,
+          userId,
+        },
         data,
       });
 
@@ -148,8 +149,11 @@ export class ExerciseRepository {
         }
       }
 
-      return tx.exercise.findUniqueOrThrow({
-        where: { id },
+      return tx.exercise.findFirstOrThrow({
+        where: {
+          id,
+          userId,
+        },
         include: {
           muscles: {
             include: { muscleGroup: true },

@@ -5,23 +5,6 @@ import type { WorkoutSessionExerciseViewModel, WorkoutExerciseViewModel } from '
 //Prisma
 import { $Enums, WorkoutSessionStatus } from '@prisma/client';
 
-export interface DeleteWorkoutResponse {
-  success: boolean;
-  message: string;
-}
-
-export interface GetWorkoutResponse {
-  success: boolean;
-  message: string;
-  workout: EditWorkoutViewModel;
-}
-
-export interface EditWorkoutResponse {
-  success: boolean;
-  message: string;
-  workout: WorkoutViewModel[];
-}
-
 export interface WorkoutViewModel {
   id: number;
   name: string;
@@ -31,7 +14,7 @@ export interface WorkoutViewModel {
   workoutExercises: WorkoutExercisesViewModel[];
 }
 
-export interface WorkoutExercisesViewModel {
+interface WorkoutExercisesViewModel {
   exerciseId: number;
   name: string;
   sets: number;
@@ -42,35 +25,9 @@ export interface WorkoutExercisesViewModel {
   order: number;
 }
 
-export interface EditWorkoutDto {
-  name: string;
-  description: string;
-  workoutExericses: WorkoutExerciseViewModel[];
-}
-
-export interface CreateWorkoutExerciseDto {
-  workoutId: number;
-  exerciseId: number;
-  sets: number;
-  reps: number;
-  weight: number;
-  rest: number;
-  note: string;
-  order: number;
-}
-
-export interface UpdateWorkoutSessionSetDto {
-  actualReps: number;
-  actualWeight: number;
-}
-
 export interface RegisterWorkoutScheduleDto {
   workoutId: number;
   date: string;
-}
-
-export interface RegisterWorkoutSessionDto {
-  workoutId: number;
 }
 
 export interface EditWorkoutViewModel {
@@ -112,21 +69,6 @@ export interface WeeklyWorkoutViewModel {
   exercises: WorkoutExerciseViewModel[];
 }
 
-export interface SelectedWorkoutProps {
-  workout: WeeklyWorkoutViewModel;
-}
-
-export interface WorkoutResponse {
-  success: boolean;
-  workouts: WorkoutViewModel[];
-  message?: string;
-}
-
-export interface WorkoutValidationResult {
-  message: string;
-  success: boolean;
-}
-
 export interface WorkoutSessionFinishViewModel {
   id: number;
   userId: number;
@@ -134,14 +76,6 @@ export interface WorkoutSessionFinishViewModel {
   startedAt: Date;
   finishedAt: Date | null;
   status: $Enums.WorkoutSessionStatus;
-}
-
-export interface WorkoutSchedelueViewModel {
-  userId: number;
-  id: number;
-  createdAt: Date;
-  workoutId: number;
-  date: Date;
 }
 
 export interface RegisterWorkoutActionResult {

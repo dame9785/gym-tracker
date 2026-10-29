@@ -35,11 +35,11 @@ export class WorkoutSessionService {
   async getById(id: number, userId: number): Promise<ApiResponse<WorkoutSessionDetailApiResponse>> {
     try {
       const workoutSession = await this.workoutSessionRepository.getById(id, userId);
-      console.dir(workoutSession, { depth: null, colors: true });
+
       if (!workoutSession) {
         return {
           success: false,
-          message: 'Kunde inte avsluta träningspasset.',
+          message: 'Träningspasset hittades inte eller saknar behörighet.',
         } satisfies ErrorResponse;
       }
 
@@ -56,13 +56,14 @@ export class WorkoutSessionService {
       };
     }
   }
-  async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
+  async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number, userId: number): Promise<ApiResponse<WorkoutSessionUpdatedSetResponse>> {
     try {
-      const updatedSet = await this.workoutSessionRepository.updateSet(id, actualReps, actualWeight, actualSeconds);
+      const updatedSet = await this.workoutSessionRepository.updateSet(id, actualReps, actualWeight, actualSeconds, userId);
+
       if (!updatedSet) {
         return {
           success: false,
-          message: 'Gick inte uppdatera, server fel',
+          message: 'Setet hittades inte eller saknar behörighet.',
         } satisfies ErrorResponse;
       }
 
@@ -71,41 +72,52 @@ export class WorkoutSessionService {
         data: updatedSet,
       } satisfies SuccessResponse<WorkoutSessionUpdatedSetResponse>;
     } catch (error) {
+      console.error('Failed to update workout session set:', error);
+
       return {
         success: false,
-        message: 'Gick inte uppdatera, server fel',
+        message: 'Gick inte att uppdatera setet.',
       } satisfies ErrorResponse;
     }
   }
 
-  async finish(id: number): Promise<ApiResponse<WorkoutFinishApiResponse>> {
+  async finish(id: number, userId: number): Promise<ApiResponse<WorkoutFinishApiResponse>> {
     try {
-      const workoutSession = await this.workoutSessionRepository.finish(id);
+      const workoutSession = await this.workoutSessionRepository.finish(id, userId);
+
+      if (!workoutSession) {
+        return {
+          success: false,
+          message: 'Träningspasset hittades inte eller saknar behörighet.',
+        } satisfies ErrorResponse;
+      }
+
       return {
         success: true,
         data: workoutSession,
       } satisfies SuccessResponse<WorkoutFinishApiResponse>;
     } catch (error) {
-      console.error(error);
+      console.error('Failed to finish workout session:', error);
 
       return {
         success: false,
-        message: 'Something went wrong..',
+        message: 'Kunde inte avsluta träningspasset.',
       } satisfies ErrorResponse;
     }
   }
 
   //Update workout session status
-  async updateWorkoutSessionStatus(workoutSessionId: number): Promise<ApiResponse<UpdateWorkoutSessionResponse>> {
+  async updateWorkoutSessionStatus(workoutSessionId: number, userId: number): Promise<ApiResponse<UpdateWorkoutSessionResponse>> {
     try {
-      const updatedWorkoutSession = await this.workoutSessionRepository.updateWorkoutSessionsStatus(workoutSessionId);
+      const updated = await this.workoutSessionRepository.updateWorkoutSessionsStatus(workoutSessionId, userId);
 
-      if (!updatedWorkoutSession) {
+      if (!updated) {
         return {
           success: false,
-          message: 'Kunde inte avsluta träningspasset.',
+          message: 'Träningspasset hittades inte eller saknar behörighet.',
         } satisfies ErrorResponse;
       }
+
       return {
         success: true,
         data: {
@@ -114,11 +126,11 @@ export class WorkoutSessionService {
         },
       } satisfies SuccessResponse<UpdateWorkoutSessionResponse>;
     } catch (error) {
-      console.error(error);
+      console.error('Failed to update workout session status:', error);
 
       return {
         success: false,
-        message: 'Kunde inte avsluta träningspasset.',
+        message: 'Kunde inte uppdatera träningspassets status.',
       } satisfies ErrorResponse;
     }
   }
@@ -169,24 +181,6 @@ export class WorkoutSessionService {
       return {
         success: false as const,
         message: 'Kunde inte hämta föregående träningspass.',
-      };
-    }
-  }
-
-  async debugCompletedSessions(userId: number) {
-    try {
-      const sessions = await this.workoutSessionRepository.debugCompletedSessions(userId);
-
-      return {
-        success: true as const,
-        data: sessions,
-      };
-    } catch (error) {
-      console.error('Failed to fetch completed sessions:', error);
-
-      return {
-        success: false as const,
-        message: 'Kunde inte hämta avslutade träningspass.',
       };
     }
   }

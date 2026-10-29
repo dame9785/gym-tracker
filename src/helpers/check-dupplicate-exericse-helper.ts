@@ -1,4 +1,3 @@
-import { prisma } from '@/lib/prisma';
 import { Exercise } from '@/types/exercise-types';
 /**
  * Checks if the exercise list contains duplicate exercise IDs.

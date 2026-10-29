@@ -3,7 +3,6 @@ import Link from 'next/link';
 
 // Components
 import StartWorkoutButton from '@/components/workout/start-workout-button';
-import NotPerformedButton from '@/components/dashboard/not-perfomed-button';
 
 // Icons
 import { CalendarDays, Clock3, Dumbbell, ListChecks, Scale } from 'lucide-react';

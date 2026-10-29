@@ -1,7 +1,7 @@
 import { UserViewModel } from './user-types';
 import { LogItemViewModel } from './log-weight-types';
 import { ExerciseViewModel } from './exercise-types';
-import { WeeklyWorkoutViewModel, WorkoutSchedelueViewModel, WorkoutSessionFinishViewModel, WorkoutSessionViewModel, WorkoutViewModel } from './workout-types';
+import { WeeklyWorkoutViewModel, WorkoutSessionFinishViewModel, WorkoutSessionViewModel, WorkoutViewModel } from './workout-types';
 import { WeeklySummaryViewModel } from './dashboard-types';
 import { HistoryViewModel } from './history-types';
 
@@ -39,12 +39,6 @@ export interface RegisterResponse {
   token: string;
 }
 
-//Login
-export interface LogoutResponse {
-  success: boolean;
-  message: string;
-}
-
 export interface UserLogWeightResponse {
   logList: LogItemViewModel[];
   currentWeight: number | null;
@@ -53,8 +47,6 @@ export interface UserLogWeightResponse {
 }
 
 export type DeleteLogWeightResponse = [];
-
-export type FoodDeleteResponse = [];
 
 export type ExerciseApiResponse = ExerciseViewModel[];
 
@@ -90,7 +82,7 @@ export interface HistoryApiResponse {
   pagination: PaginationViewModel;
 }
 
-export interface PaginationViewModel {
+interface PaginationViewModel {
   currentPage: number;
   totalPages: number;
   pageSize: number;
@@ -110,7 +102,7 @@ export interface UpdateWorkoutSessionResponse {
   success: boolean;
 }
 
-export interface UpdatedSetViewModel {
+interface UpdatedSetViewModel {
   id: number;
   actualReps: number | null;
   actualWeight: number | null;

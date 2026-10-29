@@ -174,6 +174,13 @@ export async function deleteExerciseAction(id: number) {
   try {
     const user = await requireAuth();
 
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      return {
+        success: false,
+        message: 'Invalid exercise ID.',
+      };
+    }
+
     return await exerciseService.delete(id, user.userId);
   } catch (error) {
     console.error('Delete exercise action failed:', error);
@@ -190,6 +197,13 @@ export async function updateExerciseAction(id: number, formData: FormData) {
 
   try {
     const user = await requireAuth();
+
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      return {
+        success: false,
+        message: 'Invalid exercise ID.',
+      };
+    }
 
     const dto: Record<string, unknown> = {};
 

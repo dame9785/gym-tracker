@@ -1,5 +1,5 @@
 //Prisma
-import { GoalType, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 //Types
 import type { UserSettingsViewModel, UserViewModel } from '@/types/user-types';

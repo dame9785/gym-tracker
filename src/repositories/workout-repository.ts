@@ -4,25 +4,37 @@ import { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
 export class WorkoutRepository {
   async create(dto: AddWorkoutDto, userId: number) {
-    return await prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx) => {
+      // Get unique exercise IDs from the submitted workout.
+      const exerciseIds = [...new Set(dto.workoutExercises.map((exercise) => exercise.exerciseId))];
+
+      // Verify that every exercise belongs to this user.
+      if (exerciseIds.length > 0) {
+        const ownedExercises = await tx.exercise.findMany({
+          where: {
+            id: { in: exerciseIds },
+            userId,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (ownedExercises.length !== exerciseIds.length) {
+          throw new Error('One or more exercises are invalid.');
+        }
+      }
+
+      // Create the workout only after ownership validation.
       const workout = await tx.workout.create({
         data: {
-          userId: userId,
+          userId,
           name: dto.name,
           description: dto.description,
         },
-        include: {
-          exercises: {
-            include: {
-              exercise: true,
-            },
-            orderBy: {
-              order: 'asc',
-            },
-          },
-        },
       });
 
+      // Add the workout exercises.
       let order = 1;
 
       for (const exercise of dto.workoutExercises) {
@@ -42,7 +54,22 @@ export class WorkoutRepository {
         order++;
       }
 
-      return workout;
+      // Return the workout with its exercises.
+      return tx.workout.findUniqueOrThrow({
+        where: {
+          id: workout.id,
+        },
+        include: {
+          exercises: {
+            include: {
+              exercise: true,
+            },
+            orderBy: {
+              order: 'asc',
+            },
+          },
+        },
+      });
     });
   }
 
@@ -71,12 +98,46 @@ export class WorkoutRepository {
     });
   }
 
-  async update(id: number, dto: UpdateWorkoutDto) {
-    return await prisma.$transaction(async (tx) => {
-      // Uppdatera workout
+  async update(id: number, dto: UpdateWorkoutDto, userId: number) {
+    return prisma.$transaction(async (tx) => {
+      // Verify that the workout belongs to the authenticated user.
+      const workout = await tx.workout.findFirst({
+        where: {
+          id,
+          userId,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!workout) {
+        return null;
+      }
+
+      // Verify that all exercises belong to the authenticated user.
+      const exerciseIds = [...new Set(dto.workoutExercises.map((exercise) => exercise.exerciseId))];
+
+      if (exerciseIds.length > 0) {
+        const ownedExercises = await tx.exercise.findMany({
+          where: {
+            id: { in: exerciseIds },
+            userId,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (ownedExercises.length !== exerciseIds.length) {
+          throw new Error('One or more exercises are invalid.');
+        }
+      }
+
       await tx.workout.update({
         where: {
           id,
+          userId,
         },
         data: {
           name: dto.name,
@@ -84,14 +145,12 @@ export class WorkoutRepository {
         },
       });
 
-      // Ta bort alla gamla övningar
       await tx.workoutExercise.deleteMany({
         where: {
           workoutId: id,
         },
       });
 
-      // Lägg till de nya
       let order = 1;
 
       for (const exercise of dto.workoutExercises) {
@@ -110,6 +169,8 @@ export class WorkoutRepository {
 
         order++;
       }
+
+      return { id };
     });
   }
 

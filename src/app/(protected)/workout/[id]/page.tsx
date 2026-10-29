@@ -25,7 +25,7 @@ export default async function WorkoutPage({ params }: PageProps) {
 
   const workoutId = Number(id);
 
-  if (!Number.isInteger(workoutId) || workoutId <= 0) {
+  if (!Number.isSafeInteger(workoutId) || workoutId <= 0) {
     redirect('/workouts');
   }
 

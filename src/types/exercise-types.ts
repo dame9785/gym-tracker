@@ -17,16 +17,6 @@ export interface ExerciseViewModel {
   techniqueTips: string | null;
 }
 
-export interface EditWorkoutExerciseDto {
-  exerciseId: number;
-  name: string;
-  sets: number;
-  reps: number;
-  order: number;
-  weight: number | null;
-  note: string | null;
-}
-
 export interface RegisterWorkoutExerciseDto {
   exerciseId: number;
   sets: number;
@@ -60,9 +50,4 @@ export interface WorkoutSessionExerciseViewModel {
   order: number;
   note: string | null;
   sets: WorkoutSessionSetViewModel[];
-}
-
-export interface ExerciseResponse {
-  message: string;
-  isSuccess: boolean;
 }

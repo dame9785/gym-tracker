@@ -53,18 +53,6 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
 
   const sessionExercises = session?.exercises ?? [];
 
-  const completedSets = sessionExercises.reduce((total, exercise) => total + exercise.sets.filter((set) => set.completed).length, 0);
-
-  const actualReps = sessionExercises.reduce(
-    (total, exercise) => total + exercise.sets.reduce((setTotal, set) => setTotal + (set.completed ? (set.actualReps ?? 0) : 0), 0),
-    0,
-  );
-
-  const actualSeconds = sessionExercises.reduce(
-    (total, exercise) => total + exercise.sets.reduce((setTotal, set) => setTotal + (set.completed ? (set.actualSeconds ?? 0) : 0), 0),
-    0,
-  );
-
   const getCompletedReps = (exercise: WorkoutSessionViewModel['exercises'][number] | undefined): number | null => {
     const completedSets = (exercise?.sets ?? []).filter((set) => set.completed);
 
@@ -100,50 +88,6 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
 
     return setsWithWeight.reduce((total, set) => total + (set.actualWeight ?? 0), 0) / setsWithWeight.length;
   };
-
-  const workoutProgress = exercises.map((exercise) => {
-    const currentExercise = sessionExercises.find((item) => item.exerciseId === exercise.exerciseId);
-
-    const previousSession = previousSessions.find((item) =>
-      item.exercises.some((exerciseSession) => exerciseSession.exerciseId === exercise.exerciseId && exerciseSession.sets.some((set) => set.completed)),
-    );
-
-    const previousExercise = previousSession?.exercises.find((item) => item.exerciseId === exercise.exerciseId && item.sets.some((set) => set.completed));
-
-    if (!currentExercise || !previousExercise) {
-      return { status: 'missing' as const };
-    }
-
-    const values = [
-      getProgressStatus(getCompletedReps(currentExercise), getCompletedReps(previousExercise)),
-      getProgressStatus(getAverageWeight(currentExercise), getAverageWeight(previousExercise)),
-      getProgressStatus(getCompletedSeconds(currentExercise), getCompletedSeconds(previousExercise), true),
-    ];
-
-    const comparable = values.filter((value) => value !== 'missing');
-
-    if (comparable.length === 0) {
-      return { status: 'missing' as const };
-    }
-
-    if (comparable.includes('lower')) {
-      return { status: 'lower' as const };
-    }
-
-    if (comparable.includes('improved')) {
-      return { status: 'improved' as const };
-    }
-
-    return { status: 'unchanged' as const };
-  });
-
-  const improvedExercises = workoutProgress.filter((item) => item.status === 'improved').length;
-
-  const unchangedExercises = workoutProgress.filter((item) => item.status === 'unchanged').length;
-
-  const lowerExercises = workoutProgress.filter((item) => item.status === 'lower').length;
-
-  const missingExercises = workoutProgress.filter((item) => item.status === 'missing').length;
 
   return (
     <section className="mx-auto w-full max-w-5xl space-y-8 pb-10">

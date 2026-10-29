@@ -49,7 +49,7 @@ export type WorkoutSessionWithExercisesViewModel = {
   exercises: WorkoutSessionExerciseViewModel[];
 };
 
-export type WorkoutSessionExerciseViewModel = {
+type WorkoutSessionExerciseViewModel = {
   id: number;
   name: string;
   primaryMuscle: string;
@@ -63,7 +63,7 @@ export type WorkoutSessionExerciseViewModel = {
   sets: WorkoutSessionSetViewModel[];
 };
 
-export type WorkoutSessionSetViewModel = {
+type WorkoutSessionSetViewModel = {
   id: number;
   setNumber: number;
   targetReps: number;

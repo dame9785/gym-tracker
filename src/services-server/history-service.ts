@@ -1,14 +1,10 @@
-//Repository
 import { WorkoutSessionMapper } from '@/mapping/workout-session-mapping';
 import { HistoryRepository } from '@/repositories/history-repository';
-import { WorkoutRepository } from '@/repositories/workout-repository';
 
-//Types
-import { ErrorResponse, ApiResponse, HistoryApiResponse } from '@/types/api-types';
+import type { ErrorResponse, ApiResponse, HistoryApiResponse } from '@/types/api-types';
 
 export class HistoryService {
   private historyRepository = new HistoryRepository();
-  private workoutRepository = new WorkoutRepository();
 
   async getHistory(page: number, userId: number): Promise<ApiResponse<HistoryApiResponse>> {
     try {

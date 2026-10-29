@@ -7,26 +7,39 @@ import { DeleteWorkoutActionResult, RegisterWorkoutActionResult, UpdateWorkoutAc
 
 const workoutService = new WorkoutService();
 export async function registerWorkoutAction(dto: AddWorkoutDto): Promise<RegisterWorkoutActionResult> {
-  const user = await requireAuth();
+  try {
+    const user = await requireAuth();
 
-  const validation = registerWorkoutSchema.safeParse(dto);
+    const validation = registerWorkoutSchema.safeParse(dto);
 
-  if (!validation.success) {
+    if (!validation.success) {
+      return {
+        success: false,
+        message: 'Validation failed.',
+        errors: validation.error.flatten().fieldErrors,
+      };
+    }
+
+    return await workoutService.create(validation.data, user.userId);
+  } catch (error) {
+    console.error('Register workout action failed:', error);
+
     return {
       success: false,
-      message: 'Validation failed.',
-      errors: validation.error.flatten().fieldErrors,
+      message: 'Something went wrong. Please try again.',
     };
   }
-
-  const result = workoutService.create(validation.data, user.userId);
-  return result;
 }
 
 export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutDto): Promise<UpdateWorkoutActionResult> {
   try {
     const user = await requireAuth();
-
+    if (!Number.isSafeInteger(workoutId) || workoutId <= 0) {
+      return {
+        success: false,
+        message: 'Invalid workout ID.',
+      };
+    }
     const validation = updateWorkoutSchema.safeParse(dto);
 
     if (!validation.success) {
@@ -62,6 +75,12 @@ export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutD
 export async function deleteWorkoutAction(id: number): Promise<DeleteWorkoutActionResult> {
   try {
     const user = await requireAuth();
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      return {
+        success: false,
+        message: 'Invalid workout ID.',
+      };
+    }
     return await workoutService.delete(id, user.userId);
   } catch (error) {
     console.error('Delete exercise action failed:', error);

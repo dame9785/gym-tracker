@@ -1,10 +1,8 @@
-//Next Response & Request
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 
-//Services
 import { WorkoutSessionService } from '@/services-server/workout-session-service';
 import { getTokenFromCookieStore, getUserFromToken } from '@/lib/auth';
-import { ErrorResponse } from '@/types/api-types';
+import type { ErrorResponse } from '@/types/api-types';
 
 const workoutSessionService = new WorkoutSessionService();
 
@@ -16,37 +14,68 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Unauthorized ',
+          message: 'Unauthorized.',
         } satisfies ErrorResponse,
         { status: 401 },
       );
     }
 
-    const payLoad = await getUserFromToken(token);
-    if (!payLoad) {
+    const payload = getUserFromToken(token);
+
+    if (!payload || !Number.isSafeInteger(payload.userId) || payload.userId <= 0) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Unauthorized ',
+          message: 'Unauthorized.',
         } satisfies ErrorResponse,
         { status: 401 },
       );
     }
-    const userId = payLoad.userId;
-    const dto = await request.json();
-    const result = await workoutSessionService.create(dto.workoutId, userId);
+
+    let dto: unknown;
+
+    try {
+      dto = await request.json();
+    } catch {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Invalid JSON body.',
+        } satisfies ErrorResponse,
+        { status: 400 },
+      );
+    }
+
+    if (
+      typeof dto !== 'object' ||
+      dto === null ||
+      !('workoutId' in dto) ||
+      typeof dto.workoutId !== 'number' ||
+      !Number.isSafeInteger(dto.workoutId) ||
+      dto.workoutId <= 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Invalid workout ID.',
+        } satisfies ErrorResponse,
+        { status: 400 },
+      );
+    }
+
+    const result = await workoutSessionService.create(dto.workoutId, payload.userId);
 
     return NextResponse.json(result, {
       status: result.success ? 201 : 400,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Failed to create workout session:', error);
 
     return NextResponse.json(
       {
         success: false,
-        message: 'Något gick fel.',
-      },
+        message: 'Something went wrong.',
+      } satisfies ErrorResponse,
       { status: 500 },
     );
   }

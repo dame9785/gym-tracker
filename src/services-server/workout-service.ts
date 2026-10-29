@@ -34,8 +34,14 @@ export class WorkoutService {
 
   async update(id: number, dto: UpdateWorkoutDto, userId: number): Promise<UpdateWorkoutActionResult> {
     try {
-      //Update workout in database
-      await this.workoutRepository.update(id, dto);
+      const updated = await this.workoutRepository.update(id, dto, userId);
+
+      if (!updated) {
+        return {
+          success: false,
+          message: 'Could not find workout.',
+        } satisfies ErrorResponse;
+      }
 
       const workout = await this.workoutRepository.getById(id, userId);
 
@@ -52,7 +58,8 @@ export class WorkoutService {
         data: WorkoutMapper.workoutDtoToViewModel(workout),
       } satisfies UpdateWorkoutActionResult;
     } catch (error) {
-      console.error('Update workout failed, server error:', error);
+      console.error('Update workout failed:', error);
+
       return errorResponse('An error occurred on the server.');
     }
   }

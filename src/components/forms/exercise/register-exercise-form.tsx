@@ -3,10 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Activity, ArrowLeft, Check, Dumbbell, FileText, Image as ImageIcon, ListChecks, LoaderCircle, Plus } from 'lucide-react';
+import { Activity, ArrowLeft, Check, Dumbbell, FileText, Image as ImageIcon, LoaderCircle, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import FormStyles from '@/components/forms/form.module.css';
 import Button from '@/components/button/button';
 import ImageUpload from '@/components/ui/image-upload';
 

@@ -17,23 +17,8 @@ import { UserMapper } from '../mapping/user-mapping';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
 // Types
-import type {
-  ApiResponse,
-  ErrorResponse,
-  LoginResponse,
-  RegisterResponse,
-  SuccessResponse,
-  UpdateUserResponse,
-  UserResponse,
-} from '@/types/api-types';
-import {
-  loginSchema,
-  registerUserSchema,
-  updateUserSchema,
-  type LoginDto,
-  type RegisterUserDto,
-  type UpdateUserDto,
-} from '@/schemas/auth-schemas';
+import type { ApiResponse, ErrorResponse, LoginResponse, RegisterResponse, SuccessResponse, UpdateUserResponse, UserResponse } from '@/types/api-types';
+import { loginSchema, registerUserSchema, updateUserSchema, type LoginDto, type RegisterUserDto, type UpdateUserDto } from '@/schemas/auth-schemas';
 import { errorResponse } from '@/utils/api-error';
 import { UserViewModel } from '@/types/user-types';
 
@@ -41,24 +26,25 @@ export class AuthService {
   private userRepository = new UserRepository();
 
   //Login User
+
   async login(dto: LoginDto): Promise<ApiResponse<LoginResponse>> {
     try {
-      const user = await this.userRepository.findByEmail(dto.email);
-      const errors: Record<string, string[]> = {};
-
-      //ZOD Validation
       const validation = loginSchema.safeParse(dto);
 
       if (!validation.success) {
         const fieldErrors = ErrorsHelper.getFormErrors<LoginDto>(validation.error.issues);
+
         const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
 
         return {
           success: false,
-          message: 'Validerings fel',
-          errors: errors,
+          message: 'Valideringsfel.',
+          errors,
         } satisfies ErrorResponse;
       }
+
+      const { email, password } = validation.data;
+      const user = await this.userRepository.findByEmail(email);
 
       if (!user) {
         return {
@@ -67,8 +53,8 @@ export class AuthService {
         } satisfies ErrorResponse;
       }
 
-      //Check if password match
-      const passwordValid = await bcrypt.compare(dto.password, user.passwordHash);
+      const passwordValid = await bcrypt.compare(password, user.passwordHash);
+
       if (!passwordValid) {
         return {
           success: false,
@@ -76,25 +62,13 @@ export class AuthService {
         } satisfies ErrorResponse;
       }
 
-      //If errors existing
-      if (Object.keys(errors).length > 0) {
-        const validationResult: ErrorResponse = {
-          success: false,
-          message: 'Kontrollera formuläret.',
-          errors,
-        };
-
-        return validationResult;
-      }
-
-      //Generate token
       const token = generateToken(user.id);
 
       return {
         success: true,
         message: 'Inloggning lyckades',
         data: {
-          token: token,
+          token,
           userId: user.id,
         },
       } satisfies SuccessResponse<LoginResponse>;
@@ -112,10 +86,22 @@ export class AuthService {
   async register(dto: RegisterUserDto): Promise<ApiResponse<RegisterResponse>> {
     const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
 
-    const [existingEmail, existingUsername] = await Promise.all([
-      this.userRepository.emailExists(dto.email),
-      this.userRepository.usernameExists(dto.username),
-    ]);
+    //Validation
+    const validation = registerUserSchema.safeParse(dto);
+    if (!validation.success) {
+      const fieldErrors = ErrorsHelper.getFormErrors<RegisterUserDto>(validation.error.issues);
+      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
+
+      return {
+        success: false,
+        message: 'Felaktig email eller lösenord.',
+        errors: errors,
+      } satisfies ErrorResponse;
+    }
+
+    const data = validation.data;
+
+    const [existingEmail, existingUsername] = await Promise.all([this.userRepository.emailExists(data.email), this.userRepository.usernameExists(data.username)]);
 
     if (existingEmail) {
       fieldErrors.email = 'E-postadressen används redan.';
@@ -133,22 +119,9 @@ export class AuthService {
       } satisfies ErrorResponse;
     }
 
-    //Validation
-    const validation = registerUserSchema.safeParse(dto);
-    if (!validation.success) {
-      const fieldErrors = ErrorsHelper.getFormErrors<RegisterUserDto>(validation.error.issues);
-      const errors = Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message]]));
-
-      return {
-        success: false,
-        message: 'Felaktig email eller lösenord.',
-        errors: errors,
-      } satisfies ErrorResponse;
-    }
-
     try {
-      const passwordHash = await bcrypt.hash(dto.password, 10);
-      const userData = UserMapper.createUserDtoToDbModel(dto, passwordHash);
+      const passwordHash = await bcrypt.hash(data.password, 10);
+      const userData = UserMapper.createUserDtoToDbModel(data, passwordHash);
       const user = await this.userRepository.create(userData);
 
       return {
