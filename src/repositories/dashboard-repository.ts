@@ -5,12 +5,17 @@ export class DashboardRepository {
     const today = new Date();
 
     const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay() + 1);
+
+    // Monday is the first day of the week.
+    // Sunday (0) must go back 6 days, not forward 1 day.
+    const daysSinceMonday = (startOfWeek.getDay() + 6) % 7;
+
+    startOfWeek.setDate(startOfWeek.getDate() - daysSinceMonday);
     startOfWeek.setHours(0, 0, 0, 0);
 
     // Sunday belongs to the same week as the preceding Monday.
     const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 7);
+    endOfWeek.setDate(endOfWeek.getDate() + 7);
 
     return prisma.workoutSchedule.findMany({
       where: {

@@ -1,11 +1,48 @@
-//Prisma
 import { prisma } from '@/lib/prisma';
 
 export class HistoryRepository {
+  // Get ALL workout sessions, regardless of status
+  async getAllWorkoutSessions(userId: number, page: number, pageSize: number) {
+    const skip = (page - 1) * pageSize;
+
+    return prisma.workoutSession.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        workout: true,
+        exercises: {
+          include: {
+            workoutExercise: {
+              include: {
+                exercise: {
+                  include: {
+                    muscles: {
+                      include: {
+                        muscleGroup: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            sets: true,
+          },
+        },
+      },
+      orderBy: {
+        startedAt: 'desc',
+      },
+      skip,
+      take: pageSize,
+    });
+  }
+
+  // Get completed workout sessions only
   async getCompletedWorkoutSessions(userId: number, page: number, pageSize: number) {
     const skip = (page - 1) * pageSize;
 
-    const sessions = await prisma.workoutSession.findMany({
+    return prisma.workoutSession.findMany({
       where: {
         userId,
         status: 'COMPLETED',
@@ -37,30 +74,28 @@ export class HistoryRepository {
       skip,
       take: pageSize,
     });
-
-    return sessions;
   }
 
+  // Count all workout sessions
   async getAllWorkoutSessionsCount(userId: number) {
-    const sessionsCount = await prisma.workoutSession.count({
+    return prisma.workoutSession.count({
       where: {
-        userId: userId,
+        userId,
       },
     });
-
-    return sessionsCount;
   }
 
+  // Count completed workout sessions
   async getTotalCompletedWorkout(userId: number) {
-    const totalCompletedCount = await prisma.workoutSession.count({
+    return prisma.workoutSession.count({
       where: {
-        userId: userId,
+        userId,
         status: 'COMPLETED',
       },
     });
-    return totalCompletedCount;
   }
 
+  // Calculate total training time
   async getTotalTrainingTime(userId: number) {
     const sessions = await prisma.workoutSession.findMany({
       where: {
@@ -81,7 +116,7 @@ export class HistoryRepository {
       if (session.finishedAt) {
         const duration = session.finishedAt.getTime() - session.startedAt.getTime();
 
-        totalSeconds += Math.floor(duration / 1000);
+        totalSeconds += Math.max(0, Math.floor(duration / 1000));
       }
     });
 
@@ -96,31 +131,31 @@ export class HistoryRepository {
     };
   }
 
+  // Count completed sets only
   async getTotalSets(userId: number) {
-    const totalSets = await prisma.workoutSessionSet.count({
+    return prisma.workoutSessionSet.count({
       where: {
         workoutSessionExercise: {
           workoutSession: {
-            userId: userId,
+            userId,
             status: 'COMPLETED',
           },
         },
       },
     });
-
-    return totalSets;
   }
 
+  // Get completed workout sessions without pagination
   async getWorkoutSessions(userId: number) {
-    const workoutSessions = await prisma.workoutSession.findMany({
+    return prisma.workoutSession.findMany({
       where: {
-        userId: userId,
+        userId,
         status: 'COMPLETED',
       },
     });
-    return workoutSessions;
   }
 
+  // Debug completed sessions
   async debugCompletedSessions(userId: number) {
     return prisma.workoutSession.findMany({
       where: {

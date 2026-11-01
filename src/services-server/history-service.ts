@@ -13,11 +13,12 @@ export class HistoryService {
       const totalCompleted = await this.historyRepository.getTotalCompletedWorkout(userId);
 
       const pageSize = 3;
-      const totalPages = Math.ceil(totalCompleted / pageSize);
+      const totalPages = Math.ceil(totalWorkouts / pageSize);
 
       const totalTrainingTime = await this.historyRepository.getTotalTrainingTime(userId);
-      const totalCompeletedSets = await this.historyRepository.getTotalSets(userId);
-      const workoutSessions = await this.historyRepository.getCompletedWorkoutSessions(userId, page, pageSize);
+      const totalCompletedSets = await this.historyRepository.getTotalSets(userId);
+
+      const workoutSessions = await this.historyRepository.getAllWorkoutSessions(userId, page, pageSize);
 
       return {
         success: true,
@@ -32,19 +33,20 @@ export class HistoryService {
               hours: totalTrainingTime.hours,
             },
 
-            totalCompletedSets: totalCompeletedSets,
+            totalCompletedSets,
             workoutSessions: workoutSessions.map((x) => WorkoutSessionMapper.mapWorkoutSessionWithExericses(x)),
           },
           pagination: {
             currentPage: page,
             totalPages,
             pageSize,
-            totalItems: totalCompleted,
+            totalItems: totalWorkouts,
           },
         },
       } satisfies ApiResponse<HistoryApiResponse>;
     } catch (error) {
       console.error('Error while fetching history data', error);
+
       return {
         success: false,
         message: 'Could not load workout history.',
