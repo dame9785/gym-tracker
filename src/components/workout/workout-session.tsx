@@ -9,6 +9,8 @@ import type { WorkoutSessionViewModel } from '@/types/workout-types';
 import WorkoutSessionExerciseCard from '@/components/workout/workout-session-exercise-card';
 import NotPerformedButton from '@/components/dashboard/not-perfomed-button';
 
+import { finishWorkoutSessionAction } from '@/actions/workout-session-actions';
+
 interface WorkoutSessionProps {
   workoutSession: WorkoutSessionViewModel;
 }
@@ -27,14 +29,10 @@ export default function WorkoutSession({ workoutSession }: WorkoutSessionProps) 
     setIsFinishing(true);
 
     try {
-      const response = await fetch(`/api/workout-sessions/${workoutSession.id}`, {
-        method: 'PUT',
-      });
+      const result = await finishWorkoutSessionAction(workoutSession.id);
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        toast.error(result.message ?? 'Could not finish workout. Please try again.');
+      if (!result.success) {
+        toast.error(result.message || 'Could not finish workout. Please try again.');
         return;
       }
 

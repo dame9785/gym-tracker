@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import { updateWorkoutSessionSetAction } from '@/actions/workout-session-actions';
 import type { WorkoutSessionSetViewModel } from '@/types/workout-types';
 
 interface WorkoutSessionSetCardProps {
@@ -37,21 +38,13 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
     setIsSaved(false);
 
     try {
-      const response = await fetch(`/api/workout-session-sets/${set.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          actualReps,
-          actualWeight,
-          actualSeconds,
-        }),
+      const result = await updateWorkoutSessionSetAction(set.id, {
+        actualReps,
+        actualWeight,
+        actualSeconds,
       });
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
+      if (!result.success) {
         toast.error(result.message ?? 'Could not save set. Please try again.');
         return;
       }
@@ -69,7 +62,6 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
   return (
     <div className={`border-t px-4 py-4 transition first:border-t-0 ${isSaved ? 'bg-green-500/[0.02]' : 'bg-transparent'}`}>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
-        {/* Set information */}
         <div className="flex min-w-[170px] items-center gap-3 lg:pb-2">
           <div
             className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
@@ -90,7 +82,6 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
           </div>
         </div>
 
-        {/* Inputs */}
         <div className="grid flex-1 grid-cols-3 gap-3">
           <div>
             <label htmlFor={`reps-${set.id}`} className="mb-1.5 block text-xs font-medium text-zinc-500">
@@ -150,7 +141,6 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
           </div>
         </div>
 
-        {/* Save */}
         <div className="lg:pb-0">
           <button
             type="button"

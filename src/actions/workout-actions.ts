@@ -1,16 +1,27 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
+
 import { requireAuth } from '@/lib/auth';
+
 import { registerWorkoutSchema, updateWorkoutSchema } from '@/schemas/workout-schemas';
+
 import type { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
+
 import { WorkoutService } from '@/services-server/workout-service';
+
 import type { DeleteWorkoutActionResult, RegisterWorkoutActionResult, UpdateWorkoutActionResult } from '@/types/workout-types';
 
 const workoutService = new WorkoutService();
 
+function isValidId(id: number): boolean {
+  return Number.isSafeInteger(id) && id > 0;
+}
+
 export async function registerWorkoutAction(dto: AddWorkoutDto): Promise<RegisterWorkoutActionResult> {
+  const user = await requireAuth();
+
   try {
-    const user = await requireAuth();
     const validation = registerWorkoutSchema.safeParse(dto);
 
     if (!validation.success) {
@@ -23,32 +34,35 @@ export async function registerWorkoutAction(dto: AddWorkoutDto): Promise<Registe
 
     const workout = await workoutService.create(validation.data, user.userId);
 
+    revalidatePath('/workout');
+    revalidatePath('/dashboard');
+
     return {
       success: true,
       message: 'Workout created successfully.',
       data: workout,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Register workout action failed:', error);
 
     return {
       success: false,
-      message: 'Something went wrong. Please try again.',
+      message: 'Could not create workout. Please try again.',
     };
   }
 }
 
 export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutDto): Promise<UpdateWorkoutActionResult> {
+  const user = await requireAuth();
+
+  if (!isValidId(workoutId)) {
+    return {
+      success: false,
+      message: 'Invalid workout ID.',
+    };
+  }
+
   try {
-    const user = await requireAuth();
-
-    if (!Number.isSafeInteger(workoutId) || workoutId <= 0) {
-      return {
-        success: false,
-        message: 'Invalid workout ID.',
-      };
-    }
-
     const validation = updateWorkoutSchema.safeParse(dto);
 
     if (!validation.success) {
@@ -61,44 +75,51 @@ export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutD
 
     const workout = await workoutService.update(workoutId, validation.data, user.userId);
 
+    revalidatePath('/workout');
+    revalidatePath(`/workout/${workoutId}`);
+    revalidatePath('/dashboard');
+
     return {
       success: true,
       message: 'Workout updated successfully.',
       data: workout,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Update workout action failed:', error);
 
     return {
       success: false,
-      message: error instanceof Error && error.message === 'Could not find workout.' ? error.message : 'Something went wrong. Please try again.',
+      message: error instanceof Error && error.message === 'Could not find workout.' ? error.message : 'Could not update workout. Please try again.',
     };
   }
 }
 
 export async function deleteWorkoutAction(id: number): Promise<DeleteWorkoutActionResult> {
+  const user = await requireAuth();
+
+  if (!isValidId(id)) {
+    return {
+      success: false,
+      message: 'Invalid workout ID.',
+    };
+  }
+
   try {
-    const user = await requireAuth();
-
-    if (!Number.isSafeInteger(id) || id <= 0) {
-      return {
-        success: false,
-        message: 'Invalid workout ID.',
-      };
-    }
-
     await workoutService.delete(id, user.userId);
+
+    revalidatePath('/workout');
+    revalidatePath('/dashboard');
 
     return {
       success: true,
       message: 'Workout deleted successfully.',
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Delete workout action failed:', error);
 
     return {
       success: false,
-      message: 'Something went wrong. Please try again.',
+      message: 'Could not delete workout. Please try again.',
     };
   }
 }

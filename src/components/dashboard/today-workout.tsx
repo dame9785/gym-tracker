@@ -3,7 +3,8 @@
 import { CalendarDays, CheckCircle2, Clock3, Dumbbell, Play, RotateCcw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { WeeklyWorkoutViewModel } from '@/types/workout-types';
+import { createWorkoutSessionAction } from '@/actions/workout-session-actions';
+import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 interface TodayWorkoutProps {
   workout?: WeeklyWorkoutViewModel;
@@ -15,9 +16,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
   const hasWorkout = !!workout;
 
   const handleStartWorkout = async () => {
-    if (!workout) {
-      return;
-    }
+    if (!workout) return;
 
     if (workout.status === 'ACTIVE' && workout.activeSessionId) {
       router.push(`/workout-sessions/${workout.activeSessionId}`);
@@ -25,19 +24,9 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
     }
 
     try {
-      const response = await fetch('/api/workout-sessions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          workoutId: workout.id,
-        }),
-      });
+      const result = await createWorkoutSessionAction(workout.id);
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
+      if (!result.success || !result.data) {
         console.error('Failed to start workout:', result.message);
         return;
       }
@@ -57,7 +46,6 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
         ${hasWorkout ? (workout.status === 'COMPLETED' ? 'border-green-500/30' : 'border-orange-500/30') : 'border-zinc-800'}
       `}
     >
-      {/* Top accent */}
       <div
         className={`
           absolute left-0 top-0 h-px w-full
@@ -65,11 +53,9 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
         `}
       />
 
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Today</p>
-
           <h2 className="mt-1 text-xl font-bold text-white">Todays Workout</h2>
         </div>
 
@@ -80,7 +66,6 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
 
       {hasWorkout ? (
         <div className="mt-7">
-          {/* Workout icon + status */}
           <div className="flex items-center justify-between">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500/10">
               <Dumbbell className="h-7 w-7 text-orange-400" />
@@ -98,7 +83,6 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
             {workout.status === 'NOTCOMPLETED' && <div className="rounded-full bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-400">Missed</div>}
           </div>
 
-          {/* Workout information */}
           <div className="mt-5">
             <h3 className="text-2xl font-bold tracking-tight text-white">{workout.workoutName}</h3>
 
@@ -111,11 +95,9 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
             </p>
           </div>
 
-          {/* Stats */}
           <div className="mt-6 flex gap-3">
             <div className="flex items-center gap-2 rounded-xl bg-zinc-800/70 px-4 py-3">
               <Dumbbell className="h-4 w-4 text-zinc-500" />
-
               <div>
                 <p className="text-xs text-zinc-500">Exercises</p>
                 <p className="text-sm font-semibold text-zinc-200">{workout.exerciseCount}</p>
@@ -124,7 +106,6 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
 
             <div className="flex items-center gap-2 rounded-xl bg-zinc-800/70 px-4 py-3">
               <Clock3 className="h-4 w-4 text-zinc-500" />
-
               <div>
                 <p className="text-xs text-zinc-500">Duration</p>
                 <p className="text-sm font-semibold text-zinc-200">{workout.estimatedMinutes} min</p>
@@ -132,7 +113,6 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
             </div>
           </div>
 
-          {/* Action */}
           {workout.status === 'ACTIVE' && (
             <button
               onClick={handleStartWorkout}
@@ -142,8 +122,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
                 font-semibold text-white
                 shadow-lg shadow-orange-500/10
                 transition-all duration-200
-                hover:bg-orange-400
-                hover:shadow-orange-500/20
+                hover:bg-orange-400 hover:shadow-orange-500/20
                 active:scale-[0.98]
               "
             >
@@ -184,7 +163,6 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
           )}
         </div>
       ) : (
-        /* Rest day */
         <div className="mt-7">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-800">
             <span className="text-2xl">😴</span>

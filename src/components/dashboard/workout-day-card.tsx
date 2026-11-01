@@ -1,4 +1,5 @@
 import { CalendarDays, Clock3, Dumbbell, ListChecks } from 'lucide-react';
+import type { WorkoutSessionStatus } from '@prisma/client';
 
 import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
@@ -11,7 +12,16 @@ interface WorkoutDayCardProps {
 export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCardProps) {
   const hasWorkout = !!workout;
 
-  const statusConfig = {
+  const statusConfig: Partial<
+    Record<
+      WorkoutSessionStatus,
+      {
+        border: string;
+        badge: string;
+        label: string;
+      }
+    >
+  > = {
     COMPLETED: {
       border: 'border-green-500/50',
       badge: 'bg-green-500/10 text-green-400',
@@ -38,7 +48,7 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
         group min-h-[220px] rounded-2xl border
         bg-zinc-950/80 p-4
         transition-all duration-200
-        ${hasWorkout ? status?.border : 'border-zinc-800'}
+        ${hasWorkout ? (status?.border ?? 'border-zinc-800') : 'border-zinc-800'}
         ${onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-zinc-600 hover:bg-zinc-900' : ''}
       `}
     >
@@ -78,13 +88,11 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
           <div className="mt-5 space-y-2">
             <div className="flex items-center gap-2 text-sm text-zinc-500">
               <ListChecks className="h-4 w-4" />
-
               <span>{workout.exerciseCount} exercises</span>
             </div>
 
             <div className="flex items-center gap-2 text-sm text-zinc-500">
               <Clock3 className="h-4 w-4" />
-
               <span>{workout.estimatedMinutes} min</span>
             </div>
           </div>

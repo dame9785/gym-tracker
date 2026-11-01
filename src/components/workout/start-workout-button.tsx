@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import { createWorkoutSessionAction } from '@/actions/workout-session-actions';
+
 interface StartWorkoutButtonProps {
   workoutId: number;
 }
@@ -18,17 +20,9 @@ export default function StartWorkoutButton({ workoutId }: StartWorkoutButtonProp
     setIsStarting(true);
 
     try {
-      const response = await fetch('/api/workout-sessions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ workoutId }),
-      });
+      const result = await createWorkoutSessionAction(workoutId);
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
+      if (!result.success || !result.data) {
         toast.error(result.message ?? 'Could not start workout. Please try again.');
         return;
       }

@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { setWorkoutSessionNotPerformedAction } from '@/actions/workout-session-actions';
+
 type Props = {
   workoutSessionId: number;
 };
@@ -18,11 +20,9 @@ export default function NotPerformedButton({ workoutSessionId }: Props) {
     setIsUpdating(true);
 
     try {
-      const response = await fetch(`/api/workout-sessions/${workoutSessionId}/status`, { method: 'PUT' });
+      const result = await setWorkoutSessionNotPerformedAction(workoutSessionId);
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
+      if (!result.success) {
         toast.error(result.message ?? 'Could not update workout. Please try again.');
         return;
       }
