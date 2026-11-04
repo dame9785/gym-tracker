@@ -6,7 +6,23 @@ type WorkoutSessionForStreak = {
 };
 
 export function calculateStreak(sessions: WorkoutSessionForStreak[]): number {
-  const completedSessions = sessions.filter((session) => session.status === 'COMPLETED').sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
+  if (sessions.length === 0) {
+    return 0;
+  }
 
-  return completedSessions.length;
+  // Sortera alla pass från senaste till äldsta.
+  const sortedSessions = [...sessions].sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
+
+  let streak = 0;
+
+  for (const session of sortedSessions) {
+    // Ett ej genomfört pass bryter streaken.
+    if (session.status !== 'COMPLETED') {
+      break;
+    }
+
+    streak++;
+  }
+
+  return streak;
 }
