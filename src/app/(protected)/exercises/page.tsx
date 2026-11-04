@@ -36,7 +36,7 @@ export default async function Exercise(): Promise<React.ReactElement> {
             <p className="mt-2 text-sm text-zinc-400 sm:text-base">All exercises are displayed here; you can edit or delete them.</p>
           </div>
 
-          <Link href="/exercise/register" className="inline-flex shrink-0">
+          <Link href="/exercises/register" className="inline-flex shrink-0">
             <Button type="button" variant="primary">
               Add exercise
             </Button>

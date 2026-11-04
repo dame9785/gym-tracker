@@ -166,4 +166,22 @@ export class HistoryRepository {
       },
     });
   }
+
+  // Get workout sessions for streak calculation, regardless of status.
+  async getWorkoutSessionsForStreak(userId: number) {
+    return prisma.workoutSession.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+        status: true,
+        startedAt: true,
+        finishedAt: true,
+      },
+      orderBy: {
+        startedAt: 'desc',
+      },
+    });
+  }
 }
