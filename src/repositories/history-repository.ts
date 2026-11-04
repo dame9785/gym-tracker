@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/prisma';
 
 export class HistoryRepository {
-  // Get ALL workout sessions, regardless of status
+  // Get ALL workout sessions, regardless of status.
+  // Historical data is read from session snapshots.
   async getAllWorkoutSessions(userId: number, page: number, pageSize: number) {
     const skip = (page - 1) * pageSize;
 
@@ -10,23 +11,16 @@ export class HistoryRepository {
         userId,
       },
       include: {
-        workout: true,
         exercises: {
           include: {
-            workoutExercise: {
-              include: {
-                exercise: {
-                  include: {
-                    muscles: {
-                      include: {
-                        muscleGroup: true,
-                      },
-                    },
-                  },
-                },
+            sets: {
+              orderBy: {
+                setNumber: 'asc',
               },
             },
-            sets: true,
+          },
+          orderBy: {
+            order: 'asc',
           },
         },
       },
@@ -38,7 +32,8 @@ export class HistoryRepository {
     });
   }
 
-  // Get completed workout sessions only
+  // Get completed workout sessions only.
+  // Historical data is read from session snapshots.
   async getCompletedWorkoutSessions(userId: number, page: number, pageSize: number) {
     const skip = (page - 1) * pageSize;
 
@@ -48,23 +43,16 @@ export class HistoryRepository {
         status: 'COMPLETED',
       },
       include: {
-        workout: true,
         exercises: {
           include: {
-            workoutExercise: {
-              include: {
-                exercise: {
-                  include: {
-                    muscles: {
-                      include: {
-                        muscleGroup: true,
-                      },
-                    },
-                  },
-                },
+            sets: {
+              orderBy: {
+                setNumber: 'asc',
               },
             },
-            sets: true,
+          },
+          orderBy: {
+            order: 'asc',
           },
         },
       },
@@ -76,7 +64,7 @@ export class HistoryRepository {
     });
   }
 
-  // Count all workout sessions
+  // Count all workout sessions.
   async getAllWorkoutSessionsCount(userId: number) {
     return prisma.workoutSession.count({
       where: {
@@ -85,7 +73,7 @@ export class HistoryRepository {
     });
   }
 
-  // Count completed workout sessions
+  // Count completed workout sessions.
   async getTotalCompletedWorkout(userId: number) {
     return prisma.workoutSession.count({
       where: {
@@ -95,7 +83,7 @@ export class HistoryRepository {
     });
   }
 
-  // Calculate total training time
+  // Calculate total training time.
   async getTotalTrainingTime(userId: number) {
     const sessions = await prisma.workoutSession.findMany({
       where: {
@@ -131,7 +119,7 @@ export class HistoryRepository {
     };
   }
 
-  // Count completed sets only
+  // Count completed sets only.
   async getTotalSets(userId: number) {
     return prisma.workoutSessionSet.count({
       where: {
@@ -145,17 +133,20 @@ export class HistoryRepository {
     });
   }
 
-  // Get completed workout sessions without pagination
+  // Get completed workout sessions without pagination.
   async getWorkoutSessions(userId: number) {
     return prisma.workoutSession.findMany({
       where: {
         userId,
         status: 'COMPLETED',
       },
+      orderBy: {
+        finishedAt: 'desc',
+      },
     });
   }
 
-  // Debug completed sessions
+  // Debug completed sessions.
   async debugCompletedSessions(userId: number) {
     return prisma.workoutSession.findMany({
       where: {
@@ -165,14 +156,10 @@ export class HistoryRepository {
       select: {
         id: true,
         workoutId: true,
+        workoutName: true,
         status: true,
         startedAt: true,
         finishedAt: true,
-        workout: {
-          select: {
-            name: true,
-          },
-        },
       },
       orderBy: {
         finishedAt: 'desc',

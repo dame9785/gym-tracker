@@ -108,7 +108,7 @@ export default function ExericseCard({ exercise }: Props) {
             <div className="flex shrink-0 items-center gap-2">
               {/* Edit exercise */}
               <Link
-                href={`/exercises/edit/${exercise.slug}`}
+                href={`/exercises/edit/${exercise.id}`}
                 aria-label={`Edit ${exercise.name}`}
                 title="Edit exercise"
                 className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/70 text-zinc-300 transition hover:border-orange-500/50 hover:bg-orange-500/10 hover:text-orange-400"
