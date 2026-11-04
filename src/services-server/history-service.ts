@@ -12,7 +12,7 @@ export class HistoryService {
 
       const totalCompleted = await this.historyRepository.getTotalCompletedWorkout(userId);
 
-      const pageSize = 3;
+      const pageSize = 9;
       const totalPages = Math.ceil(totalWorkouts / pageSize);
 
       const totalTrainingTime = await this.historyRepository.getTotalTrainingTime(userId);
