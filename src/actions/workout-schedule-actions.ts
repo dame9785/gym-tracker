@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { requireAuth } from '@/lib/auth';
-import { WorkoutScheduleService } from '@/services-server/workout-schedule-service';
+import { WorkoutScheduleService } from '@/services/workout-schedule-service';
 import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
 

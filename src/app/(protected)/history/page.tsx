@@ -1,5 +1,5 @@
 //Services
-import { HistoryService } from '@/services-server/history-service';
+import { HistoryService } from '@/services/history-service';
 import { requireAuth } from '@/lib/auth';
 
 import HistoryTopStats from '@/components/history/history-top-stats';

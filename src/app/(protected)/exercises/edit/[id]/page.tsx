@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import EditExerciseForm from '@/components/forms/exercise/edit-exercise-form';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
-import { ExerciseService } from '@/services-server/exercise-service';
+import { ExerciseService } from '@/services/exercise-service';
 import type { ExerciseResult } from '@/types/exercise-types';
 
 type PageProps = {

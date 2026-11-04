@@ -9,7 +9,7 @@ import Pagination from '@/components/log-weight/log-pagination';
 import Button from '@/components/button/button';
 
 //Services
-import { WeightLogService } from '@/services-server/weight-log-service';
+import { WeightLogService } from '@/services/weight-log-service';
 
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
@@ -33,10 +33,7 @@ export default async function LogWeight({ searchParams }: Props) {
   if (!response.success || !response.data) {
     return (
       <main>
-        <ErrorMessage
-          title="Unable to load foods"
-          message={response.message ?? 'Something went wrong while loading your foods.'}
-        />
+        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
       </main>
     );
   }

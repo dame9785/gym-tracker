@@ -1,7 +1,7 @@
 import EditWorkoutForm from '@/components/forms/workout/edit-workout-form';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
-import { WorkoutService } from '@/services-server/workout-service';
+import { WorkoutService } from '@/services/workout-service';
 
 type PageProps = {
   params: Promise<{

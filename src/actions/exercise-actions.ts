@@ -1,7 +1,7 @@
 'use server';
 
 import { requireAuth } from '@/lib/auth';
-import { ExerciseService } from '@/services-server/exercise-service';
+import { ExerciseService } from '@/services/exercise-service';
 import { registerExerciseSchema, updateExerciseSchema } from '@/schemas/exercise-schema';
 
 import { put, del } from '@vercel/blob';

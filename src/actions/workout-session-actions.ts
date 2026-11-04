@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { requireAuth } from '@/lib/auth';
-import { WorkoutSessionService } from '@/services-server/workout-session-service';
+import { WorkoutSessionService } from '@/services/workout-session-service';
 
 const workoutSessionService = new WorkoutSessionService();
 

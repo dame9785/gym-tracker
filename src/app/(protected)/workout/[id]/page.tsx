@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation';
 import WorkoutDetails from '@/components/workout/workout-details';
 import ErrorMessage from '@/components/ui/error-message';
 
-import { WorkoutService } from '@/services-server/workout-service';
-import { WorkoutSessionService } from '@/services-server/workout-session-service';
+import { WorkoutService } from '@/services/workout-service';
+import { WorkoutSessionService } from '@/services/workout-session-service';
 
 import { requireAuth } from '@/lib/auth';
 import type { WorkoutSessionViewModel } from '@/types/workout-types';

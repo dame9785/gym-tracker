@@ -1,5 +1,5 @@
 'use server';
-import { WeightLogService } from '@/services-server/weight-log-service';
+import { WeightLogService } from '@/services/weight-log-service';
 import { requireAuth } from '@/lib/auth';
 import { AddWeightDto, addWeightSchema, UpdateWeightDto, updateWeightSchema } from '@/schemas/weight-log.schemas';
 

@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 
 import { requireAuth } from '@/lib/auth';
 import { loginSchema, registerUserSchema, updateUserSchema, type LoginDto, type RegisterUserDto, type UpdateUserDto } from '@/schemas/auth-schemas';
-import { AuthService } from '@/services-server/auth-service';
+import { AuthService } from '@/services/auth-service';
 import type { UserActionResult } from '@/types/user-types';
 
 const authService = new AuthService();

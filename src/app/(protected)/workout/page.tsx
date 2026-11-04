@@ -5,7 +5,7 @@ import WorkoutTable from '@/components/tables/workout-table';
 import Pagination from '@/components/workout/pagination';
 import ErrorMessage from '@/components/ui/error-message';
 
-import { WorkoutService } from '@/services-server/workout-service';
+import { WorkoutService } from '@/services/workout-service';
 import { requireAuth } from '@/lib/auth';
 
 type Props = {

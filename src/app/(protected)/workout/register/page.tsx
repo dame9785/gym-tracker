@@ -1,7 +1,7 @@
 import RegisterWorkoutForm from '@/components/forms/workout/register-workout-form';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
-import { ExerciseService } from '@/services-server/exercise-service';
+import { ExerciseService } from '@/services/exercise-service';
 import type { ExerciseListResult } from '@/types/exercise-types';
 
 const exerciseService = new ExerciseService();

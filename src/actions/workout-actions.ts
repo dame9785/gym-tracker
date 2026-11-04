@@ -8,7 +8,7 @@ import { registerWorkoutSchema, updateWorkoutSchema } from '@/schemas/workout-sc
 
 import type { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
-import { WorkoutService } from '@/services-server/workout-service';
+import { WorkoutService } from '@/services/workout-service';
 
 import type { DeleteWorkoutActionResult, RegisterWorkoutActionResult, UpdateWorkoutActionResult } from '@/types/workout-types';
 

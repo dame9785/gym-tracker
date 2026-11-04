@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Button from '@/components/button/button';
 import Exercises from '@/components/exericses/exercises';
 import ErrorMessage from '@/components/ui/error-message';
-import { ExerciseService } from '@/services-server/exercise-service';
+import { ExerciseService } from '@/services/exercise-service';
 import { requireAuth } from '@/lib/auth';
 import type { ExerciseListResult } from '@/types/exercise-types';
 

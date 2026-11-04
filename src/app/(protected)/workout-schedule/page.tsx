@@ -1,7 +1,7 @@
 import ScheduleWorkoutForm from '@/components/forms/workout/schedule-workout-form';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
-import { WorkoutService } from '@/services-server/workout-service';
+import { WorkoutService } from '@/services/workout-service';
 
 const workoutService = new WorkoutService();
 

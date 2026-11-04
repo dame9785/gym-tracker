@@ -1,7 +1,7 @@
 import WeightForm from '@/components/forms/log-weight/edit-weight-form';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
-import { WeightLogService } from '@/services-server/weight-log-service';
+import { WeightLogService } from '@/services/weight-log-service';
 
 interface Props {
   params: Promise<{

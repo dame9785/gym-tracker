@@ -1,6 +1,6 @@
 import ErrorMessage from '@/components/ui/error-message';
 import WorkoutSession from '@/components/workout/workout-session';
-import { WorkoutSessionService } from '@/services-server/workout-session-service';
+import { WorkoutSessionService } from '@/services/workout-session-service';
 import { requireAuth } from '@/lib/auth';
 
 interface PageProps {

@@ -4,7 +4,7 @@ import { Activity, ArrowLeft, Dumbbell, FileText, Lightbulb, ListChecks, Pencil 
 import { notFound } from 'next/navigation';
 
 import ErrorMessage from '@/components/ui/error-message';
-import { ExerciseService } from '@/services-server/exercise-service';
+import { ExerciseService } from '@/services/exercise-service';
 import { requireAuth } from '@/lib/auth';
 import type { ExerciseResult } from '@/types/exercise-types';
 

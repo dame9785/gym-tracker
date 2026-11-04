@@ -1,7 +1,7 @@
 import UpdateUserForm from '@/components/forms/user/update-user-form';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
-import { AuthService } from '@/services-server/auth-service';
+import { AuthService } from '@/services/auth-service';
 
 const authService = new AuthService();
 

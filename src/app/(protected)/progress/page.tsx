@@ -5,7 +5,7 @@ import ExerciseProgress from '@/components/progress/progress-exercise';
 import WeightProgressChart from '@/components/progress/weight-progress-chart';
 
 import { requireAuth } from '@/lib/auth';
-import ProgressService from '@/services-server/progress-service';
+import ProgressService from '@/services/progress-service';
 
 export default async function ProgressPage() {
   const user = await requireAuth();

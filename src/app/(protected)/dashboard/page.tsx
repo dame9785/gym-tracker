@@ -6,7 +6,7 @@ import WeeklySummary from '@/components/dashboard/weekly-summary';
 import WorkoutCalendar from '@/components/calendar/workout-calendar';
 
 import { requireAuth } from '@/lib/auth';
-import { DashboardService } from '@/services-server/dashboard-service';
+import { DashboardService } from '@/services/dashboard-service';
 
 export default async function DashboardPage() {
   const user = await requireAuth();
