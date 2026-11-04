@@ -10,7 +10,10 @@ type MuscleInput = {
 export class ExerciseRepository {
   async getAllExersise(userId: number) {
     return prisma.exercise.findMany({
-      where: { userId },
+      where: {
+        userId,
+        archivedAt: null,
+      },
       include: {
         muscles: {
           include: {
@@ -58,19 +61,30 @@ export class ExerciseRepository {
   }
 
   async delete(id: number, userId: number): Promise<void> {
-    const result = await prisma.exercise.deleteMany({
-      where: { id, userId },
+    const result = await prisma.exercise.updateMany({
+      where: {
+        id,
+        userId,
+        archivedAt: null,
+      },
+      data: {
+        archivedAt: new Date(),
+      },
     });
 
     if (result.count === 0) {
-      throw new Error('Exercise not found or unauthorized');
+      throw new Error('Exercise not found or already archived.');
     }
   }
 
   async update(id: number, dto: UpdateExericseDto, userId: number): Promise<void> {
     await prisma.$transaction(async (tx) => {
       const existing = await tx.exercise.findFirst({
-        where: { id, userId },
+        where: {
+          id,
+          userId,
+          archivedAt: null,
+        },
         include: {
           muscles: {
             include: { muscleGroup: true },
@@ -79,7 +93,7 @@ export class ExerciseRepository {
       });
 
       if (!existing) {
-        throw new Error('Exercise not found or unauthorized');
+        throw new Error('Exercise not found or unauthorized.');
       }
 
       const musclesChanged = dto.primaryMuscle !== undefined || dto.secondaryMuscles !== undefined;
@@ -115,7 +129,7 @@ export class ExerciseRepository {
         const primaryMuscle = dto.primaryMuscle ?? existing.muscles.find((muscle) => muscle.role === MuscleRole.PRIMARY)?.muscleGroup.name;
 
         if (!primaryMuscle) {
-          throw new Error('A primary muscle group is required');
+          throw new Error('A primary muscle group is required.');
         }
 
         const secondaryMuscles =
@@ -151,7 +165,11 @@ export class ExerciseRepository {
 
   async getById(id: number, userId: number) {
     return prisma.exercise.findFirst({
-      where: { id, userId },
+      where: {
+        id,
+        userId,
+        archivedAt: null,
+      },
       include: {
         muscles: {
           include: { muscleGroup: true },
@@ -162,7 +180,11 @@ export class ExerciseRepository {
 
   async getBySlug(slug: string, userId: number) {
     return prisma.exercise.findFirst({
-      where: { slug, userId },
+      where: {
+        slug,
+        userId,
+        archivedAt: null,
+      },
       include: {
         muscles: {
           include: { muscleGroup: true },
@@ -175,13 +197,13 @@ export class ExerciseRepository {
     const primaryMuscle = input.primaryMuscle.trim();
 
     if (!primaryMuscle) {
-      throw new Error('A primary muscle group is required');
+      throw new Error('A primary muscle group is required.');
     }
 
     const normalizedSecondary = input.secondaryMuscles.map((name) => name.trim());
 
     if (normalizedSecondary.some((name) => !name)) {
-      throw new Error('Muscle group names cannot be empty');
+      throw new Error('Muscle group names cannot be empty.');
     }
 
     const uniqueSecondary = [...new Map(normalizedSecondary.map((name) => [name.toLowerCase(), name])).values()].filter(

@@ -70,7 +70,7 @@ export class WorkoutSessionRepository {
 
     const activeKey = `${userId}:${workoutId}`;
 
-    // Återanvänd ett redan aktivt träningspass.
+    // Reuse an existing active workout session.
     const existingSession = await prisma.workoutSession.findFirst({
       where: {
         userId,
@@ -80,7 +80,7 @@ export class WorkoutSessionRepository {
     });
 
     if (existingSession) {
-      // Säkerställ att äldre aktiva sessioner också har en activeKey.
+      // Ensure older active sessions also have an activeKey.
       if (existingSession.activeKey === null) {
         await prisma.workoutSession.updateMany({
           where: {
@@ -113,16 +113,34 @@ export class WorkoutSessionRepository {
           data: {
             userId,
             workoutId,
+            workoutName: workout.name,
+            workoutDescription: workout.description,
             activeKey,
           },
         });
 
         for (const workoutExercise of workout.exercises) {
+          const exercise = workoutExercise.exercise;
+
+          const primaryMuscle = exercise.muscles.find((muscle) => muscle.role === 'PRIMARY')?.muscleGroup.name ?? '';
+
+          const secondaryMuscles = exercise.muscles.filter((muscle) => muscle.role === 'SECONDARY').map((muscle) => muscle.muscleGroup.name);
+
           const sessionExercise = await tx.workoutSessionExercise.create({
             data: {
               workoutSessionId: workoutSession.id,
               workoutExerciseId: workoutExercise.id,
               order: workoutExercise.order,
+
+              // Exercise snapshots.
+              exerciseName: exercise.name,
+              exerciseImagePath: exercise.imagePath,
+              exerciseEquipment: exercise.equipment,
+              exerciseDescription: exercise.description,
+              exerciseInstructions: exercise.instructions,
+              exerciseTechniqueTips: exercise.techniqueTips,
+              primaryMuscle,
+              secondaryMuscles: JSON.stringify(secondaryMuscles),
             },
           });
 
@@ -145,7 +163,7 @@ export class WorkoutSessionRepository {
         return workoutSession;
       });
     } catch (error: unknown) {
-      // Hantera endast Prisma-unikahetskonflikter.
+      // Handle only Prisma unique constraint conflicts.
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const activeSession = await prisma.workoutSession.findFirst({
           where: {
@@ -161,7 +179,7 @@ export class WorkoutSessionRepository {
         }
       }
 
-      // Andra databasfel ska inte döljas.
+      // Do not hide other database errors.
       throw error;
     }
   }

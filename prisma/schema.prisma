@@ -100,30 +100,34 @@ model ExerciseMuscle {
 }
 
 model Exercise {
-  id            Int     @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   name          String
-  slug          String? @unique @db.VarChar(191)
-  equipment     String? @db.VarChar(50)
+  slug          String?   @unique @db.VarChar(191)
+  equipment     String?   @db.VarChar(50)
   imagePath     String?
-  description   String  @db.Text
-  instructions  String  @db.Text
-  techniqueTips String? @db.Text
+  description   String    @db.Text
+  instructions  String    @db.Text
+  techniqueTips String?   @db.Text
+  archivedAt    DateTime?
 
   userId Int
   user   User @relation(fields: [userId], references: [id])
 
   muscles  ExerciseMuscle[]
   workouts WorkoutExercise[]
+
+  @@index([userId, archivedAt])
 }
 
 model Workout {
-  id               Int      @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   userId           Int
-  name             String   @db.VarChar(100)
-  description      String?  @db.VarChar(500)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  name             String    @db.VarChar(100)
+  description      String?   @db.VarChar(500)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   estimatedMinutes Int?
+  archivedAt       DateTime?
 
   user      User              @relation(fields: [userId], references: [id])
   exercises WorkoutExercise[]
@@ -131,10 +135,11 @@ model Workout {
   sessions  WorkoutSession[]
 
   @@index([userId])
+  @@index([userId, archivedAt])
 }
 
 model WorkoutExercise {
-  id         Int     @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   workoutId  Int
   exerciseId Int
   sets       Int
@@ -142,15 +147,17 @@ model WorkoutExercise {
   weight     Float?
   order      Int
   seconds    Int?
-  note       String? @db.VarChar(500)
+  note       String?   @db.VarChar(500)
+  archivedAt DateTime?
 
   workout  Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-  exercise Exercise @relation(fields: [exerciseId], references: [id])
+  exercise Exercise @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
 
   sessionExercises WorkoutSessionExercise[]
 
   @@index([workoutId])
   @@index([exerciseId])
+  @@index([workoutId, archivedAt])
 }
 
 model WorkoutSchedule {
@@ -168,16 +175,18 @@ model WorkoutSchedule {
 }
 
 model WorkoutSession {
-  id         Int                  @id @default(autoincrement())
-  userId     Int
-  workoutId  Int
-  activeKey  String?              @unique @db.VarChar(191)
-  startedAt  DateTime             @default(now())
-  finishedAt DateTime?
-  status     WorkoutSessionStatus @default(ACTIVE)
+  id                 Int                  @id @default(autoincrement())
+  userId             Int
+  workoutId          Int
+  workoutName        String               @db.VarChar(100)
+  workoutDescription String?              @db.VarChar(500)
+  activeKey          String?              @unique @db.VarChar(191)
+  startedAt          DateTime             @default(now())
+  finishedAt         DateTime?
+  status             WorkoutSessionStatus @default(ACTIVE)
 
   user      User                     @relation(fields: [userId], references: [id])
-  workout   Workout                  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  workout   Workout                  @relation(fields: [workoutId], references: [id], onDelete: Restrict)
   exercises WorkoutSessionExercise[]
 
   @@index([userId])
@@ -185,20 +194,27 @@ model WorkoutSession {
 }
 
 model WorkoutSessionExercise {
-  id                Int @id @default(autoincrement())
-  workoutSessionId  Int
-  workoutExerciseId Int
-  order             Int
+  id                    Int     @id @default(autoincrement())
+  workoutSessionId      Int
+  workoutExerciseId     Int
+  exerciseName          String  @db.VarChar(191)
+  exerciseImagePath     String? @db.Text
+  exerciseEquipment     String? @db.VarChar(50)
+  exerciseDescription   String  @db.Text
+  exerciseInstructions  String  @db.Text
+  exerciseTechniqueTips String? @db.Text
+  primaryMuscle         String  @db.VarChar(191)
+  secondaryMuscles      String  @db.Text
+  order                 Int
 
   workoutSession  WorkoutSession  @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
+  workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Restrict)
 
   sets WorkoutSessionSet[]
 
   @@index([workoutSessionId])
   @@index([workoutExerciseId])
 }
-
 
 model WorkoutSessionSet {
   id                       Int       @id @default(autoincrement())
@@ -217,7 +233,6 @@ model WorkoutSessionSet {
 
   @@index([workoutSessionExerciseId])
 }
-
 
 model CalorieLog {
   id       Int      @id @default(autoincrement())

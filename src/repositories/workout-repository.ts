@@ -1,6 +1,18 @@
 import { prisma } from '@/lib/prisma';
 import type { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
+const workoutExerciseInclude = {
+  exercise: {
+    include: {
+      muscles: {
+        include: {
+          muscleGroup: true,
+        },
+      },
+    },
+  },
+} as const;
+
 export class WorkoutRepository {
   async create(dto: AddWorkoutDto, userId: number) {
     return prisma.$transaction(async (tx) => {
@@ -11,6 +23,7 @@ export class WorkoutRepository {
           where: {
             id: { in: exerciseIds },
             userId,
+            archivedAt: null,
           },
           select: {
             id: true,
@@ -18,7 +31,7 @@ export class WorkoutRepository {
         });
 
         if (ownedExercises.length !== exerciseIds.length) {
-          throw new Error('One or more exercises are invalid.');
+          throw new Error('One or more exercises are invalid or archived.');
         }
       }
 
@@ -55,9 +68,7 @@ export class WorkoutRepository {
         },
         include: {
           exercises: {
-            include: {
-              exercise: true,
-            },
+            include: workoutExerciseInclude,
             orderBy: {
               order: 'asc',
             },
@@ -73,12 +84,14 @@ export class WorkoutRepository {
     return prisma.workout.findMany({
       where: {
         userId,
+        archivedAt: null,
       },
       include: {
         exercises: {
-          include: {
-            exercise: true,
+          where: {
+            archivedAt: null,
           },
+          include: workoutExerciseInclude,
           orderBy: {
             order: 'asc',
           },
@@ -98,9 +111,18 @@ export class WorkoutRepository {
         where: {
           id,
           userId,
+          archivedAt: null,
         },
         select: {
           id: true,
+          exercises: {
+            where: {
+              archivedAt: null,
+            },
+            orderBy: {
+              order: 'asc',
+            },
+          },
         },
       });
 
@@ -115,6 +137,7 @@ export class WorkoutRepository {
           where: {
             id: { in: exerciseIds },
             userId,
+            archivedAt: null,
           },
           select: {
             id: true,
@@ -122,7 +145,7 @@ export class WorkoutRepository {
         });
 
         if (ownedExercises.length !== exerciseIds.length) {
-          throw new Error('One or more exercises are invalid.');
+          throw new Error('One or more exercises are invalid or archived.');
         }
       }
 
@@ -137,42 +160,77 @@ export class WorkoutRepository {
         },
       });
 
-      await tx.workoutExercise.deleteMany({
-        where: {
-          workoutId: id,
-        },
-      });
+      const existingExercises = workout.exercises;
+      const retainedIds = new Set<number>();
 
       let order = 1;
 
       for (const exercise of dto.workoutExercises) {
-        await tx.workoutExercise.create({
-          data: {
-            workoutId: id,
-            exerciseId: exercise.exerciseId,
-            sets: exercise.sets,
-            reps: exercise.reps,
-            weight: exercise.weight,
-            seconds: exercise.seconds,
-            note: exercise.note,
-            order,
-          },
-        });
+        const existing = existingExercises.find((item) => item.exerciseId === exercise.exerciseId);
+
+        if (existing) {
+          retainedIds.add(existing.id);
+
+          await tx.workoutExercise.update({
+            where: {
+              id: existing.id,
+            },
+            data: {
+              sets: exercise.sets,
+              reps: exercise.reps,
+              weight: exercise.weight,
+              seconds: exercise.seconds,
+              note: exercise.note,
+              order,
+            },
+          });
+        } else {
+          await tx.workoutExercise.create({
+            data: {
+              workoutId: id,
+              exerciseId: exercise.exerciseId,
+              sets: exercise.sets,
+              reps: exercise.reps,
+              weight: exercise.weight,
+              seconds: exercise.seconds,
+              note: exercise.note,
+              order,
+            },
+          });
+        }
 
         order++;
       }
 
-      // Return the updated workout with its exercises.
+      const removedExerciseIds = existingExercises.filter((exercise) => !retainedIds.has(exercise.id)).map((exercise) => exercise.id);
+
+      if (removedExerciseIds.length > 0) {
+        await tx.workoutExercise.updateMany({
+          where: {
+            id: {
+              in: removedExerciseIds,
+            },
+            workoutId: id,
+            archivedAt: null,
+          },
+          data: {
+            archivedAt: new Date(),
+          },
+        });
+      }
+
       return tx.workout.findFirst({
         where: {
           id,
           userId,
+          archivedAt: null,
         },
         include: {
           exercises: {
-            include: {
-              exercise: true,
+            where: {
+              archivedAt: null,
             },
+            include: workoutExerciseInclude,
             orderBy: {
               order: 'asc',
             },
@@ -187,12 +245,14 @@ export class WorkoutRepository {
       where: {
         id,
         userId,
+        archivedAt: null,
       },
       include: {
         exercises: {
-          include: {
-            exercise: true,
+          where: {
+            archivedAt: null,
           },
+          include: workoutExerciseInclude,
           orderBy: {
             order: 'asc',
           },
@@ -202,10 +262,14 @@ export class WorkoutRepository {
   }
 
   async delete(id: number, userId: number): Promise<void> {
-    await prisma.workout.delete({
+    await prisma.workout.updateMany({
       where: {
-        userId,
         id,
+        userId,
+        archivedAt: null,
+      },
+      data: {
+        archivedAt: new Date(),
       },
     });
   }
@@ -214,6 +278,7 @@ export class WorkoutRepository {
     return prisma.workout.count({
       where: {
         userId,
+        archivedAt: null,
       },
     });
   }

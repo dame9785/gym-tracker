@@ -16,22 +16,8 @@ export type TotalTrainingTimeViewModel = {
 
 export type WorkoutSessionWithRelations = Prisma.WorkoutSessionGetPayload<{
   include: {
-    workout: true;
     exercises: {
       include: {
-        workoutExercise: {
-          include: {
-            exercise: {
-              include: {
-                muscles: {
-                  include: {
-                    muscleGroup: true;
-                  };
-                };
-              };
-            };
-          };
-        };
         sets: true;
       };
     };
