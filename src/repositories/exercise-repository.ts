@@ -61,20 +61,37 @@ export class ExerciseRepository {
   }
 
   async delete(id: number, userId: number): Promise<void> {
-    const result = await prisma.exercise.updateMany({
-      where: {
-        id,
-        userId,
-        archivedAt: null,
-      },
-      data: {
-        archivedAt: new Date(),
-      },
-    });
+    await prisma.$transaction(async (tx) => {
+      const archivedAt = new Date();
 
-    if (result.count === 0) {
-      throw new Error('Exercise not found or already archived.');
-    }
+      const result = await tx.exercise.updateMany({
+        where: {
+          id,
+          userId,
+          archivedAt: null,
+        },
+        data: {
+          archivedAt,
+        },
+      });
+
+      if (result.count === 0) {
+        throw new Error('Exercise not found or already archived.');
+      }
+
+      await tx.workoutExercise.updateMany({
+        where: {
+          exerciseId: id,
+          archivedAt: null,
+          workout: {
+            userId,
+          },
+        },
+        data: {
+          archivedAt,
+        },
+      });
+    });
   }
 
   async update(id: number, dto: UpdateExericseDto, userId: number): Promise<void> {
