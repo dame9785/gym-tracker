@@ -52,11 +52,13 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className={`${styles.form} mx-auto`}>
       <div className={styles.formWrapper}>
-        <h1 className={styles.formTitle}>
-          Gym
-          <span>Tracker</span>
-        </h1>
-        <FaDumbbell className={styles.formIcon} />
+        <div className={styles.logoWrapper}>
+          <h1 className={styles.formTitle}>
+            Gym<span>Tracker</span>
+          </h1>
+
+          <FaDumbbell className={styles.logoIcon} />
+        </div>
       </div>
 
       {/* Email */}

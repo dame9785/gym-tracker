@@ -356,3 +356,38 @@
 .forgotPasswordWrapper a:hover {
   color: #ffb347;
 }
+
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.logoIcon {
+  color: #f59e0b;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.formTitle {
+  margin: 0;
+  line-height: 1;
+}
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.logoIcon {
+  color: #f59e0b;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.formTitle {
+  margin: 0;
+  line-height: 1;
+}
