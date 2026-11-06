@@ -1,6 +1,6 @@
+
 'use client';
 
-//FONTAWSOME ICONS
 import {
   FaEnvelope,
   FaWeightScale,
@@ -15,33 +15,30 @@ import {
   FaLock,
 } from 'react-icons/fa6';
 
-//Toast Alert
 import { toast } from 'sonner';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 
-//Components
 import Button from '@/components/button/button';
 
-//Styling
 import FormStyles from '@/components/forms/form.module.css';
 import buttonStyles from '@/components/button/button.module.css';
 
-//NEXT & Hooks
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import {
+  registerUserSchema,
+  type RegisterUserDto,
+} from '@/schemas/auth-schemas';
 
-//Types
-import { registerUserSchema, type RegisterUserDto } from '@/schemas/auth-schemas';
 import { Gender, GoalType } from '@prisma/client';
-
 import { registerUserAction } from '@/actions/user-actions';
 
 export default function RegisterForm() {
   const router = useRouter();
 
-  /*States*/
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [isSaving, setIsSaving] = useState(false);
+
   const [formData, setFormData] = useState<RegisterUserDto>({
     email: '',
     username: '',
@@ -51,7 +48,7 @@ export default function RegisterForm() {
     bodyWeight: 0,
     height: 0,
     gender: 'MALE',
-    birthDate: new Date().toISOString().split('T')[0],
+    birthDate: '',
     goalType: 'MAINTENANCE',
     goalWeight: 0,
     goalDate: '',
@@ -59,30 +56,59 @@ export default function RegisterForm() {
     confirmPassword: '',
   });
 
-  const cleanValidationError = (name: string): void => {
+  // Password requirements
+  const passwordRequirements = [
+    {
+      label: 'At least 12 characters',
+      valid: formData.password.length >= 12,
+    },
+    {
+      label: 'Maximum 128 characters',
+      valid: formData.password.length <= 128,
+    },
+    {
+      label: 'At least one uppercase letter',
+      valid: /[A-Z]/.test(formData.password),
+    },
+    {
+      label: 'At least one lowercase letter',
+      valid: /[a-z]/.test(formData.password),
+    },
+    {
+      label: 'At least one number',
+      valid: /[0-9]/.test(formData.password),
+    },
+    {
+      label: 'At least one special character',
+      valid: /[^A-Za-z0-9]/.test(formData.password),
+    },
+  ];
+
+  // Remove validation error for a specific field
+  const cleanValidationError = (name: string) => {
     setErrors((prev) => {
       const newErrors = { ...prev };
-      delete newErrors[name as keyof typeof newErrors];
+      delete newErrors[name];
 
       return newErrors;
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  // Handle input changes
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
 
-    //Remove only the validation error for the specified field
     cleanValidationError(name);
 
-    let parsedValue: string | number | Date = value;
+    let parsedValue: string | number = value;
 
-    // Convert numeric form fields from strings to numbers
     switch (name) {
       case 'bodyWeight':
       case 'height':
       case 'goalWeight':
-      case 'goalTypeId':
-        parsedValue = Number(value);
+        parsedValue = value === '' ? 0 : Number(value);
         break;
     }
 
@@ -92,23 +118,35 @@ export default function RegisterForm() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // Get first validation error for a field
+  const renderFieldError = (name: keyof RegisterUserDto) => {
+    const error = errors[name]?.[0];
+
+    if (!error) return null;
+
+    return (
+      <p className={FormStyles.fieldErrorMessage} role="alert">
+        {error}
+      </p>
+    );
+  };
+
+  // Submit registration form
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    /*zod validation*/
-    const validate = registerUserSchema.safeParse(formData);
-    if (!validate.success) {
-      setErrors(validate.error.flatten().fieldErrors);
+    const validation = registerUserSchema.safeParse(formData);
+
+    if (!validation.success) {
+      setErrors(validation.error.flatten().fieldErrors);
       return;
     }
 
     setIsSaving(true);
-
-    /*Remove all the validation error*/
     setErrors({});
 
     try {
-      const response = await registerUserAction(validate.data);
+      const response = await registerUserAction(validation.data);
 
       if (!response.success) {
         setErrors(response.errors ?? {});
@@ -119,7 +157,7 @@ export default function RegisterForm() {
       toast.success(response.message);
       router.push('/account/setting');
     } catch (error) {
-      console.error('Failed to create food:', error);
+      console.error('Failed to register user:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);
@@ -134,8 +172,10 @@ export default function RegisterForm() {
           <span> Konto</span>
         </h1>
       </div>
+
       <div className={FormStyles.formGrid}>
-       <div className={FormStyles.formLeft}>
+        <div className={FormStyles.formLeft}>
+
           {/* EMAIL */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
@@ -144,6 +184,7 @@ export default function RegisterForm() {
                 Email
               </label>
             </div>
+
             <input
               className={FormStyles.formInput}
               name="email"
@@ -154,7 +195,8 @@ export default function RegisterForm() {
               placeholder="E-post..."
               onChange={handleChange}
             />
-            {errors.email?.[0] && <p className={FormStyles.fieldErrorMessage}>{errors.email[0]}</p>}
+
+            {renderFieldError('email')}
           </div>
 
           {/* USERNAME */}
@@ -165,20 +207,22 @@ export default function RegisterForm() {
                 Användarnamn
               </label>
             </div>
+
             <input
               className={FormStyles.formInput}
               name="username"
               type="text"
-              value={formData.username}
               id="username"
               autoComplete="username"
+              value={formData.username}
               placeholder="Användarnamn..."
               onChange={handleChange}
             />
-            {errors.username?.[0] && <p className={FormStyles.fieldErrorMessage}>{errors.username[0]}</p>}
+
+            {renderFieldError('username')}
           </div>
 
-          {/* NAME */}
+          {/* FIRST NAME */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaSignature className={FormStyles.formIcon} />
@@ -186,17 +230,19 @@ export default function RegisterForm() {
                 Namn
               </label>
             </div>
+
             <input
               className={FormStyles.formInput}
               name="firstName"
               type="text"
-              value={formData.firstName}
               id="firstName"
               autoComplete="given-name"
+              value={formData.firstName}
               placeholder="Namn..."
               onChange={handleChange}
             />
-            {errors.firstName && <p className={FormStyles.fieldErrorMessage}>{errors.firstName}</p>}
+
+            {renderFieldError('firstName')}
           </div>
 
           {/* LAST NAME */}
@@ -207,21 +253,22 @@ export default function RegisterForm() {
                 Efternamn
               </label>
             </div>
+
             <input
               className={FormStyles.formInput}
               name="lastName"
               type="text"
-              value={formData.lastName}
               id="lastName"
               autoComplete="family-name"
+              value={formData.lastName}
               placeholder="Efternamn..."
               onChange={handleChange}
             />
-            {errors.lastName && <p className={FormStyles.fieldErrorMessage}>{errors.lastName}</p>}
+
+            {renderFieldError('lastName')}
           </div>
 
           {/* PHONE */}
-
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaPhone className={FormStyles.formIcon} />
@@ -242,12 +289,14 @@ export default function RegisterForm() {
               onChange={handleChange}
             />
 
-            <small>Exempel: 076-123 45 67 eller +46 76 123 45 67</small>
+            <small>
+              Exempel: 076-123 45 67 eller +46 76 123 45 67
+            </small>
 
-            {errors.phoneNumber?.[0] && <p className={FormStyles.fieldErrorMessage}>{errors.phoneNumber[0]}</p>}
+            {renderFieldError('phoneNumber')}
           </div>
 
-          {/* Body Weight */}
+          {/* BODY WEIGHT */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaWeightScale className={FormStyles.formIcon} />
@@ -255,26 +304,35 @@ export default function RegisterForm() {
                 Kroppsvikt (kg)
               </label>
             </div>
+
             <input
               className={FormStyles.formInput}
               name="bodyWeight"
               type="number"
               step="0.1"
+              min="20"
+              max="400"
               id="bodyWeight"
-              value={formData.bodyWeight}
-              placeholder="Ex (40.2kg)"
+              value={formData.bodyWeight || ''}
+              placeholder="Exempel: 70.5"
               onChange={handleChange}
             />
-            {errors.bodyWeight && <p className={FormStyles.fieldErrorMessage}>{errors.bodyWeight}</p>}
+
+            {renderFieldError('bodyWeight')}
           </div>
+
           {/* PASSWORD */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaLock className={FormStyles.formIcon} />
-              <label htmlFor="password" className={FormStyles.formLabel}>
+              <label
+                htmlFor="password"
+                className={FormStyles.formLabel}
+              >
                 Lösenord
               </label>
             </div>
+
             <input
               className={FormStyles.formInput}
               value={formData.password}
@@ -285,19 +343,46 @@ export default function RegisterForm() {
               placeholder="Lösenord..."
               onChange={handleChange}
             />
-        {errors.password?.[0] && (
-  <p className={FormStyles.fieldErrorMessage}>
-    {errors.password[0]}
-  </p>
-)}
+
+            {formData.password.length > 0 ? (
+              <div>
+                <p className={FormStyles.passwordRequirementsTitle}>
+                  Lösenordet måste uppfylla följande krav:
+                </p>
+
+                <ul className={FormStyles.passwordRequirements}>
+                  {passwordRequirements.map((requirement) => (
+                    <li
+                      key={requirement.label}
+                      className={
+                        requirement.valid
+                          ? FormStyles.requirementValid
+                          : FormStyles.requirementInvalid
+                      }
+                    >
+                      <span aria-hidden="true">
+                        {requirement.valid ? '✓' : '○'}
+                      </span>
+
+                      {requirement.label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              renderFieldError('password')
+            )}
           </div>
 
           {/* CONFIRM PASSWORD */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaLock className={FormStyles.formIcon} />
-              <label htmlFor="confirmPassword" className={FormStyles.formLabel}>
-                Confirm password
+              <label
+                htmlFor="confirmPassword"
+                className={FormStyles.formLabel}
+              >
+                Bekräfta lösenord
               </label>
             </div>
 
@@ -308,16 +393,18 @@ export default function RegisterForm() {
               type="password"
               id="confirmPassword"
               autoComplete="new-password"
-              placeholder="Confirm password..."
+              placeholder="Bekräfta lösenord..."
               onChange={handleChange}
             />
 
-            {errors.confirmPassword?.[0] && <p className={FormStyles.fieldErrorMessage}>{errors.confirmPassword[0]}</p>}
+            {renderFieldError('confirmPassword')}
           </div>
         </div>
 
+        {/* RIGHT COLUMN */}
         <div className="form-right">
-          {/* Height */}
+
+          {/* HEIGHT */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaRulerVertical className={FormStyles.formIcon} />
@@ -325,17 +412,21 @@ export default function RegisterForm() {
                 Längd (cm)
               </label>
             </div>
+
             <input
               className={FormStyles.formInput}
               name="height"
               type="number"
               step="0.1"
+              min="100"
+              max="250"
               id="height"
-              value={formData.height}
-              placeholder="Ex (150.5cm)"
+              value={formData.height || ''}
+              placeholder="Exempel: 175"
               onChange={handleChange}
             />
-            {errors.height && <p className={FormStyles.fieldErrorMessage}>{errors.height}</p>}
+
+            {renderFieldError('height')}
           </div>
 
           {/* GENDER */}
@@ -346,15 +437,24 @@ export default function RegisterForm() {
                 Kön
               </label>
             </div>
-            <select className={FormStyles.formSelect} id="gender" name="gender" value={formData.gender} onChange={handleChange}>
+
+            <select
+              className={FormStyles.formSelect}
+              id="gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+            >
               <option value="">Välj kön</option>
               <option value={Gender.MALE}>Man</option>
               <option value={Gender.FEMALE}>Kvinna</option>
               <option value={Gender.OTHER}>Annat</option>
             </select>
+
+            {renderFieldError('gender')}
           </div>
 
-          {/* Birth */}
+          {/* BIRTH DATE */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaCakeCandles className={FormStyles.formIcon} />
@@ -362,56 +462,76 @@ export default function RegisterForm() {
                 Född
               </label>
             </div>
+
             <input
               className={FormStyles.formInput}
               name="birthDate"
               type="date"
               id="birthDate"
-              placeholder="1997-09-26"
               value={formData.birthDate}
               onChange={handleChange}
             />
-            {errors.birthDate && <p className={FormStyles.fieldErrorMessage}>{errors.birthDate}</p>}
+
+            {renderFieldError('birthDate')}
           </div>
 
-          {/* Goal Type*/}
+          {/* GOAL TYPE */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaMars className={FormStyles.formIcon} />
               <label className={FormStyles.formLabel} htmlFor="goalType">
-                Goal type
+                Träningsmål
               </label>
             </div>
-            <select className={FormStyles.formSelect} id="goalType" name="goalType" value={formData.goalType} onChange={handleChange}>
-              <option value="">Select goal type</option>
-              <option value={GoalType.MUSCLE_GAIN}>Muscle Gain</option>
-              <option value={GoalType.WEIGHT_LOSS}>Weight Loss</option>
-              <option value={GoalType.MAINTENANCE}>Maintenance</option>
+
+            <select
+              className={FormStyles.formSelect}
+              id="goalType"
+              name="goalType"
+              value={formData.goalType}
+              onChange={handleChange}
+            >
+              <option value="">Välj träningsmål</option>
+              <option value={GoalType.MUSCLE_GAIN}>
+                Muskelökning
+              </option>
+              <option value={GoalType.WEIGHT_LOSS}>
+                Viktnedgång
+              </option>
+              <option value={GoalType.MAINTENANCE}>
+                Behålla vikten
+              </option>
             </select>
+
+            {renderFieldError('goalType')}
           </div>
 
-          {/* Goal weight*/}
+          {/* GOAL WEIGHT */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaWeightHanging className={FormStyles.formIcon} />
               <label className={FormStyles.formLabel} htmlFor="goalWeight">
-                Mål vikt (kg)
+                Målvikt (kg)
               </label>
             </div>
+
             <input
               className={FormStyles.formInput}
-              value={formData.goalWeight}
+              value={formData.goalWeight || ''}
               name="goalWeight"
               type="number"
               step="0.1"
-              placeholder="Ex: 75"
+              min="20"
+              max="400"
+              placeholder="Exempel: 75"
               id="goalWeight"
               onChange={handleChange}
             />
-            {errors.goalWeight && <p className={FormStyles.fieldErrorMessage}>{errors.goalWeight}</p>}
+
+            {renderFieldError('goalWeight')}
           </div>
 
-          {/* Goal Date */}
+          {/* GOAL DATE */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaFlagCheckered className={FormStyles.formIcon} />
@@ -419,17 +539,36 @@ export default function RegisterForm() {
                 Måldatum
               </label>
             </div>
-            <input className={FormStyles.formInput} value={formData.goalDate} name="goalDate" type="date" id="goalDate" onChange={handleChange} />
-            {errors.goalDate && <p className={FormStyles.fieldErrorMessage}>{errors.goalDate}</p>}
+
+            <input
+              className={FormStyles.formInput}
+              value={formData.goalDate}
+              name="goalDate"
+              type="date"
+              id="goalDate"
+              onChange={handleChange}
+            />
+
+            {renderFieldError('goalDate')}
           </div>
         </div>
       </div>
+
+      {/* ACTION BUTTONS */}
       <div className="grid grid-2">
-        <Button type="submit" variant="primary" disabled={isSaving}>
-          Skapa konto
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={isSaving}
+        >
+          {isSaving ? 'Skapar konto...' : 'Skapa konto'}
         </Button>
-        <Link href="/account/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
-          Gå tillbaks
+
+        <Link
+          href="/account/login"
+          className={`${buttonStyles.button} ${buttonStyles.secondary}`}
+        >
+          Gå tillbaka
         </Link>
       </div>
     </form>
