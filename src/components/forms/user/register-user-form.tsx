@@ -285,7 +285,11 @@ export default function RegisterForm() {
               placeholder="Lösenord..."
               onChange={handleChange}
             />
-            {errors.password && <p className={FormStyles.fieldErrorMessage}>{errors.password}</p>}
+        {errors.password?.[0] && (
+  <p className={FormStyles.fieldErrorMessage}>
+    {errors.password[0]}
+  </p>
+)}
           </div>
 
           {/* CONFIRM PASSWORD */}
