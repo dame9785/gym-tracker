@@ -173,8 +173,9 @@ export class WorkoutRepository {
 
           await tx.workoutExercise.update({
             where: {
-              id: existing.id,
-            },
+  id: existing.id,
+  workoutId: id,
+},
             data: {
               sets: exercise.sets,
               reps: exercise.reps,
