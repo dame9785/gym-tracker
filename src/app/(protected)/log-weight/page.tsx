@@ -12,7 +12,7 @@ import { requireAuth } from '@/lib/auth';
 
 import ProgressService from '@/services/progress-service';
 import GoalProgress from '@/components/progress/progress-goal';
-import WeightProgressChart from '@/components/progress/weight-progress-chart';
+import WeightProgressChart from '@/components/log-weight/weight-progress-chart';
 
 type Props = {
   searchParams: Promise<{

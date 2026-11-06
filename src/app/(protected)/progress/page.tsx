@@ -1,8 +1,6 @@
 import ProgressHeader from '@/components/progress/progress-header';
-import WeightProgress from '@/components/progress/progress-weight';
-import GoalProgress from '@/components/progress/progress-goal';
+
 import ExerciseProgress from '@/components/progress/progress-exercise';
-import WeightProgressChart from '@/components/progress/weight-progress-chart';
 
 import { requireAuth } from '@/lib/auth';
 import ProgressService from '@/services/progress-service';
@@ -12,8 +10,6 @@ export default async function ProgressPage() {
 
   const progressService = new ProgressService();
   const response = await progressService.getProgress(user.userId);
-
-  const weightProgress = response.weightProgress;
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
