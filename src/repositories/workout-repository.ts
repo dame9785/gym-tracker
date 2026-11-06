@@ -77,8 +77,7 @@ export class WorkoutRepository {
       });
     });
   }
-
-  async getAll(userId: number, page: number, pageSize: number) {
+async getAll(userId: number, page: number, pageSize: number) {
   if (!Number.isSafeInteger(page) || page < 1) {
     throw new Error('Invalid page number.');
   }
@@ -92,30 +91,31 @@ export class WorkoutRepository {
   if (!Number.isSafeInteger(skip)) {
     throw new Error('Invalid pagination offset.');
   }
-    return prisma.workout.findMany({
-      where: {
-        userId,
-        archivedAt: null,
-      },
-      include: {
-        exercises: {
-          where: {
-            archivedAt: null,
-          },
-          include: workoutExerciseInclude,
-          orderBy: {
-            order: 'asc',
-          },
+
+  return prisma.workout.findMany({
+    where: {
+      userId,
+      archivedAt: null,
+    },
+    include: {
+      exercises: {
+        where: {
+          archivedAt: null,
+        },
+        include: workoutExerciseInclude,
+        orderBy: {
+          order: 'asc',
         },
       },
-      orderBy: {
-        createdAt: 'asc',
-      },
-      skip,
-      take: pageSize,
-    });
-  }
-
+    },
+    orderBy: {
+      createdAt: 'asc',
+    },
+    skip,
+    take: pageSize,
+  });
+}
+  
   async update(id: number, dto: UpdateWorkoutDto, userId: number) {
     return prisma.$transaction(async (tx) => {
       const workout = await tx.workout.findFirst({
