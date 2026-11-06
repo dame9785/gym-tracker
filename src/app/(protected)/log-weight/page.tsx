@@ -9,7 +9,6 @@ import Button from '@/components/button/button';
 import { WeightLogService } from '@/services/weight-log-service';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
-import { Scale } from 'lucide-react';
 
 type Props = {
   searchParams: Promise<{
