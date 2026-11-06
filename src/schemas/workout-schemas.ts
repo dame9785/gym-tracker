@@ -52,7 +52,7 @@ const workoutFields = {
     .min(1, 'Namnet måste anges.')
     .max(100, 'Namnet får innehålla högst 100 tecken.'),
 
-  workoutExercises: z
+workoutExercises: z
   .array(updateWorkoutExerciseSchema)
   .min(1, 'Minst en övning måste läggas till.')
   .superRefine((exercises, ctx) => {
