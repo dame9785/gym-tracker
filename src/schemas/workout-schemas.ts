@@ -52,8 +52,19 @@ const workoutFields = {
     .min(1, 'Namnet måste anges.')
     .max(100, 'Namnet får innehålla högst 100 tecken.'),
 
-  workoutExercises: z.array(updateWorkoutExerciseSchema)
-    .min(1, 'Minst en övning måste läggas till.'),
+  workoutExercises: z
+  .array(updateWorkoutExerciseSchema)
+  .min(1, 'Minst en övning måste läggas till.')
+  .superRefine((exercises, ctx) => {
+    const exerciseIds = exercises.map((exercise) => exercise.exerciseId);
+
+    if (new Set(exerciseIds).size !== exerciseIds.length) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Samma övning kan inte läggas till flera gånger.',
+      });
+    }
+  }),
 };
 
 export const updateWorkoutSchema = z.object(workoutFields);
