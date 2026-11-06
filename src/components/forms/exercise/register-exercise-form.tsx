@@ -115,7 +115,7 @@ export default function RegisterForm() {
       }
 
       toast.success(response.message);
-      router.push('/exercise');
+      router.push('/exercises');
       router.refresh();
     } catch (error) {
       console.error('Failed to create exercise:', error);

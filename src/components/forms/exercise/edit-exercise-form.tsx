@@ -189,7 +189,7 @@ export default function EditExercise({ exericse }: Props) {
       }
 
       toast.success(response.message);
-      router.push('/exercise');
+      router.push('/exercises');
       router.refresh();
     } catch (error) {
       console.error('Failed to update exercise:', error);
