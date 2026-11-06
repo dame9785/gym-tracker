@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import Statistic from '@/components/log-weight/log-weight-statistics';
 import LogHistoryList from '@/components/log-weight/log-history-list';
-import WeightChart from '@/components/log-weight/weight-chart';
+
 import Pagination from '@/components/log-weight/log-pagination';
 import Button from '@/components/button/button';
 
