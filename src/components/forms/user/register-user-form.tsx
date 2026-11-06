@@ -163,7 +163,7 @@ const defaultGoalDate = [
       }
 
       toast.success(response.message);
-      router.push('/account/setting');
+      router.push('/dashboard');
     } catch (error) {
       console.error('Failed to register user:', error);
       toast.error('Something went wrong. Please try again.');
