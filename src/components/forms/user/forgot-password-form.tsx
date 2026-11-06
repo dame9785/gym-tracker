@@ -55,7 +55,7 @@ export default function ForgotPasswordForm() {
       <div className={styles.form}>
         <h1 className={styles.formTitle}>Check your email</h1>
 
-        <p>If an account exists with that email address, you will receive a password reset link shortly.</p>
+        <p className={styles.formDescription}>Enter your email address and well send you a link to reset your password.</p>
       </div>
     );
   }

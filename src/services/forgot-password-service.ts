@@ -14,6 +14,12 @@ export class ForgotPasswordService {
       return;
     }
 
+    const canRequest = await this.passwordResetService.canRequestPasswordReset(user.id);
+
+    if (!canRequest) {
+      return;
+    }
+
     const token = await this.passwordResetService.createToken(user.id);
 
     const appUrl = process.env.APP_URL;

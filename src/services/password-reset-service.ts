@@ -117,4 +117,19 @@ export class PasswordResetService {
       });
     });
   }
+
+  async canRequestPasswordReset(userId: number): Promise<boolean> {
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+
+    const requestCount = await prisma.passwordResetToken.count({
+      where: {
+        userId,
+        createdAt: {
+          gte: fifteenMinutesAgo,
+        },
+      },
+    });
+
+    return requestCount < 3;
+  }
 }
