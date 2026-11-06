@@ -1,26 +1,69 @@
+
 import { z } from 'zod';
 
-const updateWorkoutExericeSchema = z.object({
-  exerciseId: z.coerce.number(),
-  sets: z.coerce.number(),
-  reps: z.coerce.number(),
-  weight: z.coerce.number(),
-  seconds: z.coerce.number(),
-  note: z.string().trim(),
+const requiredNumber = z.preprocess(
+  (value) => {
+    if (
+      value === null ||
+      value === undefined ||
+      (typeof value === 'string' && value.trim() === '')
+    ) {
+      return Number.NaN;
+    }
+
+    return value;
+  },
+  z.coerce.number().finite()
+);
+
+const updateWorkoutExerciseSchema = z.object({
+  exerciseId: requiredNumber
+    .int('Övningens ID måste vara ett heltal.')
+    .positive('Ogiltigt övnings-ID.'),
+
+  sets: requiredNumber
+    .int('Antal set måste vara ett heltal.')
+    .min(0, 'Antal set kan inte vara negativt.'),
+
+  reps: requiredNumber
+    .int('Antal repetitioner måste vara ett heltal.')
+    .min(0, 'Antal repetitioner kan inte vara negativt.'),
+
+  weight: requiredNumber
+    .min(0, 'Vikten kan inte vara negativ.'),
+
+  seconds: requiredNumber
+    .int('Sekunder måste vara ett heltal.')
+    .min(0, 'Sekunder kan inte vara negativa.'),
+
+  note: z.string()
+    .trim()
+    .max(500, 'Anteckningen får innehålla högst 500 tecken.'),
 });
 
-export const updateWorkoutSchema = z.object({
-  description: z.string().trim().min(1, 'Anteckning måste anges.'),
-  name: z.string().trim().min(1, 'Namnet måste anges.'),
-  workoutExercises: z.array(updateWorkoutExericeSchema),
-});
+const workoutFields = {
+  description: z.string()
+    .trim()
+    .min(1, 'Beskrivning måste anges.')
+    .max(1000, 'Beskrivningen får innehålla högst 1000 tecken.'),
 
-export const registerWorkoutSchema = z.object({
-  description: z.string().trim().min(1, 'Beskrivning måste anges.'),
-  name: z.string().trim().min(1, 'Namn måste anges.'),
-  workoutExercises: z.array(updateWorkoutExericeSchema),
-});
+  name: z.string()
+    .trim()
+    .min(1, 'Namnet måste anges.')
+    .max(100, 'Namnet får innehålla högst 100 tecken.'),
+
+  workoutExercises: z.array(updateWorkoutExerciseSchema)
+    .min(1, 'Minst en övning måste läggas till.'),
+};
+
+export const updateWorkoutSchema = z.object(workoutFields);
+
+export const registerWorkoutSchema = z.object(workoutFields);
 
 export type UpdateWorkoutDto = z.infer<typeof updateWorkoutSchema>;
-export type UpdateWorkoutExericseDto = z.infer<typeof updateWorkoutExericeSchema>;
+
+export type UpdateWorkoutExerciseDto = z.infer<
+  typeof updateWorkoutExerciseSchema
+>;
+
 export type AddWorkoutDto = z.infer<typeof registerWorkoutSchema>;
