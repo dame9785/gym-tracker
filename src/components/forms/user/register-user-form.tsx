@@ -135,7 +135,7 @@ export default function RegisterForm() {
         </h1>
       </div>
       <div className={FormStyles.formGrid}>
-        <div className="form-left">
+       <div className={FormStyles.formLeft}>
           {/* EMAIL */}
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
