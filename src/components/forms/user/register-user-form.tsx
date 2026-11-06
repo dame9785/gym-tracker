@@ -108,7 +108,7 @@ export default function RegisterForm() {
 
     try {
       const response = await registerUserAction(validate.data);
-
+      console.log(response);
       if (!response.success) {
         setErrors(response.errors ?? {});
         toast.error(response.message);

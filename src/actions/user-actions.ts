@@ -14,12 +14,13 @@ function getErrorMessage(error: unknown): string {
     return 'Something went wrong.';
   }
 
-  if (error.message.startsWith('Validation failed: ')) {
-    return 'Validation failed.';
-  }
-
-  if (error.message.startsWith('User already exists: ')) {
-    return 'The username or email address is already in use.';
+  if (
+    error.message.startsWith('Validation failed: ') ||
+    error.message.startsWith('Registration failed: ') ||
+    error.message.startsWith('User update failed: ') ||
+    error.message.startsWith('User already exists: ')
+  ) {
+    return 'Please correct the highlighted fields.';
   }
 
   if (error.message === 'Invalid email or password.') {
@@ -30,6 +31,8 @@ function getErrorMessage(error: unknown): string {
     return 'User not found.';
   }
 
+  console.error('[UserAction] Unexpected error:', error);
+
   return 'Something went wrong.';
 }
 
@@ -38,7 +41,7 @@ function getValidationErrors(error: unknown): Record<string, string[]> | undefin
     return undefined;
   }
 
-  const prefixes = ['Validation failed: ', 'User already exists: '];
+  const prefixes = ['Validation failed: ', 'Registration failed: ', 'User update failed: ', 'User already exists: '];
   const prefix = prefixes.find((item) => error.message.startsWith(item));
 
   if (!prefix) {

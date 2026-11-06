@@ -67,19 +67,19 @@ export class AuthService {
     const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
 
     if (existingEmail) {
-      fieldErrors.email = 'E-postadressen används redan.';
+      fieldErrors.email = 'This email address is already registered.';
     }
 
     if (existingUsername) {
-      fieldErrors.username = 'Användarnamnet används redan.';
+      fieldErrors.username = 'This username is already taken.';
     }
 
     if (existingPhoneNumber) {
-      fieldErrors.phoneNumber = 'Telefonnumret är redan registrerat.';
+      fieldErrors.phoneNumber = 'This phone number is already registered.';
     }
 
     if (existingEmail || existingUsername || existingPhoneNumber) {
-      throw new Error(`User already exists: ${JSON.stringify(fieldErrors)}`);
+      throw new Error(`Registration failed: ${JSON.stringify(fieldErrors)}`);
     }
 
     try {
@@ -96,7 +96,7 @@ export class AuthService {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const fieldErrors = ErrorsHelper.getUniqueConstraintFieldErrors<RegisterUserDto>(error);
 
-        throw new Error(`User already exists: ${JSON.stringify(fieldErrors)}`);
+        throw new Error(`Registration failed: ${JSON.stringify(fieldErrors)}`);
       }
 
       throw error;
@@ -125,7 +125,7 @@ export class AuthService {
     const validation = updateUserSchema.safeParse(dto);
 
     if (!validation.success) {
-      const fieldErrors = validation.error.flatten().fieldErrors;
+      const fieldErrors = ErrorsHelper.getFormErrors<UpdateUserDto>(validation.error.issues);
 
       throw new Error(`Validation failed: ${JSON.stringify(fieldErrors)}`);
     }
@@ -141,19 +141,19 @@ export class AuthService {
     const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
 
     if (existingEmail) {
-      fieldErrors.email = 'E-postadressen är upptagen.';
+      fieldErrors.email = 'This email address is already in use.';
     }
 
     if (existingUsername) {
-      fieldErrors.username = 'Användarnamnet är upptaget.';
+      fieldErrors.username = 'This username is already taken.';
     }
 
     if (existingPhoneNumber) {
-      fieldErrors.phoneNumber = 'Telefonnumret är redan registrerat.';
+      fieldErrors.phoneNumber = 'This phone number is already registered.';
     }
 
     if (existingEmail || existingUsername || existingPhoneNumber) {
-      throw new Error(`User already exists: ${JSON.stringify(fieldErrors)}`);
+      throw new Error(`User update failed: ${JSON.stringify(fieldErrors)}`);
     }
 
     const updateData = UserMapper.userDtoToDbModel(data);
@@ -164,7 +164,7 @@ export class AuthService {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const fieldErrors = ErrorsHelper.getUniqueConstraintFieldErrors<UpdateUserDto>(error);
 
-        throw new Error(`User already exists: ${JSON.stringify(fieldErrors)}`);
+        throw new Error(`User update failed: ${JSON.stringify(fieldErrors)}`);
       }
 
       throw error;
