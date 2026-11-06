@@ -97,13 +97,13 @@ function Sidebar() {
       {isOpen && <button type="button" aria-label="Close sidebar" onClick={closeSidebar} className="fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] lg:hidden" />}
 
       {/* Sidebar */}
-      <aside
-        id="gymtracker-sidebar"
-        aria-label="Sidebar navigation"
-        className={`fixed inset-y-0 left-0 z-50 flex h-dvh w-60 flex-col justify-between overflow-y-auto border-r border-slate-800/80 bg-[#03091b] px-4 py-5 text-slate-100 shadow-2xl shadow-black/20 transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0`}
-      >
+   <aside
+  id="gymtracker-sidebar"
+  aria-label="Sidebar navigation"
+  className={`fixed left-0 top-14 bottom-0 lg:top-0 z-50 flex h-auto lg:h-dvh w-60 flex-col justify-between overflow-y-auto overscroll-contain border-r border-slate-800/80 bg-[#03091b] px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-slate-100 shadow-2xl shadow-black/20 transition-transform duration-300 ease-in-out ${
+    isOpen ? 'translate-x-0' : '-translate-x-full'
+  } lg:translate-x-0`}
+>
         <div>
           {/* Logo */}
           <Link href="/dashboard" onClick={closeSidebar} className="mb-9 flex items-center gap-3 rounded-xl px-1">
