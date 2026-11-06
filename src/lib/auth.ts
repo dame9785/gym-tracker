@@ -1,6 +1,7 @@
 import { verifyToken } from '@/lib/jwt';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
 
 export function getUserFromToken(token: string) {
   if (!token) return null;
@@ -27,6 +28,15 @@ export async function requireAuth() {
   const user = getUserFromToken(token);
 
   if (!user) {
+    redirect('/account/login');
+  }
+
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.userId },
+    select: { tokenVersion: true },
+  });
+
+  if (!dbUser || dbUser.tokenVersion !== user.tokenVersion) {
     redirect('/account/login');
   }
 

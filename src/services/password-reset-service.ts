@@ -98,11 +98,10 @@ export class PasswordResetService {
       }
 
       await tx.user.update({
-        where: {
-          id: resetToken.userId,
-        },
+        where: { id: resetToken.userId },
         data: {
           passwordHash,
+          tokenVersion: { increment: 1 },
         },
       });
 

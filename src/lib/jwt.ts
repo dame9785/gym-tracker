@@ -2,6 +2,7 @@ import jwt, { type JwtPayload } from 'jsonwebtoken';
 
 interface TokenPayload extends JwtPayload {
   userId: number;
+  tokenVersion: number;
 }
 
 function getJwtSecret(): string {
@@ -14,12 +15,16 @@ function getJwtSecret(): string {
   return secret;
 }
 
-export function generateToken(userId: number): string {
+export function generateToken(userId: number, tokenVersion: number): string {
   if (!Number.isInteger(userId) || userId <= 0) {
     throw new Error('Invalid user ID.');
   }
 
-  return jwt.sign({ userId }, getJwtSecret(), {
+  if (!Number.isInteger(tokenVersion) || tokenVersion < 0) {
+    throw new Error('Invalid token version.');
+  }
+
+  return jwt.sign({ userId, tokenVersion }, getJwtSecret(), {
     algorithm: 'HS256',
     expiresIn: '7d',
   });
@@ -30,7 +35,15 @@ export function verifyToken(token: string): TokenPayload {
     algorithms: ['HS256'],
   });
 
-  if (typeof payload === 'string' || !Number.isInteger(payload.userId) || typeof payload.userId !== 'number' || payload.userId <= 0) {
+  if (
+    typeof payload === 'string' ||
+    typeof payload.userId !== 'number' ||
+    !Number.isInteger(payload.userId) ||
+    payload.userId <= 0 ||
+    typeof payload.tokenVersion !== 'number' ||
+    !Number.isInteger(payload.tokenVersion) ||
+    payload.tokenVersion < 0
+  ) {
     throw new Error('Invalid token payload.');
   }
 

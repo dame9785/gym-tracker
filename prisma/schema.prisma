@@ -14,8 +14,10 @@ model User {
   username     String @unique @db.VarChar(50)
   email        String @unique @db.VarChar(100)
   phoneNumber          String @unique @db.VarChar(20)
- passwordHash         String
- passwordResetTokens  PasswordResetToken[]
+  passwordHash         String
+  passwordResetTokens  PasswordResetToken[]
+
+   tokenVersion Int @default(0)
 
   bodyWeight Decimal @db.Decimal(5, 2)
   goalWeight Decimal @db.Decimal(5, 2)

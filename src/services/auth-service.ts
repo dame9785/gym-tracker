@@ -47,7 +47,7 @@ export class AuthService {
     }
 
     return {
-      token: generateToken(user.id),
+      token: generateToken(user.id, user.tokenVersion),
       userId: user.id,
     };
   }
@@ -99,7 +99,7 @@ export class AuthService {
 
       return {
         userId: user.id,
-        token: generateToken(user.id),
+        token: generateToken(user.id, user.tokenVersion),
       };
     } catch (error: unknown) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
@@ -159,7 +159,10 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(newPassword, 10);
 
-    await this.userRepository.update(userId, { passwordHash });
+    await this.userRepository.update(userId, {
+      passwordHash,
+      tokenVersion: { increment: 1 },
+    });
   }
 
   /**

@@ -12,6 +12,7 @@ export class UserRepository {
         id: true,
         email: true,
         passwordHash: true,
+        tokenVersion: true,
       },
     });
   }
