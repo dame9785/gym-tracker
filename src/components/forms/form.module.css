@@ -474,3 +474,29 @@
     text-align: center;
   }
 }
+
+/* Fix iOS Safari date input width */
+@media screen and (max-width: 600px) {
+  .formGroup {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .formInput,
+  .formSelect {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .formInput[type='date'] {
+    display: block;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
