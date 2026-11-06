@@ -45,26 +45,26 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
     <div
       onClick={onClick}
       className={`
-        group min-h-[220px] rounded-2xl border
-        bg-zinc-950/80 p-4
+        group flex min-w-0 min-h-[180px] flex-col rounded-2xl border
+        bg-zinc-950/80 p-3 sm:min-h-[220px] sm:p-4
         transition-all duration-200
         ${hasWorkout ? (status?.border ?? 'border-zinc-800') : 'border-zinc-800'}
-        ${onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-zinc-600 hover:bg-zinc-900' : ''}
+        ${hasWorkout && onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-zinc-600 hover:bg-zinc-900' : ''}
       `}
     >
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <CalendarDays className="h-4 w-4 text-zinc-600" />
+      <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-1">
+        <div className="flex min-w-0 items-center gap-1.5">
+          <CalendarDays className="h-3.5 w-3.5 shrink-0 text-zinc-600 sm:h-4 sm:w-4" />
 
-          <span className="text-sm font-medium text-zinc-300">{day}</span>
+          <span className="truncate text-xs font-medium text-zinc-300 sm:text-sm">{day}</span>
         </div>
 
         {status && (
           <span
             className={`
-              rounded-full px-2 py-1
-              text-[10px] font-semibold
+              max-w-full rounded-full px-2 py-1
+              text-[9px] font-semibold sm:text-[10px]
               ${status.badge}
             `}
           >
@@ -75,38 +75,38 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
 
       {/* Content */}
       {hasWorkout ? (
-        <div className="mt-7">
+        <div className="mt-4 flex flex-1 flex-col sm:mt-7">
           {/* Icon */}
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10">
-            <Dumbbell className="h-5 w-5 text-blue-400" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 sm:h-11 sm:w-11 sm:rounded-xl">
+            <Dumbbell className="h-4 w-4 text-blue-400 sm:h-5 sm:w-5" />
           </div>
 
           {/* Workout name */}
-          <h3 className="mt-4 line-clamp-2 min-h-[48px] text-base font-semibold text-white">{workout.workoutName}</h3>
+          <h3 className="mt-3 line-clamp-2 min-h-[40px] break-words text-sm font-semibold text-white sm:mt-4 sm:min-h-[48px] sm:text-base">{workout.workoutName}</h3>
 
           {/* Stats */}
-          <div className="mt-5 space-y-2">
-            <div className="flex items-center gap-2 text-sm text-zinc-500">
-              <ListChecks className="h-4 w-4" />
-              <span>{workout.exerciseCount} exercises</span>
+          <div className="mt-auto space-y-2 pt-3">
+            <div className="flex min-w-0 items-center gap-1.5 text-xs text-zinc-500 sm:gap-2 sm:text-sm">
+              <ListChecks className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+              <span className="truncate">{workout.exerciseCount} exercises</span>
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-zinc-500">
-              <Clock3 className="h-4 w-4" />
-              <span>{workout.estimatedMinutes} min</span>
+            <div className="flex min-w-0 items-center gap-1.5 text-xs text-zinc-500 sm:gap-2 sm:text-sm">
+              <Clock3 className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+              <span className="truncate">{workout.estimatedMinutes} min</span>
             </div>
           </div>
         </div>
       ) : (
-        <div className="mt-7">
+        <div className="mt-4 flex flex-1 flex-col sm:mt-7">
           {/* Rest icon */}
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-900">
-            <span className="text-xl">😴</span>
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 sm:h-11 sm:w-11 sm:rounded-xl">
+            <span className="text-lg sm:text-xl">😴</span>
           </div>
 
-          <h3 className="mt-4 text-base font-semibold text-zinc-400">Rest Day</h3>
+          <h3 className="mt-3 text-sm font-semibold text-zinc-400 sm:mt-4 sm:text-base">Rest Day</h3>
 
-          <p className="mt-2 text-sm text-zinc-600">No workout planned</p>
+          <p className="mt-2 text-xs text-zinc-600 sm:text-sm">No workout planned</p>
         </div>
       )}
     </div>

@@ -6,6 +6,8 @@ import { getWorkoutSchedulesByMonthAction } from '@/actions/workout-schedule-act
 
 import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 
+const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 function getCalendarDays(year: number, month: number) {
   const firstDay = new Date(year, month - 1, 1);
   const lastDay = new Date(year, month, 0);
@@ -13,7 +15,7 @@ function getCalendarDays(year: number, month: number) {
   const firstWeekday = (firstDay.getDay() + 6) % 7;
   const daysInMonth = lastDay.getDate();
 
-  const days = [];
+  const days: (Date | null)[] = [];
 
   for (let i = 0; i < firstWeekday; i++) {
     days.push(null);
@@ -96,19 +98,20 @@ export default function WorkoutCalendar() {
   }, [currentYear, currentMonth]);
 
   return (
-    <section className="w-full">
-      <div className="mb-4 flex items-center justify-between">
+    <section className="w-full min-w-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950/50 p-3 sm:p-5 lg:p-6">
+      {/* Calendar header */}
+      <div className="mb-4 flex items-center justify-between gap-2 sm:mb-6">
         <button
           type="button"
           onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() - 1, 1))}
-          className="rounded-md px-3 py-2 text-lg text-white transition hover:bg-white/10"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xl text-white transition hover:bg-white/10 sm:h-10 sm:w-10"
           aria-label="Previous month"
         >
           ‹
         </button>
 
-        <div className="flex items-center gap-4">
-          <h2 className="text-xl font-semibold capitalize">
+        <div className="flex min-w-0 items-center justify-center gap-2 sm:gap-4">
+          <h2 className="truncate text-base font-semibold capitalize text-white sm:text-xl">
             {currentDate.toLocaleDateString('en-US', {
               month: 'long',
               year: 'numeric',
@@ -118,7 +121,7 @@ export default function WorkoutCalendar() {
           <button
             type="button"
             onClick={goToToday}
-            className="rounded-md border border-orange-500/50 px-3 py-1.5 text-sm font-medium text-orange-400 transition hover:bg-orange-500/10"
+            className="shrink-0 rounded-md border border-orange-500/50 px-2 py-1.5 text-xs font-medium text-orange-400 transition hover:bg-orange-500/10 sm:px-3 sm:text-sm"
           >
             Today
           </button>
@@ -127,46 +130,51 @@ export default function WorkoutCalendar() {
         <button
           type="button"
           onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() + 1, 1))}
-          className="rounded-md px-3 py-2 text-lg text-white transition hover:bg-white/10"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xl text-white transition hover:bg-white/10 sm:h-10 sm:w-10"
           aria-label="Next month"
         >
           ›
         </button>
       </div>
 
+      {/* Weekdays */}
       <div className="grid grid-cols-7">
-        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-          <div key={day} className="border-b border-white/10 p-3 text-center text-sm font-semibold text-gray-400">
+        {weekDays.map((day) => (
+          <div key={day} className="border-b border-white/10 px-0.5 py-2 text-center text-[10px] font-semibold text-gray-400 sm:p-3 sm:text-sm">
             {day}
           </div>
         ))}
       </div>
 
+      {/* Calendar days */}
       <div className="grid grid-cols-7">
         {calendarDays.map((day, index) => {
           const dayWorkouts = day ? getWorkoutsForDay(day) : [];
 
           return (
-            <div key={index} className={`min-h-24 border-b border-r border-white/10 p-2 ${day && isToday(day) ? 'ring-2 ring-inset ring-orange-500' : ''}`}>
+            <div
+              key={index}
+              className={`min-h-[76px] min-w-0 border-b border-r border-white/10 p-1 sm:min-h-24 sm:p-2 ${
+                day && isToday(day) ? 'ring-1 ring-inset ring-orange-500 sm:ring-2' : ''
+              }`}
+            >
               {day && (
                 <>
                   <span
-                    className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-sm ${
+                    className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] sm:h-7 sm:w-7 sm:text-sm ${
                       isToday(day) ? 'bg-orange-500 font-bold text-black' : 'text-white'
                     }`}
                   >
                     {day.getDate()}
                   </span>
 
-                  <div className="mt-2 space-y-1">
+                  <div className="mt-1 space-y-1 sm:mt-2">
                     {dayWorkouts.map((workout) => (
-                      <button
-                        key={workout.id}
-                        type="button"
-                        className="w-full rounded-md bg-blue-500/20 px-2 py-1 text-left text-xs text-blue-300 transition hover:bg-blue-500/30"
-                      >
-                        💪 {workout.workoutName}
-                      </button>
+                      <div key={workout.id} title={workout.workoutName} className="truncate rounded bg-blue-500/20 px-1 py-1 text-[9px] text-blue-300 sm:px-2 sm:text-xs">
+                        <span className="hidden sm:inline">💪 </span>
+                        <span className="sm:hidden">💪</span>
+                        <span className="hidden sm:inline">{workout.workoutName}</span>
+                      </div>
                     ))}
                   </div>
                 </>
@@ -176,11 +184,12 @@ export default function WorkoutCalendar() {
         })}
       </div>
 
-      {isLoading && <p className="mt-4 text-sm text-gray-400">Loading workouts...</p>}
+      {/* Loading and error states */}
+      {isLoading && <p className="mt-4 text-xs text-gray-400 sm:text-sm">Loading workouts...</p>}
 
-      {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
+      {error && <p className="mt-4 text-xs text-red-400 sm:text-sm">{error}</p>}
 
-      {!isLoading && !error && <p className="mt-4">Workouts this month: {workouts.length}</p>}
+      {!isLoading && !error && <p className="mt-4 text-xs text-gray-400 sm:text-sm">Workouts this month: {workouts.length}</p>}
     </section>
   );
 }

@@ -1,12 +1,9 @@
 'use client';
 
-//NEXT & React
 import { useState } from 'react';
 
-//Types
 import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
-//Components
 import SelectedWorkout from './selected-workout';
 import Modal from '@/components/modal/modal';
 import WorkoutDayCard from './workout-day-card';
@@ -21,10 +18,10 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
   const [selectedWorkout, setSelectedWorkout] = useState<WeeklyWorkoutViewModel>();
 
   return (
-    <section>
-      <h2 className="mb-6 text-2xl font-semibold p-[10px]">Veckans översikt</h2>
+    <section className="min-w-0">
+      <h2 className="mb-4 px-1 text-xl font-semibold sm:mb-6 sm:px-2.5 sm:text-2xl">Veckans översikt</h2>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-7">
+      <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-4 xl:grid-cols-7">
         {week.map((day) => {
           const workout = workouts.find(
             (w) =>
@@ -33,15 +30,23 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
               }) === day.toLowerCase(),
           );
 
-          return <WorkoutDayCard key={day} day={day} workout={workout} onClick={() => setSelectedWorkout(workout)} />;
+          return (
+            <div key={day} className="min-w-0">
+              <WorkoutDayCard
+                day={day}
+                workout={workout}
+                onClick={() => {
+                  if (workout) {
+                    setSelectedWorkout(workout);
+                  }
+                }}
+              />
+            </div>
+          );
         })}
       </div>
 
-      <Modal
-        isOpen={!!selectedWorkout}
-        onClose={() => setSelectedWorkout(undefined)}
-        title={selectedWorkout?.workoutName}
-      >
+      <Modal isOpen={!!selectedWorkout} onClose={() => setSelectedWorkout(undefined)} title={selectedWorkout?.workoutName}>
         {selectedWorkout && <SelectedWorkout workout={selectedWorkout} />}
       </Modal>
     </section>
