@@ -67,7 +67,7 @@ export default async function LogWeight({ searchParams }: Props) {
 
       {/* Chart */}
       <div className="mb-6 min-w-0 overflow-hidden rounded-2xl sm:mb-10">
-        <div className="h-64 min-w-0 sm:h-72">
+        <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
           <WeightChart logList={LogList} />
         </div>
       </div>
