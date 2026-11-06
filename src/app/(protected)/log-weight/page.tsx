@@ -88,10 +88,7 @@ export default async function LogWeight({ searchParams }: Props) {
         </div>
       )}
 
-      {/* Weight Chart */}
-      <div className="mb-6 min-w-0 w-full overflow-hidden rounded-2xl sm:mb-10">
-        <WeightChart logList={LogList} />
-      </div>
+     
 
       {/* Weight History */}
       <section className="min-w-0 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 sm:p-6" id="history-section-weight">
