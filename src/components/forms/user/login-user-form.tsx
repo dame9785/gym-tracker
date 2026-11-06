@@ -107,6 +107,10 @@ export default function LoginForm() {
         {errors.password && <p className={styles.fieldErrorMessage}>{errors.password.join(', ')}</p>}
       </div>
 
+      <div className={styles.forgotPasswordWrapper}>
+        <Link href="/account/forgot-password">Forgot your password?</Link>
+      </div>
+
       {/* Login button */}
       <div className="grid grid-1">
         <Button type="submit" variant="primary" disabled={isSaving}>
@@ -115,7 +119,7 @@ export default function LoginForm() {
       </div>
 
       {/* Register */}
-      <div className="mt-10 flex justify-center">
+      <div className="mt-10 flex justify-center ">
         <Link href="/account/register" className="border-b border-solid border-amber-500 p-2 hover:text-amber-600">
           Create an account
         </Link>

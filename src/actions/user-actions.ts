@@ -7,15 +7,23 @@ import {
   loginSchema,
   registerUserSchema,
   updateUserSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
   type ChangePasswordDto,
   type LoginDto,
   type RegisterUserDto,
   type UpdateUserDto,
+  type ForgotPasswordDto,
+  type ResetPasswordDto,
 } from '@/schemas/auth-schemas';
 import { AuthService } from '@/services/auth-service';
 import type { UserActionResult } from '@/types/user-types';
+import { ForgotPasswordService } from '@/services/forgot-password-service';
+import { PasswordResetService } from '@/services/password-reset-service';
 
 const authService = new AuthService();
+const forgotPasswordService = new ForgotPasswordService();
+const passwordResetService = new PasswordResetService();
 
 function getErrorMessage(error: unknown): string {
   if (!(error instanceof Error)) {
@@ -80,6 +88,71 @@ function getValidationErrors(error: unknown): Record<string, string[]> | undefin
     return Object.keys(errors).length > 0 ? errors : undefined;
   } catch {
     return undefined;
+  }
+}
+
+export async function resetPasswordAction(dto: ResetPasswordDto): Promise<UserActionResult<undefined>> {
+  const validation = resetPasswordSchema.safeParse(dto);
+
+  if (!validation.success) {
+    return {
+      success: false,
+      message: 'Please correct the highlighted fields.',
+      errors: validation.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    await passwordResetService.resetPassword(validation.data.token, validation.data.newPassword);
+
+    return {
+      success: true,
+      message: 'Your password has been reset successfully.',
+      data: undefined,
+    };
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === 'Invalid or expired password reset link.') {
+      return {
+        success: false,
+        message: 'This password reset link is invalid or has expired.',
+      };
+    }
+
+    console.error('[resetPasswordAction] Failed:', error);
+
+    return {
+      success: false,
+      message: 'Unable to reset your password. Please try again later.',
+    };
+  }
+}
+
+export async function forgotPasswordAction(dto: ForgotPasswordDto): Promise<UserActionResult<undefined>> {
+  const validation = forgotPasswordSchema.safeParse(dto);
+
+  if (!validation.success) {
+    return {
+      success: false,
+      message: 'Please enter a valid email address.',
+      errors: validation.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    await forgotPasswordService.requestPasswordReset(validation.data.email);
+
+    return {
+      success: true,
+      message: 'If an account exists with that email address, you will receive a password reset link shortly.',
+      data: undefined,
+    };
+  } catch (error: unknown) {
+    console.error('[forgotPasswordAction] Failed:', error);
+
+    return {
+      success: false,
+      message: 'Unable to process your request. Please try again later.',
+    };
   }
 }
 

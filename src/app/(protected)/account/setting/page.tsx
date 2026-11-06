@@ -1,5 +1,3 @@
-import ChangePasswordForm from '@/components/forms/user/change-password-form';
-import UpdateUserForm from '@/components/forms/user/update-user-form';
 import UserSettingsTabs from '@/components/forms/user/user-settings-tabs';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';

@@ -10,6 +10,7 @@ export class UserRepository {
       },
       select: {
         id: true,
+        email: true,
         passwordHash: true,
       },
     });

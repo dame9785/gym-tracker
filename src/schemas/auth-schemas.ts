@@ -121,8 +121,34 @@ export const changePasswordSchema = z
     path: ['newPassword'],
   });
 
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().email('Please enter a valid email address.').toLowerCase(),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1, 'Invalid or missing reset token.'),
+
+    newPassword: z
+      .string()
+      .min(12, 'Password must be at least 12 characters long.')
+      .max(128, 'Password cannot exceed 128 characters.')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
+      .regex(/[a-z]/, 'Password must contain at least one lowercase letter.')
+      .regex(/[0-9]/, 'Password must contain at least one number.')
+      .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character.'),
+
+    confirmNewPassword: z.string().min(1, 'Please confirm your new password.'),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: 'Passwords do not match.',
+    path: ['confirmNewPassword'],
+  });
+
 // User DTOs
 export type RegisterUserDto = z.infer<typeof registerUserSchema>;
 export type LoginDto = z.infer<typeof loginSchema>;
 export type UpdateUserDto = z.infer<typeof updateUserSchema>;
 export type ChangePasswordDto = z.infer<typeof changePasswordSchema>;
+export type ForgotPasswordDto = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordDto = z.infer<typeof resetPasswordSchema>;

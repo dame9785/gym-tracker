@@ -286,3 +286,73 @@
     text-align: center;
   }
 }
+
+/* ===========================
+   Authentication Forms
+=========================== */
+
+.authForm {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2.5rem;
+}
+
+.authForm .formWrapper {
+  flex-direction: column;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 0 0 1.5rem;
+}
+
+.authForm .formTitle {
+  margin-bottom: 0.5rem;
+}
+
+.formDescription {
+  color: var(--text-grey-100);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.authForm .formGroup {
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .authForm {
+    padding: 2rem 1.5rem;
+  }
+}
+
+.backLink {
+  display: block;
+  width: fit-content;
+  margin: 1.5rem auto 0;
+  color: var(--orange-clr);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: #ffb347;
+}
+
+.forgotPasswordWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+}
+
+.forgotPasswordWrapper a {
+  color: var(--orange-clr);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.forgotPasswordWrapper a:hover {
+  color: #ffb347;
+}
