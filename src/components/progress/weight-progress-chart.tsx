@@ -1,6 +1,7 @@
 'use client';
 
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+
 import type { WeightProgressEntry } from '@/types/progress-type';
 
 type Props = {
@@ -69,7 +70,7 @@ export default function WeightProgressChart({ history, startWeight, goalWeight }
   const formatChange = (value: number) => `${value > 0 ? '+' : ''}${formatWeight(value)}`;
 
   return (
-    <section className="mb-10 rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 p-6 sm:p-8">
+    <section className="mb-10 w-full min-w-0 rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 p-4 sm:p-8">
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-xl font-bold text-white">Viktutveckling</h2>
@@ -132,7 +133,7 @@ export default function WeightProgressChart({ history, startWeight, goalWeight }
           </div>
 
           {/* Chart */}
-          <div className="h-72 w-full">
+          <div className="h-72 w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>
                 <CartesianGrid stroke="#3f3f46" strokeDasharray="4 4" vertical={false} />
@@ -163,7 +164,6 @@ export default function WeightProgressChart({ history, startWeight, goalWeight }
                   formatter={(value) => [`${formatWeight(Number(value))} kg`, 'Vikt']}
                   labelFormatter={(_, payload) => {
                     const loggedAt = payload?.[0]?.payload?.loggedAt;
-
                     return loggedAt ? formatDate(loggedAt) : '';
                   }}
                 />

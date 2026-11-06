@@ -39,8 +39,6 @@ export default function WeightChart({ logList }: WeightChartProps) {
       </div>
 
       {/* Chart */}
-
-      {/* Chart */}
       <div className="mt-5 w-full min-w-0 sm:mt-6">
         {chartData.length > 0 ? (
           <div className="w-full min-w-0" style={{ height: '260px', minWidth: 0 }}>

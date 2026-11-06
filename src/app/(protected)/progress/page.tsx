@@ -21,22 +21,6 @@ export default async function ProgressPage() {
         <ProgressHeader />
       </div>
 
-      <section className="mb-12">
-        <div className="mb-5 border-b border-zinc-800 pb-4">
-          <h2 className="text-lg font-semibold text-white">Vikt och mål</h2>
-
-          <p className="mt-1 text-sm leading-6 text-zinc-400">Följ din viktförändring och se hur du närmar dig ditt mål.</p>
-        </div>
-
-        <div className="space-y-5">
-          <WeightProgress weightData={weightProgress} />
-
-          <GoalProgress weightData={weightProgress} />
-
-          {weightProgress && <WeightProgressChart history={weightProgress.history} startWeight={weightProgress.startWeight} goalWeight={weightProgress.goalWeight} />}
-        </div>
-      </section>
-
       <section>
         <div className="mb-5 border-b border-zinc-800 pb-4">
           <h2 className="text-lg font-semibold text-white">Träning och personliga rekord</h2>
