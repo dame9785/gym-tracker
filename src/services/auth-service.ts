@@ -58,7 +58,11 @@ export class AuthService {
 
     const data = validation.data;
 
-    const [existingEmail, existingUsername] = await Promise.all([this.userRepository.emailExists(data.email), this.userRepository.usernameExists(data.username)]);
+    const [existingEmail, existingUsername, existingPhoneNumber] = await Promise.all([
+      this.userRepository.emailExists(data.email),
+      this.userRepository.usernameExists(data.username),
+      this.userRepository.phoneNumberExists(data.phoneNumber),
+    ]);
 
     const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
 
@@ -70,7 +74,11 @@ export class AuthService {
       fieldErrors.username = 'Användarnamnet används redan.';
     }
 
-    if (existingEmail || existingUsername) {
+    if (existingPhoneNumber) {
+      fieldErrors.phoneNumber = 'Telefonnumret är redan registrerat.';
+    }
+
+    if (existingEmail || existingUsername || existingPhoneNumber) {
       throw new Error(`User already exists: ${JSON.stringify(fieldErrors)}`);
     }
 
@@ -124,9 +132,10 @@ export class AuthService {
 
     const data = validation.data;
 
-    const [existingEmail, existingUsername] = await Promise.all([
+    const [existingEmail, existingUsername, existingPhoneNumber] = await Promise.all([
       this.userRepository.emailExists(data.email, userId),
       this.userRepository.usernameExists(data.username, userId),
+      this.userRepository.phoneNumberExists(data.phoneNumber, userId),
     ]);
 
     const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
@@ -139,13 +148,27 @@ export class AuthService {
       fieldErrors.username = 'Användarnamnet är upptaget.';
     }
 
-    if (existingEmail || existingUsername) {
+    if (existingPhoneNumber) {
+      fieldErrors.phoneNumber = 'Telefonnumret är redan registrerat.';
+    }
+
+    if (existingEmail || existingUsername || existingPhoneNumber) {
       throw new Error(`User already exists: ${JSON.stringify(fieldErrors)}`);
     }
 
     const updateData = UserMapper.userDtoToDbModel(data);
 
-    await this.userRepository.update(userId, updateData);
+    try {
+      await this.userRepository.update(userId, updateData);
+    } catch (error: unknown) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const fieldErrors = ErrorsHelper.getUniqueConstraintFieldErrors<UpdateUserDto>(error);
+
+        throw new Error(`User already exists: ${JSON.stringify(fieldErrors)}`);
+      }
+
+      throw error;
+    }
 
     const updatedUser = await this.userRepository.findById(userId);
 

@@ -76,4 +76,18 @@ export class UserRepository {
 
     return user !== null;
   }
+
+  async phoneNumberExists(phoneNumber: string, ignoreUserId?: number): Promise<boolean> {
+    const user = await prisma.user.findFirst({
+      where: {
+        phoneNumber,
+        NOT: ignoreUserId ? { id: ignoreUserId } : undefined,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return user !== null;
+  }
 }

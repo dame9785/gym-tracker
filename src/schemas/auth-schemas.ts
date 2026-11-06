@@ -48,7 +48,9 @@ export const registerUserSchema = z.object({
   phoneNumber: z
     .string()
     .trim()
-    .regex(/^(?:\+46|0)7\d{8}$/, 'Ogiltigt svenskt telefonnummer.'),
+    .transform((value) => value.replace(/[\s()-]/g, ''))
+    .refine((value) => /^(?:\+46|0)7\d{8}$/.test(value), 'Ange ett giltigt svenskt mobilnummer.')
+    .transform((value) => (value.startsWith('0') ? `+46${value.slice(1)}` : value)),
 
   email: z.string().trim().email('Ogiltig e-postadress.').toLowerCase(),
   bodyWeight: z.number().min(20, 'Ogiltig kroppsvikt.').max(400, 'Ogiltig kroppsvikt.'),

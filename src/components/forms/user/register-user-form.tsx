@@ -116,7 +116,7 @@ export default function RegisterForm() {
       }
 
       toast.success(response.message);
-      router.push('/account/settings');
+      router.push('/account/setting');
     } catch (error) {
       console.error('Failed to create food:', error);
       toast.error('Something went wrong. Please try again.');
@@ -220,24 +220,30 @@ export default function RegisterForm() {
           </div>
 
           {/* PHONE */}
+
           <div className={FormStyles.formGroup}>
             <div className={FormStyles.labelWrapper}>
               <FaPhone className={FormStyles.formIcon} />
               <label className={FormStyles.formLabel} htmlFor="phoneNumber">
-                Nummer
+                Telefonnummer
               </label>
             </div>
+
             <input
               className={FormStyles.formInput}
               name="phoneNumber"
               type="tel"
               id="phoneNumber"
               autoComplete="tel"
+              inputMode="tel"
               value={formData.phoneNumber}
-              placeholder="Telefonnummer..."
+              placeholder="076-123 45 67"
               onChange={handleChange}
             />
-            {errors.phoneNumber && <p className={FormStyles.fieldErrorMessage}>{errors.phoneNumber}</p>}
+
+            <small>Exempel: 076-123 45 67 eller +46 76 123 45 67</small>
+
+            {errors.phoneNumber?.[0] && <p className={FormStyles.fieldErrorMessage}>{errors.phoneNumber[0]}</p>}
           </div>
 
           {/* Body Weight */}
