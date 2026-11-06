@@ -3,7 +3,15 @@
 import { cookies } from 'next/headers';
 
 import { requireAuth } from '@/lib/auth';
-import { loginSchema, registerUserSchema, updateUserSchema, type LoginDto, type RegisterUserDto, type UpdateUserDto } from '@/schemas/auth-schemas';
+import {
+  loginSchema,
+  registerUserSchema,
+  updateUserSchema,
+  type ChangePasswordDto,
+  type LoginDto,
+  type RegisterUserDto,
+  type UpdateUserDto,
+} from '@/schemas/auth-schemas';
 import { AuthService } from '@/services/auth-service';
 import type { UserActionResult } from '@/types/user-types';
 
@@ -72,6 +80,26 @@ function getValidationErrors(error: unknown): Record<string, string[]> | undefin
     return Object.keys(errors).length > 0 ? errors : undefined;
   } catch {
     return undefined;
+  }
+}
+
+export async function changePasswordAction(dto: ChangePasswordDto): Promise<UserActionResult<undefined>> {
+  try {
+    const user = await requireAuth();
+
+    await authService.changePassword(dto, user.userId);
+
+    return {
+      success: true,
+      message: 'Password changed successfully.',
+      data: undefined,
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+      errors: getValidationErrors(error),
+    };
   }
 }
 

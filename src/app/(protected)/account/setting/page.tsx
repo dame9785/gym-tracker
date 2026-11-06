@@ -1,4 +1,6 @@
+import ChangePasswordForm from '@/components/forms/user/change-password-form';
 import UpdateUserForm from '@/components/forms/user/update-user-form';
+import UserSettingsTabs from '@/components/forms/user/user-settings-tabs';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
 import { AuthService } from '@/services/auth-service';
@@ -23,12 +25,9 @@ export default async function UserSettings(): Promise<React.ReactElement> {
       </main>
     );
   }
-
   return (
-    <div className="container">
-      <div className="form-wrapper m-[5em] flex items-center justify-center">
-        <UpdateUserForm user={loggedInUser} />
-      </div>
-    </div>
+    <main className="container mx-auto px-4 py-10">
+      <UserSettingsTabs user={loggedInUser} />
+    </main>
   );
 }

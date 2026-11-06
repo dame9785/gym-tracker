@@ -56,6 +56,7 @@ export default function RegisterForm() {
     goalWeight: 0,
     goalDate: '',
     password: '',
+    confirmPassword: '',
   });
 
   const cleanValidationError = (name: string): void => {
@@ -108,7 +109,7 @@ export default function RegisterForm() {
 
     try {
       const response = await registerUserAction(validate.data);
-      console.log(response);
+
       if (!response.success) {
         setErrors(response.errors ?? {});
         toast.error(response.message);
@@ -285,6 +286,29 @@ export default function RegisterForm() {
               onChange={handleChange}
             />
             {errors.password && <p className={FormStyles.fieldErrorMessage}>{errors.password}</p>}
+          </div>
+
+          {/* CONFIRM PASSWORD */}
+          <div className={FormStyles.formGroup}>
+            <div className={FormStyles.labelWrapper}>
+              <FaLock className={FormStyles.formIcon} />
+              <label htmlFor="confirmPassword" className={FormStyles.formLabel}>
+                Confirm password
+              </label>
+            </div>
+
+            <input
+              className={FormStyles.formInput}
+              value={formData.confirmPassword}
+              name="confirmPassword"
+              type="password"
+              id="confirmPassword"
+              autoComplete="new-password"
+              placeholder="Confirm password..."
+              onChange={handleChange}
+            />
+
+            {errors.confirmPassword?.[0] && <p className={FormStyles.fieldErrorMessage}>{errors.confirmPassword[0]}</p>}
           </div>
         </div>
 

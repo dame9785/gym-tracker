@@ -5,7 +5,16 @@ import { UserRepository } from '@/repositories/user-repository';
 import { generateToken } from '@/lib/jwt';
 import { UserMapper } from '@/mapping/user-mapping';
 import { ErrorsHelper } from '@/helpers/error-helper';
-import { loginSchema, registerUserSchema, updateUserSchema, type LoginDto, type RegisterUserDto, type UpdateUserDto } from '@/schemas/auth-schemas';
+import {
+  loginSchema,
+  registerUserSchema,
+  updateUserSchema,
+  changePasswordSchema,
+  type LoginDto,
+  type RegisterUserDto,
+  type UpdateUserDto,
+  type ChangePasswordDto,
+} from '@/schemas/auth-schemas';
 import type { LoginResponse, RegisterResponse, UpdateUserResponse, UserResponse } from '@/types/user-types';
 
 export class AuthService {
@@ -115,6 +124,42 @@ export class AuthService {
     }
 
     return UserMapper.userDbToViewModel(user);
+  }
+
+  /**
+   * Changes a user's password.
+   * Throws an error if validation or password verification fails.
+   */
+  async changePassword(dto: ChangePasswordDto, userId: number): Promise<void> {
+    const validation = changePasswordSchema.safeParse(dto);
+
+    if (!validation.success) {
+      const fieldErrors = ErrorsHelper.getFormErrors<ChangePasswordDto>(validation.error.issues);
+
+      throw new Error(`Validation failed: ${JSON.stringify(fieldErrors)}`);
+    }
+
+    const { currentPassword, newPassword } = validation.data;
+
+    const user = await this.userRepository.findById(userId);
+
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    const currentPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
+
+    if (!currentPasswordValid) {
+      throw new Error(
+        `Validation failed: ${JSON.stringify({
+          currentPassword: ['Current password is incorrect.'],
+        })}`,
+      );
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    await this.userRepository.update(userId, { passwordHash });
   }
 
   /**
