@@ -9,7 +9,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
     <div className="min-h-screen">
       <Sidebar />
 
-      <main className="ml-[250px] min-h-screen p-8">
+      <main className="ml-0 min-h-screen min-w-0 px-4 pb-6 pt-20 sm:px-6 sm:pb-8 lg:ml-60 lg:p-8">
         <div className="mx-auto w-full max-w-[1400px]">{children}</div>
       </main>
 
