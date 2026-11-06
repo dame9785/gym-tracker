@@ -1,8 +1,9 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Roboto } from 'next/font/google';
 import './globals.css';
 
 import { Toaster } from 'sonner';
+
 const roboto = Roboto({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -14,15 +15,22 @@ export const metadata: Metadata = {
     'Your personal fitness companion. Create workout plans, track your training sessions, monitor your progress, and stay motivated as you work towards your fitness goals.',
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#03091b',
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv" className={`${roboto.variable} ${roboto.variable} min-h-full antialiased`}>
-      <body className="min-h-screen">
-        <main className="min-h-screen p-8">{children}</main>
+    <html lang="sv" className={`${roboto.variable} min-h-full antialiased`}>
+      <body className="min-h-screen min-h-dvh w-full">
+        {children}
         <Toaster richColors position="top-right" />
       </body>
     </html>
