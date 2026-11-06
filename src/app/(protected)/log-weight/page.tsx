@@ -1,18 +1,15 @@
-//Next Link
 import Link from 'next/link';
 
-//Components
 import Statistic from '@/components/log-weight/log-weight-statistics';
 import LogHistoryList from '@/components/log-weight/log-history-list';
 import WeightChart from '@/components/log-weight/weight-chart';
 import Pagination from '@/components/log-weight/log-pagination';
 import Button from '@/components/button/button';
 
-//Services
 import { WeightLogService } from '@/services/weight-log-service';
-
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
+import { Scale } from 'lucide-react';
 
 type Props = {
   searchParams: Promise<{
@@ -26,14 +23,14 @@ export default async function LogWeight({ searchParams }: Props) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
 
-  //Check if user has token or exiperied token.
   const user = await requireAuth();
 
   const response = await weightLogService.getAll(page, user.userId);
+
   if (!response.success || !response.data) {
     return (
-      <main>
-        <ErrorMessage title="Unable to load foods" message={response.message ?? 'Something went wrong while loading your foods.'} />
+      <main className="w-full min-w-0">
+        <ErrorMessage title="Unable to load weight history" message={response.message ?? 'Something went wrong while loading your weight history.'} />
       </main>
     );
   }
@@ -47,55 +44,61 @@ export default async function LogWeight({ searchParams }: Props) {
   const totalPage = data.pagination.totalPages;
 
   return (
-    <div className="container max-w-7xl">
+    <div className="mx-auto w-full min-w-0 max-w-7xl px-0">
       {/* Header */}
-      <div className="mb-10 flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-bold text-white">Weight</h1>
-          <p className="mt-2 text-zinc-400">Track your weight over time.</p>
+      <div className="mb-6 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-white sm:text-4xl">Weight</h1>
+          <p className="mt-2 text-sm text-zinc-400 sm:text-base">Track your weight over time.</p>
         </div>
 
-        <Link href="/log-weight/create">
-          <Button type="submit" variant="primary">
-            Log weight
-          </Button>
-        </Link>
+        <div className="w-full sm:w-auto">
+          <Link href="/log-weight/create" className="block">
+            <Button type="button" variant="primary">
+              Log weight
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      {/* Statistik */}
-      <Statistic currentWeight={currentWeight} startWeight={startWeight} />
+      {/* Statistics */}
+      <div className="mb-6 min-w-0 sm:mb-8">
+        <Statistic currentWeight={currentWeight} startWeight={startWeight} />
+      </div>
 
-      {/* Graf */}
-      <div className="mb-10 rounded-2xl">
-        <div className="h-72">
+      {/* Chart */}
+      <div className="mb-6 min-w-0 overflow-hidden rounded-2xl sm:mb-10">
+        <div className="h-64 min-w-0 sm:h-72">
           <WeightChart logList={LogList} />
         </div>
       </div>
 
-      {/* Historik */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900" id="history-section-weight">
-        <div className="border-b border-zinc-800 px-6 py-4">
-          <h2 className="text-xl font-semibold text-white">History</h2>
+      {/* History */}
+      <section className="min-w-0 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 sm:p-6" id="history-section-weight">
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-white">Weight History</h2>
+            <p className="mt-1 text-xs text-zinc-500">Your previous weight entries</p>
+          </div>
+
+          <span className="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs font-medium text-zinc-400">{LogList.length} entries</span>
         </div>
 
-        <table className="w-full">
-          <thead className="bg-zinc-950">
-            <tr className="text-left text-sm text-zinc-400">
-              <th className="px-6 py-3">Date</th>
-              <th className="px-6 py-3">Weight</th>
-              <th className="px-6 py-3">Notes</th>
-              <th className="px-6 py-3">Edit / Delete</th>
-            </tr>
-          </thead>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2  xl:grid-cols-3">
+          {LogList.length > 0 ? (
+            LogList.map((item) => <LogHistoryList key={item.id} logItem={item} />)
+          ) : (
+            <div className="col-span-full rounded-xl border border-dashed border-zinc-800 px-4 py-10 text-center">
+              <p className="text-sm font-medium text-zinc-400">No weight entries yet</p>
+              <p className="mt-1 text-xs text-zinc-600">Your logged weights will appear here.</p>
+            </div>
+          )}
+        </div>
+      </section>
 
-          <tbody>
-            {LogList?.map((item) => {
-              return <LogHistoryList key={item.id} logItem={item} />;
-            })}
-          </tbody>
-        </table>
+      <div className="mt-4 min-w-0">
+        <Pagination currentPage={currentPage} totalPages={totalPage} />
       </div>
-      <Pagination currentPage={currentPage} totalPages={totalPage} />
     </div>
   );
 }
