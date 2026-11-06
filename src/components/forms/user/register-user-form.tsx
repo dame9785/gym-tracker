@@ -36,6 +36,14 @@ import { registerUserAction } from '@/actions/user-actions';
 export default function RegisterForm() {
   const router = useRouter();
 
+const today = new Date();
+
+const defaultGoalDate = [
+  today.getFullYear(),
+  String(today.getMonth() + 1).padStart(2, '0'),
+  String(today.getDate()).padStart(2, '0'),
+].join('-');
+
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [isSaving, setIsSaving] = useState(false);
 
@@ -48,10 +56,10 @@ export default function RegisterForm() {
     bodyWeight: 0,
     height: 0,
     gender: 'MALE',
-    birthDate: '',
+    birthDate: '2000-01-01',
     goalType: 'MAINTENANCE',
     goalWeight: 0,
-    goalDate: '',
+    goalDate: defaultGoalDate,
     password: '',
     confirmPassword: '',
   });
