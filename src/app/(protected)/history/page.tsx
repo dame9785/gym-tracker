@@ -41,7 +41,7 @@ export default async function HistoryPage({ searchParams }: Props) {
   const pagination = response.data.pagination;
 
   return (
-    <div className="mx-auto max-w-7xl p-8">
+    <div className="mx-auto w-full min-w-0 max-w-7xl px-0 py-8">
       {/* History Header*/}
       <HistoryHeader />
 

@@ -27,7 +27,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
   };
 
   return (
-    <section className="mt-10">
+    <section className="mt-10 min-w-0">
       {/* Section header */}
       <div className="mb-5">
         <h2 className="text-2xl font-bold text-white">Workout History</h2>
@@ -43,14 +43,19 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
         </div>
       ) : (
         /* Responsive workout grid */
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid w-full min-w-0 grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {workoutSessions.map((session) => {
             const isCompleted = session.status === 'COMPLETED';
 
-            const formattedDate = new Date(session.finishedAt ?? session.startedAt).toLocaleString('en-GB', {
+            const sessionDate = new Date(session.finishedAt ?? session.startedAt);
+
+            const formattedDate = sessionDate.toLocaleDateString('en-GB', {
               day: '2-digit',
               month: 'short',
               year: 'numeric',
+            });
+
+            const formattedTime = sessionDate.toLocaleTimeString('en-GB', {
               hour: '2-digit',
               minute: '2-digit',
             });
@@ -76,45 +81,50 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
             return (
               <article
                 key={session.id}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/70 transition-all duration-200 hover:border-orange-500/40 hover:bg-zinc-900"
+                className="group flex w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/70 transition-all duration-200 hover:border-orange-500/40 hover:bg-zinc-900"
               >
                 {/* Session header */}
-                <div className="flex flex-1 flex-col p-5">
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex min-w-0 items-start gap-3">
-                        <div className="shrink-0 rounded-xl bg-orange-500/10 p-3">
-                          <Dumbbell className="h-6 w-6 text-orange-500" />
-                        </div>
-
-                        <div className="min-w-0">
-                          <h3 className="break-words text-lg font-bold text-white transition-colors group-hover:text-orange-400">{session.workoutName}</h3>
-
-                          <div className="mt-2 flex items-center gap-2 text-xs text-zinc-400">
-                            <CalendarDays className="h-4 w-4 shrink-0" />
-                            <span>{formattedDate}</span>
-                          </div>
-                        </div>
+                <div className="flex flex-1 flex-col p-4 sm:p-5">
+                  <div className="flex flex-col gap-3">
+                    {/* Workout title and icon */}
+                    <div className="flex min-w-0 items-start gap-3">
+                      <div className="shrink-0 rounded-xl bg-orange-500/10 p-2.5 sm:p-3">
+                        <Dumbbell className="h-5 w-5 text-orange-500 sm:h-6 sm:w-6" />
                       </div>
 
-                      {/* Status badge */}
-                      <div
-                        className={`flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1.5 ${
-                          isCompleted ? 'border-green-500/20 bg-green-500/10' : 'border-red-500/20 bg-red-500/10'
-                        }`}
-                      >
-                        {isCompleted ? <CheckCircle2 className="h-3.5 w-3.5 text-green-400" /> : <XCircle className="h-3.5 w-3.5 text-red-400" />}
+                      <div className="min-w-0 flex-1">
+                        <h3 className="break-words text-base font-bold leading-snug text-white transition-colors group-hover:text-orange-400 sm:text-lg">
+                          {session.workoutName}
+                        </h3>
 
-                        <span className={`text-[10px] font-semibold tracking-wide ${isCompleted ? 'text-green-400' : 'text-red-400'}`}>{session.status}</span>
+                        {/* Date and time */}
+                        <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-zinc-400">
+                          <CalendarDays className="h-4 w-4 shrink-0" />
+                          <span>
+                            {formattedDate} • {formattedTime}
+                          </span>
+                        </div>
                       </div>
+                    </div>
+
+                    {/* Status badge */}
+                    <div
+                      className={`flex w-fit shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 ${
+                        isCompleted ? 'border-green-500/20 bg-green-500/10' : 'border-red-500/20 bg-red-500/10'
+                      }`}
+                    >
+                      {isCompleted ? <CheckCircle2 className="h-3.5 w-3.5 text-green-400" /> : <XCircle className="h-3.5 w-3.5 text-red-400" />}
+
+                      <span className={`text-[10px] font-semibold tracking-wide ${isCompleted ? 'text-green-400' : 'text-red-400'}`}>{session.status}</span>
                     </div>
                   </div>
 
-                  {session.workoutDescription && <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-zinc-400">{session.workoutDescription}</p>}
+                  {/* Description */}
+                  {session.workoutDescription && <p className="mt-4 line-clamp-2 break-words text-sm leading-relaxed text-zinc-400">{session.workoutDescription}</p>}
 
                   {/* Session stats */}
                   <div className="mt-5 grid grid-cols-2 gap-3">
-                    <div className="rounded-xl bg-zinc-800/70 px-3 py-3">
+                    <div className="min-w-0 rounded-xl bg-zinc-800/70 px-3 py-3">
                       <div className="flex items-center gap-2">
                         <Clock3 className="h-4 w-4 shrink-0 text-orange-500" />
                         <span className="text-sm font-semibold text-white">{durationMinutes} min</span>
@@ -122,7 +132,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                       <p className="mt-1 text-xs text-zinc-500">Duration</p>
                     </div>
 
-                    <div className="rounded-xl bg-zinc-800/70 px-3 py-3">
+                    <div className="min-w-0 rounded-xl bg-zinc-800/70 px-3 py-3">
                       <div className="flex items-center gap-2">
                         <Dumbbell className="h-4 w-4 shrink-0 text-orange-500" />
                         <span className="text-sm font-semibold text-white">{session.exercises.length}</span>
@@ -130,7 +140,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                       <p className="mt-1 text-xs text-zinc-500">Exercises</p>
                     </div>
 
-                    <div className="rounded-xl bg-zinc-800/70 px-3 py-3">
+                    <div className="min-w-0 rounded-xl bg-zinc-800/70 px-3 py-3">
                       <div className="flex items-center gap-2">
                         <Layers3 className="h-4 w-4 shrink-0 text-orange-500" />
                         <span className="text-sm font-semibold text-white">
@@ -140,10 +150,10 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                       <p className="mt-1 text-xs text-zinc-500">Completed sets</p>
                     </div>
 
-                    <div className="rounded-xl bg-zinc-800/70 px-3 py-3">
+                    <div className="min-w-0 rounded-xl bg-zinc-800/70 px-3 py-3">
                       <div className="flex items-center gap-2">
                         <Timer className="h-4 w-4 shrink-0 text-orange-500" />
-                        <span className="text-sm font-semibold text-white">{actualSeconds > 0 ? formatDuration(actualSeconds) : '—'}</span>
+                        <span className="truncate text-sm font-semibold text-white">{actualSeconds > 0 ? formatDuration(actualSeconds) : '—'}</span>
                       </div>
                       <p className="mt-1 text-xs text-zinc-500">Work time</p>
                     </div>
@@ -174,7 +184,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
 
                 {/* Exercise and set details */}
                 {isExpanded && (
-                  <div className="space-y-4 border-t border-zinc-800 bg-black/10 p-4">
+                  <div className="space-y-4 border-t border-zinc-800 bg-black/10 p-3 sm:p-4">
                     {session.exercises
                       .slice()
                       .sort((a, b) => a.order - b.order)
@@ -220,28 +230,28 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                                   </div>
 
                                   <div className="grid grid-cols-3 gap-2">
-                                    <div className="rounded-lg bg-zinc-800/60 p-2">
+                                    <div className="min-w-0 rounded-lg bg-zinc-800/60 p-2">
                                       <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
-                                        <Repeat2 className="h-3.5 w-3.5" />
+                                        <Repeat2 className="h-3.5 w-3.5 shrink-0" />
                                         <span className="text-[10px] uppercase tracking-wide">Reps</span>
                                       </div>
                                       <p className="text-sm font-bold text-white">{set.actualReps ?? '—'}</p>
                                     </div>
 
-                                    <div className="rounded-lg bg-zinc-800/60 p-2">
+                                    <div className="min-w-0 rounded-lg bg-zinc-800/60 p-2">
                                       <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
-                                        <Weight className="h-3.5 w-3.5" />
+                                        <Weight className="h-3.5 w-3.5 shrink-0" />
                                         <span className="text-[10px] uppercase tracking-wide">Weight</span>
                                       </div>
-                                      <p className="text-sm font-bold text-white">{set.actualWeight != null ? `${set.actualWeight} kg` : '—'}</p>
+                                      <p className="break-words text-sm font-bold text-white">{set.actualWeight != null ? `${set.actualWeight} kg` : '—'}</p>
                                     </div>
 
-                                    <div className="rounded-lg bg-zinc-800/60 p-2">
+                                    <div className="min-w-0 rounded-lg bg-zinc-800/60 p-2">
                                       <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
-                                        <Timer className="h-3.5 w-3.5" />
+                                        <Timer className="h-3.5 w-3.5 shrink-0" />
                                         <span className="text-[10px] uppercase tracking-wide">Seconds</span>
                                       </div>
-                                      <p className="text-sm font-bold text-white">{set.actualSeconds != null ? formatDuration(set.actualSeconds) : '—'}</p>
+                                      <p className="break-words text-sm font-bold text-white">{set.actualSeconds != null ? formatDuration(set.actualSeconds) : '—'}</p>
                                     </div>
                                   </div>
                                 </div>
