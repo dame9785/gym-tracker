@@ -79,8 +79,19 @@ export class WorkoutRepository {
   }
 
   async getAll(userId: number, page: number, pageSize: number) {
-    const skip = (page - 1) * pageSize;
+  if (!Number.isSafeInteger(page) || page < 1) {
+    throw new Error('Invalid page number.');
+  }
 
+  if (!Number.isSafeInteger(pageSize) || pageSize < 1) {
+    throw new Error('Invalid page size.');
+  }
+
+  const skip = (page - 1) * pageSize;
+
+  if (!Number.isSafeInteger(skip)) {
+    throw new Error('Invalid pagination offset.');
+  }
     return prisma.workout.findMany({
       where: {
         userId,
