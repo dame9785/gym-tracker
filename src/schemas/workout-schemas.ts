@@ -15,7 +15,6 @@ const requiredNumber = z.preprocess(
   },
   z.coerce.number().finite()
 );
-
 const updateWorkoutExerciseSchema = z.object({
   exerciseId: requiredNumber
     .int('Övningens ID måste vara ett heltal.')
