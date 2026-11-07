@@ -11,10 +11,6 @@ import FormStyles from '@/components/forms/form.module.css';
 import WorkoutExerciseCard from '@/components/forms/workout/workout-exercise-card';
 
 
-
-import type { ExerciseViewModel } from '@/types/exercise-types';
-
-
 //Toast alert sonner
 import { toast } from 'sonner';
 import type { ExerciseViewModel } from '@/types/exercise-types';
