@@ -85,7 +85,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
   const getStatusLabel = (status: WeeklyWorkoutViewModel['status']) => {
     switch (status) {
       case 'COMPLETED':
-        return 'Completed';
+        return <Check className="h-3.5 w-3.5 text-emerald-400" />;
       case 'ACTIVE':
         return 'Active';
       case 'NOTCOMPLETED':
@@ -98,7 +98,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
   const getStatusStyle = (status: WeeklyWorkoutViewModel['status']) => {
     switch (status) {
       case 'COMPLETED':
-        return 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-300';
+        return 'border border-emerald-500/30 bg-emerald-500/15 text-emerald-300';
       case 'ACTIVE':
         return 'bg-orange-500/10 text-orange-400';
       case 'NOTCOMPLETED':
@@ -110,7 +110,9 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
 
   return (
     <section className="min-w-0">
-      <h2 className="mb-4 px-1 text-xl font-semibold sm:mb-6 sm:px-2.5 sm:text-2xl">Overview of the week number ({weekNumber})</h2>
+      <h3 className="mb-4 px-1 text-xl font-semibold sm:mb-6 sm:px-2.5 sm:text-2xl">
+        Overview of the week number <span className="text-orange-400">({weekNumber})</span>
+      </h3>
 
       {/* Mobile and tablet view */}
       <div className="mt-5 lg:hidden">

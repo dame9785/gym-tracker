@@ -23,8 +23,8 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
     >
   > = {
     COMPLETED: {
-      border: 'border-emerald-500/30',
-      badge: 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-300',
+      border: 'border-emerald-500/40',
+      badge: 'bg-emerald-500/15 text-emerald-300',
       label: '✓ Completed',
     },
     ACTIVE: {
@@ -44,7 +44,9 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
   return (
     <div
       onClick={onClick}
-      className={`group flex h-full min-h-[220px] min-w-0 flex-col rounded-2xl border ${workout?.status === 'COMPLETED' ? 'bg-emerald-500/10' : 'bg-zinc-950/80'} p-4 transition-all duration-200 sm:min-h-[280px] ${hasWorkout ? (status?.border ?? 'border-zinc-800') : 'border-zinc-800'} ${hasWorkout && onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-zinc-600 hover:bg-zinc-900' : ''} `}
+      className={`group flex h-full min-h-[220px] min-w-0 flex-col rounded-2xl border ${workout?.status === 'COMPLETED' ? 'border-emerald-500/40 bg-emerald-950/30' : 'border-zinc-800 bg-zinc-950/80'} p-4 transition-all duration-200 sm:min-h-[280px] ${
+        hasWorkout && onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-emerald-400/60' : ''
+      }`}
     >
       {/* Header */}
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">

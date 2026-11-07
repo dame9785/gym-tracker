@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import Button from '@/components/button/button';
-import WorkoutTable from '@/components/tables/workout-table';
+import WorkoutTable from '@/components/workout/workout-detail-card';
 import Pagination from '@/components/workout/pagination';
 import ErrorMessage from '@/components/ui/error-message';
 
@@ -47,7 +47,7 @@ export default async function Workouts({ searchParams }: Props) {
       <header className="mb-10">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="max-w-2xl">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-orange-400">Training library</p>
+            <p className="mb-2 text-xs font-semibold tracking-[0.2em] text-orange-400 uppercase">Training library</p>
 
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Workouts</h1>
 
