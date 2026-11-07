@@ -1,14 +1,6 @@
-
 'use client';
 
-import {
-  CalendarDays,
-  CheckCircle2,
-  Clock3,
-  Dumbbell,
-  Play,
-  RotateCcw,
-} from 'lucide-react';
+import { CalendarDays, CheckCircle2, Clock3, Dumbbell, Play, RotateCcw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { createWorkoutSessionAction } from '@/actions/workout-session-actions';
@@ -46,39 +38,15 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
   };
 
   return (
-    <div
-      className={`
-        relative min-w-0 overflow-hidden rounded-2xl border
-        bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950
-        p-4 sm:p-6
-        ${hasWorkout
-          ? workout.status === 'COMPLETED'
-            ? 'border-green-500/30'
-            : 'border-orange-500/30'
-          : 'border-zinc-800'}
-      `}
-    >
-      <div
-        className={`
-          absolute left-0 top-0 h-px w-full
-          ${hasWorkout
-            ? workout.status === 'COMPLETED'
-              ? 'bg-gradient-to-r from-green-500/70 via-green-500/20 to-transparent'
-              : 'bg-gradient-to-r from-orange-500/70 via-orange-500/20 to-transparent'
-            : 'bg-zinc-700'}
-        `}
-      />
+    <div className={`relative min-w-0 overflow-hidden rounded-2xl border bg-linear-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-4 sm:p-6 ${hasWorkout ? (workout.status === 'COMPLETED' ? 'border-green-500/30' : 'border-orange-500/30') : 'border-zinc-800'} `}>
+      <div className={`absolute top-0 left-0 h-px w-full ${hasWorkout ? (workout.status === 'COMPLETED' ? 'bg-linear-to-r from-green-500/70 via-green-500/20 to-transparent' : 'bg-gradient-to-r from-orange-500/70 via-orange-500/20 to-transparent') : 'bg-zinc-700'} `} />
 
       {/* Header */}
       <div className="flex min-w-0 items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500 sm:text-sm">
-            Today
-          </p>
+          <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase sm:text-sm">Today</p>
 
-          <h2 className="mt-1 text-lg font-bold text-white sm:text-xl">
-            Todays Workout
-          </h2>
+          <h2 className="mt-1 text-lg font-bold text-white sm:text-xl">Todays Workout</h2>
         </div>
 
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-800">
@@ -101,32 +69,16 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
               </div>
             )}
 
-            {workout.status === 'ACTIVE' && (
-              <div className="shrink-0 rounded-full bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-400 sm:text-sm">
-                Ready to train
-              </div>
-            )}
+            {workout.status === 'ACTIVE' && <div className="shrink-0 rounded-full bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-400 sm:text-sm">Ready to train</div>}
 
-            {workout.status === 'NOTCOMPLETED' && (
-              <div className="shrink-0 rounded-full bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-400 sm:text-sm">
-                Missed
-              </div>
-            )}
+            {workout.status === 'NOTCOMPLETED' && <div className="shrink-0 rounded-full bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-400 sm:text-sm">Missed</div>}
           </div>
 
           {/* Workout information */}
           <div className="mt-5 min-w-0">
-            <h3 className="break-words text-xl font-bold tracking-tight text-white sm:text-2xl">
-              {workout.workoutName}
-            </h3>
+            <h3 className="text-xl font-bold tracking-tight break-words text-white sm:text-2xl">{workout.workoutName}</h3>
 
-            <p className="mt-2 text-sm leading-5 text-zinc-500 sm:text-base sm:leading-6">
-              {workout.status === 'COMPLETED'
-                ? 'Great work! You completed your workout today.'
-                : workout.status === 'NOTCOMPLETED'
-                  ? 'This workout was not completed.'
-                  : 'Everything is ready. Time to get started.'}
-            </p>
+            <p className="mt-2 text-sm leading-5 text-zinc-500 sm:text-base sm:leading-6">{workout.status === 'COMPLETED' ? 'Great work! You completed your workout today.' : workout.status === 'NOTCOMPLETED' ? 'This workout was not completed.' : 'Everything is ready. Time to get started.'}</p>
           </div>
 
           {/* Statistics */}
@@ -135,13 +87,9 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
               <Dumbbell className="h-4 w-4 shrink-0 text-zinc-500" />
 
               <div className="min-w-0">
-                <p className="text-xs text-zinc-500 sm:text-sm">
-                  Exercises
-                </p>
+                <p className="text-xs text-zinc-500 sm:text-sm">Exercises</p>
 
-                <p className="text-sm font-semibold text-zinc-200 sm:text-base">
-                  {workout.exerciseCount}
-                </p>
+                <p className="text-sm font-semibold text-zinc-200 sm:text-base">{workout.exerciseCount}</p>
               </div>
             </div>
 
@@ -149,13 +97,9 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
               <Clock3 className="h-4 w-4 shrink-0 text-zinc-500" />
 
               <div className="min-w-0">
-                <p className="text-xs text-zinc-500 sm:text-sm">
-                  Duration
-                </p>
+                <p className="text-xs text-zinc-500 sm:text-sm">Duration</p>
 
-                <p className="text-sm font-semibold text-zinc-200 sm:text-base">
-                  {workout.estimatedMinutes} min
-                </p>
+                <p className="text-sm font-semibold text-zinc-200 sm:text-base">{workout.estimatedMinutes} min</p>
               </div>
             </div>
           </div>
@@ -164,15 +108,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
           {workout.status === 'ACTIVE' && (
             <button
               onClick={handleStartWorkout}
-              className="
-                mt-6 flex w-full items-center justify-center gap-2
-                rounded-xl bg-orange-500 px-5 py-3.5
-                text-sm font-semibold text-white sm:text-base
-                shadow-lg shadow-orange-500/10
-                transition-all duration-200
-                hover:bg-orange-400 hover:shadow-orange-500/20
-                active:scale-[0.98]
-              "
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-orange-500/10 transition-all duration-200 hover:bg-orange-400 hover:shadow-orange-500/20 active:scale-[0.98] sm:text-base"
             >
               <Play className="h-4 w-4 fill-current" />
               Start Workout
@@ -181,14 +117,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
 
           {/* Completed */}
           {workout.status === 'COMPLETED' && (
-            <div
-              className="
-                mt-6 flex w-full items-center justify-center gap-2
-                rounded-xl border border-green-500/20
-                bg-green-500/5 px-5 py-3.5
-                text-sm font-semibold text-green-400 sm:text-base
-              "
-            >
+            <div className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-green-500/20 bg-green-500/5 px-5 py-3.5 text-sm font-semibold text-green-400 sm:text-base">
               <CheckCircle2 className="h-5 w-5" />
               Workout Completed
             </div>
@@ -196,17 +125,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
 
           {/* Not completed */}
           {workout.status === 'NOTCOMPLETED' && (
-            <button
-              onClick={handleStartWorkout}
-              className="
-                mt-6 flex w-full items-center justify-center gap-2
-                rounded-xl border border-orange-500/30
-                bg-orange-500/10 px-5 py-3.5
-                text-sm font-semibold text-orange-400 sm:text-base
-                transition-all duration-200
-                hover:bg-orange-500/15
-              "
-            >
+            <button onClick={handleStartWorkout} className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-orange-500/30 bg-orange-500/10 px-5 py-3.5 text-sm font-semibold text-orange-400 transition-all duration-200 hover:bg-orange-500/15 sm:text-base">
               <RotateCcw className="h-4 w-4" />
               Start Workout
             </button>
@@ -218,18 +137,12 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
             <span className="text-2xl">😴</span>
           </div>
 
-          <h3 className="mt-5 text-xl font-bold text-zinc-300 sm:text-2xl">
-            Rest Day
-          </h3>
+          <h3 className="mt-5 text-xl font-bold text-zinc-300 sm:text-2xl">Rest Day</h3>
 
-          <p className="mt-2 text-sm leading-5 text-zinc-500 sm:text-base sm:leading-6">
-            No workout planned for today. Take some time to recover.
-          </p>
+          <p className="mt-2 text-sm leading-5 text-zinc-500 sm:text-base sm:leading-6">No workout planned for today. Take some time to recover.</p>
 
           <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-            <p className="text-sm font-medium leading-5 text-zinc-400 sm:text-base sm:leading-6">
-              Recovery is part of the progress.
-            </p>
+            <p className="text-sm leading-5 font-medium text-zinc-400 sm:text-base sm:leading-6">Recovery is part of the progress.</p>
           </div>
         </div>
       )}

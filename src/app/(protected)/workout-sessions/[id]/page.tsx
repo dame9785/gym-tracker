@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+
 import ErrorMessage from '@/components/ui/error-message';
 import WorkoutSession from '@/components/workout/workout-session';
 import { WorkoutSessionService } from '@/services/workout-session-service';
@@ -13,8 +15,6 @@ const workoutSessionService = new WorkoutSessionService();
 
 export default async function WorkoutSessionPage({ params }: PageProps) {
   const { id } = await params;
-
-  //Check if user has token or exiperied token.
   const user = await requireAuth();
 
   const sessionId = Number(id);
@@ -41,6 +41,11 @@ export default async function WorkoutSessionPage({ params }: PageProps) {
         <ErrorMessage title="Unable to load workout session" message="Something went wrong while loading your workout session." />
       </main>
     );
+  }
+
+  // Only active sessions may be displayed in the workout view.
+  if (workoutSession.status !== 'ACTIVE') {
+    redirect('/dashboard');
   }
 
   return <WorkoutSession workoutSession={workoutSession} />;

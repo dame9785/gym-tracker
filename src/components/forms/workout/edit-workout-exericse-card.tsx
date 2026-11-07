@@ -9,21 +9,11 @@ type Props = {
   index: number;
   workoutExericse: UpdateWorkoutExerciseDto;
   exercises: ExerciseViewModel[];
-  onUpdate: (
-    index: number,
-    field: keyof UpdateWorkoutExerciseDto,
-    value: number | string
-  ) => void;
+  onUpdate: (index: number, field: keyof UpdateWorkoutExerciseDto, value: number | string) => void;
   onRemove: (index: number) => void;
 };
 
-export default function WorkoutExerciseCard({
-  index,
-  workoutExericse,
-  exercises,
-  onUpdate,
-  onRemove,
-}: Props) {
+export default function WorkoutExerciseCard({ index, workoutExericse, exercises, onUpdate, onRemove }: Props) {
   return (
     <div className={FormStyles.exerciseCard}>
       <div className={FormStyles.formGroup}>
@@ -35,9 +25,7 @@ export default function WorkoutExerciseCard({
           id={`exercise-${index}`}
           className={FormStyles.formSelect}
           value={workoutExericse.exerciseId}
-          onChange={(e) =>
-            onUpdate(index, 'exerciseId', Number(e.target.value))
-          }
+          onChange={(e) => onUpdate(index, 'exerciseId', Number(e.target.value))}
         >
           <option value={0} disabled>
             Välj övning
@@ -62,9 +50,7 @@ export default function WorkoutExerciseCard({
             type="number"
             className={FormStyles.formInput}
             value={workoutExericse.sets ?? 0}
-            onChange={(e) =>
-              onUpdate(index, 'sets', Number(e.target.value))
-            }
+            onChange={(e) => onUpdate(index, 'sets', Number(e.target.value))}
           />
         </div>
 
@@ -78,9 +64,7 @@ export default function WorkoutExerciseCard({
             type="number"
             className={FormStyles.formInput}
             value={workoutExericse.reps}
-            onChange={(e) =>
-              onUpdate(index, 'reps', Number(e.target.value))
-            }
+            onChange={(e) => onUpdate(index, 'reps', Number(e.target.value))}
           />
         </div>
 
@@ -95,9 +79,7 @@ export default function WorkoutExerciseCard({
             step="0.5"
             className={FormStyles.formInput}
             value={workoutExericse.weight ?? 0}
-            onChange={(e) =>
-              onUpdate(index, 'weight', Number(e.target.value))
-            }
+            onChange={(e) => onUpdate(index, 'weight', Number(e.target.value))}
           />
         </div>
 
@@ -111,9 +93,7 @@ export default function WorkoutExerciseCard({
             type="number"
             className={FormStyles.formInput}
             value={workoutExericse.seconds ?? 0}
-            onChange={(e) =>
-              onUpdate(index, 'seconds', Number(e.target.value))
-            }
+            onChange={(e) => onUpdate(index, 'seconds', Number(e.target.value))}
           />
         </div>
       </div>
@@ -128,17 +108,11 @@ export default function WorkoutExerciseCard({
           rows={3}
           className={FormStyles.formTextarea}
           value={workoutExericse.note}
-          onChange={(e) =>
-            onUpdate(index, 'note', e.target.value)
-          }
+          onChange={(e) => onUpdate(index, 'note', e.target.value)}
         />
       </div>
 
-      <Button
-        type="button"
-        variant="delete"
-        onClick={() => onRemove(index)}
-      >
+      <Button type="button" variant="delete" onClick={() => onRemove(index)}>
         Ta bort övning
       </Button>
     </div>

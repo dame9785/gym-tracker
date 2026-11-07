@@ -35,40 +35,32 @@ export class WorkoutSessionMapper {
       finishedAt: workoutSession.finishedAt,
       status: workoutSession.status,
 
-      exercises: workoutSession.exercises.map((exercise) => {
-        const exerciseModel = exercise.workoutExercise.exercise;
+      exercises: workoutSession.exercises.map((exercise) => ({
+        id: exercise.id,
+        exerciseId: exercise.workoutExercise.exerciseId,
+        name: exercise.exerciseName,
+        primaryMuscle: exercise.primaryMuscle,
+        secondaryMuscles: this.parseSecondaryMuscles(exercise.secondaryMuscles),
+        equipment: exercise.exerciseEquipment,
+        description: exercise.exerciseDescription,
+        instructions: exercise.exerciseInstructions,
+        techniqueTips: exercise.exerciseTechniqueTips,
+        order: exercise.order,
+        note: exercise.workoutExercise.note,
+        workoutExerciseId: exercise.workoutExerciseId,
 
-        const primaryMuscle = exerciseModel.muscles.find((muscle) => muscle.role === 'PRIMARY');
-
-        const secondaryMuscles = exerciseModel.muscles.filter((muscle) => muscle.role === 'SECONDARY').map((muscle) => muscle.muscleGroup.name);
-
-        return {
-          id: exercise.id,
-          exerciseId: exerciseModel.id,
-          name: exerciseModel.name,
-          primaryMuscle: primaryMuscle?.muscleGroup.name ?? '',
-          secondaryMuscles,
-          equipment: exerciseModel.equipment,
-          description: exerciseModel.description,
-          instructions: exerciseModel.instructions,
-          techniqueTips: exerciseModel.techniqueTips,
-          order: exercise.order,
-          note: exercise.workoutExercise.note,
-          workoutExerciseId: exercise.workoutExerciseId,
-
-          sets: exercise.sets.map((set) => ({
-            id: set.id,
-            setNumber: set.setNumber,
-            targetReps: set.targetReps,
-            targetWeight: set.targetWeight,
-            actualReps: set.actualReps,
-            actualSeconds: set.actualSeconds,
-            targetSeconds: set.targetSeconds,
-            actualWeight: set.actualWeight,
-            completed: set.completed,
-          })),
-        };
-      }),
+        sets: exercise.sets.map((set) => ({
+          id: set.id,
+          setNumber: set.setNumber,
+          targetReps: set.targetReps,
+          targetWeight: set.targetWeight,
+          actualReps: set.actualReps,
+          actualSeconds: set.actualSeconds,
+          targetSeconds: set.targetSeconds,
+          actualWeight: set.actualWeight,
+          completed: set.completed,
+        })),
+      })),
     };
   }
 

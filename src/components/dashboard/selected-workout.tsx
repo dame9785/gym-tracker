@@ -26,7 +26,7 @@ export default function SelectedWorkout({ workout }: Props) {
             </div>
 
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-orange-400">Selected workout</p>
+              <p className="text-xs font-medium tracking-wider text-orange-400 uppercase">Selected workout</p>
 
               <h3 className="mt-1 text-2xl font-bold text-white">{workout.workoutName}</h3>
 
@@ -107,38 +107,11 @@ export default function SelectedWorkout({ workout }: Props) {
 
         <div className="space-y-3">
           {workout.exercises.map((exercise, index) => (
-            <div
-              key={`${exercise.exerciseId}-${index}`}
-              className="
-                group
-                flex items-center justify-between gap-4
-                rounded-xl
-                border border-zinc-800
-                bg-zinc-900/70
-                p-4
-                transition-all duration-200
-                hover:border-zinc-700
-                hover:bg-zinc-800/50
-              "
-            >
+            <div key={`${exercise.exerciseId}-${index}`} className="group flex items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900/70 p-4 transition-all duration-200 hover:border-zinc-700 hover:bg-zinc-800/50">
               {/* Exercise information */}
               <div className="flex min-w-0 items-center gap-4">
                 {/* Order */}
-                <div
-                  className="
-                    flex h-10 w-10 shrink-0
-                    items-center justify-center
-                    rounded-xl
-                    bg-zinc-800
-                    text-sm font-bold
-                    text-zinc-400
-                    transition-colors
-                    group-hover:bg-orange-500/10
-                    group-hover:text-orange-400
-                  "
-                >
-                  {exercise.order}
-                </div>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-800 text-sm font-bold text-zinc-400 transition-colors group-hover:bg-orange-500/10 group-hover:text-orange-400">{exercise.order}</div>
 
                 <div className="min-w-0">
                   <h5 className="truncate font-semibold text-white">{exercise.name}</h5>
@@ -168,27 +141,7 @@ export default function SelectedWorkout({ workout }: Props) {
 
       {/* Actions */}
       <div className="flex flex-col gap-3 border-t border-zinc-800 bg-zinc-900/40 p-6 sm:flex-row sm:items-center sm:justify-end">
-        <Link
-          href={`/workout/${workout.id}`}
-          className="
-      inline-flex
-      h-11
-      min-w-33
-      items-center
-      justify-center
-      rounded-xl
-      border border-zinc-700
-      bg-zinc-800/60
-      px-5
-      text-sm
-      font-semibold
-      text-zinc-300
-      transition-all duration-200
-      hover:border-zinc-600
-      hover:bg-zinc-800
-      hover:text-white
-    "
-        >
+        <Link href={`/workout/${workout.id}`} className="inline-flex h-11 min-w-33 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/60 px-5 text-sm font-semibold text-zinc-300 transition-all duration-200 hover:border-zinc-600 hover:bg-zinc-800 hover:text-white">
           View Workout
         </Link>
 
