@@ -10,14 +10,14 @@ import FormStyles from '@/components/forms/form.module.css';
 // Components
 import WorkoutExerciseCard from '@/components/forms/workout/workout-exercise-card';
 
-//Helpers
-import { hasDuplicateExercises } from '@/helpers/check-dupplicate-exericse-helper';
+
 
 import type { ExerciseViewModel, RegisterWorkoutExerciseDto } from '@/types/exercise-types';
 
 //Toast alert sonner
 import { toast } from 'sonner';
-import { AddWorkoutDto, registerWorkoutSchema } from '@/schemas/workout-schemas';
+import type { AddWorkoutDto } from '@/schemas/workout-schemas';
+import { registerWorkoutSchema } from '@/schemas/workout-schemas';
 
 import { registerWorkoutAction } from '@/actions/workout-actions';
 
@@ -45,11 +45,7 @@ export default function AddWorkoutForm({ exericses }: Props) {
       return;
     }
 
-    // Check duplicate exercises
-    if (hasDuplicateExercises(formData.workoutExercises)) {
-      toast.error('You cannot choose the same exercise more than once.');
-      return;
-    }
+    
 
     try {
       const response = await registerWorkoutAction(validate.data);
