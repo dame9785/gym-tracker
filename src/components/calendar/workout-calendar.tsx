@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -43,14 +44,22 @@ export default function WorkoutCalendar() {
     return workouts.filter((workout) => {
       const workoutDate = new Date(workout.date);
 
-      return workoutDate.getFullYear() === day.getFullYear() && workoutDate.getMonth() === day.getMonth() && workoutDate.getDate() === day.getDate();
+      return (
+        workoutDate.getFullYear() === day.getFullYear() &&
+        workoutDate.getMonth() === day.getMonth() &&
+        workoutDate.getDate() === day.getDate()
+      );
     });
   };
 
   const isToday = (day: Date) => {
     const today = new Date();
 
-    return day.getFullYear() === today.getFullYear() && day.getMonth() === today.getMonth() && day.getDate() === today.getDate();
+    return (
+      day.getFullYear() === today.getFullYear() &&
+      day.getMonth() === today.getMonth() &&
+      day.getDate() === today.getDate()
+    );
   };
 
   const goToToday = () => {
@@ -65,7 +74,10 @@ export default function WorkoutCalendar() {
       setError(null);
 
       try {
-        const result = await getWorkoutSchedulesByMonthAction(currentYear, currentMonth);
+        const result = await getWorkoutSchedulesByMonthAction(
+          currentYear,
+          currentMonth,
+        );
 
         if (!isActive) return;
 
@@ -103,7 +115,11 @@ export default function WorkoutCalendar() {
       <div className="mb-4 flex items-center justify-between gap-2 sm:mb-6">
         <button
           type="button"
-          onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() - 1, 1))}
+          onClick={() =>
+            setCurrentDate(
+              new Date(currentYear, currentDate.getMonth() - 1, 1),
+            )
+          }
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xl text-white transition hover:bg-white/10 sm:h-10 sm:w-10"
           aria-label="Previous month"
         >
@@ -129,7 +145,11 @@ export default function WorkoutCalendar() {
 
         <button
           type="button"
-          onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() + 1, 1))}
+          onClick={() =>
+            setCurrentDate(
+              new Date(currentYear, currentDate.getMonth() + 1, 1),
+            )
+          }
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xl text-white transition hover:bg-white/10 sm:h-10 sm:w-10"
           aria-label="Next month"
         >
@@ -140,7 +160,10 @@ export default function WorkoutCalendar() {
       {/* Weekdays */}
       <div className="grid grid-cols-7">
         {weekDays.map((day) => (
-          <div key={day} className="border-b border-white/10 px-0.5 py-2 text-center text-[10px] font-semibold text-gray-400 sm:p-3 sm:text-sm">
+          <div
+            key={day}
+            className="border-b border-white/10 px-0.5 py-2 text-center text-xs font-semibold text-gray-400 sm:p-3 sm:text-sm"
+          >
             {day}
           </div>
         ))}
@@ -154,26 +177,48 @@ export default function WorkoutCalendar() {
           return (
             <div
               key={index}
-              className={`min-h-[76px] min-w-0 border-b border-r border-white/10 p-1 sm:min-h-24 sm:p-2 ${
-                day && isToday(day) ? 'ring-1 ring-inset ring-orange-500 sm:ring-2' : ''
-              }`}
+              className={`
+                min-h-[76px] min-w-0 border-b border-r border-white/10
+                p-1 sm:min-h-24 sm:p-2
+                ${
+                  day && isToday(day)
+                    ? 'ring-1 ring-inset ring-orange-500 sm:ring-2'
+                    : ''
+                }
+              `}
             >
               {day && (
                 <>
                   <span
-                    className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] sm:h-7 sm:w-7 sm:text-sm ${
-                      isToday(day) ? 'bg-orange-500 font-bold text-black' : 'text-white'
-                    }`}
+                    className={`
+                      inline-flex h-6 w-6 items-center justify-center
+                      rounded-full text-xs sm:h-7 sm:w-7 sm:text-sm
+                      ${
+                        isToday(day)
+                          ? 'bg-orange-500 font-bold text-black'
+                          : 'text-white'
+                      }
+                    `}
                   >
                     {day.getDate()}
                   </span>
 
                   <div className="mt-1 space-y-1 sm:mt-2">
                     {dayWorkouts.map((workout) => (
-                      <div key={workout.id} title={workout.workoutName} className="truncate rounded bg-blue-500/20 px-1 py-1 text-[9px] text-blue-300 sm:px-2 sm:text-xs">
+                      <div
+                        key={workout.id}
+                        title={workout.workoutName}
+                        className="
+                          truncate rounded bg-blue-500/20
+                          px-1 py-1 text-xs text-blue-300
+                          sm:px-2
+                        "
+                      >
                         <span className="hidden sm:inline">💪 </span>
                         <span className="sm:hidden">💪</span>
-                        <span className="hidden sm:inline">{workout.workoutName}</span>
+                        <span className="hidden sm:inline">
+                          {workout.workoutName}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -185,11 +230,23 @@ export default function WorkoutCalendar() {
       </div>
 
       {/* Loading and error states */}
-      {isLoading && <p className="mt-4 text-xs text-gray-400 sm:text-sm">Loading workouts...</p>}
+      {isLoading && (
+        <p className="mt-4 text-sm text-gray-400">
+          Loading workouts...
+        </p>
+      )}
 
-      {error && <p className="mt-4 text-xs text-red-400 sm:text-sm">{error}</p>}
+      {error && (
+        <p className="mt-4 text-sm text-red-400">
+          {error}
+        </p>
+      )}
 
-      {!isLoading && !error && <p className="mt-4 text-xs text-gray-400 sm:text-sm">Workouts this month: {workouts.length}</p>}
+      {!isLoading && !error && (
+        <p className="mt-4 text-sm text-gray-400">
+          Workouts this month: {workouts.length}
+        </p>
+      )}
     </section>
   );
 }
