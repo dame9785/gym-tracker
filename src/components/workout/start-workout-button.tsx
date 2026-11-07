@@ -9,9 +9,10 @@ import { createWorkoutSessionAction } from '@/actions/workout-session-actions';
 interface StartWorkoutButtonProps {
   workoutId: number;
   workoutScheduleId?: number;
+  activeSessionId?: number | null;
 }
 
-export default function StartWorkoutButton({ workoutId, workoutScheduleId }: StartWorkoutButtonProps) {
+export default function StartWorkoutButton({ workoutId, workoutScheduleId, activeSessionId }: StartWorkoutButtonProps) {
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
 
@@ -19,6 +20,11 @@ export default function StartWorkoutButton({ workoutId, workoutScheduleId }: Sta
     if (isStarting) return;
 
     setIsStarting(true);
+
+    if (activeSessionId) {
+      router.push(`/workout-sessions/${activeSessionId}`);
+      return;
+    }
 
     try {
       const result = await createWorkoutSessionAction(workoutId, workoutScheduleId);

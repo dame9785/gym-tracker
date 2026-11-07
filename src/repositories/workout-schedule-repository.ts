@@ -1,13 +1,8 @@
-
-
 import { prisma } from '@/lib/prisma';
 import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
 
 export class WorkoutScheduleRepository {
-  async create(
-    dto: RegisterWorkoutScheduleDto,
-    userId: number
-  ): Promise<Awaited<ReturnType<typeof prisma.workoutSchedule.create>>> {
+  async create(dto: RegisterWorkoutScheduleDto, userId: number): Promise<Awaited<ReturnType<typeof prisma.workoutSchedule.create>>> {
     return prisma.$transaction(async (tx) => {
       const workout = await tx.workout.findFirst({
         where: {
@@ -52,7 +47,30 @@ export class WorkoutScheduleRepository {
         },
       },
       include: {
-        workout: true,
+        sessions: {
+          where: {
+            userId,
+          },
+          orderBy: {
+            startedAt: 'desc',
+          },
+          take: 1,
+        },
+        workout: {
+          include: {
+            exercises: {
+              where: {
+                archivedAt: null,
+              },
+              include: {
+                exercise: true,
+              },
+              orderBy: {
+                order: 'asc',
+              },
+            },
+          },
+        },
       },
       orderBy: {
         date: 'asc',

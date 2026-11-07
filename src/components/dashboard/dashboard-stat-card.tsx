@@ -6,6 +6,7 @@ export type DashboardStatCardProps = {
 };
 
 export default function DashboardStatCard({ icon, title, value, subtitle }: DashboardStatCardProps) {
+  console.log(icon, title, value, subtitle);
   switch (title) {
     case 'Workouts this week':
       value = value + ' ' + 'Workouts';

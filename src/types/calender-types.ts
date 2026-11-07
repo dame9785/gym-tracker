@@ -1,6 +1,3 @@
-export interface CalendarWorkoutViewModel {
-  id: number;
-  date: string;
-  workoutId: number;
-  workoutName: string;
-}
+import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
+
+export type CalendarWorkoutViewModel = WeeklyWorkoutViewModel;

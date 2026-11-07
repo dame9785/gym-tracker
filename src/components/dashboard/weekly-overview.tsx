@@ -9,6 +9,8 @@ import SelectedWorkout from './selected-workout';
 import Modal from '@/components/modal/modal';
 import WorkoutDayCard from './workout-day-card';
 
+import { getISOWeek } from 'date-fns';
+
 interface WeeklyOverviewProps {
   workouts: WeeklyWorkoutViewModel[];
 }
@@ -45,6 +47,9 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
 
   const setSelectedDayIndex = setManualSelectedDayIndex;
 
+  //GETTING Current Number of the week.
+  const weekNumber = getISOWeek(new Date());
+
   const getWorkoutForDay = (day: string) => {
     return workouts.find(
       (workout) =>
@@ -58,14 +63,13 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
   const selectedDayWorkout = getWorkoutForDay(selectedDay.name);
 
   const getDayIndicator = (workout?: WeeklyWorkoutViewModel) => {
-    console.log(workout);
     if (!workout) {
       return <Moon className="h-3.5 w-3.5 text-zinc-500" />;
     }
 
     switch (workout.status) {
       case 'COMPLETED':
-        return <Check className="h-3.5 w-3.5 text-green-400" />;
+        return <Check className="h-3.5 w-3.5 text-emerald-400" />;
 
       case 'ACTIVE':
         return <Circle className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />;
@@ -94,7 +98,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
   const getStatusStyle = (status: WeeklyWorkoutViewModel['status']) => {
     switch (status) {
       case 'COMPLETED':
-        return 'bg-green-500/10 text-green-400';
+        return 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-300';
       case 'ACTIVE':
         return 'bg-orange-500/10 text-orange-400';
       case 'NOTCOMPLETED':
@@ -106,10 +110,10 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
 
   return (
     <section className="min-w-0">
-      <h2 className="mb-4 px-1 text-xl font-semibold sm:mb-6 sm:px-2.5 sm:text-2xl">Veckans översikt</h2>
+      <h2 className="mb-4 px-1 text-xl font-semibold sm:mb-6 sm:px-2.5 sm:text-2xl">Overview of the week number ({weekNumber})</h2>
 
       {/* Mobile and tablet view */}
-      <div className="lg:hidden">
+      <div className="mt-5 lg:hidden">
         {/* Week selector */}
         <div className="mb-4 grid grid-cols-7 gap-1.5 sm:gap-2">
           {week.map((day, index) => {
@@ -173,7 +177,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
       </div>
 
       {/* Desktop view */}
-      <div className="hidden min-w-0 auto-rows-fr grid-cols-2 gap-3 lg:grid lg:grid-cols-4 lg:gap-4 xl:grid-cols-7">
+      <div className="mt-5 hidden min-w-0 auto-rows-fr grid-cols-2 gap-3 lg:grid lg:grid-cols-4 lg:gap-4 xl:grid-cols-7">
         {week.map((day) => {
           const workout = getWorkoutForDay(day.name);
 

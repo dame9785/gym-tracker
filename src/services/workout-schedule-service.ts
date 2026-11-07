@@ -3,6 +3,7 @@ import type { CalendarWorkoutViewModel } from '@/types/calender-types';
 
 import { WorkoutScheduleRepository } from '@/repositories/workout-schedule-repository';
 import { schedelueWorkoutSchema } from '@/schemas/schedelue-workout-schemas';
+import { mapWeeklyOverview } from '@/mapping/dashboard-mapping';
 
 export class WorkoutScheduleService {
   private workoutScheduleRepository = new WorkoutScheduleRepository();
@@ -26,11 +27,6 @@ export class WorkoutScheduleService {
   async getByMonth(userId: number, year: number, month: number): Promise<CalendarWorkoutViewModel[]> {
     const workoutSchedules = await this.workoutScheduleRepository.getByMonth(userId, year, month);
 
-    return workoutSchedules.map((schedule) => ({
-      id: schedule.id,
-      date: schedule.date.toISOString(),
-      workoutId: schedule.workoutId,
-      workoutName: schedule.workout.name,
-    }));
+    return mapWeeklyOverview(workoutSchedules);
   }
 }
