@@ -1,68 +1,96 @@
+
 'use client';
 
-// Next & Hooks
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import type { FormEvent } from 'react';
 
-// Styles
 import FormStyles from '@/components/forms/form.module.css';
 
-// Components
 import WorkoutExerciseCard from '@/components/forms/workout/workout-exercise-card';
 
-
-//Toast alert sonner
 import { toast } from 'sonner';
+
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
 import {
   registerWorkoutSchema,
   type AddWorkoutDto,
 } from '@/schemas/workout-schemas';
+
 import { registerWorkoutAction } from '@/actions/workout-actions';
+
+// --------------------------------------------------
+// Props
+// --------------------------------------------------
 
 type Props = {
   exericses: ExerciseViewModel[];
 };
 
-export default function AddWorkoutForm({ exericses }: Props) {
+// --------------------------------------------------
+// Component
+// --------------------------------------------------
+
+export default function AddWorkoutForm({
+  exericses,
+}: Props) {
   const router = useRouter();
+
   const [errors, setErrors] = useState<Record<string, string[]>>({});
+
   const [formData, setFormData] = useState<AddWorkoutDto>({
     name: '',
     description: '',
     workoutExercises: [],
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // --------------------------------------------------
+  // Submit
+  // --------------------------------------------------
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //Validate data with ZOD
-    const validate = registerWorkoutSchema.safeParse(formData);
+    setErrors({});
 
-    if (!validate.success) {
-      setErrors(validate.error.flatten().fieldErrors);
+    const validation = registerWorkoutSchema.safeParse(formData);
+
+    if (!validation.success) {
+      setErrors(
+        validation.error.flatten().fieldErrors as Record<string, string[]>
+      );
+
       return;
     }
 
-    
-
     try {
-      const response = await registerWorkoutAction(validate.data);
+      const response = await registerWorkoutAction(
+        validation.data
+      );
 
       if (!response.success) {
         setErrors(response.errors ?? {});
+
         toast.error(response.message);
         return;
       }
 
-      toast.success(response.message ?? 'Workout was successfully created.');
+      toast.success(
+        response.message ?? 'Workout was successfully created.'
+      );
+
       router.push('/workout');
     } catch (error) {
       console.error('Failed to create workout:', error);
+
       toast.error('Something went wrong. Please try again.');
     }
   };
+
+  // --------------------------------------------------
+  // Add exercise
+  // --------------------------------------------------
 
   const addExercise = () => {
     setFormData((prev) => ({
@@ -74,32 +102,47 @@ export default function AddWorkoutForm({ exericses }: Props) {
           sets: 0,
           reps: 0,
           weight: 0,
-          note: '',
           seconds: 0,
+          note: '',
         },
       ],
     }));
   };
 
+  // --------------------------------------------------
+  // Remove exercise
+  // --------------------------------------------------
+
   const removeExercise = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      workoutExercises: prev.workoutExercises.filter((_, i) => i !== index),
+      workoutExercises: prev.workoutExercises.filter(
+        (_, i) => i !== index
+      ),
     }));
   };
 
-const updateExercise = (
-  index: number,
-  field: keyof AddWorkoutDto['workoutExercises'][number],
-  value: number | string
-) => {
+  // --------------------------------------------------
+  // Update exercise
+  // --------------------------------------------------
+
+  const updateExercise = (
+    index: number,
+    field: keyof AddWorkoutDto['workoutExercises'][number],
+    value: number | string
+  ) => {
     setFormData((prev) => {
       const updatedExercises = [...prev.workoutExercises];
+      const current = updatedExercises[index];
+
+      if (!current) {
+        return prev;
+      }
 
       updatedExercises[index] = {
-        ...updatedExercises[index],
+        ...current,
         [field]: value,
-      };
+      } as AddWorkoutDto['workoutExercises'][number];
 
       return {
         ...prev,
@@ -108,20 +151,32 @@ const updateExercise = (
     });
   };
 
+  // --------------------------------------------------
+  // Render
+  // --------------------------------------------------
+
   return (
     <div className={FormStyles.formContainer}>
       <h1 className={FormStyles.formTitle}>
         Add <span>Workout</span>
       </h1>
 
-      <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
-        {/* Workout namn */}
+      <form
+        onSubmit={handleSubmit}
+        className={`${FormStyles.form} mx-auto`}
+      >
+        {/* Workout name */}
+
         <div className={FormStyles.formGroup}>
-          <label htmlFor="name" className={FormStyles.formLabel}>
+          <label
+            htmlFor="name"
+            className={FormStyles.formLabel}
+          >
             Workout name *
           </label>
 
           <input
+            required
             id="name"
             type="text"
             className={FormStyles.formInput}
@@ -134,16 +189,26 @@ const updateExercise = (
               }))
             }
           />
-          {errors.name?.[0] && (
-            <p id="name-error" className="text-red-500" role="alert">
-              {errors.name[0]}
+
+          {errors.name?.map((error, index) => (
+            <p
+              key={index}
+              id="name-error"
+              className="text-red-500"
+              role="alert"
+            >
+              {error}
             </p>
-          )}
+          ))}
         </div>
 
-        {/* Beskrivning */}
+        {/* Description */}
+
         <div className={FormStyles.formGroup}>
-          <label htmlFor="description" className={FormStyles.formLabel}>
+          <label
+            htmlFor="description"
+            className={FormStyles.formLabel}
+          >
             Description
           </label>
 
@@ -151,7 +216,7 @@ const updateExercise = (
             id="description"
             rows={4}
             className={FormStyles.formTextarea}
-            placeholder="Example. Focus on arms, breast..."
+            placeholder="Example. Focus on arms, chest..."
             value={formData.description}
             onChange={(e) =>
               setFormData((prev) => ({
@@ -160,27 +225,52 @@ const updateExercise = (
               }))
             }
           />
-          {errors.description?.[0] && (
-            <p id="description-error" className="text-red-500" role="alert">
-              {errors.description[0]}
+
+          {errors.description?.map((error, index) => (
+            <p
+              key={index}
+              id="description-error"
+              className="text-red-500"
+              role="alert"
+            >
+              {error}
             </p>
-          )}
+          ))}
         </div>
 
-        {/* Övningar */}
+        {/* Exercises */}
+
         <div className={FormStyles.exerciseSection}>
-          <h2 className={FormStyles.sectionTitle}>Exericses</h2>
+          <h2 className={FormStyles.sectionTitle}>
+            Exercises
+          </h2>
 
           {formData.workoutExercises.map((exercise, index) => (
-            <WorkoutExerciseCard key={index} index={index} exercise={exercise} exercises={exericses} onUpdate={updateExercise} onRemove={removeExercise} />
+            <WorkoutExerciseCard
+              key={index}
+              index={index}
+              exercise={exercise}
+              exercises={exericses}
+              onUpdate={updateExercise}
+              onRemove={removeExercise}
+            />
           ))}
 
-          <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>
-            + Add more exericse
+          <button
+            type="button"
+            className={FormStyles.addExerciseButton}
+            onClick={addExercise}
+          >
+            + Add more exercises
           </button>
         </div>
 
-        <button type="submit" className={FormStyles.submitButton}>
+        {/* Submit button */}
+
+        <button
+          type="submit"
+          className={FormStyles.submitButton}
+        >
           Save Workout
         </button>
       </form>
