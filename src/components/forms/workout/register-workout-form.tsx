@@ -12,7 +12,8 @@ import WorkoutExerciseCard from '@/components/forms/workout/workout-exercise-car
 
 
 
-import type { ExerciseViewModel, RegisterWorkoutExerciseDto } from '@/types/exercise-types';
+import type { ExerciseViewModel } from '@/types/exercise-types';
+
 
 //Toast alert sonner
 import { toast } from 'sonner';
