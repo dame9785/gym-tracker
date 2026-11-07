@@ -69,28 +69,28 @@ const updateExercise = (
 };
 
   const removeExercise = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      workoutExercises: prev.workoutExercises.filter((_, i) => i !== index),
-    }));
-  };
+  setFormData((prev: UpdateWorkoutDto) => ({
+    ...prev,
+    workoutExercises: prev.workoutExercises.filter((_, i) => i !== index),
+  }));
+};
 
-  const addExercise = () => {
-    setFormData((prev) => ({
-      ...prev,
-      workoutExercises: [
-        ...prev.workoutExercises,
-        {
-          exerciseId: 0,
-          sets: 0,
-          reps: 0,
-          weight: 0,
-          seconds: 0,
-          note: '',
-        },
-      ],
-    }));
-  };
+const addExercise = () => {
+  setFormData((prev: UpdateWorkoutDto) => ({
+    ...prev,
+    workoutExercises: [
+      ...prev.workoutExercises,
+      {
+        exerciseId: 0,
+        sets: 0,
+        reps: 0,
+        weight: 0,
+        seconds: 0,
+        note: '',
+      },
+    ],
+  }));
+};
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
