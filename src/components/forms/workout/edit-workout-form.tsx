@@ -48,7 +48,11 @@ export default function EditWorkoutForm({ workout, exericses }: props) {
     })),
   });
 
-  const updateExercise = (index: number, field: keyof UpdateWorkoutExericseDto, value: number | string) => {
+  const updateExercise = (
+  index: number,
+  field: keyof UpdateWorkoutDto['workoutExercises'][number],
+  value: number | string
+) => {
     setFormData((prev) => {
       const updated = [...prev.workoutExercises];
 
