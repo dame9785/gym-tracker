@@ -88,7 +88,11 @@ export default function AddWorkoutForm({ exericses }: Props) {
     }));
   };
 
-  const updateExercise = (index: number, field: keyof RegisterWorkoutExerciseDto, value: number | string) => {
+const updateExercise = (
+  index: number,
+  field: keyof AddWorkoutDto['workoutExercises'][number],
+  value: number | string
+) => {
     setFormData((prev) => {
       const updatedExercises = [...prev.workoutExercises];
 
