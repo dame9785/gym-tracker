@@ -71,7 +71,10 @@ const updateExercise = (
   const removeExercise = (index: number) => {
   setFormData((prev: UpdateWorkoutDto) => ({
     ...prev,
-    workoutExercises: prev.workoutExercises.filter((_, i) => i !== index),
+    workoutExercises: prev.workoutExercises.filter(
+      (_: UpdateWorkoutDto['workoutExercises'][number], i: number) =>
+        i !== index
+    ),
   }));
 };
 
