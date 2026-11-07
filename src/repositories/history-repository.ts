@@ -86,17 +86,18 @@ export class HistoryRepository {
   // Calculate total training time.
   async getTotalTrainingTime(userId: number) {
     const sessions = await prisma.workoutSession.findMany({
-      where: {
-        userId,
-        finishedAt: {
-          not: null,
-        },
-      },
-      select: {
-        startedAt: true,
-        finishedAt: true,
-      },
-    });
+  where: {
+    userId,
+    status: 'COMPLETED',
+    finishedAt: {
+      not: null,
+    },
+  },
+  select: {
+    startedAt: true,
+    finishedAt: true,
+  },
+});
 
     let totalSeconds = 0;
 
