@@ -50,20 +50,20 @@ export default function WorkoutDayCard({
     <div
       onClick={onClick}
       className={`
-        group flex h-full min-h-[260px] min-w-0 flex-col
-        rounded-2xl border bg-zinc-950/80 p-3
+        group flex h-full min-h-[220px] min-w-0 flex-col
+        rounded-2xl border bg-zinc-950/80 p-4
         transition-all duration-200
-        sm:min-h-[280px] sm:p-4
+        sm:min-h-[280px]
         ${hasWorkout ? (status?.border ?? 'border-zinc-800') : 'border-zinc-800'}
         ${hasWorkout && onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-zinc-600 hover:bg-zinc-900' : ''}
       `}
     >
       {/* Header */}
-      <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-1">
-        <div className="flex min-w-0 items-center gap-1.5">
-          <CalendarDays className="h-3.5 w-3.5 shrink-0 text-zinc-600 sm:h-4 sm:w-4" />
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <CalendarDays className="h-4 w-4 shrink-0 text-zinc-600" />
 
-          <span className="truncate text-xs font-medium text-zinc-300 sm:text-sm">
+          <span className="truncate text-sm font-medium text-zinc-300">
             {day}
           </span>
         </div>
@@ -71,8 +71,7 @@ export default function WorkoutDayCard({
         {status && (
           <span
             className={`
-              max-w-full rounded-full px-2 py-1
-              text-[9px] font-semibold sm:text-[10px]
+              rounded-full px-2 py-1 text-[10px] font-semibold
               ${status.badge}
             `}
           >
@@ -81,32 +80,28 @@ export default function WorkoutDayCard({
         )}
       </div>
 
-      {/* Workout content */}
+      {/* Workout */}
       {hasWorkout && workout ? (
-        <div className="mt-4 flex min-h-0 flex-1 flex-col sm:mt-7">
-          {/* Icon */}
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 sm:h-11 sm:w-11 sm:rounded-xl">
-            <Dumbbell className="h-4 w-4 text-blue-400 sm:h-5 sm:w-5" />
+        <div className="mt-6 flex min-h-0 flex-1 flex-col">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500/10">
+            <Dumbbell className="h-5 w-5 text-blue-400" />
           </div>
 
-          {/* Workout name */}
-          <h3 className="mt-3 line-clamp-2 min-h-[40px] break-words text-sm font-semibold text-white sm:mt-4 sm:min-h-[48px] sm:text-base">
+          <h3 className="mt-4 line-clamp-2 min-h-12 break-words text-base font-semibold text-white">
             {workout.workoutName}
           </h3>
 
-          {/* Stats */}
-          <div className="mt-auto space-y-2 pt-3">
-            <div className="flex min-w-0 items-center gap-1.5 text-xs text-zinc-500 sm:gap-2 sm:text-sm">
-              <ListChecks className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-
+          {/* Statistics */}
+          <div className="mt-auto space-y-3 pt-4">
+            <div className="flex min-w-0 items-center gap-2 text-sm text-zinc-500">
+              <ListChecks className="h-4 w-4 shrink-0" />
               <span className="truncate">
                 {workout.exerciseCount} exercises
               </span>
             </div>
 
-            <div className="flex min-w-0 items-center gap-1.5 text-xs text-zinc-500 sm:gap-2 sm:text-sm">
-              <Clock3 className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-
+            <div className="flex min-w-0 items-center gap-2 text-sm text-zinc-500">
+              <Clock3 className="h-4 w-4 shrink-0" />
               <span className="truncate">
                 {workout.estimatedMinutes} min
               </span>
@@ -114,17 +109,16 @@ export default function WorkoutDayCard({
           </div>
         </div>
       ) : (
-        /* Rest day content */
-        <div className="mt-4 flex flex-1 flex-col sm:mt-7">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-900 sm:h-11 sm:w-11 sm:rounded-xl">
-            <span className="text-lg sm:text-xl">😴</span>
+        <div className="mt-6 flex flex-1 flex-col">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-zinc-900">
+            <span className="text-xl">😴</span>
           </div>
 
-          <h3 className="mt-3 text-sm font-semibold text-zinc-400 sm:mt-4 sm:text-base">
+          <h3 className="mt-4 text-base font-semibold text-zinc-400">
             Rest Day
           </h3>
 
-          <p className="mt-2 text-xs text-zinc-600 sm:text-sm">
+          <p className="mt-2 text-sm text-zinc-600">
             No workout planned
           </p>
         </div>
