@@ -1,146 +1,36 @@
-import FormStyles from '@/components/forms/form.module.css';
-import Button from '@/components/button/button';
+import type { WorkoutSessionExerciseViewModel } from '@/types/exercise-types';
 
-import type { ExerciseViewModel } from '@/types/exercise-types';
-import type { AddWorkoutDto } from '@/schemas/workout-schemas';
+import WorkoutSessionSetCard from '@/components/workout/workout-session-set-card';
 
-type WorkoutExercise = AddWorkoutDto['workoutExercises'][number];
-
-interface WorkoutExerciseCardProps {
-  index: number;
-  exercise: WorkoutExercise;
-  exercises: ExerciseViewModel[];
-  onUpdate: (
-    index: number,
-    field: keyof WorkoutExercise,
-    value: number | string
-  ) => void;
-  onRemove: (index: number) => void;
+interface WorkoutSessionExerciseCardProps {
+  exercise: WorkoutSessionExerciseViewModel;
 }
 
-export default function WorkoutExerciseCard({
-  index,
-  exercise,
-  exercises,
-  onUpdate,
-  onRemove,
-}: WorkoutExerciseCardProps) {
+export default function WorkoutSessionExerciseCard({ exercise }: WorkoutSessionExerciseCardProps) {
   return (
-    <div className={FormStyles.exerciseCard}>
-      <div className={FormStyles.formGroup}>
-        <label htmlFor={`exercise-${index}`} className={FormStyles.formLabel}>
-          Exercise
-        </label>
+    <section className="min-w-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
+      <div className="border-b border-zinc-800 p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-bold text-white sm:text-xl">{exercise.name}</h2>
 
-        <select
-          id={`exercise-${index}`}
-          className={FormStyles.formSelect}
-          value={exercise.exerciseId}
-          onChange={(e) =>
-            onUpdate(index, 'exerciseId', Number(e.target.value))
-          }
-        >
-          <option value={0} disabled>
-            Select exercise
-          </option>
+          <span className="text-sm text-zinc-500">{exercise.sets.length} set</span>
+        </div>
 
-          {exercises.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
-            </option>
-          ))}
-        </select>
+        {exercise.primaryMuscle && (
+          <p className="mt-1 text-sm text-zinc-400">
+            {exercise.primaryMuscle}
+            {exercise.secondaryMuscles.length > 0 && ` · ${exercise.secondaryMuscles.join(', ')}`}
+          </p>
+        )}
+
+        {exercise.note && <p className="mt-3 text-sm text-zinc-400">{exercise.note}</p>}
       </div>
 
-      <div className={FormStyles.exerciseGrid}>
-        <div className={FormStyles.formGroup}>
-          <label htmlFor={`sets-${index}`} className={FormStyles.formLabel}>
-            Sets
-          </label>
-
-          <input
-            id={`sets-${index}`}
-            type="number"
-            min={1}
-            className={FormStyles.formInput}
-            value={exercise.sets}
-            onChange={(e) =>
-              onUpdate(index, 'sets', Number(e.target.value))
-            }
-          />
-        </div>
-
-        <div className={FormStyles.formGroup}>
-          <label htmlFor={`reps-${index}`} className={FormStyles.formLabel}>
-            Reps
-          </label>
-
-          <input
-            id={`reps-${index}`}
-            type="number"
-            className={FormStyles.formInput}
-            value={exercise.reps}
-            onChange={(e) =>
-              onUpdate(index, 'reps', Number(e.target.value))
-            }
-          />
-        </div>
-
-        <div className={FormStyles.formGroup}>
-          <label htmlFor={`weight-${index}`} className={FormStyles.formLabel}>
-            Weight (kg)
-          </label>
-
-          <input
-            id={`weight-${index}`}
-            type="number"
-            min={0}
-            step="0.5"
-            className={FormStyles.formInput}
-            value={exercise.weight ?? ''}
-            onChange={(e) =>
-              onUpdate(index, 'weight', Number(e.target.value))
-            }
-          />
-        </div>
-
-        <div className={FormStyles.formGroup}>
-          <label htmlFor={`seconds-${index}`} className={FormStyles.formLabel}>
-            Seconds
-          </label>
-
-          <input
-            id={`seconds-${index}`}
-            type="number"
-            min={0}
-            className={FormStyles.formInput}
-            value={exercise.seconds ?? ''}
-            onChange={(e) =>
-              onUpdate(index, 'seconds', Number(e.target.value))
-            }
-          />
-        </div>
+      <div>
+        {exercise.sets.map((set) => (
+          <WorkoutSessionSetCard key={set.id} set={set} />
+        ))}
       </div>
-
-      <div className={FormStyles.formGroup}>
-        <label htmlFor={`note-${index}`} className={FormStyles.formLabel}>
-          Note
-        </label>
-
-        <textarea
-          id={`note-${index}`}
-          rows={3}
-          className={FormStyles.formTextarea}
-          value={exercise.note}
-          onChange={(e) =>
-            onUpdate(index, 'note', e.target.value)
-          }
-        />
-      </div>
-
-      <Button type="button" variant="delete" onClick={() => onRemove(index)}>
-        Remove
-      </Button>
-    </div>
+    </section>
   );
 }
