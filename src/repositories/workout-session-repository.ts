@@ -379,22 +379,45 @@ async updateSet(
     });
   }
 
-  async getPreviousCompletedByWorkoutId(workoutId: number, userId: number, currentSessionId: number): Promise<SessionWithDetails | null> {
-    return prisma.workoutSession.findFirst({
-      where: {
-        workoutId,
-        userId,
-        status: 'COMPLETED',
-        id: {
-          not: currentSessionId,
-        },
+  async getPreviousCompletedByWorkoutId(
+  workoutId: number,
+  userId: number,
+  currentSessionId: number
+): Promise<SessionWithDetails | null> {
+  const currentSession = await prisma.workoutSession.findFirst({
+    where: {
+      id: currentSessionId,
+      workoutId,
+      userId,
+      status: 'COMPLETED',
+      finishedAt: {
+        not: null,
       },
-      orderBy: {
-        finishedAt: 'desc',
-      },
-      include: sessionDetailsInclude,
-    });
+    },
+    select: {
+      finishedAt: true,
+    },
+  });
+
+  if (!currentSession?.finishedAt) {
+    return null;
   }
+
+  return prisma.workoutSession.findFirst({
+    where: {
+      workoutId,
+      userId,
+      status: 'COMPLETED',
+      finishedAt: {
+        lt: currentSession.finishedAt,
+      },
+    },
+    orderBy: {
+      finishedAt: 'desc',
+    },
+    include: sessionDetailsInclude,
+  });
+}
 
   async getPreviousCompletedSessions(userId: number, currentSessionId: number, currentFinishedAt: Date): Promise<SessionWithDetails[]> {
     return prisma.workoutSession.findMany({
