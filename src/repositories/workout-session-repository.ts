@@ -58,131 +58,169 @@ export class WorkoutSessionRepository {
   private workoutRepository = new WorkoutRepository();
 
   async create(workoutId: number, userId: number): Promise<WorkoutSession> {
-    const workout = await this.workoutRepository.getById(workoutId, userId);
+  const activeKey = `${userId}:${workoutId}`;
 
-    if (!workout) {
-      throw new Error('Workout hittades inte.');
+  // Reuse an existing active workout session.
+  const existingSession = await prisma.workoutSession.findFirst({
+    where: {
+      userId,
+      workoutId,
+      status: 'ACTIVE',
+    },
+  });
+
+  if (existingSession) {
+    if (existingSession.activeKey === null) {
+      await prisma.workoutSession.updateMany({
+        where: {
+          id: existingSession.id,
+          status: 'ACTIVE',
+          activeKey: null,
+        },
+        data: {
+          activeKey,
+        },
+      });
+
+      const updatedSession = await prisma.workoutSession.findUnique({
+        where: {
+          id: existingSession.id,
+        },
+      });
+
+      if (updatedSession) {
+        return updatedSession;
+      }
     }
 
-    if (workout.exercises.length === 0) {
-      throw new Error('Workout innehåller inga övningar.');
-    }
+    return existingSession;
+  }
 
-    const activeKey = `${userId}:${workoutId}`;
-
-    // Reuse an existing active workout session.
-    const existingSession = await prisma.workoutSession.findFirst({
-      where: {
-        userId,
-        workoutId,
-        status: 'ACTIVE',
-      },
-    });
-
-    if (existingSession) {
-      // Ensure older active sessions also have an activeKey.
-      if (existingSession.activeKey === null) {
-        await prisma.workoutSession.updateMany({
-          where: {
-            id: existingSession.id,
-            status: 'ACTIVE',
-            activeKey: null,
+  try {
+    return await prisma.$transaction(async (tx): Promise<WorkoutSession> => {
+      // Fetch and validate the workout inside the transaction.
+      const workout = await tx.workout.findFirst({
+        where: {
+          id: workoutId,
+          userId,
+          archivedAt: null,
+        },
+        include: {
+          exercises: {
+            where: {
+              archivedAt: null,
+            },
+            include: {
+              exercise: {
+                include: {
+                  muscles: {
+                    include: {
+                      muscleGroup: true,
+                    },
+                  },
+                },
+              },
+            },
+            orderBy: {
+              order: 'asc',
+            },
           },
-          data: {
-            activeKey,
-          },
-        });
+        },
+      });
 
-        const updatedSession = await prisma.workoutSession.findUnique({
-          where: {
-            id: existingSession.id,
-          },
-        });
-
-        if (updatedSession) {
-          return updatedSession;
-        }
+      if (!workout) {
+        throw new Error('Workout hittades inte.');
       }
 
-      return existingSession;
-    }
+      if (workout.exercises.length === 0) {
+        throw new Error('Workout innehåller inga övningar.');
+      }
 
-    try {
-      return await prisma.$transaction(async (tx): Promise<WorkoutSession> => {
-        const workoutSession = await tx.workoutSession.create({
+      const workoutSession = await tx.workoutSession.create({
+        data: {
+          userId,
+          workoutId,
+          workoutName: workout.name,
+          workoutDescription: workout.description,
+          activeKey,
+        },
+      });
+
+      for (const workoutExercise of workout.exercises) {
+        const exercise = workoutExercise.exercise;
+
+        const primaryMuscle =
+          exercise.muscles.find(
+            (muscle) => muscle.role === 'PRIMARY'
+          )?.muscleGroup.name ?? '';
+
+        const secondaryMuscles = exercise.muscles
+          .filter((muscle) => muscle.role === 'SECONDARY')
+          .map((muscle) => muscle.muscleGroup.name);
+
+        const sessionExercise = await tx.workoutSessionExercise.create({
           data: {
-            userId,
-            workoutId,
-            workoutName: workout.name,
-            workoutDescription: workout.description,
-            activeKey,
+            workoutSessionId: workoutSession.id,
+            workoutExerciseId: workoutExercise.id,
+            order: workoutExercise.order,
+
+            // Exercise snapshots.
+            exerciseName: exercise.name,
+            exerciseImagePath: exercise.imagePath,
+            exerciseEquipment: exercise.equipment,
+            exerciseDescription: exercise.description,
+            exerciseInstructions: exercise.instructions,
+            exerciseTechniqueTips: exercise.techniqueTips,
+            primaryMuscle,
+            secondaryMuscles: JSON.stringify(secondaryMuscles),
           },
         });
 
-        for (const workoutExercise of workout.exercises) {
-          const exercise = workoutExercise.exercise;
-
-          const primaryMuscle = exercise.muscles.find((muscle) => muscle.role === 'PRIMARY')?.muscleGroup.name ?? '';
-
-          const secondaryMuscles = exercise.muscles.filter((muscle) => muscle.role === 'SECONDARY').map((muscle) => muscle.muscleGroup.name);
-
-          const sessionExercise = await tx.workoutSessionExercise.create({
+        for (
+          let setNumber = 1;
+          setNumber <= workoutExercise.sets;
+          setNumber++
+        ) {
+          await tx.workoutSessionSet.create({
             data: {
-              workoutSessionId: workoutSession.id,
-              workoutExerciseId: workoutExercise.id,
-              order: workoutExercise.order,
-
-              // Exercise snapshots.
-              exerciseName: exercise.name,
-              exerciseImagePath: exercise.imagePath,
-              exerciseEquipment: exercise.equipment,
-              exerciseDescription: exercise.description,
-              exerciseInstructions: exercise.instructions,
-              exerciseTechniqueTips: exercise.techniqueTips,
-              primaryMuscle,
-              secondaryMuscles: JSON.stringify(secondaryMuscles),
+              workoutSessionExerciseId: sessionExercise.id,
+              setNumber,
+              targetReps: workoutExercise.reps ?? 0,
+              targetSeconds: workoutExercise.seconds ?? null,
+              targetWeight: workoutExercise.weight,
+              actualReps: null,
+              actualSeconds: null,
+              actualWeight: null,
             },
           });
-
-          for (let setNumber = 1; setNumber <= workoutExercise.sets; setNumber++) {
-            await tx.workoutSessionSet.create({
-              data: {
-                workoutSessionExerciseId: sessionExercise.id,
-                setNumber,
-                targetReps: workoutExercise.reps ?? 0,
-                targetSeconds: workoutExercise.seconds ?? null,
-                targetWeight: workoutExercise.weight,
-                actualReps: null,
-                actualSeconds: null,
-                actualWeight: null,
-              },
-            });
-          }
-        }
-
-        return workoutSession;
-      });
-    } catch (error: unknown) {
-      // Handle only Prisma unique constraint conflicts.
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        const activeSession = await prisma.workoutSession.findFirst({
-          where: {
-            userId,
-            workoutId,
-            status: 'ACTIVE',
-            activeKey,
-          },
-        });
-
-        if (activeSession) {
-          return activeSession;
         }
       }
 
-      // Do not hide other database errors.
-      throw error;
+      return workoutSession;
+    });
+  } catch (error: unknown) {
+    // Handle only Prisma unique constraint conflicts.
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      const activeSession = await prisma.workoutSession.findFirst({
+        where: {
+          userId,
+          workoutId,
+          status: 'ACTIVE',
+          activeKey,
+        },
+      });
+
+      if (activeSession) {
+        return activeSession;
+      }
     }
+
+    throw error;
   }
+}
 
   async getById(id: number, userId: number): Promise<SessionWithDetails | null> {
     return prisma.workoutSession.findFirst({
