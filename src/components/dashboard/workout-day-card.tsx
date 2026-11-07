@@ -63,7 +63,7 @@ export default function WorkoutDayCard({
         <div className="flex min-w-0 items-center gap-2">
           <CalendarDays className="h-4 w-4 shrink-0 text-zinc-600" />
 
-          <span className="truncate text-sm font-medium text-zinc-300">
+          <span className="truncate text-sm font-medium text-zinc-300 sm:text-base">
             {day}
           </span>
         </div>
@@ -71,7 +71,7 @@ export default function WorkoutDayCard({
         {status && (
           <span
             className={`
-              rounded-full px-2 py-1 text-[10px] font-semibold
+              shrink-0 rounded-full px-2 py-1 text-xs font-semibold
               ${status.badge}
             `}
           >
@@ -87,20 +87,20 @@ export default function WorkoutDayCard({
             <Dumbbell className="h-5 w-5 text-blue-400" />
           </div>
 
-          <h3 className="mt-4 line-clamp-2 min-h-12 break-words text-base font-semibold text-white">
+          <h3 className="mt-4 line-clamp-2 min-h-12 break-words text-base font-semibold text-white sm:text-lg">
             {workout.workoutName}
           </h3>
 
           {/* Statistics */}
           <div className="mt-auto space-y-3 pt-4">
-            <div className="flex min-w-0 items-center gap-2 text-sm text-zinc-500">
+            <div className="flex min-w-0 items-center gap-2 text-sm text-zinc-500 sm:text-base">
               <ListChecks className="h-4 w-4 shrink-0" />
               <span className="truncate">
                 {workout.exerciseCount} exercises
               </span>
             </div>
 
-            <div className="flex min-w-0 items-center gap-2 text-sm text-zinc-500">
+            <div className="flex min-w-0 items-center gap-2 text-sm text-zinc-500 sm:text-base">
               <Clock3 className="h-4 w-4 shrink-0" />
               <span className="truncate">
                 {workout.estimatedMinutes} min
@@ -114,11 +114,11 @@ export default function WorkoutDayCard({
             <span className="text-xl">😴</span>
           </div>
 
-          <h3 className="mt-4 text-base font-semibold text-zinc-400">
+          <h3 className="mt-4 text-base font-semibold text-zinc-400 sm:text-lg">
             Rest Day
           </h3>
 
-          <p className="mt-2 text-sm text-zinc-600">
+          <p className="mt-2 text-sm text-zinc-600 sm:text-base">
             No workout planned
           </p>
         </div>
