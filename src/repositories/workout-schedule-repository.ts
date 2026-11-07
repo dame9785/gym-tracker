@@ -1,14 +1,36 @@
+
+
 import { prisma } from '@/lib/prisma';
 import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
 
 export class WorkoutScheduleRepository {
-  async create(dto: RegisterWorkoutScheduleDto, userId: number): Promise<Awaited<ReturnType<typeof prisma.workoutSchedule.create>>> {
-    return prisma.workoutSchedule.create({
-      data: {
-        userId,
-        workoutId: dto.workoutId,
-        date: new Date(dto.date),
-      },
+  async create(
+    dto: RegisterWorkoutScheduleDto,
+    userId: number
+  ): Promise<Awaited<ReturnType<typeof prisma.workoutSchedule.create>>> {
+    return prisma.$transaction(async (tx) => {
+      const workout = await tx.workout.findFirst({
+        where: {
+          id: dto.workoutId,
+          userId,
+          archivedAt: null,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!workout) {
+        throw new Error('Workout not found or unavailable.');
+      }
+
+      return tx.workoutSchedule.create({
+        data: {
+          userId,
+          workoutId: workout.id,
+          date: new Date(dto.date),
+        },
+      });
     });
   }
 
@@ -22,6 +44,11 @@ export class WorkoutScheduleRepository {
         date: {
           gte: startDate,
           lt: endDate,
+        },
+        workout: {
+          is: {
+            archivedAt: null,
+          },
         },
       },
       include: {
