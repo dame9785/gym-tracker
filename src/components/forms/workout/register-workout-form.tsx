@@ -13,9 +13,8 @@ import WorkoutExerciseCard from '@/components/forms/workout/workout-exercise-car
 
 //Toast alert sonner
 import { toast } from 'sonner';
-import type { ExerciseViewModel } from '@/types/exercise-types';
 import type { AddWorkoutDto } from '@/schemas/workout-schemas';
-
+import { registerWorkoutSchema } from '@/schemas/workout-schemas';
 import { registerWorkoutAction } from '@/actions/workout-actions';
 
 type Props = {
