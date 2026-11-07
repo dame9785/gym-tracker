@@ -58,6 +58,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
   const selectedDayWorkout = getWorkoutForDay(selectedDay.name);
 
   const getDayIndicator = (workout?: WeeklyWorkoutViewModel) => {
+    console.log(workout);
     if (!workout) {
       return <Moon className="h-3.5 w-3.5 text-zinc-500" />;
     }

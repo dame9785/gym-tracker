@@ -13,20 +13,21 @@ export default function HistoryTopStats({ data }: Props) {
   return (
     <div className="mb-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
       {/* Total Workouts */}
-      <div className="group rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-800/70 p-6 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:border-zinc-700 hover:shadow-xl">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm font-medium text-zinc-400">Total Workouts</p>
+      <div className="group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-950 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 sm:rounded-2xl sm:p-5 lg:p-6">
+        <div className="absolute top-0 left-0 h-px w-full bg-linear-to-r from-orange-500/60 via-orange-500/20 to-transparent" />
 
-            <p className="mt-3 text-4xl font-bold tracking-tight text-white">{data.totalWorkouts}</p>
-
-            <p className="mt-2 text-xs text-zinc-500">All scheduled workouts</p>
-          </div>
-
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10">
+        <div className="flex flex-2 items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-500/10 text-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-orange-500/15 sm:h-11 sm:w-11 sm:rounded-xl sm:text-2xl">
+            {' '}
             <Dumbbell className="h-5 w-5 text-blue-400" />
           </div>
+
+          <h3 className="mt-3 min-w-0 text-2xl font-bold tracking-tight wrap-break-word text-orange-400 sm:mt-6 sm:text-4xl lg:text-4xl xl:text-[40px]">{data.totalWorkouts} Workouts</h3>
         </div>
+
+        <b className="mt-1 min-w-0 text-lg leading-snug font-bold wrap-break-word text-zinc-300">Total Workouts</b>
+
+        <p className="mt-1 min-w-0 text-sm leading-snug wrap-break-word text-zinc-500">All scheduled workouts</p>
       </div>
 
       {/* Completed */}
