@@ -1,5 +1,7 @@
 import { Scale, TrendingDown, TrendingUp } from 'lucide-react';
 
+import DashboardStatCard from '@/components/dashboard/dashboard-stat-card';
+
 type StatisticProps = {
   currentWeight: number | null;
   startWeight: number | null;
@@ -10,136 +12,33 @@ export default function Statistic({ currentWeight, startWeight }: StatisticProps
   const start = Number(startWeight ?? 0);
 
   const difference = current - start;
-  const isWeightGain = difference >= 0;
+
+  const stats = [
+    {
+      icon: <Scale />,
+      title: 'Nuvarande vikt',
+      value: `${currentWeight ?? 0} kg`,
+      subtitle: 'Din senaste registrerade vikt',
+    },
+    {
+      icon: <Scale />,
+      title: 'Startvikt',
+      value: `${startWeight ?? 0} kg`,
+      subtitle: 'Din ursprungliga vikt',
+    },
+    {
+      icon: difference >= 0 ? <TrendingUp /> : <TrendingDown />,
+      title: 'Förändring',
+      value: `${difference > 0 ? '+' : ''}${difference.toFixed(1)} kg`,
+      subtitle: 'Förändring sedan start',
+    },
+  ];
 
   return (
-    <div className="mb-10 grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {/* Current Weight */}
-      <div
-        className="
-          group relative min-w-0 overflow-hidden
-          rounded-2xl border border-zinc-800
-          bg-gradient-to-br from-zinc-900 to-zinc-950
-          p-6
-          transition-all duration-300
-          hover:-translate-y-1
-          hover:border-orange-500/40
-          hover:shadow-xl
-          hover:shadow-orange-500/5
-        "
-      >
-        <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-orange-500/70 via-orange-500/20 to-transparent" />
-
-        <div className="flex items-center justify-between">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400 transition-transform duration-300 group-hover:scale-110">
-            <Scale className="h-5 w-5" />
-          </div>
-
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-600">Current</span>
-        </div>
-
-        <p className="mt-6 text-sm font-medium text-zinc-400">Nuvarande vikt</p>
-
-        <div className="mt-1 flex min-w-0 items-baseline gap-2">
-          <h2 className="truncate text-3xl font-bold tracking-tight text-white">{currentWeight ?? 0}</h2>
-
-          <span className="shrink-0 text-sm font-medium text-zinc-500">kg</span>
-        </div>
-      </div>
-
-      {/* Start Weight */}
-      <div
-        className="
-          group relative min-w-0 overflow-hidden
-          rounded-2xl border border-zinc-800
-          bg-gradient-to-br from-zinc-900 to-zinc-950
-          p-6
-          transition-all duration-300
-          hover:-translate-y-1
-          hover:border-blue-500/40
-          hover:shadow-xl
-          hover:shadow-blue-500/5
-        "
-      >
-        <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-blue-500/70 via-blue-500/20 to-transparent" />
-
-        <div className="flex items-center justify-between">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 transition-transform duration-300 group-hover:scale-110">
-            <Scale className="h-5 w-5" />
-          </div>
-
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-600">Start</span>
-        </div>
-
-        <p className="mt-6 text-sm font-medium text-zinc-400">Startvikt</p>
-
-        <div className="mt-1 flex min-w-0 items-baseline gap-2">
-          <h2 className="truncate text-3xl font-bold tracking-tight text-white">{startWeight ?? 0}</h2>
-
-          <span className="shrink-0 text-sm font-medium text-zinc-500">kg</span>
-        </div>
-      </div>
-
-      {/* Difference */}
-      <div
-        className={`
-          group relative min-w-0 overflow-hidden
-          rounded-2xl border
-          bg-gradient-to-br from-zinc-900 to-zinc-950
-          p-6
-          transition-all duration-300
-          hover:-translate-y-1
-          hover:shadow-xl
-          ${
-            isWeightGain
-              ? 'border-green-500/30 hover:border-green-500/50 hover:shadow-green-500/5'
-              : 'border-red-500/30 hover:border-red-500/50 hover:shadow-red-500/5'
-          }
-        `}
-      >
-        <div
-          className={`
-            absolute left-0 top-0 h-px w-full
-            ${
-              isWeightGain
-                ? 'bg-gradient-to-r from-green-500/70 via-green-500/20 to-transparent'
-                : 'bg-gradient-to-r from-red-500/70 via-red-500/20 to-transparent'
-            }
-          `}
-        />
-
-        <div className="flex items-center justify-between">
-          <div
-            className={`
-              flex h-11 w-11 shrink-0 items-center justify-center
-              rounded-xl
-              ${isWeightGain ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}
-              transition-transform duration-300
-              group-hover:scale-110
-            `}
-          >
-            {isWeightGain ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />}
-          </div>
-
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-600">Progress</span>
-        </div>
-
-        <p className="mt-6 text-sm font-medium text-zinc-400">Förändring</p>
-
-        <div className="mt-1 flex min-w-0 items-baseline gap-2">
-          <h2
-            className={`
-              truncate text-3xl font-bold tracking-tight
-              ${isWeightGain ? 'text-green-400' : 'text-red-400'}
-            `}
-          >
-            {difference > 0 ? '+' : ''}
-            {difference.toFixed(1)}
-          </h2>
-
-          <span className="shrink-0 text-sm font-medium text-zinc-500">kg</span>
-        </div>
-      </div>
+    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {stats.map((stat) => (
+        <DashboardStatCard key={stat.title} icon={stat.icon} title={stat.title} value={stat.value} subtitle={stat.subtitle} />
+      ))}
     </div>
   );
 }
