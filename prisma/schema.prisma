@@ -184,8 +184,9 @@ model WorkoutSchedule {
   date      DateTime
   createdAt DateTime @default(now())
 
-  user    User    @relation(fields: [userId], references: [id])
-  workout Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  user     User             @relation(fields: [userId], references: [id])
+  workout  Workout          @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  sessions WorkoutSession[]
 
   @@index([userId])
   @@index([workoutId])
@@ -195,6 +196,7 @@ model WorkoutSession {
   id                 Int                  @id @default(autoincrement())
   userId             Int
   workoutId          Int
+  workoutScheduleId  Int?
   workoutName        String               @db.VarChar(100)
   workoutDescription String?              @db.VarChar(500)
   activeKey          String?              @unique @db.VarChar(191)
@@ -202,12 +204,14 @@ model WorkoutSession {
   finishedAt         DateTime?
   status             WorkoutSessionStatus @default(ACTIVE)
 
-  user      User                     @relation(fields: [userId], references: [id])
-  workout   Workout                  @relation(fields: [workoutId], references: [id], onDelete: Restrict)
-  exercises WorkoutSessionExercise[]
+  user            User            @relation(fields: [userId], references: [id])
+  workout         Workout         @relation(fields: [workoutId], references: [id], onDelete: Restrict)
+  workoutSchedule WorkoutSchedule? @relation(fields: [workoutScheduleId], references: [id], onDelete: SetNull)
+  exercises       WorkoutSessionExercise[]
 
   @@index([userId])
   @@index([workoutId])
+  @@index([workoutScheduleId])
 }
 
 model WorkoutSessionExercise {

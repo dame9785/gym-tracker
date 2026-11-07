@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { Check, Circle, Dumbbell, Moon, X } from 'lucide-react';
 
 import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
@@ -29,21 +28,22 @@ function getTodayIndex() {
   return day === 0 ? 6 : day - 1;
 }
 
+// useSyncExternalStore subscription
+const subscribe = () => () => {};
+
+// Server and initial hydration snapshot
+const getServerTodayIndex = () => null;
+
 export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
-  const [selectedWorkout, setSelectedWorkout] =
-    useState<WeeklyWorkoutViewModel>();
+  const [selectedWorkout, setSelectedWorkout] = useState<WeeklyWorkoutViewModel>();
 
-  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const todayIndex = useSyncExternalStore(subscribe, getTodayIndex, getServerTodayIndex);
 
-  const [todayIndex, setTodayIndex] = useState<number | null>(null);
+  const [manualSelectedDayIndex, setManualSelectedDayIndex] = useState<number | null>(null);
 
-  // Set today's weekday after mounting to avoid hydration mismatch.
-  useEffect(() => {
-    const today = getTodayIndex();
+  const selectedDayIndex = manualSelectedDayIndex ?? todayIndex ?? 0;
 
-    setTodayIndex(today);
-    setSelectedDayIndex(today);
-  }, []);
+  const setSelectedDayIndex = setManualSelectedDayIndex;
 
   const getWorkoutForDay = (day: string) => {
     return workouts.find(
@@ -67,9 +67,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
         return <Check className="h-3.5 w-3.5 text-green-400" />;
 
       case 'ACTIVE':
-        return (
-          <Circle className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />
-        );
+        return <Circle className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />;
 
       case 'NOTCOMPLETED':
         return <X className="h-3.5 w-3.5 text-red-400" />;
@@ -79,11 +77,35 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
     }
   };
 
+  const getStatusLabel = (status: WeeklyWorkoutViewModel['status']) => {
+    switch (status) {
+      case 'COMPLETED':
+        return 'Completed';
+      case 'ACTIVE':
+        return 'Active';
+      case 'NOTCOMPLETED':
+        return 'Missed';
+      default:
+        return 'Planned';
+    }
+  };
+
+  const getStatusStyle = (status: WeeklyWorkoutViewModel['status']) => {
+    switch (status) {
+      case 'COMPLETED':
+        return 'bg-green-500/10 text-green-400';
+      case 'ACTIVE':
+        return 'bg-orange-500/10 text-orange-400';
+      case 'NOTCOMPLETED':
+        return 'bg-red-500/10 text-red-400';
+      default:
+        return 'bg-blue-500/10 text-blue-400';
+    }
+  };
+
   return (
     <section className="min-w-0">
-      <h2 className="mb-4 px-1 text-xl font-semibold sm:mb-6 sm:px-2.5 sm:text-2xl">
-        Veckans översikt
-      </h2>
+      <h2 className="mb-4 px-1 text-xl font-semibold sm:mb-6 sm:px-2.5 sm:text-2xl">Veckans översikt</h2>
 
       {/* Mobile and tablet view */}
       <div className="lg:hidden">
@@ -101,32 +123,15 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
                 onClick={() => setSelectedDayIndex(index)}
                 aria-label={`${day.name}${isToday ? ', today' : ''}`}
                 aria-pressed={isSelected}
-                className={`
-                  flex min-w-0 flex-col items-center justify-center
-                  gap-2 rounded-xl border px-1 py-3
-                  transition-all duration-200
-                  ${
-                    isSelected
-                      ? 'border-orange-500 bg-orange-500/15 text-orange-400 shadow-lg shadow-orange-950/20'
-                      : 'border-zinc-800 bg-zinc-950/80 text-zinc-400 hover:border-zinc-600'
-                  }
-                `}
+                className={`flex min-w-0 flex-col items-center justify-center gap-2 rounded-xl border px-1 py-3 transition-all duration-200 ${
+                  isSelected ? 'border-orange-500 bg-orange-500/15 text-orange-400 shadow-lg shadow-orange-950/20' : 'border-zinc-800 bg-zinc-950/80 text-zinc-400 hover:border-zinc-600'
+                } `}
               >
-                <span className="text-xs font-semibold sm:text-sm">
-                  {day.short}
-                </span>
+                <span className="text-xs font-semibold sm:text-sm">{day.short}</span>
 
-                <span className="flex h-5 w-5 items-center justify-center">
-                  {getDayIndicator(workout)}
-                </span>
+                <span className="flex h-5 w-5 items-center justify-center">{getDayIndicator(workout)}</span>
 
-                {isToday ? (
-                  <span className="text-xs font-bold text-orange-400">
-                    IDAG
-                  </span>
-                ) : (
-                  <span className="h-3" />
-                )}
+                {isToday ? <span className="text-xs font-bold text-orange-400">IDAG</span> : <span className="h-3" />}
               </button>
             );
           })}
@@ -135,37 +140,12 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
         {/* Selected day heading */}
         <div className="mb-3 flex min-w-0 items-center justify-between gap-2 px-1">
           <div className="min-w-0">
-            <h3 className="text-lg font-semibold text-white">
-              {selectedDay.name}
-            </h3>
+            <h3 className="text-lg font-semibold text-white">{selectedDay.name}</h3>
 
-            <p className="mt-1 text-sm leading-5 text-zinc-500">
-              {selectedDayWorkout
-                ? 'Träningspass planerat eller registrerat'
-                : 'Ingen träning planerad'}
-            </p>
+            <p className="mt-1 text-sm leading-5 text-zinc-500">{selectedDayWorkout ? 'Träningspass planerat eller registrerat' : 'Ingen träning planerad'}</p>
           </div>
 
-          {selectedDayWorkout && (
-            <span
-              className={`
-                shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold
-                ${
-                  selectedDayWorkout.status === 'COMPLETED'
-                    ? 'bg-green-500/10 text-green-400'
-                    : selectedDayWorkout.status === 'ACTIVE'
-                      ? 'bg-orange-500/10 text-orange-400'
-                      : 'bg-red-500/10 text-red-400'
-                }
-              `}
-            >
-              {selectedDayWorkout.status === 'COMPLETED'
-                ? 'Completed'
-                : selectedDayWorkout.status === 'ACTIVE'
-                  ? 'Active'
-                  : 'Missed'}
-            </span>
-          )}
+          {selectedDayWorkout && <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusStyle(selectedDayWorkout.status)} `}>{getStatusLabel(selectedDayWorkout.status)}</span>}
         </div>
 
         {/* Selected day card */}
@@ -181,23 +161,11 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
 
         {/* Previous / next day */}
         <div className="mt-3 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() =>
-              setSelectedDayIndex((current) => (current + 6) % 7)
-            }
-            className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
-          >
+          <button type="button" onClick={() => setSelectedDayIndex((current) => ((current ?? todayIndex ?? 0) + 6) % 7)} className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white">
             ← Föregående
           </button>
 
-          <button
-            type="button"
-            onClick={() =>
-              setSelectedDayIndex((current) => (current + 1) % 7)
-            }
-            className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
-          >
+          <button type="button" onClick={() => setSelectedDayIndex((current) => ((current ?? todayIndex ?? 0) + 1) % 7)} className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white">
             Nästa →
           </button>
         </div>
@@ -225,14 +193,8 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
       </div>
 
       {/* Workout details modal */}
-      <Modal
-        isOpen={!!selectedWorkout}
-        onClose={() => setSelectedWorkout(undefined)}
-        title={selectedWorkout?.workoutName}
-      >
-        {selectedWorkout && (
-          <SelectedWorkout workout={selectedWorkout} />
-        )}
+      <Modal isOpen={!!selectedWorkout} onClose={() => setSelectedWorkout(undefined)} title={selectedWorkout?.workoutName}>
+        {selectedWorkout && <SelectedWorkout workout={selectedWorkout} />}
       </Modal>
     </section>
   );

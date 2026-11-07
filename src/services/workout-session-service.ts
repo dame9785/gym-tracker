@@ -5,8 +5,8 @@ import type { WorkoutFinishApiResponse, WorkoutSessionDetailApiResponse, Workout
 export class WorkoutSessionService {
   private workoutSessionRepository = new WorkoutSessionRepository();
 
-  async create(workoutId: number, userId: number): Promise<number> {
-    const workoutSession = await this.workoutSessionRepository.create(workoutId, userId);
+  async create(workoutId: number, userId: number, workoutScheduleId?: number): Promise<number> {
+    const workoutSession = await this.workoutSessionRepository.create(workoutId, userId, workoutScheduleId);
 
     return workoutSession.id;
   }

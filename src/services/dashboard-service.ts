@@ -12,10 +12,7 @@ export class DashboardService {
   private historyRepository = new HistoryRepository();
 
   async getDashboard(userId: number): Promise<DashboardResult> {
-    const [weeklyOverview, workoutSessions] = await Promise.all([
-      this.dashboardRepository.getWeeklyOverview(userId),
-      this.historyRepository.getWorkoutSessionsForStreak(userId),
-    ]);
+    const [weeklyOverview, workoutSessions] = await Promise.all([this.dashboardRepository.getWeeklyOverview(userId), this.historyRepository.getWorkoutSessionsForStreak(userId)]);
 
     const weeklyOverviewViewModel = mapWeeklyOverview(weeklyOverview);
 
@@ -27,9 +24,30 @@ export class DashboardService {
       return workoutDate.getFullYear() === today.getFullYear() && workoutDate.getMonth() === today.getMonth() && workoutDate.getDate() === today.getDate();
     });
 
+    const totalDurationMs = workoutSessions.reduce((total, item) => {
+      if (!item.startedAt || !item.finishedAt) {
+        return total;
+      }
+
+      const duration = item.finishedAt.getTime() - item.startedAt.getTime();
+
+      return total + Math.max(0, duration);
+    }, 0);
+
+    const durationMinutes = Math.floor(totalDurationMs / 60000);
+
+    workoutSessions.forEach((item) => {
+      console.log({
+        id: item.id,
+        startedAt: item.startedAt,
+        finishedAt: item.finishedAt,
+        duration: item.startedAt && item.finishedAt ? (item.finishedAt.getTime() - item.startedAt.getTime()) / 60000 : null,
+      });
+    });
+
     const weeklySummary = {
       workouts: weeklyOverviewViewModel.length,
-      trainingTime: weeklyOverviewViewModel.reduce((total, workout) => total + workout.estimatedMinutes, 0),
+      trainingTime: durationMinutes,
       streak: calculateStreak(workoutSessions),
     };
 

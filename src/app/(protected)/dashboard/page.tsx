@@ -13,6 +13,7 @@ export default async function DashboardPage() {
 
   const dashboardService = new DashboardService();
   const result = await dashboardService.getDashboard(user.userId);
+  console.log(result);
 
   return (
     <div className="w-full min-w-0 space-y-5 sm:space-y-8">

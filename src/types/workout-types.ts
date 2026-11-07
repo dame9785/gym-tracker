@@ -60,11 +60,12 @@ export interface WorkoutSessionSetViewModel {
 
 export interface WeeklyWorkoutViewModel {
   id: number;
+  workoutId: number;
   workoutName: string;
   date: string;
   exerciseCount: number;
   estimatedMinutes: number;
-  status: WorkoutSessionStatus;
+  status: WorkoutSessionStatus | null;
   activeSessionId: number | null;
   exercises: WorkoutExerciseViewModel[];
 }

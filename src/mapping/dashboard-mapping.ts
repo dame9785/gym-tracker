@@ -7,6 +7,7 @@ import { Prisma } from '@prisma/client';
 
 type WeeklyOverview = Prisma.WorkoutScheduleGetPayload<{
   include: {
+    sessions: true;
     workout: {
       include: {
         exercises: {
@@ -14,15 +15,14 @@ type WeeklyOverview = Prisma.WorkoutScheduleGetPayload<{
             exercise: true;
           };
         };
-        sessions: true;
       };
     };
   };
 }>;
 
 export function mapWeeklyOverview(workouts: WeeklyOverview[]): WeeklyWorkoutViewModel[] {
-  return workouts.map((workout) => {
-    const exercises: WorkoutExerciseViewModel[] = workout.workout.exercises.map((workoutExercise) => ({
+  return workouts.map((workoutSchedule) => {
+    const exercises: WorkoutExerciseViewModel[] = workoutSchedule.workout.exercises.map((workoutExercise) => ({
       exerciseId: workoutExercise.exercise.id,
       name: workoutExercise.exercise.name,
       sets: workoutExercise.sets,
@@ -32,16 +32,18 @@ export function mapWeeklyOverview(workouts: WeeklyOverview[]): WeeklyWorkoutView
       seconds: workoutExercise.seconds ?? 0,
     }));
 
-    const latestSession = workout.workout.sessions[0];
+    // Get the latest session belonging to this specific schedule.
+    const latestSession = [...workoutSchedule.sessions].sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime())[0];
 
     return {
-      id: workout.workout.id,
-      workoutName: workout.workout.name,
-      date: workout.date.toISOString(),
+      id: workoutSchedule.id,
+      workoutId: workoutSchedule.workout.id,
+      workoutName: workoutSchedule.workout.name,
+      date: workoutSchedule.date.toISOString(),
       exerciseCount: exercises.length,
-      estimatedMinutes: workout.workout.estimatedMinutes ?? 0,
+      estimatedMinutes: workoutSchedule.workout.estimatedMinutes ?? 0,
       activeSessionId: latestSession?.id ?? null,
-      status: latestSession?.status,
+      status: latestSession?.status ?? null,
       exercises,
     };
   });

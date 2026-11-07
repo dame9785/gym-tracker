@@ -141,11 +141,11 @@ export default function SelectedWorkout({ workout }: Props) {
 
       {/* Actions */}
       <div className="flex flex-col gap-3 border-t border-zinc-800 bg-zinc-900/40 p-6 sm:flex-row sm:items-center sm:justify-end">
-        <Link href={`/workout/${workout.id}`} className="inline-flex h-11 min-w-33 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/60 px-5 text-sm font-semibold text-zinc-300 transition-all duration-200 hover:border-zinc-600 hover:bg-zinc-800 hover:text-white">
+        <Link href={`/workout/${workout.workoutId}`} className="inline-flex h-11 min-w-33 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/60 px-5 text-sm font-semibold text-zinc-300 transition-all duration-200 hover:border-zinc-600 hover:bg-zinc-800 hover:text-white">
           View Workout
         </Link>
 
-        {workout.status !== 'COMPLETED' && <StartWorkoutButton workoutId={workout.id} />}
+        {workout.status !== 'COMPLETED' && <StartWorkoutButton workoutId={workout.workoutId} />}
       </div>
     </div>
   );

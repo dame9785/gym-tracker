@@ -11,6 +11,7 @@ const workoutSessionService = new WorkoutSessionService();
 // Validation schemas
 const createWorkoutSessionSchema = z.object({
   workoutId: z.number().int().positive(),
+  workoutScheduleId: z.number().int().positive().optional(),
 });
 
 const updateWorkoutSessionSetSchema = z.object({
@@ -37,11 +38,14 @@ type ActionSuccess<T = undefined> = {
 type ActionResult<T = undefined> = ActionSuccess<T> | ActionError;
 
 // Create workout session
-export async function createWorkoutSessionAction(workoutId: number): Promise<ActionResult<number>> {
+export async function createWorkoutSessionAction(workoutId: number, workoutScheduleId?: number): Promise<ActionResult<number>> {
   const user = await requireAuth();
 
   try {
-    const validation = createWorkoutSessionSchema.safeParse({ workoutId });
+    const validation = createWorkoutSessionSchema.safeParse({
+      workoutId,
+      workoutScheduleId,
+    });
 
     if (!validation.success) {
       return {
@@ -51,7 +55,7 @@ export async function createWorkoutSessionAction(workoutId: number): Promise<Act
       };
     }
 
-    const sessionId = await workoutSessionService.create(validation.data.workoutId, user.userId);
+    const sessionId = await workoutSessionService.create(validation.data.workoutId, user.userId, validation.data.workoutScheduleId);
 
     return {
       success: true,
@@ -61,10 +65,7 @@ export async function createWorkoutSessionAction(workoutId: number): Promise<Act
   } catch (error: unknown) {
     console.error('Create workout session action failed:', error);
 
-    const message =
-      error instanceof Error && ['Workout hittades inte.', 'Workout innehåller inga övningar.'].includes(error.message)
-        ? error.message
-        : 'Could not start workout. Please try again.';
+    const message = error instanceof Error && ['Workout hittades inte.', 'Workout innehåller inga övningar.'].includes(error.message) ? error.message : 'Could not start workout. Please try again.';
 
     return {
       success: false,

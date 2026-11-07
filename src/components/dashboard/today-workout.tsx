@@ -24,7 +24,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
     }
 
     try {
-      const result = await createWorkoutSessionAction(workout.id);
+      const result = await createWorkoutSessionAction(workout.workoutId, workout.id);
 
       if (!result.success || !result.data) {
         console.error('Failed to start workout:', result.message);
