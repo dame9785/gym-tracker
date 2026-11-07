@@ -121,17 +121,18 @@ export class HistoryRepository {
 
   // Count completed sets only.
   async getTotalSets(userId: number) {
-    return prisma.workoutSessionSet.count({
-      where: {
-        workoutSessionExercise: {
-          workoutSession: {
-            userId,
-            status: 'COMPLETED',
-          },
+  return prisma.workoutSessionSet.count({
+    where: {
+      completed: true,
+      workoutSessionExercise: {
+        workoutSession: {
+          userId,
+          status: 'COMPLETED',
         },
       },
-    });
-  }
+    },
+  });
+}
 
   // Get completed workout sessions without pagination.
   async getWorkoutSessions(userId: number) {
