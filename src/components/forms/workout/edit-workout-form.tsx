@@ -19,7 +19,10 @@ import EditWorkoutExericeCard from '@/components/forms/workout/edit-workout-exer
 
 //NEXT Redirect
 
-import { UpdateWorkoutDto, UpdateWorkoutExericseDto } from '@/schemas/workout-schemas';
+import type {
+  UpdateWorkoutDto,
+  UpdateWorkoutExerciseDto,
+} from '@/schemas/workout-schemas';
 import { updateWorkoutAction } from '@/actions/workout-actions';
 import Button from '@/components/button/button';
 
