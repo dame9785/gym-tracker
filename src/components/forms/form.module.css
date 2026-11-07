@@ -227,6 +227,13 @@
   background: rgba(249, 115, 22, 0.12);
 }
 
+.formHint {
+  margin: 0.35rem 0 0;
+  color: var(--text-grey-100);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
 .submitButton {
   width: 100%;
   margin-top: 1rem;
