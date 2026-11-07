@@ -10,7 +10,7 @@ export class HistoryService {
     try {
       
       const pageSize = 9;
-      const totalPages = Math.ceil(totalWorkouts / pageSize);
+
 
       const [
   totalWorkouts,
@@ -25,6 +25,8 @@ export class HistoryService {
   this.historyRepository.getTotalSets(userId),
   this.historyRepository.getAllWorkoutSessions(userId, page, pageSize),
 ]);
+
+      const totalPages = Math.ceil(totalWorkouts / pageSize);
 
       return {
         success: true,
