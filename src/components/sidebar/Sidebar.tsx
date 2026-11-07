@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -53,7 +54,11 @@ function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const isOpen = useSyncExternalStore(subscribeToSidebar, getSidebarSnapshot, getSidebarServerSnapshot);
+  const isOpen = useSyncExternalStore(
+    subscribeToSidebar,
+    getSidebarSnapshot,
+    getSidebarServerSnapshot
+  );
 
   const toggleSidebar = () => {
     updateSidebarPreference(!isOpen);
@@ -65,7 +70,9 @@ function Sidebar() {
 
   const handleLogout = async () => {
     closeSidebar();
+
     await logoutAction();
+
     router.push('/account/login');
     router.refresh();
   };
@@ -73,7 +80,7 @@ function Sidebar() {
   return (
     <>
       {/* Mobile header */}
-      <header className="fixed inset-x-0 top-0 z-[60] flex h-14 items-center gap-3 border-b border-slate-800 bg-[#03091b] px-4 lg:hidden">
+      <header className="fixed inset-x-0 top-0 z-[80] flex h-14 items-center gap-3 border-b border-slate-800 bg-[#03091b] px-4 lg:hidden">
         <button
           type="button"
           onClick={toggleSidebar}
@@ -82,31 +89,47 @@ function Sidebar() {
           aria-controls="gymtracker-sidebar"
           className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-200 transition hover:bg-slate-800 hover:text-orange-400"
         >
-          {isOpen ? <FiX className="h-5 w-5" /> : <FiMenu className="h-5 w-5" />}
+          {isOpen ? (
+            <FiX className="h-5 w-5" />
+          ) : (
+            <FiMenu className="h-5 w-5" />
+          )}
         </button>
 
         <Link href="/dashboard" className="flex items-center gap-2">
           <FaDumbbell className="text-orange-400" />
+
           <span className="font-extrabold text-white">
             Gym<span className="text-orange-400">Tracker</span>
           </span>
         </Link>
       </header>
 
-      {/* Overlay */}
-      {isOpen && <button type="button" aria-label="Close sidebar" onClick={closeSidebar} className="fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] lg:hidden" />}
+      {/* Sidebar overlay */}
+      {isOpen && (
+        <button
+          type="button"
+          aria-label="Close sidebar"
+          onClick={closeSidebar}
+          className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-[2px] lg:hidden"
+        />
+      )}
 
       {/* Sidebar */}
-   <aside
-  id="gymtracker-sidebar"
-  aria-label="Sidebar navigation"
-  className={`fixed left-0 top-14 bottom-0 lg:top-0 z-50 flex h-auto lg:h-dvh w-60 flex-col justify-between overflow-y-auto overscroll-contain border-r border-slate-800/80 bg-[#03091b] px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-slate-100 shadow-2xl shadow-black/20 transition-transform duration-300 ease-in-out ${
-    isOpen ? 'translate-x-0' : '-translate-x-full'
-  } lg:translate-x-0`}
->
+      <aside
+        id="gymtracker-sidebar"
+        aria-label="Sidebar navigation"
+        className={`fixed left-0 top-14 bottom-0 z-[75] flex h-auto w-60 flex-col justify-between overflow-y-auto overscroll-contain border-r border-slate-800/80 bg-[#03091b] px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-slate-100 shadow-2xl shadow-black/20 transition-transform duration-300 ease-in-out lg:top-0 lg:z-50 lg:h-dvh ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0`}
+      >
         <div>
           {/* Logo */}
-          <Link href="/dashboard" onClick={closeSidebar} className="mb-9 flex items-center gap-3 rounded-xl px-1">
+          <Link
+            href="/dashboard"
+            onClick={closeSidebar}
+            className="mb-9 flex items-center gap-3 rounded-xl px-1"
+          >
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-orange-400/20 bg-gradient-to-br from-orange-500/20 to-amber-500/10 text-xl text-orange-400 shadow-lg shadow-orange-950/20">
               <FaDumbbell />
             </div>
@@ -116,18 +139,23 @@ function Sidebar() {
                 Gym<span className="text-orange-400">Tracker</span>
               </span>
 
-              <span className="mt-0.5 whitespace-nowrap text-[9px] font-bold tracking-[0.17em] text-slate-500">YOUR FITNESS JOURNEY</span>
+              <span className="mt-0.5 whitespace-nowrap text-[9px] font-bold tracking-[0.17em] text-slate-500">
+                YOUR FITNESS JOURNEY
+              </span>
             </div>
           </Link>
 
           {/* Navigation heading */}
-          <div className="mb-3 px-2.5 text-[10px] font-bold tracking-[0.2em] text-slate-500">MENU</div>
+          <div className="mb-3 px-2.5 text-[10px] font-bold tracking-[0.2em] text-slate-500">
+            MENU
+          </div>
 
           {/* Navigation */}
           <nav aria-label="Main navigation">
             <ul className="flex flex-col gap-1.5">
               {navigationItems.map(({ label, href, icon: Icon }) => {
-                const isActive = pathname === href || pathname.startsWith(`${href}/`);
+                const isActive =
+                  pathname === href || pathname.startsWith(`${href}/`);
 
                 return (
                   <li key={href}>
@@ -141,17 +169,25 @@ function Sidebar() {
                           : 'border-transparent text-slate-400 hover:border-orange-500/15 hover:bg-orange-500/5 hover:text-white'
                       }`}
                     >
-                      {isActive && <span className="absolute inset-y-2 left-0 w-0.5 rounded-full bg-orange-400 shadow-[0_0_10px_rgba(251,146,60,0.6)]" />}
+                      {isActive && (
+                        <span className="absolute inset-y-2 left-0 w-0.5 rounded-full bg-orange-400 shadow-[0_0_10px_rgba(251,146,60,0.6)]" />
+                      )}
 
                       <Icon
                         className={`h-[17px] w-[17px] shrink-0 transition-colors duration-200 ${
-                          isActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-orange-400'
+                          isActive
+                            ? 'text-orange-400'
+                            : 'text-slate-500 group-hover:text-orange-400'
                         }`}
                       />
 
-                      <span className="flex-1 text-xs font-semibold">{label}</span>
+                      <span className="flex-1 text-xs font-semibold">
+                        {label}
+                      </span>
 
-                      {isActive && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.6)]" />}
+                      {isActive && (
+                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.6)]" />
+                      )}
                     </Link>
                   </li>
                 );
@@ -169,8 +205,13 @@ function Sidebar() {
             </div>
 
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold text-slate-200">Stay consistent</p>
-              <p className="mt-0.5 text-[9px] text-slate-500">Small steps. Big results.</p>
+              <p className="text-[11px] font-semibold text-slate-200">
+                Stay consistent
+              </p>
+
+              <p className="mt-0.5 text-[9px] text-slate-500">
+                Small steps. Big results.
+              </p>
             </div>
           </div>
 
@@ -178,7 +219,11 @@ function Sidebar() {
 
           {/* Logout */}
           <div className="[&_button]:w-full">
-            <Button type="button" variant="secondary" onClick={handleLogout}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleLogout}
+            >
               Logga ut
             </Button>
           </div>
