@@ -128,7 +128,7 @@ export default function RegisterForm() {
   const selectedCount = formData.secondaryMuscles?.length ?? 0;
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 pb-12 pt-8 sm:px-6 lg:pt-10">
+  <div className="mx-auto w-full min-w-0 max-w-4xl px-3 pb-8 pt-5 sm:px-6 sm:pb-12 sm:pt-8 lg:pt-10">
       {/* Page header */}
       <div className="mb-8 flex items-start gap-4">
         <Link
