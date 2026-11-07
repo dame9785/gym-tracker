@@ -12,7 +12,7 @@ type Props = {
   index: number;
   workoutExericse: UpdateWorkoutExerciseDto;
   exercises: ExerciseViewModel[];
-  onUpdate: (index: number, field: keyof UpdateWorkoutExericseDto, value: number | string) => void;
+  onUpdate: (index: number, field: keyof UpdateWorkoutExerciseDto, value: number | string) => void;
   onRemove: (index: number) => void;
 };
 
