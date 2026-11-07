@@ -167,7 +167,7 @@ export default function RegisterForm() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+<form onSubmit={handleSubmit} className="min-w-0 space-y-4 sm:space-y-5">
         {/* Basic information */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
