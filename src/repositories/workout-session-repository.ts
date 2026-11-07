@@ -123,9 +123,14 @@ if (!workoutExists) {
         },
         include: {
           exercises: {
-            where: {
-              archivedAt: null,
-            },
+  where: {
+    archivedAt: null,
+    exercise: {
+      is: {
+        archivedAt: null,
+      },
+    },
+  },
             include: {
               exercise: {
                 include: {
