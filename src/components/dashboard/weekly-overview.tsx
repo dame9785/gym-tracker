@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -12,16 +13,27 @@ interface WeeklyOverviewProps {
   workouts: WeeklyWorkoutViewModel[];
 }
 
-const week = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag'];
+const week = [
+  'Måndag',
+  'Tisdag',
+  'Onsdag',
+  'Torsdag',
+  'Fredag',
+  'Lördag',
+  'Söndag',
+];
 
 export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
-  const [selectedWorkout, setSelectedWorkout] = useState<WeeklyWorkoutViewModel>();
+  const [selectedWorkout, setSelectedWorkout] =
+    useState<WeeklyWorkoutViewModel>();
 
   return (
     <section className="min-w-0">
-      <h2 className="mb-4 px-1 text-xl font-semibold sm:mb-6 sm:px-2.5 sm:text-2xl">Veckans översikt</h2>
+      <h2 className="mb-4 px-1 text-xl font-semibold sm:mb-6 sm:px-2.5 sm:text-2xl">
+        Veckans översikt
+      </h2>
 
-      <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-4 xl:grid-cols-7">
+      <div className="grid min-w-0 auto-rows-fr grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 xl:grid-cols-7">
         {week.map((day) => {
           const workout = workouts.find(
             (w) =>
@@ -31,7 +43,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
           );
 
           return (
-            <div key={day} className="min-w-0">
+            <div key={day} className="h-full min-w-0">
               <WorkoutDayCard
                 day={day}
                 workout={workout}
@@ -46,8 +58,14 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
         })}
       </div>
 
-      <Modal isOpen={!!selectedWorkout} onClose={() => setSelectedWorkout(undefined)} title={selectedWorkout?.workoutName}>
-        {selectedWorkout && <SelectedWorkout workout={selectedWorkout} />}
+      <Modal
+        isOpen={!!selectedWorkout}
+        onClose={() => setSelectedWorkout(undefined)}
+        title={selectedWorkout?.workoutName}
+      >
+        {selectedWorkout && (
+          <SelectedWorkout workout={selectedWorkout} />
+        )}
       </Modal>
     </section>
   );
