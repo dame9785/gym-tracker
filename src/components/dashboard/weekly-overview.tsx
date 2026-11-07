@@ -59,21 +59,23 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
 
   const getDayIndicator = (workout?: WeeklyWorkoutViewModel) => {
     if (!workout) {
-      return <Moon className="h-3 w-3 text-zinc-500" />;
+      return <Moon className="h-3.5 w-3.5 text-zinc-500" />;
     }
 
     switch (workout.status) {
       case 'COMPLETED':
-        return <Check className="h-3 w-3 text-green-400" />;
+        return <Check className="h-3.5 w-3.5 text-green-400" />;
 
       case 'ACTIVE':
-        return <Circle className="h-3 w-3 fill-orange-400 text-orange-400" />;
+        return (
+          <Circle className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />
+        );
 
       case 'NOTCOMPLETED':
-        return <X className="h-3 w-3 text-red-400" />;
+        return <X className="h-3.5 w-3.5 text-red-400" />;
 
       default:
-        return <Dumbbell className="h-3 w-3 text-blue-400" />;
+        return <Dumbbell className="h-3.5 w-3.5 text-blue-400" />;
     }
   };
 
@@ -110,7 +112,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
                   }
                 `}
               >
-                <span className="text-[10px] font-semibold sm:text-xs">
+                <span className="text-xs font-semibold sm:text-sm">
                   {day.short}
                 </span>
 
@@ -118,26 +120,26 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
                   {getDayIndicator(workout)}
                 </span>
 
-                {isToday && (
-                  <span className="text-[8px] font-bold text-orange-400 sm:text-[9px]">
+                {isToday ? (
+                  <span className="text-xs font-bold text-orange-400">
                     IDAG
                   </span>
+                ) : (
+                  <span className="h-3" />
                 )}
-
-                {!isToday && <span className="h-[12px]" />}
               </button>
             );
           })}
         </div>
 
         {/* Selected day heading */}
-        <div className="mb-3 flex items-center justify-between px-1">
-          <div>
+        <div className="mb-3 flex min-w-0 items-center justify-between gap-2 px-1">
+          <div className="min-w-0">
             <h3 className="text-lg font-semibold text-white">
               {selectedDay.name}
             </h3>
 
-            <p className="mt-1 text-xs text-zinc-500">
+            <p className="mt-1 text-sm leading-5 text-zinc-500">
               {selectedDayWorkout
                 ? 'Träningspass planerat eller registrerat'
                 : 'Ingen träning planerad'}
@@ -147,7 +149,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
           {selectedDayWorkout && (
             <span
               className={`
-                rounded-full px-2.5 py-1 text-[10px] font-semibold
+                shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold
                 ${
                   selectedDayWorkout.status === 'COMPLETED'
                     ? 'bg-green-500/10 text-green-400'
@@ -184,7 +186,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
             onClick={() =>
               setSelectedDayIndex((current) => (current + 6) % 7)
             }
-            className="rounded-lg px-3 py-2 text-xs font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+            className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
           >
             ← Föregående
           </button>
@@ -194,7 +196,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
             onClick={() =>
               setSelectedDayIndex((current) => (current + 1) % 7)
             }
-            className="rounded-lg px-3 py-2 text-xs font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+            className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
           >
             Nästa →
           </button>
