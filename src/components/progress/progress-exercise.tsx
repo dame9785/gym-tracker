@@ -24,10 +24,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
 
   const activeChartMetric: ChartMetric = isPlank ? 'seconds' : chartMetric;
 
-  const history = useMemo(
-    () => [...(selectedExercise?.history ?? [])].sort((a, b) => new Date(a.loggedAt).getTime() - new Date(b.loggedAt).getTime()),
-    [selectedExercise],
-  );
+  const history = useMemo(() => [...(selectedExercise?.history ?? [])].sort((a, b) => new Date(a.loggedAt).getTime() - new Date(b.loggedAt).getTime()), [selectedExercise]);
 
   const first = history[0];
   const current = history.at(-1);
@@ -118,7 +115,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                 setSelectedExerciseId(Number(event.target.value));
                 setChartMetric(metric === 'seconds' ? 'seconds' : 'weight');
               }}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-white outline-none transition focus:border-orange-500 sm:max-w-md"
+              className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-white transition outline-none focus:border-orange-500 sm:max-w-md"
             >
               {exerciseProgress.map((exercise) => (
                 <option key={exercise.exerciseId} value={exercise.exerciseId}>
@@ -132,7 +129,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
             <>
               {history.length > 0 ? (
                 <>
-                  <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
                     <StatCard
                       label={isPlank ? 'Senaste tid' : 'Senaste resultat'}
                       value={isPlank ? `${current?.seconds ?? 0} sek` : `${current?.weight ?? 0} kg`}
@@ -143,28 +140,14 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                     <StatCard
                       label={isPlank ? 'Personligt tidsrekord' : 'Bästa vikt'}
                       value={isPlank ? `${bestSeconds} sek` : `${bestWeight} kg`}
-                      detail={
-                        isPlank
-                          ? bestSecondsEntry
-                            ? `Uppnått ${new Date(bestSecondsEntry.loggedAt).toLocaleDateString('sv-SE')}`
-                            : 'Inget rekord ännu'
-                          : bestWeightEntry
-                            ? `Uppnått ${new Date(bestWeightEntry.loggedAt).toLocaleDateString('sv-SE')}`
-                            : 'Ingen giltig vikt registrerad'
-                      }
+                      detail={isPlank ? (bestSecondsEntry ? `Uppnått ${new Date(bestSecondsEntry.loggedAt).toLocaleDateString('sv-SE')}` : 'Inget rekord ännu') : bestWeightEntry ? `Uppnått ${new Date(bestWeightEntry.loggedAt).toLocaleDateString('sv-SE')}` : 'Ingen giltig vikt registrerad'}
                       icon={<Trophy className="h-4 w-4" />}
                     />
 
                     <StatCard
                       label={isPlank ? 'Träningsdagar' : 'Flest repetitioner'}
                       value={isPlank ? String(trainingDays) : String(bestReps)}
-                      detail={
-                        isPlank
-                          ? 'Dagar med registrerad träning'
-                          : bestRepsEntry
-                            ? `Uppnått ${new Date(bestRepsEntry.loggedAt).toLocaleDateString('sv-SE')}`
-                            : 'Inga giltiga repetitioner registrerade'
-                      }
+                      detail={isPlank ? 'Dagar med registrerad träning' : bestRepsEntry ? `Uppnått ${new Date(bestRepsEntry.loggedAt).toLocaleDateString('sv-SE')}` : 'Inga giltiga repetitioner registrerade'}
                       icon={<Repeat2 className="h-4 w-4" />}
                     />
                   </div>
@@ -172,32 +155,18 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                   {!isPlank && first && current && (
                     <div className="mt-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
                       <div className="flex items-center gap-2 text-zinc-400">
-                        {weightChange !== null && weightChange > 0 ? (
-                          <ArrowUpRight className="h-4 w-4 text-emerald-400" />
-                        ) : weightChange !== null && weightChange < 0 ? (
-                          <ArrowDownRight className="h-4 w-4 text-rose-400" />
-                        ) : (
-                          <TrendingUp className="h-4 w-4 text-zinc-400" />
-                        )}
+                        {weightChange !== null && weightChange > 0 ? <ArrowUpRight className="h-4 w-4 text-emerald-400" /> : weightChange !== null && weightChange < 0 ? <ArrowDownRight className="h-4 w-4 text-rose-400" /> : <TrendingUp className="h-4 w-4 text-zinc-400" />}
 
                         <h3 className="text-sm font-medium">Viktutveckling sedan första registreringen</h3>
                       </div>
 
                       <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                        <p
-                          className={`text-2xl font-bold ${
-                            weightChange !== null && weightChange > 0 ? 'text-emerald-400' : weightChange !== null && weightChange < 0 ? 'text-rose-400' : 'text-white'
-                          }`}
-                        >
+                        <p className={`text-2xl font-bold ${weightChange !== null && weightChange > 0 ? 'text-emerald-400' : weightChange !== null && weightChange < 0 ? 'text-rose-400' : 'text-white'}`}>
                           {weightChange !== null && weightChange > 0 ? '+' : ''}
                           {weightChange !== null ? weightChange.toLocaleString('sv-SE') : '—'} kg
                         </p>
 
-                        <p className="text-sm text-zinc-400">
-                          {weightChangePercent !== null
-                            ? `(${weightChangePercent > 0 ? '+' : ''}${weightChangePercent.toLocaleString('sv-SE', { maximumFractionDigits: 1 })} %)`
-                            : '(Procent kan inte beräknas från 0 kg)'}
-                        </p>
+                        <p className="text-sm text-zinc-400">{weightChangePercent !== null ? `(${weightChangePercent > 0 ? '+' : ''}${weightChangePercent.toLocaleString('sv-SE', { maximumFractionDigits: 1 })} %)` : '(Procent kan inte beräknas från 0 kg)'}</p>
                       </div>
 
                       <p className="mt-2 text-xs text-zinc-500">
@@ -230,25 +199,11 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                           <span className="rounded-lg bg-purple-500/15 px-4 py-2 text-sm text-purple-300">Tid (sekunder)</span>
                         ) : (
                           <>
-                            <button
-                              type="button"
-                              onClick={() => setChartMetric('weight')}
-                              aria-pressed={activeChartMetric === 'weight'}
-                              className={`rounded-lg px-4 py-2 text-sm transition ${
-                                activeChartMetric === 'weight' ? 'bg-purple-500/15 text-purple-300' : 'text-zinc-400 hover:text-white'
-                              }`}
-                            >
+                            <button type="button" onClick={() => setChartMetric('weight')} aria-pressed={activeChartMetric === 'weight'} className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'weight' ? 'bg-purple-500/15 text-purple-300' : 'text-zinc-400 hover:text-white'}`}>
                               Vikt (kg)
                             </button>
 
-                            <button
-                              type="button"
-                              onClick={() => setChartMetric('reps')}
-                              aria-pressed={activeChartMetric === 'reps'}
-                              className={`rounded-lg px-4 py-2 text-sm transition ${
-                                activeChartMetric === 'reps' ? 'bg-purple-500/15 text-purple-300' : 'text-zinc-400 hover:text-white'
-                              }`}
-                            >
+                            <button type="button" onClick={() => setChartMetric('reps')} aria-pressed={activeChartMetric === 'reps'} className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'reps' ? 'bg-purple-500/15 text-purple-300' : 'text-zinc-400 hover:text-white'}`}>
                               Repetitioner
                             </button>
                           </>
@@ -320,19 +275,12 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                                 const isSecondsRecord = newSecondsRecords.has(entry);
 
                                 return (
-                                  <div
-                                    key={`${entry.loggedAt}-${index}`}
-                                    className="flex items-center justify-between gap-3 px-4 py-4 transition-colors hover:bg-zinc-800/20 sm:px-5"
-                                  >
+                                  <div key={`${entry.loggedAt}-${index}`} className="flex items-center justify-between gap-3 px-4 py-4 transition-colors hover:bg-zinc-800/20 sm:px-5">
                                     <div className="flex min-w-0 items-center gap-3">
-                                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/80 text-sm font-semibold text-zinc-300">
-                                        {index + 1}
-                                      </div>
+                                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/80 text-sm font-semibold text-zinc-300">{index + 1}</div>
 
                                       <div className="min-w-0">
-                                        <p className="font-semibold text-white">
-                                          {isPlank ? `${entry.seconds ?? 0} sekunder` : `${entry.weight ?? 0} kg × ${entry.reps} reps`}
-                                        </p>
+                                        <p className="font-semibold text-white">{isPlank ? `${entry.seconds ?? 0} sekunder` : `${entry.weight ?? 0} kg × ${entry.reps} reps`}</p>
                                         <p className="mt-1 text-xs text-zinc-500">Set {index + 1}</p>
                                       </div>
                                     </div>
@@ -354,17 +302,13 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                   </div>
                 </>
               ) : (
-                <p className="mt-5 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-400">
-                  Det finns inga registrerade resultat för den här övningen ännu.
-                </p>
+                <p className="mt-5 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-400">Det finns inga registrerade resultat för den här övningen ännu.</p>
               )}
             </>
           )}
         </>
       ) : (
-        <p className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-400">
-          Ingen träningshistorik finns ännu. Slutför ett träningspass och registrera dina resultat för att börja följa utvecklingen.
-        </p>
+        <p className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-400">Ingen träningshistorik finns ännu. Slutför ett träningspass och registrera dina resultat för att börja följa utvecklingen.</p>
       )}
     </section>
   );
@@ -386,7 +330,7 @@ function StatCard({ label, value, detail, icon }: { label: string; value: string
     <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
       <div className="flex items-center gap-2 text-zinc-500">
         {icon}
-        <p className="text-xs font-medium uppercase tracking-wider">{label}</p>
+        <p className="text-xs font-medium tracking-wider uppercase">{label}</p>
       </div>
 
       <p className="mt-3 text-2xl font-bold text-white">{value}</p>
