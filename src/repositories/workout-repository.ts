@@ -1,3 +1,4 @@
+
 import { prisma } from '@/lib/prisma';
 import type { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
@@ -16,23 +17,25 @@ const workoutExerciseInclude = {
 export class WorkoutRepository {
   async create(dto: AddWorkoutDto, userId: number) {
     return prisma.$transaction(async (tx) => {
-      const exerciseIds = [...new Set(dto.workoutExercises.map((exercise) => exercise.exerciseId))];
+      const exerciseIds = [
+        ...new Set(
+          dto.workoutExercises.map((exercise) => exercise.exerciseId)
+        ),
+      ];
 
-      if (exerciseIds.length > 0) {
-        const ownedExercises = await tx.exercise.findMany({
-          where: {
-            id: { in: exerciseIds },
-            userId,
-            archivedAt: null,
-          },
-          select: {
-            id: true,
-          },
-        });
+      const ownedExercises = await tx.exercise.findMany({
+        where: {
+          id: { in: exerciseIds },
+          userId,
+          archivedAt: null,
+        },
+        select: {
+          id: true,
+        },
+      });
 
-        if (ownedExercises.length !== exerciseIds.length) {
-          throw new Error('One or more exercises are invalid or archived.');
-        }
+      if (ownedExercises.length !== exerciseIds.length) {
+        throw new Error('One or more exercises are invalid or archived.');
       }
 
       const workout = await tx.workout.create({
@@ -77,45 +80,50 @@ export class WorkoutRepository {
       });
     });
   }
-async getAll(userId: number, page: number, pageSize: number) {
-  if (!Number.isSafeInteger(page) || page < 1) {
-    throw new Error('Invalid page number.');
-  }
 
-  if (!Number.isSafeInteger(pageSize) || pageSize < 1) {
-    throw new Error('Invalid page size.');
-  }
+  async getAll(userId: number, page: number, pageSize: number) {
+    if (!Number.isSafeInteger(page) || page < 1) {
+      throw new Error('Invalid page number.');
+    }
 
-  const skip = (page - 1) * pageSize;
+    if (
+      !Number.isSafeInteger(pageSize) ||
+      pageSize < 1 ||
+      pageSize > 100
+    ) {
+      throw new Error('Invalid page size.');
+    }
 
-  if (!Number.isSafeInteger(skip)) {
-    throw new Error('Invalid pagination offset.');
-  }
+    const skip = (page - 1) * pageSize;
 
-  return prisma.workout.findMany({
-    where: {
-      userId,
-      archivedAt: null,
-    },
-    include: {
-      exercises: {
-        where: {
-          archivedAt: null,
-        },
-        include: workoutExerciseInclude,
-        orderBy: {
-          order: 'asc',
+    if (!Number.isSafeInteger(skip)) {
+      throw new Error('Invalid pagination offset.');
+    }
+
+    return prisma.workout.findMany({
+      where: {
+        userId,
+        archivedAt: null,
+      },
+      include: {
+        exercises: {
+          where: {
+            archivedAt: null,
+          },
+          include: workoutExerciseInclude,
+          orderBy: {
+            order: 'asc',
+          },
         },
       },
-    },
-    orderBy: {
-      createdAt: 'asc',
-    },
-    skip,
-    take: pageSize,
-  });
-}
-  
+      orderBy: {
+        createdAt: 'asc',
+      },
+      skip,
+      take: pageSize,
+    });
+  }
+
   async update(id: number, dto: UpdateWorkoutDto, userId: number) {
     return prisma.$transaction(async (tx) => {
       const workout = await tx.workout.findFirst({
@@ -141,12 +149,20 @@ async getAll(userId: number, page: number, pageSize: number) {
         return null;
       }
 
-      const exerciseIds = [...new Set(dto.workoutExercises.map((exercise) => exercise.exerciseId))];
+      // Existing exercises may remain even if they have been archived.
+      // Only newly added exercises must be active and owned by the user.
+      const existingExerciseIds = new Set(
+        workout.exercises.map((exercise) => exercise.exerciseId)
+      );
 
-      if (exerciseIds.length > 0) {
-        const ownedExercises = await tx.exercise.findMany({
+      const newExerciseIds = dto.workoutExercises
+        .map((exercise) => exercise.exerciseId)
+        .filter((exerciseId) => !existingExerciseIds.has(exerciseId));
+
+      if (newExerciseIds.length > 0) {
+        const availableExercises = await tx.exercise.findMany({
           where: {
-            id: { in: exerciseIds },
+            id: { in: newExerciseIds },
             userId,
             archivedAt: null,
           },
@@ -155,8 +171,10 @@ async getAll(userId: number, page: number, pageSize: number) {
           },
         });
 
-        if (ownedExercises.length !== exerciseIds.length) {
-          throw new Error('One or more exercises are invalid or archived.');
+        if (availableExercises.length !== newExerciseIds.length) {
+          throw new Error(
+            'One or more exercises are invalid or archived.'
+          );
         }
       }
 
@@ -164,6 +182,7 @@ async getAll(userId: number, page: number, pageSize: number) {
         where: {
           id,
           userId,
+          archivedAt: null,
         },
         data: {
           name: dto.name,
@@ -177,16 +196,18 @@ async getAll(userId: number, page: number, pageSize: number) {
       let order = 1;
 
       for (const exercise of dto.workoutExercises) {
-        const existing = existingExercises.find((item) => item.exerciseId === exercise.exerciseId);
+        const existing = existingExercises.find(
+          (item) => item.exerciseId === exercise.exerciseId
+        );
 
         if (existing) {
           retainedIds.add(existing.id);
 
           await tx.workoutExercise.update({
             where: {
-  id: existing.id,
-  workoutId: id,
-},
+              id: existing.id,
+              workoutId: id,
+            },
             data: {
               sets: exercise.sets,
               reps: exercise.reps,
@@ -214,7 +235,9 @@ async getAll(userId: number, page: number, pageSize: number) {
         order++;
       }
 
-      const removedExerciseIds = existingExercises.filter((exercise) => !retainedIds.has(exercise.id)).map((exercise) => exercise.id);
+      const removedExerciseIds = existingExercises
+        .filter((exercise) => !retainedIds.has(exercise.id))
+        .map((exercise) => exercise.id);
 
       if (removedExerciseIds.length > 0) {
         await tx.workoutExercise.updateMany({
