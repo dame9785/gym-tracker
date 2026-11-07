@@ -58,23 +58,22 @@ export class WorkoutSessionRepository {
 
 
   async create(workoutId: number, userId: number): Promise<WorkoutSession> {
+  const workoutExists = await prisma.workout.findFirst({
+    where: {
+      id: workoutId,
+      userId,
+      archivedAt: null,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!workoutExists) {
+    throw new Error('Workout hittades inte.');
+  }
+
   const activeKey = `${userId}:${workoutId}`;
-
-const workoutExists = await prisma.workout.findFirst({
-  where: {
-    id: workoutId,
-    userId,
-    archivedAt: null,
-  },
-  select: {
-    id: true,
-  },
-});
-
-if (!workoutExists) {
-  throw new Error('Workout hittades inte.');
-}
-
 
   // Reuse an existing active workout session.
   const existingSession = await prisma.workoutSession.findFirst({
