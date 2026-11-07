@@ -1,7 +1,7 @@
 import { Prisma, type WorkoutSession, type WorkoutSessionSet } from '@prisma/client';
 
 import { prisma } from '@/lib/prisma';
-import { WorkoutRepository } from './workout-repository';
+
 
 const sessionDetailsInclude = {
   exercises: {
@@ -55,7 +55,7 @@ type SessionWithSets = Prisma.WorkoutSessionGetPayload<{
 }>;
 
 export class WorkoutSessionRepository {
-  private workoutRepository = new WorkoutRepository();
+
 
   async create(workoutId: number, userId: number): Promise<WorkoutSession> {
   const activeKey = `${userId}:${workoutId}`;
