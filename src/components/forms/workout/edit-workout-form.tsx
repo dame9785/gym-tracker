@@ -1,38 +1,45 @@
+
 'use client';
 
-//React hooks
 import { useState } from 'react';
+import type { FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-//Styles
 import FormStyles from '@/components/forms/form.module.css';
 
-//Types
 import type { ExerciseViewModel } from '@/types/exercise-types';
 import type { WorkoutViewModel } from '@/types/workout-types';
 
-//Services
 import { toast } from 'sonner';
 
-//Components
 import EditWorkoutExericeCard from '@/components/forms/workout/edit-workout-exericse-card';
 
-//NEXT Redirec
 import type { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
-
 import { updateWorkoutAction } from '@/actions/workout-actions';
+
 import Button from '@/components/button/button';
 
-//Props
-type props = {
+// --------------------------------------------------
+// Props
+// --------------------------------------------------
+
+type Props = {
   workout: WorkoutViewModel;
   exericses: ExerciseViewModel[];
 };
 
-export default function EditWorkoutForm({ workout, exericses }: props) {
-  const [errors, setErrors] = useState<Record<string, string[]>>({});
+// --------------------------------------------------
+// Component
+// --------------------------------------------------
+
+export default function EditWorkoutForm({
+  workout,
+  exericses,
+}: Props) {
   const router = useRouter();
+
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState<UpdateWorkoutDto>({
@@ -48,61 +55,84 @@ export default function EditWorkoutForm({ workout, exericses }: props) {
     })),
   });
 
-const updateExercise = (
-  index: number,
-  field: keyof UpdateWorkoutDto['workoutExercises'][number],
-  value: number | string
-) => {
-  setFormData((prev: UpdateWorkoutDto) => {
-    const updated = [...prev.workoutExercises];
+  // --------------------------------------------------
+  // Update exercise
+  // --------------------------------------------------
 
-    updated[index] = {
-      ...updated[index],
-      [field]: value,
-    };
+  const updateExercise = (
+    index: number,
+    field: keyof UpdateWorkoutDto['workoutExercises'][number],
+    value: number | string
+  ) => {
+    setFormData((prev) => {
+      const updated = [...prev.workoutExercises];
+      const current = updated[index];
 
-    return {
-      ...prev,
-      workoutExercises: updated,
-    };
-  });
-};
+      if (!current) {
+        return prev;
+      }
+
+      updated[index] = {
+        ...current,
+        [field]: value,
+      } as UpdateWorkoutDto['workoutExercises'][number];
+
+      return {
+        ...prev,
+        workoutExercises: updated,
+      };
+    });
+  };
+
+  // --------------------------------------------------
+  // Remove exercise
+  // --------------------------------------------------
 
   const removeExercise = (index: number) => {
-  setFormData((prev: UpdateWorkoutDto) => ({
-    ...prev,
-    workoutExercises: prev.workoutExercises.filter(
-      (_: UpdateWorkoutDto['workoutExercises'][number], i: number) =>
-        i !== index
-    ),
-  }));
-};
+    setFormData((prev) => ({
+      ...prev,
+      workoutExercises: prev.workoutExercises.filter(
+        (_, i) => i !== index
+      ),
+    }));
+  };
 
-const addExercise = () => {
-  setFormData((prev: UpdateWorkoutDto) => ({
-    ...prev,
-    workoutExercises: [
-      ...prev.workoutExercises,
-      {
-        exerciseId: 0,
-        sets: 0,
-        reps: 0,
-        weight: 0,
-        seconds: 0,
-        note: '',
-      },
-    ],
-  }));
-};
+  // --------------------------------------------------
+  // Add exercise
+  // --------------------------------------------------
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const addExercise = () => {
+    setFormData((prev) => ({
+      ...prev,
+      workoutExercises: [
+        ...prev.workoutExercises,
+        {
+          exerciseId: 0,
+          sets: 0,
+          reps: 0,
+          weight: 0,
+          seconds: 0,
+          note: '',
+        },
+      ],
+    }));
+  };
+
+  // --------------------------------------------------
+  // Submit
+  // --------------------------------------------------
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setIsSaving(true);
     setErrors({});
 
     try {
-      const response = await updateWorkoutAction(workout.id, formData);
+      const response = await updateWorkoutAction(
+        workout.id,
+        formData
+      );
 
       if (!response.success) {
         if (response.errors) {
@@ -117,11 +147,16 @@ const addExercise = () => {
       router.push('/workout');
     } catch (error) {
       console.error('Failed to update workout:', error);
+
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
+
+  // --------------------------------------------------
+  // Render
+  // --------------------------------------------------
 
   return (
     <div className={FormStyles.formContainer}>
@@ -129,10 +164,17 @@ const addExercise = () => {
         Uppdatera <span>träningspass</span>
       </h1>
 
-      <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
-        {/* Workout namn */}
+      <form
+        onSubmit={handleSubmit}
+        className={`${FormStyles.form} mx-auto`}
+      >
+        {/* Workout name */}
+
         <div className={FormStyles.formGroup}>
-          <label htmlFor="name" className={FormStyles.formLabel}>
+          <label
+            htmlFor="name"
+            className={FormStyles.formLabel}
+          >
             Workout namn *
           </label>
 
@@ -144,60 +186,93 @@ const addExercise = () => {
             placeholder="T.ex. Push Day"
             value={formData.name}
             onChange={(e) =>
-  setFormData((prev: UpdateWorkoutDto) => ({
-    ...prev,
-    name: e.target.value,
-  }))
-}
+              setFormData((prev) => ({
+                ...prev,
+                name: e.target.value,
+              }))
+            }
           />
-          {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
+
+          {errors.name?.map((error, index) => (
+            <p
+              key={index}
+              className={FormStyles.fieldErrorMessage}
+            >
+              {error}
+            </p>
+          ))}
         </div>
 
-        {/* Beskrivning */}
+        {/* Description */}
+
         <div className={FormStyles.formGroup}>
-          <label htmlFor="description" className={FormStyles.formLabel}>
+          <label
+            htmlFor="description"
+            className={FormStyles.formLabel}
+          >
             Beskrivning
           </label>
 
           <textarea
-            required
             id="description"
             rows={4}
             className={FormStyles.formTextarea}
             placeholder="Fokusera på axlar, bröst..."
             value={formData.description}
             onChange={(e) =>
-  setFormData((prev: UpdateWorkoutDto) => ({
-    ...prev,
-    description: e.target.value,
-  }))
-}
+              setFormData((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }))
+            }
           />
-          {errors.description && <p className={FormStyles.fieldErrorMessage}>{errors.description}</p>}
+
+          {errors.description?.map((error, index) => (
+            <p
+              key={index}
+              className={FormStyles.fieldErrorMessage}
+            >
+              {error}
+            </p>
+          ))}
         </div>
 
-        {/* Övningar */}
+        {/* Exercises */}
+
         <div className={FormStyles.exerciseSection}>
-          <h2 className={FormStyles.sectionTitle}>Övningar</h2>
+          <h2 className={FormStyles.sectionTitle}>
+            Övningar
+          </h2>
 
-          {formData.workoutExercises.map((workoutExercise, index) => (
-            <EditWorkoutExericeCard
-              key={index}
-              index={index}
-              workoutExericse={workoutExercise}
-              exercises={exericses}
-              onUpdate={updateExercise}
-              onRemove={removeExercise}
-            />
-          ))}
+          {formData.workoutExercises.map(
+            (workoutExercise, index) => (
+              <EditWorkoutExericeCard
+                key={index}
+                index={index}
+                workoutExericse={workoutExercise}
+                exercises={exericses}
+                onUpdate={updateExercise}
+                onRemove={removeExercise}
+              />
+            )
+          )}
 
-          <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>
+          <button
+            type="button"
+            className={FormStyles.addExerciseButton}
+            onClick={addExercise}
+          >
             + Lägg till övning
           </button>
         </div>
 
-        {/* Button */}
-        <Button type="submit" variant="primary" disabled={isSaving}>
+        {/* Submit button */}
+
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={isSaving}
+        >
           {isSaving ? 'Updating workout...' : 'Update workout'}
         </Button>
       </form>
