@@ -8,9 +8,10 @@ import { createWorkoutSessionAction } from '@/actions/workout-session-actions';
 
 interface StartWorkoutButtonProps {
   workoutId: number;
+  workoutScheduleId?: number;
 }
 
-export default function StartWorkoutButton({ workoutId }: StartWorkoutButtonProps) {
+export default function StartWorkoutButton({ workoutId, workoutScheduleId }: StartWorkoutButtonProps) {
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
 
@@ -20,7 +21,7 @@ export default function StartWorkoutButton({ workoutId }: StartWorkoutButtonProp
     setIsStarting(true);
 
     try {
-      const result = await createWorkoutSessionAction(workoutId);
+      const result = await createWorkoutSessionAction(workoutId, workoutScheduleId);
 
       if (!result.success || !result.data) {
         toast.error(result.message ?? 'Could not start workout. Please try again.');
@@ -42,16 +43,7 @@ export default function StartWorkoutButton({ workoutId }: StartWorkoutButtonProp
       type="button"
       onClick={handleStartWorkout}
       disabled={isStarting}
-      className="
-        inline-flex h-11 min-w-[132px]
-        items-center justify-center
-        rounded-xl border border-zinc-700
-        bg-orange-700 px-5
-        text-sm font-semibold text-zinc-300
-        transition-all duration-200
-        hover:border-zinc-600 hover:bg-zinc-800 hover:text-white
-        disabled:cursor-not-allowed disabled:opacity-60
-      "
+      className="inline-flex h-11 min-w-[132px] items-center justify-center rounded-xl border border-zinc-700 bg-orange-700 px-5 text-sm font-semibold text-zinc-300 transition-all duration-200 hover:border-zinc-600 hover:bg-zinc-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
     >
       {isStarting ? 'Starting...' : 'Start Workout'}
     </button>

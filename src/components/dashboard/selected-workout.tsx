@@ -145,7 +145,7 @@ export default function SelectedWorkout({ workout }: Props) {
           View Workout
         </Link>
 
-        {workout.status !== 'COMPLETED' && <StartWorkoutButton workoutId={workout.workoutId} />}
+        {workout.status !== 'COMPLETED' && <StartWorkoutButton workoutId={workout.workoutId} workoutScheduleId={workout.id} />}
       </div>
     </div>
   );
