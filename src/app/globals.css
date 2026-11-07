@@ -1,6 +1,18 @@
 
 @import 'tailwindcss';
 
+@theme {
+  /* Typography */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+}
+
 :root {
   --main-clr: #0b0f14;
   --dark-900-clr: #0b0c0d;
