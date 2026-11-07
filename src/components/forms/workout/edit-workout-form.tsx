@@ -141,11 +141,11 @@ const addExercise = () => {
             placeholder="T.ex. Push Day"
             value={formData.name}
             onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }))
-            }
+  setFormData((prev: UpdateWorkoutDto) => ({
+    ...prev,
+    name: e.target.value,
+  }))
+}
           />
           {errors.name && <p className={FormStyles.fieldErrorMessage}>{errors.name}</p>}
         </div>
@@ -164,11 +164,11 @@ const addExercise = () => {
             placeholder="Fokusera på axlar, bröst..."
             value={formData.description}
             onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }
+  setFormData((prev: UpdateWorkoutDto) => ({
+    ...prev,
+    description: e.target.value,
+  }))
+}
           />
           {errors.description && <p className={FormStyles.fieldErrorMessage}>{errors.description}</p>}
         </div>
