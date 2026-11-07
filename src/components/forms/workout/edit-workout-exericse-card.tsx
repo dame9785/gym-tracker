@@ -1,10 +1,7 @@
-// Styles
 import FormStyles from '@/components/forms/form.module.css';
 
-//Components
 import Button from '@/components/button/button';
 
-//Types
 import type { ExerciseViewModel } from '@/types/exercise-types';
 import type { UpdateWorkoutExerciseDto } from '@/schemas/workout-schemas';
 
@@ -12,14 +9,23 @@ type Props = {
   index: number;
   workoutExericse: UpdateWorkoutExerciseDto;
   exercises: ExerciseViewModel[];
-  onUpdate: (index: number, field: keyof UpdateWorkoutExerciseDto, value: number | string) => void;
+  onUpdate: (
+    index: number,
+    field: keyof UpdateWorkoutExerciseDto,
+    value: number | string
+  ) => void;
   onRemove: (index: number) => void;
 };
 
-export default function WorkoutExerciseCard({ index, workoutExericse, exercises, onUpdate, onRemove }: Props) {
+export default function WorkoutExerciseCard({
+  index,
+  workoutExericse,
+  exercises,
+  onUpdate,
+  onRemove,
+}: Props) {
   return (
     <div className={FormStyles.exerciseCard}>
-      {/* Övning */}
       <div className={FormStyles.formGroup}>
         <label htmlFor={`exercise-${index}`} className={FormStyles.formLabel}>
           Övning
@@ -29,7 +35,9 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
           id={`exercise-${index}`}
           className={FormStyles.formSelect}
           value={workoutExericse.exerciseId}
-          onChange={(e) => onUpdate(index, 'exerciseId', Number(e.target.value))}
+          onChange={(e) =>
+            onUpdate(index, 'exerciseId', Number(e.target.value))
+          }
         >
           <option value={0} disabled>
             Välj övning
@@ -43,7 +51,6 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
         </select>
       </div>
 
-      {/* Set / Reps / Vikt / seconds */}
       <div className={FormStyles.exerciseGrid}>
         <div className={FormStyles.formGroup}>
           <label htmlFor={`sets-${index}`} className={FormStyles.formLabel}>
@@ -55,7 +62,9 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
             type="number"
             className={FormStyles.formInput}
             value={workoutExericse.sets ?? 0}
-            onChange={(e) => onUpdate(index, 'sets', Number(e.target.value))}
+            onChange={(e) =>
+              onUpdate(index, 'sets', Number(e.target.value))
+            }
           />
         </div>
 
@@ -69,7 +78,9 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
             type="number"
             className={FormStyles.formInput}
             value={workoutExericse.reps}
-            onChange={(e) => onUpdate(index, 'reps', Number(e.target.value))}
+            onChange={(e) =>
+              onUpdate(index, 'reps', Number(e.target.value))
+            }
           />
         </div>
 
@@ -80,13 +91,16 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
 
           <input
             id={`weight-${index}`}
-            value={workoutExericse.weight ?? 0}
             type="number"
             step="0.5"
             className={FormStyles.formInput}
-            onChange={(e) => onUpdate(index, 'weight', Number(e.target.value))}
+            value={workoutExericse.weight ?? 0}
+            onChange={(e) =>
+              onUpdate(index, 'weight', Number(e.target.value))
+            }
           />
         </div>
+
         <div className={FormStyles.formGroup}>
           <label htmlFor={`seconds-${index}`} className={FormStyles.formLabel}>
             Seconds
@@ -97,12 +111,13 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
             type="number"
             className={FormStyles.formInput}
             value={workoutExericse.seconds ?? 0}
-            onChange={(e) => onUpdate(index, 'seconds', Number(e.target.value))}
+            onChange={(e) =>
+              onUpdate(index, 'seconds', Number(e.target.value))
+            }
           />
         </div>
       </div>
 
-      {/* Anteckning */}
       <div className={FormStyles.formGroup}>
         <label htmlFor={`note-${index}`} className={FormStyles.formLabel}>
           Anteckning
@@ -113,11 +128,17 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
           rows={3}
           className={FormStyles.formTextarea}
           value={workoutExericse.note}
-          onChange={(e) => onUpdate(index, 'note', e.target.value)}
+          onChange={(e) =>
+            onUpdate(index, 'note', e.target.value)
+          }
         />
       </div>
 
-      <Button type="submit" variant="delete" onClick={() => onRemove(index)}>
+      <Button
+        type="button"
+        variant="delete"
+        onClick={() => onRemove(index)}
+      >
         Ta bort övning
       </Button>
     </div>
