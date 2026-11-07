@@ -17,12 +17,10 @@ import { toast } from 'sonner';
 //Components
 import EditWorkoutExericeCard from '@/components/forms/workout/edit-workout-exericse-card';
 
-//NEXT Redirect
+//NEXT Redirec
+import type { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
-import type {
-  UpdateWorkoutDto,
-  UpdateWorkoutExerciseDto,
-} from '@/schemas/workout-schemas';
+
 import { updateWorkoutAction } from '@/actions/workout-actions';
 import Button from '@/components/button/button';
 
