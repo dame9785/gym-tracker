@@ -1,3 +1,4 @@
+
 .formContainer {
   width: 100%;
   max-width: 800px;
@@ -5,20 +6,11 @@
 }
 
 .formWrapper {
-  padding: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1em;
-}
-
-.formTitle {
-  text-align: center;
-  font-size: var(--font-size-l);
-  font-weight: var(--font-w-800);
-  line-height: 1.5rem;
-  letter-spacing: 0.1rem;
-  margin-bottom: 2em;
+  gap: 1rem;
+  padding: 1rem;
 }
 
 .form {
@@ -33,6 +25,19 @@
   backdrop-filter: blur(6px);
 }
 
+.formTitle {
+  margin: 0 0 2rem;
+  text-align: center;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-w-800);
+  line-height: 1.3;
+  letter-spacing: 0.1rem;
+}
+
+.formTitle span {
+  color: var(--orange-clr);
+}
+
 .formGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -42,25 +47,25 @@
 
 .form-left,
 .form-right {
-  min-width: 0;
   width: 100%;
-}
-
-.formTitle span {
-  color: var(--orange-clr);
+  min-width: 0;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
   margin-bottom: 2rem;
 }
 
-.formLabel {
-  font-size: 1.2rem;
+.formLabel,
+.formGroup label {
   color: var(--text-grey-100);
-  letter-spacing: 1px;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 .formSvg {
@@ -71,8 +76,8 @@
 
 .labelWrapper {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 10px;
 }
 
 .formIcon {
@@ -87,42 +92,34 @@
   height: 40px;
 }
 
-.formInput {
+.formInput,
+.formTextarea,
+.formSelect {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
   padding: 0.8rem;
-  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
   background: transparent;
   color: #fff;
+  font-size: 1rem;
+  line-height: 1.5;
   outline: none;
-  transition: 0.2s;
-  width: 100%;
-}
-
-.formTextarea {
-  padding: 0.8rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: transparent;
-  color: #fff;
-  outline: none;
-  transition: 0.2s;
-  width: 100%;
+  transition: border-color 0.2s;
 }
 
 .formInput:focus,
-.formTextarea:focus {
+.formTextarea:focus,
+.formSelect:focus {
   border-color: var(--orange-clr);
 }
 
+.formTextarea {
+  resize: vertical;
+}
+
 .formSelect {
-  width: 100%;
-  padding: 0.8rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: transparent;
-  color: #fff;
-  outline: none;
-  transition: border-color 0.2s;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
@@ -131,10 +128,6 @@
   background-repeat: no-repeat;
   background-position: right 0.8rem center;
   padding-right: 2.8rem;
-}
-
-.formSelect:focus {
-  border-color: var(--orange-clr);
 }
 
 .formSelect option {
@@ -153,28 +146,19 @@
 
 .formInput[type='number']::-webkit-outer-spin-button,
 .formInput[type='number']::-webkit-inner-spin-button {
-  -webkit-appearance: none;
   margin: 0;
+  -webkit-appearance: none;
 }
 
 .formErrorMessage {
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  margin: 1rem 0;
+  padding: 1rem;
   border: 1px solid #ef4444;
+  border-radius: 8px;
   background: rgba(239, 68, 68, 0.12);
   color: #ef4444;
-  font-size: 0.95rem;
-  margin-bottom: 3em;
-}
-
-.formErrorMessage {
-  background: #fee2e2;
-  border: 1px solid #ef4444;
-  color: #991b1b;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
 }
 
 .formErrorMessage h3 {
@@ -187,7 +171,11 @@
 }
 
 .fieldErrorMessage {
-  color: #ef4444;
+  margin: 0.35rem 0 0;
+  color: #ef5350;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 /* ===========================
@@ -199,24 +187,25 @@
 }
 
 .sectionTitle {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #fff;
   margin-bottom: 1.5rem;
+  color: #fff;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .exerciseCard {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
   background: rgba(255, 255, 255, 0.03);
 }
 
 .exerciseGrid {
+  display: flex;
   justify-content: center;
   align-items: center;
-  display: flex;
   gap: 2.5rem;
 }
 
@@ -234,14 +223,14 @@
 }
 
 .addExerciseButton:hover {
-  background: rgba(249, 115, 22, 0.12);
   border-color: var(--orange-clr);
+  background: rgba(249, 115, 22, 0.12);
 }
 
 .submitButton {
   width: 100%;
-  padding: 1rem;
   margin-top: 1rem;
+  padding: 1rem;
   border: none;
   border-radius: 10px;
   background: var(--orange-clr);
@@ -262,12 +251,127 @@
 }
 
 /* ===========================
+   Authentication Forms
+=========================== */
+
+.authForm {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2.5rem;
+}
+
+.authForm .formWrapper {
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 0 1.5rem;
+  text-align: center;
+}
+
+.authForm .formTitle {
+  margin-bottom: 0.5rem;
+}
+
+.authForm .formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formDescription {
+  color: var(--text-grey-100);
+  line-height: 1.6;
+  text-align: center;
+  font-size: var(--font-size-base);
+}
+
+.backLink {
+  display: block;
+  width: fit-content;
+  margin: 1.5rem auto 0;
+  color: var(--orange-clr);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: #ffb347;
+}
+
+.forgotPasswordWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+}
+
+.forgotPasswordWrapper a {
+  color: var(--orange-clr);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.forgotPasswordWrapper a:hover {
+  color: #ffb347;
+}
+
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.logoIcon {
+  flex-shrink: 0;
+  color: #f59e0b;
+  font-size: 1.2rem;
+}
+
+/* ===========================
+   Password Requirements
+=========================== */
+
+.passwordRequirementsTitle {
+  margin: 0.5rem 0;
+  color: var(--foreground);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.passwordRequirements {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.passwordRequirements li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.requirementValid {
+  color: #4ade80;
+}
+
+.requirementInvalid {
+  color: #a1a1aa;
+}
+
+/* ===========================
    Responsive
 =========================== */
 
 @media (max-width: 900px) {
   .exerciseGrid {
-    grid-template-columns: repeat(2, 1fr);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -275,6 +379,7 @@
   .form {
     width: 100%;
     max-width: 100%;
+    min-width: 0;
     padding: 1.5rem 1rem;
   }
 
@@ -294,159 +399,9 @@
   }
 
   .formTitle {
-    font-size: 2rem;
-    text-align: center;
+    font-size: var(--font-size-xl);
     line-height: 1.3;
-  }
-
-  .formLabel {
-    font-size: 1rem;
-  }
-
-  .formInput,
-  .formSelect {
-    box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .formGroup {
-    margin-bottom: 1.5rem;
-  }
-
-  .exerciseGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .sectionTitle {
     text-align: center;
-  }
-}
-/* ===========================
-   Authentication Forms
-=========================== */
-
-.authForm {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 2.5rem;
-}
-
-.authForm .formWrapper {
-  flex-direction: column;
-  text-align: center;
-  gap: 0.5rem;
-  padding: 0 0 1.5rem;
-}
-
-.authForm .formTitle {
-  margin-bottom: 0.5rem;
-}
-
-.formDescription {
-  color: var(--text-grey-100);
-  line-height: 1.6;
-  text-align: center;
-}
-
-.authForm .formGroup {
-  margin-bottom: 1.5rem;
-}
-
-@media (max-width: 600px) {
-  .authForm {
-    padding: 2rem 1.5rem;
-  }
-}
-
-.backLink {
-  display: block;
-  width: fit-content;
-  margin: 1.5rem auto 0;
-  color: var(--orange-clr);
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.backLink:hover {
-  color: #ffb347;
-}
-
-.forgotPasswordWrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: -1rem;
-  margin-bottom: 1.5rem;
-}
-
-.forgotPasswordWrapper a {
-  color: var(--orange-clr);
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.forgotPasswordWrapper a:hover {
-  color: #ffb347;
-}
-
-.logoWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.logoIcon {
-  color: #f59e0b;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-
-.formTitle {
-  margin: 0;
-  line-height: 1;
-}
-.logoWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.logoIcon {
-  color: #f59e0b;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-
-.formTitle {
-  margin: 0;
-  line-height: 1;
-}
-
-/* Register form - mobile layout */
-@media screen and (max-width: 600px) {
-  .form {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    padding: 1.5rem 1rem;
-  }
-
-  .formGrid {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) !important;
-    width: 100%;
-    gap: 0;
-  }
-
-  .formGrid > div {
-    width: 100%;
-    min-width: 0;
   }
 
   .formGroup {
@@ -458,86 +413,31 @@
   .formInput,
   .formSelect,
   .formTextarea {
+    box-sizing: border-box;
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    box-sizing: border-box;
   }
 
-  .formWrapper {
-    padding: 0.5rem;
+  .exerciseGrid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .formTitle {
-    font-size: 2rem;
-    line-height: 1.3;
+  .sectionTitle {
     text-align: center;
   }
-}
 
-/* Fix iOS Safari date input width */
-@media screen and (max-width: 600px) {
-  .formGroup {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .formInput,
-  .formSelect {
-    box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
+  .authForm {
+    padding: 2rem 1.5rem;
   }
 
   .formInput[type='date'] {
     display: block;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
     -webkit-appearance: none;
     appearance: none;
   }
-}
-
-
-.passwordRequirementsTitle {
-  font-size: 0.875rem;
-  color: var(--foreground);
-  margin: 0.5rem 0;
-  line-height: 1.5;
-}
-
-.passwordRequirements {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  list-style: none;
-  padding: 0;
-  margin: 0.5rem 0 0;
-}
-
-.passwordRequirements li {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-
-.requirementValid {
-  color: #4ade80;
-}
-
-.requirementInvalid {
-  color: #a1a1aa;
-}
-
-.fieldErrorMessage {
-  color: #ef5350;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  margin: 0.35rem 0 0;
-  overflow-wrap: anywhere;
 }
