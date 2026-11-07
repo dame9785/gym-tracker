@@ -10,7 +10,7 @@ import type { UpdateWorkoutExerciseDto } from '@/schemas/workout-schemas';
 
 type Props = {
   index: number;
-  workoutExericse: UpdateWorkoutExericseDto;
+  workoutExericse: UpdateWorkoutExerciseDto;
   exercises: ExerciseViewModel[];
   onUpdate: (index: number, field: keyof UpdateWorkoutExericseDto, value: number | string) => void;
   onRemove: (index: number) => void;
