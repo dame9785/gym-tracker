@@ -297,9 +297,9 @@ const defaultGoalDate = [
               onChange={handleChange}
             />
 
-            <small>
-              Exempel: 076-123 45 67 eller +46 76 123 45 67
-            </small>
+<small className={FormStyles.fieldErrorMessage}>
+  Exempel: 076-123 45 67 eller +46 76 123 45 67
+</small>
 
             {renderFieldError('phoneNumber')}
           </div>
