@@ -7,12 +7,14 @@ import { toast } from 'sonner';
 import { createWorkoutScheduleAction } from '@/actions/workout-schedule-actions';
 
 import Button from '@/components/button/button';
-
 import FormStyles from '@/components/forms/form.module.css';
 
 import type { WorkoutViewModel } from '@/types/workout-types';
 
-import { SchedelueWorkoutDto, schedelueWorkoutSchema } from '@/schemas/schedelue-workout-schemas';
+import {
+  SchedelueWorkoutDto,
+  schedelueWorkoutSchema,
+} from '@/schemas/schedelue-workout-schemas';
 
 import { ErrorsHelper } from '@/helpers/error-helper';
 
@@ -25,7 +27,9 @@ export default function ScheduleWorkoutForm({ workouts }: Props) {
 
   const [selectedWorkoutId, setSelectedWorkoutId] = useState('');
   const [date, setDate] = useState('');
-  const [errors, setErrors] = useState<Partial<Record<keyof SchedelueWorkoutDto, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof SchedelueWorkoutDto, string>>
+  >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -43,7 +47,11 @@ export default function ScheduleWorkoutForm({ workouts }: Props) {
     const validation = schedelueWorkoutSchema.safeParse(dto);
 
     if (!validation.success) {
-      setErrors(ErrorsHelper.getFormErrors<SchedelueWorkoutDto>(validation.error.issues));
+      setErrors(
+        ErrorsHelper.getFormErrors<SchedelueWorkoutDto>(
+          validation.error.issues
+        )
+      );
       return;
     }
 
@@ -76,10 +84,18 @@ export default function ScheduleWorkoutForm({ workouts }: Props) {
         </h1>
       </div>
 
-      <div className={FormStyles.formGrouo}>
-        <label htmlFor="workout">Workout</label>
+      <div className={FormStyles.formGroup}>
+        <label htmlFor="workout" className={FormStyles.formLabel}>
+          Workout
+        </label>
 
-        <select className={FormStyles.formSelect} id="workout" value={selectedWorkoutId} onChange={(e) => setSelectedWorkoutId(e.target.value)} disabled={isSubmitting}>
+        <select
+          className={FormStyles.formSelect}
+          id="workout"
+          value={selectedWorkoutId}
+          onChange={(e) => setSelectedWorkoutId(e.target.value)}
+          disabled={isSubmitting}
+        >
           <option value="">Select workout</option>
 
           {workouts.map((workout) => (
@@ -89,17 +105,32 @@ export default function ScheduleWorkoutForm({ workouts }: Props) {
           ))}
         </select>
 
-        {errors.workoutId && <p className={FormStyles.fieldErrorMessage}>{errors.workoutId}</p>}
+        {errors.workoutId && (
+          <p className={FormStyles.fieldErrorMessage}>
+            {errors.workoutId}
+          </p>
+        )}
+      </div>
 
-        <div className={FormStyles.formGroup}>
-          <label htmlFor="date" className={FormStyles.formLabel}>
-            Date
-          </label>
+      <div className={FormStyles.formGroup}>
+        <label htmlFor="date" className={FormStyles.formLabel}>
+          Date
+        </label>
 
-          <input className={FormStyles.formInput} id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} disabled={isSubmitting} />
+        <input
+          className={FormStyles.formInput}
+          id="date"
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          disabled={isSubmitting}
+        />
 
-          {errors.date && <p className={FormStyles.fieldErrorMessage}>{errors.date}</p>}
-        </div>
+        {errors.date && (
+          <p className={FormStyles.fieldErrorMessage}>
+            {errors.date}
+          </p>
+        )}
       </div>
 
       <Button type="submit" variant="primary" disabled={isSubmitting}>
