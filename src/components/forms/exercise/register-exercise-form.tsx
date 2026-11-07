@@ -416,30 +416,35 @@ export default function RegisterForm() {
         </section>
 
         {/* Form actions */}
-        <div className="sticky bottom-3 z-10 flex flex-col-reverse gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/95 p-3 shadow-2xl shadow-black/20 backdrop-blur-xl sm:flex-row sm:justify-end">
-          <Link href="/exercise" className="sm:flex-none">
-            <span className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-zinc-700 px-5 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800 sm:w-auto">
-              <ArrowLeft className="h-4 w-4" />
-              Cancel
-            </span>
-          </Link>
+     
+<div className="flex flex-col-reverse gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/95 p-3 shadow-xl sm:sticky sm:bottom-3 sm:z-10 sm:flex-row sm:justify-end sm:backdrop-blur-xl">
+  <Link href="/exercise" className="w-full sm:w-auto">
+    <span className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-zinc-700 px-5 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800">
+      <ArrowLeft className="h-4 w-4" />
+      Cancel
+    </span>
+  </Link>
 
-          <Button type="submit" variant="primary" disabled={isSaving}>
-            <span className="inline-flex items-center justify-center gap-2">
-              {isSaving ? (
-                <>
-                  <LoaderCircle className="h-4 w-4 animate-spin" />
-                  Creating exercise...
-                </>
-              ) : (
-                <>
-                  <Check className="h-4 w-4" />
-                  Create exercise
-                </>
-              )}
-            </span>
-          </Button>
-        </div>
+  <Button
+    type="submit"
+    variant="primary"
+    disabled={isSaving}
+  >
+    <span className="inline-flex items-center justify-center gap-2 whitespace-nowrap">
+      {isSaving ? (
+        <>
+          <LoaderCircle className="h-4 w-4 animate-spin" />
+          Creating exercise...
+        </>
+      ) : (
+        <>
+          <Check className="h-4 w-4" />
+          Create exercise
+        </>
+      )}
+    </span>
+  </Button>
+</div>
       </form>
     </div>
   );
