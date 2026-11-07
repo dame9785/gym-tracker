@@ -8,17 +8,23 @@ export class HistoryService {
 
   async getHistory(page: number, userId: number): Promise<ApiResponse<HistoryApiResponse>> {
     try {
-      const totalWorkouts = await this.historyRepository.getAllWorkoutSessionsCount(userId);
-
-      const totalCompleted = await this.historyRepository.getTotalCompletedWorkout(userId);
-
+      
       const pageSize = 9;
       const totalPages = Math.ceil(totalWorkouts / pageSize);
 
-      const totalTrainingTime = await this.historyRepository.getTotalTrainingTime(userId);
-      const totalCompletedSets = await this.historyRepository.getTotalSets(userId);
-
-      const workoutSessions = await this.historyRepository.getAllWorkoutSessions(userId, page, pageSize);
+      const [
+  totalWorkouts,
+  totalCompleted,
+  totalTrainingTime,
+  totalCompletedSets,
+  workoutSessions,
+] = await Promise.all([
+  this.historyRepository.getAllWorkoutSessionsCount(userId),
+  this.historyRepository.getTotalCompletedWorkout(userId),
+  this.historyRepository.getTotalTrainingTime(userId),
+  this.historyRepository.getTotalSets(userId),
+  this.historyRepository.getAllWorkoutSessions(userId, page, pageSize),
+]);
 
       return {
         success: true,
