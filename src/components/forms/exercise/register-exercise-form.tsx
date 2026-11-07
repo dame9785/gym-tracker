@@ -20,7 +20,8 @@ const inputClass =
 
 const labelClass = 'mb-2 block text-sm font-medium text-zinc-200';
 
-const sectionClass = 'rounded-2xl border border-zinc-800/90 bg-zinc-900/60 p-5 sm:p-7';
+const sectionClass =
+  'min-w-0 w-full rounded-2xl border border-zinc-800/90 bg-zinc-900/60 p-4 sm:p-7';
 
 export default function RegisterForm() {
   const router = useRouter();
