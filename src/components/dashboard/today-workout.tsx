@@ -38,8 +38,8 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
   };
 
   return (
-    <div className={`relative min-w-0 overflow-hidden rounded-2xl border bg-linear-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-4 sm:p-6 ${hasWorkout ? (workout.status === 'COMPLETED' ? 'border-green-500/30' : 'border-orange-500/30') : 'border-zinc-800'} `}>
-      <div className={`absolute top-0 left-0 h-px w-full ${hasWorkout ? (workout.status === 'COMPLETED' ? 'bg-linear-to-r from-green-500/70 via-green-500/20 to-transparent' : 'bg-gradient-to-r from-orange-500/70 via-orange-500/20 to-transparent') : 'bg-zinc-700'} `} />
+    <div className={`relative min-w-0 overflow-hidden rounded-2xl border bg-linear-to-br from-zinc-900 via-zinc-900 to-zinc-950 p-4 sm:p-6 ${hasWorkout ? (workout.status === 'COMPLETED' ? 'border-green-500/30' : 'border-orange-500/30') : 'border-zinc-800'}`}>
+      <div className={`absolute top-0 left-0 h-px w-full ${hasWorkout ? (workout.status === 'COMPLETED' ? 'bg-linear-to-r from-green-500/70 via-green-500/20 to-transparent' : 'bg-gradient-to-r from-orange-500/70 via-orange-500/20 to-transparent') : 'bg-zinc-700'}`} />
 
       {/* Header */}
       <div className="flex min-w-0 items-center justify-between gap-3">
@@ -69,7 +69,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
               </div>
             )}
 
-            {workout.status === 'ACTIVE' && <div className="shrink-0 rounded-full bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-400 sm:text-sm">Ready to train</div>}
+            {(workout.status === 'ACTIVE' || workout.status === null) && <div className="shrink-0 rounded-full bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-400 sm:text-sm">Ready to train</div>}
 
             {workout.status === 'NOTCOMPLETED' && <div className="shrink-0 rounded-full bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-400 sm:text-sm">Missed</div>}
           </div>
@@ -105,8 +105,9 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
           </div>
 
           {/* Start workout */}
-          {workout.status === 'ACTIVE' && (
+          {(workout.status === 'ACTIVE' || workout.status === null) && (
             <button
+              type="button"
               onClick={handleStartWorkout}
               className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-orange-500/10 transition-all duration-200 hover:bg-orange-400 hover:shadow-orange-500/20 active:scale-[0.98] sm:text-base"
             >
@@ -125,7 +126,7 @@ export default function TodayWorkout({ workout }: TodayWorkoutProps) {
 
           {/* Not completed */}
           {workout.status === 'NOTCOMPLETED' && (
-            <button onClick={handleStartWorkout} className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-orange-500/30 bg-orange-500/10 px-5 py-3.5 text-sm font-semibold text-orange-400 transition-all duration-200 hover:bg-orange-500/15 sm:text-base">
+            <button type="button" onClick={handleStartWorkout} className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-orange-500/30 bg-orange-500/10 px-5 py-3.5 text-sm font-semibold text-orange-400 transition-all duration-200 hover:bg-orange-500/15 sm:text-base">
               <RotateCcw className="h-4 w-4" />
               Start Workout
             </button>
