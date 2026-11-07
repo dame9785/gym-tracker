@@ -232,43 +232,50 @@ export class WorkoutSessionRepository {
     });
   }
 
-  async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number, userId: number): Promise<WorkoutSessionSet | null> {
-    return prisma.$transaction(async (tx) => {
-      const result = await tx.workoutSessionSet.updateMany({
-        where: {
-          id,
-          workoutSessionExercise: {
-            workoutSession: {
-              userId,
-            },
+async updateSet(
+  id: number,
+  actualReps: number,
+  actualWeight: number,
+  actualSeconds: number,
+  userId: number
+): Promise<WorkoutSessionSet | null> {
+  return prisma.$transaction(async (tx) => {
+    const result = await tx.workoutSessionSet.updateMany({
+      where: {
+        id,
+        workoutSessionExercise: {
+          workoutSession: {
+            userId,
+            status: 'ACTIVE',
           },
         },
-        data: {
-          actualReps,
-          actualWeight,
-          actualSeconds,
-          completed: true,
-          completedAt: new Date(),
-        },
-      });
-
-      if (result.count === 0) {
-        return null;
-      }
-
-      return tx.workoutSessionSet.findFirst({
-        where: {
-          id,
-          workoutSessionExercise: {
-            workoutSession: {
-              userId,
-            },
-          },
-        },
-      });
+      },
+      data: {
+        actualReps,
+        actualWeight,
+        actualSeconds,
+        completed: true,
+        completedAt: new Date(),
+      },
     });
-  }
 
+    if (result.count === 0) {
+      return null;
+    }
+
+    return tx.workoutSessionSet.findFirst({
+      where: {
+        id,
+        workoutSessionExercise: {
+          workoutSession: {
+            userId,
+            status: 'ACTIVE',
+          },
+        },
+      },
+    });
+  });
+}
   async finish(id: number, userId: number): Promise<WorkoutSession | null> {
     return prisma.$transaction(async (tx) => {
       const result = await tx.workoutSession.updateMany({
