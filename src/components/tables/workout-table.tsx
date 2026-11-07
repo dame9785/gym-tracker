@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -16,11 +17,9 @@ type Props = {
 export default function WorkoutTable({ workouts }: Props) {
   const router = useRouter();
 
-  // State
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutViewModel | null>(null);
 
-  // Filter workouts based on search query
   const filteredWorkouts = workouts.filter((workout) => {
     const query = searchQuery.trim().toLowerCase();
 
@@ -31,7 +30,6 @@ export default function WorkoutTable({ workouts }: Props) {
     );
   });
 
-  // Handle delete
   const handleDelete = (id: number) => {
     toast('Are you sure you want to delete this workout?', {
       action: {
@@ -47,7 +45,6 @@ export default function WorkoutTable({ workouts }: Props) {
     });
   };
 
-  // Delete workout
   const removeWorkout = async (id: number): Promise<void> => {
     try {
       const response = await deleteWorkoutAction(id);
@@ -69,10 +66,10 @@ export default function WorkoutTable({ workouts }: Props) {
 
   return (
     <>
-      <section className="w-full">
+      <section className="w-full min-w-0">
         {/* Header */}
-        <div className="mb-5 flex items-center justify-between">
-          <div>
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <div className="min-w-0">
             <h2 className="text-lg font-semibold text-white">Your workouts</h2>
 
             <p className="mt-1 text-sm text-zinc-500">
@@ -80,7 +77,7 @@ export default function WorkoutTable({ workouts }: Props) {
             </p>
           </div>
 
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-orange-500/20 bg-orange-500/10">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-orange-500/20 bg-orange-500/10">
             <Dumbbell className="h-5 w-5 text-orange-400" />
           </div>
         </div>
@@ -93,7 +90,7 @@ export default function WorkoutTable({ workouts }: Props) {
 
           <div
             className="
-              flex items-center gap-3 rounded-xl
+              flex min-w-0 items-center gap-3 rounded-xl
               border border-zinc-800 bg-zinc-900/70
               px-4 transition-colors
               focus-within:border-orange-500/50
@@ -108,20 +105,21 @@ export default function WorkoutTable({ workouts }: Props) {
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search workouts or exercises..."
               className="
-                h-12 w-full bg-transparent text-sm text-white
-                outline-none placeholder:text-zinc-500
+                h-12 w-full min-w-0 bg-transparent
+                text-base text-white outline-none
+                placeholder:text-zinc-500
               "
             />
           </div>
 
-          <p className="mt-2 text-xs text-zinc-500">
+          <p className="mt-2 text-sm text-zinc-500">
             Showing {filteredWorkouts.length} of {workouts.length} workouts
           </p>
         </div>
 
         {/* Workout cards */}
         {filteredWorkouts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             {filteredWorkouts.map((workout) => (
               <article
                 key={workout.id}
@@ -135,7 +133,7 @@ export default function WorkoutTable({ workouts }: Props) {
                 "
               >
                 {/* Card header */}
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
                     <div
                       className="
@@ -150,9 +148,13 @@ export default function WorkoutTable({ workouts }: Props) {
                     </div>
 
                     <div className="min-w-0">
-                      <h3 className="truncate font-semibold text-white">{workout.name}</h3>
+                      <h3 className="truncate text-base font-semibold text-white">
+                        {workout.name}
+                      </h3>
 
-                      <p className="mt-1 text-xs text-zinc-500">Workout #{workout.id}</p>
+                      <p className="mt-1 text-sm text-zinc-500">
+                        Workout #{workout.id}
+                      </p>
                     </div>
                   </div>
 
@@ -189,19 +191,24 @@ export default function WorkoutTable({ workouts }: Props) {
                 </div>
 
                 {/* Description */}
-                <p className="mt-4 min-h-10 text-sm leading-5 text-zinc-400" title={workout.description ?? undefined}>
+                <p
+                  className="mt-4 min-h-10 text-sm leading-5 text-zinc-400"
+                  title={workout.description ?? undefined}
+                >
                   {workout.description || 'No description added yet.'}
                 </p>
 
                 {/* Exercises */}
                 <div className="mt-5">
                   <div className="mb-3 flex items-center justify-between gap-2">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Exercises</h4>
+                    <h4 className="text-sm font-semibold uppercase tracking-wider text-zinc-500">
+                      Exercises
+                    </h4>
 
                     <span
                       className="
                         rounded-full border border-zinc-700
-                        bg-zinc-800 px-2.5 py-1 text-xs text-zinc-400
+                        bg-zinc-800 px-2.5 py-1 text-sm text-zinc-400
                       "
                     >
                       {workout.workoutExercises.length} total
@@ -214,11 +221,11 @@ export default function WorkoutTable({ workouts }: Props) {
                         <span
                           key={exercise.exerciseId}
                           className="
-                              inline-flex max-w-full items-center
-                              rounded-lg border border-blue-500/20
-                              bg-blue-500/10 px-2.5 py-1.5
-                              text-xs font-medium text-blue-400
-                            "
+                            inline-flex max-w-full items-center
+                            rounded-lg border border-blue-500/20
+                            bg-blue-500/10 px-2.5 py-1.5
+                            text-sm font-medium text-blue-400
+                          "
                         >
                           <span className="truncate">{exercise.name}</span>
                         </span>
@@ -233,19 +240,21 @@ export default function WorkoutTable({ workouts }: Props) {
                             inline-flex cursor-pointer items-center gap-1
                             rounded-lg border border-zinc-700
                             bg-zinc-800/60 px-2.5 py-1.5
-                            text-xs font-medium text-zinc-300
+                            text-sm font-medium text-zinc-300
                             transition-colors
                             hover:border-orange-500/30
                             hover:text-orange-400
                           "
                         >
                           +{workout.workoutExercises.length - 3} more
-                          <ChevronDown className="h-3 w-3" />
+                          <ChevronDown className="h-3.5 w-3.5" />
                         </button>
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm text-zinc-600">No exercises added yet.</p>
+                    <p className="text-sm text-zinc-600">
+                      No exercises added yet.
+                    </p>
                   )}
                 </div>
 
@@ -253,23 +262,27 @@ export default function WorkoutTable({ workouts }: Props) {
                 <div
                   className="
                     mt-5 space-y-2 border-t border-zinc-800
-                    pt-4 text-xs text-zinc-500
+                    pt-4 text-sm text-zinc-500
                   "
                 >
                   <div className="flex items-center gap-2">
-                    <CalendarDays className="h-3.5 w-3.5 text-orange-400" />
+                    <CalendarDays className="h-4 w-4 shrink-0 text-orange-400" />
 
                     <span>Created:</span>
 
-                    <time className="ml-auto text-zinc-400">{new Date(workout.createdAt).toLocaleDateString('sv-SE')}</time>
+                    <time className="ml-auto text-zinc-400">
+                      {new Date(workout.createdAt).toLocaleDateString('sv-SE')}
+                    </time>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <CalendarDays className="h-3.5 w-3.5 text-orange-400" />
+                    <CalendarDays className="h-4 w-4 shrink-0 text-orange-400" />
 
                     <span>Updated:</span>
 
-                    <time className="ml-auto text-zinc-400">{new Date(workout.updatedAt).toLocaleDateString('sv-SE')}</time>
+                    <time className="ml-auto text-zinc-400">
+                      {new Date(workout.updatedAt).toLocaleDateString('sv-SE')}
+                    </time>
                   </div>
                 </div>
               </article>
@@ -288,10 +301,14 @@ export default function WorkoutTable({ workouts }: Props) {
               <Search className="h-6 w-6 text-orange-400" />
             </div>
 
-            <h3 className="mt-4 font-semibold text-white">{searchQuery.trim() ? 'No workouts found' : 'No workouts yet'}</h3>
+            <h3 className="mt-4 text-base font-semibold text-white">
+              {searchQuery.trim() ? 'No workouts found' : 'No workouts yet'}
+            </h3>
 
             <p className="mt-2 max-w-sm text-sm text-zinc-500">
-              {searchQuery.trim() ? 'Try another search term.' : 'Create your first workout to start building your workout library.'}
+              {searchQuery.trim()
+                ? 'Try another search term.'
+                : 'Create your first workout to start building your workout library.'}
             </p>
 
             {searchQuery.trim() && (
@@ -345,14 +362,20 @@ export default function WorkoutTable({ workouts }: Props) {
             onClick={(event) => event.stopPropagation()}
           >
             {/* Dialog header */}
-            <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-5">
-              <div>
-                <h2 id="workout-dialog-title" className="text-lg font-semibold text-white">
+            <div className="flex items-center justify-between gap-3 border-b border-zinc-800 px-6 py-5">
+              <div className="min-w-0">
+                <h2
+                  id="workout-dialog-title"
+                  className="text-lg font-semibold text-white"
+                >
                   {selectedWorkout.name}
                 </h2>
 
                 <p className="mt-1 text-sm text-zinc-500">
-                  {selectedWorkout.workoutExercises.length} {selectedWorkout.workoutExercises.length === 1 ? 'exercise' : 'exercises'}
+                  {selectedWorkout.workoutExercises.length}{' '}
+                  {selectedWorkout.workoutExercises.length === 1
+                    ? 'exercise'
+                    : 'exercises'}
                 </p>
               </div>
 
@@ -361,7 +384,7 @@ export default function WorkoutTable({ workouts }: Props) {
                 onClick={() => setSelectedWorkout(null)}
                 aria-label="Close dialog"
                 className="
-                  rounded-lg p-2 text-zinc-400
+                  shrink-0 rounded-lg p-2 text-zinc-400
                   transition-colors hover:bg-zinc-800
                   hover:text-white
                 "
@@ -390,7 +413,9 @@ export default function WorkoutTable({ workouts }: Props) {
                     {index + 1}
                   </span>
 
-                  <span className="text-sm font-medium text-zinc-200">{exercise.name}</span>
+                  <span className="text-base font-medium text-zinc-200">
+                    {exercise.name}
+                  </span>
                 </div>
               ))}
             </div>
