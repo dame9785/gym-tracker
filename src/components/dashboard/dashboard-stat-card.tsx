@@ -1,3 +1,4 @@
+
 export type DashboardStatCardProps = {
   icon: React.ReactNode;
   title: string;
@@ -5,14 +6,19 @@ export type DashboardStatCardProps = {
   subtitle?: string;
 };
 
-export default function DashboardStatCard({ icon, title, value, subtitle }: DashboardStatCardProps) {
+export default function DashboardStatCard({
+  icon,
+  title,
+  value,
+  subtitle,
+}: DashboardStatCardProps) {
   return (
     <div
       className="
-        group relative min-w-0 overflow-hidden
-        rounded-2xl border border-zinc-800
+        group relative flex min-w-0 flex-col overflow-hidden
+        rounded-xl border border-zinc-800
         bg-gradient-to-br from-zinc-900 to-zinc-950
-        p-4 sm:p-5 lg:p-6
+        p-2.5 sm:rounded-2xl sm:p-5 lg:p-6
         transition-all duration-300
         hover:-translate-y-1
         hover:border-orange-500/40
@@ -34,12 +40,11 @@ export default function DashboardStatCard({ icon, title, value, subtitle }: Dash
       {/* Icon */}
       <div
         className="
-          flex h-9 w-9 sm:h-11 sm:w-11
-          items-center justify-center
-          rounded-xl
-          bg-orange-500/10
-          text-xl sm:text-2xl
+          flex h-8 w-8 shrink-0 items-center justify-center
+          rounded-lg bg-orange-500/10
+          text-lg
           transition-all duration-300
+          sm:h-11 sm:w-11 sm:rounded-xl sm:text-2xl
           group-hover:scale-110
           group-hover:bg-orange-500/15
         "
@@ -48,13 +53,39 @@ export default function DashboardStatCard({ icon, title, value, subtitle }: Dash
       </div>
 
       {/* Value */}
-      <p className="mt-4 break-words text-2xl font-bold tracking-tight text-white sm:mt-6 sm:text-3xl">{value}</p>
+      <p
+        className="
+          mt-2 min-w-0 break-words
+          text-xl font-bold tracking-tight text-white
+          sm:mt-6 sm:text-3xl
+        "
+      >
+        {value}
+      </p>
 
       {/* Title */}
-      <p className="mt-1 text-xs font-semibold text-zinc-300 sm:text-sm">{title}</p>
+      <p
+        className="
+          mt-1 min-w-0 break-words
+          text-[10px] font-semibold leading-tight text-zinc-300
+          sm:text-sm
+        "
+      >
+        {title}
+      </p>
 
       {/* Subtitle */}
-      {subtitle && <p className="mt-1 text-[11px] text-zinc-500 sm:text-xs">{subtitle}</p>}
+      {subtitle && (
+        <p
+          className="
+            mt-1 min-w-0 break-words
+            text-[9px] leading-tight text-zinc-500
+            sm:text-xs
+          "
+        >
+          {subtitle}
+        </p>
+      )}
     </div>
   );
 }
