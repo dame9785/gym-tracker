@@ -6,7 +6,7 @@ import Button from '@/components/button/button';
 
 //Types
 import type { ExerciseViewModel } from '@/types/exercise-types';
-import { UpdateWorkoutExericseDto } from '@/schemas/workout-schemas';
+import type { UpdateWorkoutExerciseDto } from '@/schemas/workout-schemas';
 
 type Props = {
   index: number;
