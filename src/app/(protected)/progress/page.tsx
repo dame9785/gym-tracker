@@ -1,5 +1,3 @@
-import ProgressHeader from '@/components/progress/progress-header';
-
 import ExerciseProgress from '@/components/progress/progress-exercise';
 
 import { requireAuth } from '@/lib/auth';

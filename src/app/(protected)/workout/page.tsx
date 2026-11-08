@@ -1,6 +1,3 @@
-import Link from 'next/link';
-
-import Button from '@/components/button/button';
 import WorkoutTable from '@/components/workout/workout-detail-card';
 import Pagination from '@/components/workout/pagination';
 import ErrorMessage from '@/components/ui/error-message';

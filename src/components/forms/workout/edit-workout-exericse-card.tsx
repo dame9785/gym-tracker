@@ -21,12 +21,7 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
           Övning
         </label>
 
-        <select
-          id={`exercise-${index}`}
-          className={FormStyles.formSelect}
-          value={workoutExericse.exerciseId}
-          onChange={(e) => onUpdate(index, 'exerciseId', Number(e.target.value))}
-        >
+        <select id={`exercise-${index}`} className={FormStyles.formSelect} value={workoutExericse.exerciseId} onChange={(e) => onUpdate(index, 'exerciseId', Number(e.target.value))}>
           <option value={0} disabled>
             Välj övning
           </option>
@@ -45,13 +40,7 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
             Set
           </label>
 
-          <input
-            id={`sets-${index}`}
-            type="number"
-            className={FormStyles.formInput}
-            value={workoutExericse.sets ?? 0}
-            onChange={(e) => onUpdate(index, 'sets', Number(e.target.value))}
-          />
+          <input id={`sets-${index}`} type="number" className={FormStyles.formInput} value={workoutExericse.sets ?? 0} onChange={(e) => onUpdate(index, 'sets', Number(e.target.value))} />
         </div>
 
         <div className={FormStyles.formGroup}>
@@ -59,13 +48,7 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
             Reps
           </label>
 
-          <input
-            id={`reps-${index}`}
-            type="number"
-            className={FormStyles.formInput}
-            value={workoutExericse.reps}
-            onChange={(e) => onUpdate(index, 'reps', Number(e.target.value))}
-          />
+          <input id={`reps-${index}`} type="number" className={FormStyles.formInput} value={workoutExericse.reps} onChange={(e) => onUpdate(index, 'reps', Number(e.target.value))} />
         </div>
 
         <div className={FormStyles.formGroup}>
@@ -73,14 +56,7 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
             Vikt (kg)
           </label>
 
-          <input
-            id={`weight-${index}`}
-            type="number"
-            step="0.5"
-            className={FormStyles.formInput}
-            value={workoutExericse.weight ?? 0}
-            onChange={(e) => onUpdate(index, 'weight', Number(e.target.value))}
-          />
+          <input id={`weight-${index}`} type="number" step="0.5" className={FormStyles.formInput} value={workoutExericse.weight ?? 0} onChange={(e) => onUpdate(index, 'weight', Number(e.target.value))} />
         </div>
 
         <div className={FormStyles.formGroup}>
@@ -88,13 +64,7 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
             Seconds
           </label>
 
-          <input
-            id={`seconds-${index}`}
-            type="number"
-            className={FormStyles.formInput}
-            value={workoutExericse.seconds ?? 0}
-            onChange={(e) => onUpdate(index, 'seconds', Number(e.target.value))}
-          />
+          <input id={`seconds-${index}`} type="number" className={FormStyles.formInput} value={workoutExericse.seconds ?? 0} onChange={(e) => onUpdate(index, 'seconds', Number(e.target.value))} />
         </div>
       </div>
 
@@ -103,16 +73,10 @@ export default function WorkoutExerciseCard({ index, workoutExericse, exercises,
           Anteckning
         </label>
 
-        <textarea
-          id={`note-${index}`}
-          rows={3}
-          className={FormStyles.formTextarea}
-          value={workoutExericse.note}
-          onChange={(e) => onUpdate(index, 'note', e.target.value)}
-        />
+        <textarea id={`note-${index}`} rows={3} className={FormStyles.formTextarea} value={workoutExericse.note} onChange={(e) => onUpdate(index, 'note', e.target.value)} />
       </div>
 
-      <Button type="button" variant="delete" onClick={() => onRemove(index)}>
+      <Button type="button" variant="danger" onClick={() => onRemove(index)}>
         Ta bort övning
       </Button>
     </div>
