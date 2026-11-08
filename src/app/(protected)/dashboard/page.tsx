@@ -1,7 +1,7 @@
 import DashboardStats from '@/components/dashboard/dashboard-stats';
 import DashboardHeader from '@/components/dashboard/dashboard-header';
 import WeeklyOverview from '@/components/dashboard/weekly-overview';
-import WorkoutCalendar from '@/components/calendar/workout-calendar';
+import DashboardCalendar from '@/components/dashboard/dashboard-calendar';
 
 import { requireAuth } from '@/lib/auth';
 import { DashboardService } from '@/services/dashboard-service';
@@ -31,7 +31,7 @@ export default async function DashboardPage() {
 
       {/* Calendar */}
       <section className="min-w-0">
-        <WorkoutCalendar />
+        <DashboardCalendar />
       </section>
     </div>
   );

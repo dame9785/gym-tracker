@@ -140,10 +140,6 @@ export default function WorkoutCalendar() {
                 year: 'numeric',
               })}
             </h2>
-
-            <button type="button" onClick={goToToday} className="shrink-0 rounded-md border border-orange-500/50 px-2 py-1.5 text-xs font-medium text-orange-400 transition hover:bg-orange-500/10 sm:px-3 sm:text-sm">
-              Today
-            </button>
           </div>
 
           <button

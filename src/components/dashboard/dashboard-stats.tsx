@@ -12,8 +12,8 @@ export default function DashboardStats({ summary }: DashboardStatsProps) {
   const stats = [
     {
       icon: <FaDumbbell />,
-      title: 'Workouts this week',
-      value: summary.workouts,
+      title: 'All planned workouts',
+      value: `${summary.workouts} days`,
       subtitle: 'Scheduled workouts',
     },
     {
@@ -25,7 +25,7 @@ export default function DashboardStats({ summary }: DashboardStatsProps) {
     {
       icon: <FaFire />,
       title: 'Current streak',
-      value: summary.streak,
+      value: `${summary.streak} days`,
       subtitle: 'Consecutive training days',
     },
   ];
