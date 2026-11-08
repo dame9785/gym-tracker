@@ -30,16 +30,6 @@ export class DashboardService {
       return workoutDate.getFullYear() === today.getFullYear() && workoutDate.getMonth() === today.getMonth() && workoutDate.getDate() === today.getDate();
     });
 
-    const totalDurationMs = workoutSessions.reduce((total, item) => {
-      if (!item.startedAt || !item.finishedAt) {
-        return total;
-      }
-
-      const duration = item.finishedAt.getTime() - item.startedAt.getTime();
-
-      return total + Math.max(0, duration);
-    }, 0);
-
     const weeklySummary = {
       plannedWorkouts: plannedWorkouts.length,
       completedWorkouts: monthlyCompletedWorkouts,
