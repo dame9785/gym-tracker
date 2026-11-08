@@ -36,15 +36,6 @@ export class DashboardService {
 
     const durationMinutes = Math.floor(totalDurationMs / 60000);
 
-    workoutSessions.forEach((item) => {
-      console.log({
-        id: item.id,
-        startedAt: item.startedAt,
-        finishedAt: item.finishedAt,
-        duration: item.startedAt && item.finishedAt ? (item.finishedAt.getTime() - item.startedAt.getTime()) / 60000 : null,
-      });
-    });
-
     const weeklySummary = {
       workouts: weeklyOverviewViewModel.length,
       trainingTime: durationMinutes,

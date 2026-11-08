@@ -59,10 +59,6 @@ export default function WorkoutCalendar() {
     return day.getFullYear() === today.getFullYear() && day.getMonth() === today.getMonth() && day.getDate() === today.getDate();
   };
 
-  const goToToday = () => {
-    setCurrentDate(new Date());
-  };
-
   useEffect(() => {
     let isActive = true;
 
