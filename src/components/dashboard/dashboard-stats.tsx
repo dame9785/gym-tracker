@@ -12,9 +12,9 @@ export default function DashboardStats({ summary }: DashboardStatsProps) {
   const stats = [
     {
       icon: <FaDumbbell />,
-      title: 'All planned workouts',
-      value: `${summary.workouts} days`,
-      subtitle: 'Scheduled workouts',
+      title: 'Planned workouts',
+      value: `${summary.plannedWorkouts} workouts`,
+      subtitle: 'All upcoming scheduled workouts',
     },
     {
       icon: <BsClock />,

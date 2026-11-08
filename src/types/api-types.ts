@@ -79,6 +79,7 @@ export interface WorkoutApiGetByIdResponse {
 
 export interface DashboardResult {
   weeklyOverview: WeeklyWorkoutViewModel[];
+  plannedWorkouts: WeeklyWorkoutViewModel[];
   todayWorkout?: WeeklyWorkoutViewModel;
   weeklySummary: WeeklySummaryViewModel;
 }

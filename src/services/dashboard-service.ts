@@ -12,9 +12,9 @@ export class DashboardService {
   private historyRepository = new HistoryRepository();
 
   async getDashboard(userId: number): Promise<DashboardResult> {
-    const [weeklyOverview, workoutSessions] = await Promise.all([this.dashboardRepository.getWeeklyOverview(userId), this.historyRepository.getWorkoutSessionsForStreak(userId)]);
-
+    const [weeklyOverview, plannedWorkouts, workoutSessions] = await Promise.all([this.dashboardRepository.getWeeklyOverview(userId), this.dashboardRepository.getAllPlannedWorkouts(userId), this.historyRepository.getWorkoutSessionsForStreak(userId)]);
     const weeklyOverviewViewModel = mapWeeklyOverview(weeklyOverview);
+    const plannedWorkoutsViewModel = mapWeeklyOverview(plannedWorkouts);
 
     const today = new Date();
 
@@ -38,20 +38,16 @@ export class DashboardService {
 
     const weeklySummary = {
       workouts: weeklyOverviewViewModel.length,
+      plannedWorkouts: plannedWorkouts.length,
       trainingTime: durationMinutes,
       streak: calculateStreak(workoutSessions),
     };
 
     return {
       weeklyOverview: weeklyOverviewViewModel,
+      plannedWorkouts: plannedWorkoutsViewModel,
       weeklySummary,
       todayWorkout,
     };
-  }
-
-  async getWeeklyOverView(userId: number) {
-    const weeklyOverviewData = await this.dashboardRepository.getWeeklyOverview(userId);
-
-    return mapWeeklyOverview(weeklyOverviewData);
   }
 }

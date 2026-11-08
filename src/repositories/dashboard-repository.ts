@@ -50,4 +50,51 @@ export class DashboardRepository {
       },
     });
   }
+
+  async getAllPlannedWorkouts(userId: number) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return prisma.workoutSchedule.findMany({
+      where: {
+        userId,
+        date: {
+          gte: today,
+        },
+        sessions: {
+          none: {
+            status: {
+              in: ['COMPLETED', 'NOTCOMPLETED'],
+            },
+          },
+        },
+      },
+      include: {
+        sessions: {
+          where: {
+            userId,
+          },
+          orderBy: {
+            startedAt: 'desc',
+          },
+          take: 1,
+        },
+        workout: {
+          include: {
+            exercises: {
+              include: {
+                exercise: true,
+              },
+              orderBy: {
+                order: 'asc',
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        date: 'asc',
+      },
+    });
+  }
 }
