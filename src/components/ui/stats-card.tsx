@@ -25,7 +25,7 @@ export default function DashboardStatCard({ icon, title, value, subtitle }: Dash
   }
 
   return (
-    <div className="group relative flex min-h-[120px] min-w-0 items-center justify-between gap-2 overflow-hidden rounded-xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-950 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 sm:min-h-[155px] sm:gap-4 sm:rounded-2xl sm:p-5 lg:p-6">
+    <div className="group relative flex min-h-30 min-w-0 items-center justify-between gap-2 overflow-hidden rounded-xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-950 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 sm:min-h-[155px] sm:gap-4 sm:rounded-2xl sm:p-5 lg:p-6">
       {/* Top accent */}
       <div className="absolute top-0 left-0 h-px w-full bg-linear-to-r from-orange-500/60 via-orange-500/20 to-transparent" />
 
@@ -42,7 +42,7 @@ export default function DashboardStatCard({ icon, title, value, subtitle }: Dash
 
       {/* Right value */}
       <div className="min-w-0 shrink-0 text-right">
-        <span className="text-lg leading-tight font-extrabold tracking-tight text-orange-400 sm:text-2xl lg:text-3xl">{value}</span>
+        <span className="text-lg leading-tight font-extrabold tracking-tight text-orange-400 sm:text-2xl lg:text-2xl">{value}</span>
       </div>
     </div>
   );

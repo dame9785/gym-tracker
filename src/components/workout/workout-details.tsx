@@ -3,7 +3,7 @@ import type { WorkoutViewModel, WorkoutSessionViewModel } from '@/types/workout-
 import { FaDumbbell, FaFire } from 'react-icons/fa';
 import { BsClock } from 'react-icons/bs';
 
-import DashboardStatCard from '@/components/dashboard/dashboard-stat-card';
+import DashboardStatCard from '@/components/ui/stats-card';
 
 interface Props {
   workout: WorkoutViewModel;
