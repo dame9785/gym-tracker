@@ -1,10 +1,7 @@
-import Link from 'next/link';
-
 import Statistic from '@/components/log-weight/log-weight-statistics';
 import LogHistoryList from '@/components/log-weight/log-history-list';
 
 import Pagination from '@/components/log-weight/log-pagination';
-import Button from '@/components/button/button';
 
 import { WeightLogService } from '@/services/weight-log-service';
 import ErrorMessage from '@/components/ui/error-message';
