@@ -97,11 +97,7 @@ export default function ExerciseChart({ history, metric }: Props) {
   const maxValue = data.reduce((max, point) => Math.max(max, point.value), 0);
 
   if (data.length === 0) {
-    return (
-      <div className="flex h-64 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-center text-sm text-zinc-500">
-        Ingen historik att visa ännu. Registrera ett träningsresultat för att se utvecklingen.
-      </div>
-    );
+    return <div className="flex h-64 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-center text-sm text-zinc-500">Ingen historik att visa ännu. Registrera ett träningsresultat för att se utvecklingen.</div>;
   }
 
   return (
@@ -129,15 +125,7 @@ export default function ExerciseChart({ history, metric }: Props) {
 
             <XAxis dataKey="dateLabel" tick={{ fill: '#a1a1aa', fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#3f3f46' }} minTickGap={18} />
 
-            <YAxis
-              domain={[0, (dataMax: number) => Math.max(dataMax, 1) * 1.15]}
-              allowDecimals={metric === 'weight'}
-              tick={{ fill: '#a1a1aa', fontSize: 12 }}
-              tickLine={false}
-              axisLine={false}
-              width={48}
-              tickFormatter={(value: number) => formatValue(value)}
-            />
+            <YAxis domain={[0, (dataMax: number) => Math.max(dataMax, 1) * 1.15]} allowDecimals={metric === 'weight'} tick={{ fill: '#a1a1aa', fontSize: 12 }} tickLine={false} axisLine={false} width={48} tickFormatter={(value: number) => formatValue(value)} />
 
             <Tooltip
               content={({ active, payload }) => {
@@ -201,11 +189,7 @@ export default function ExerciseChart({ history, metric }: Props) {
         </ResponsiveContainer>
       </div>
 
-      <p className="mt-3 text-xs text-zinc-500">
-        {data.length === 1
-          ? 'Du har en registrerad träningsdag. När du registrerar fler pass visas utvecklingen mellan dagarna.'
-          : `${data.length} träningsdagar visas från äldsta till senaste registrering.`}
-      </p>
+      <p className="mt-3 text-xs text-zinc-500">{data.length === 1 ? 'Du har en registrerad träningsdag. När du registrerar fler pass visas utvecklingen mellan dagarna.' : `${data.length} träningsdagar visas från äldsta till senaste registrering.`}</p>
     </div>
   );
 }

@@ -77,7 +77,7 @@ export default function GoalProgress({ weightData }: Props) {
           </div>
 
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-purple-400">Ditt mål</p>
+            <p className="text-xs font-bold tracking-[0.18em] text-purple-400 uppercase">Ditt mål</p>
             <h2 className="mt-1 text-xl font-bold text-white sm:text-2xl">Målprogression</h2>
             <p className="mt-1 text-sm text-zinc-400">Din utveckling från startvikt till målvikt</p>
           </div>
@@ -92,14 +92,14 @@ export default function GoalProgress({ weightData }: Props) {
       {/* Weight cards */}
       <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Startvikt</p>
+          <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase">Startvikt</p>
           <p className="mt-2 text-2xl font-bold text-white">
             {formatWeight(start)} <span className="text-sm text-zinc-500">kg</span>
           </p>
         </div>
 
         <div className="rounded-xl border border-blue-400/15 bg-blue-500/[0.05] p-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Nuvarande vikt</p>
+          <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase">Nuvarande vikt</p>
           <p className="mt-2 text-2xl font-bold text-blue-400">
             {formatWeight(current)} <span className="text-sm text-zinc-500">kg</span>
           </p>
@@ -110,7 +110,7 @@ export default function GoalProgress({ weightData }: Props) {
         </div>
 
         <div className="rounded-xl border border-purple-400/15 bg-purple-500/[0.05] p-4">
-          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Målvikt</p>
+          <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase">Målvikt</p>
           <p className="mt-2 text-2xl font-bold text-purple-400">
             {formatWeight(goal)} <span className="text-sm text-zinc-500">kg</span>
           </p>
@@ -124,42 +124,10 @@ export default function GoalProgress({ weightData }: Props) {
           <p className="text-sm font-semibold text-purple-300">{percentage.toFixed(0)}%</p>
         </div>
 
-        <div
-          className="h-3 overflow-hidden rounded-full bg-zinc-800"
-          role="progressbar"
-          aria-label="Måluppfyllelse"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(percentage)}
-        >
+        <div className="h-3 overflow-hidden rounded-full bg-zinc-800" role="progressbar" aria-label="Måluppfyllelse" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(percentage)}>
           <div className="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-700" style={{ width: `${percentage}%` }} />
         </div>
       </div>
-
-      {/* Return-to-start progress */}
-      {needsReturnToStart && (
-        <div className="mt-6 rounded-xl border border-amber-500/15 bg-amber-500/[0.03] p-4">
-          <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm font-medium text-zinc-300">Tillbaka till startvikten</p>
-            <p className="text-sm font-semibold text-amber-400">{formatWeight(distanceFromStart)} kg kvar</p>
-          </div>
-
-          <div
-            className="h-2 overflow-hidden rounded-full bg-zinc-800"
-            role="progressbar"
-            aria-label="Nuvarande vikt i förhållande till startvikten"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(recoveryPercentage)}
-          >
-            <div className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400 transition-all duration-700" style={{ width: `${recoveryPercentage}%` }} />
-          </div>
-
-          <p className="mt-2 text-xs text-zinc-500">
-            Nuvarande vikt: {formatWeight(current)} kg av {formatWeight(start)} kg.
-          </p>
-        </div>
-      )}
 
       {/* Goal information */}
       <div className="mt-5 flex flex-col gap-2 border-t border-white/5 pt-5 sm:flex-row sm:items-center sm:justify-between">
