@@ -24,7 +24,7 @@ export default function DashboardStatCard({ icon, title, value, subtitle }: Dash
 
       {/* Right value */}
       <div className="min-w-0 shrink-0 text-right">
-        <span className="text-lg leading-tight font-extrabold tracking-wide text-orange-400 sm:text-2xl lg:text-2xl">{value}</span>
+        <span className="lg:text-l text-lg leading-tight font-bold tracking-wide text-orange-400 sm:text-2xl">{value}</span>
       </div>
     </div>
   );

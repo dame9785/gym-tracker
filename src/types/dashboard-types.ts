@@ -1,6 +1,5 @@
 export interface WeeklySummaryViewModel {
-  workouts: number;
   plannedWorkouts: number;
-  trainingTime: number;
+  completedWorkouts: number;
   streak: number;
 }

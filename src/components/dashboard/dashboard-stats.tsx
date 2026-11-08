@@ -1,5 +1,4 @@
-import { FaDumbbell, FaFire } from 'react-icons/fa';
-import { BsClock } from 'react-icons/bs';
+import { FaDumbbell, FaFire, FaCheckCircle } from 'react-icons/fa';
 
 import type { WeeklySummaryViewModel } from '@/types/dashboard-types';
 import StatsCard from '@/components/ui/stats-card';
@@ -17,10 +16,10 @@ export default function DashboardStats({ summary }: DashboardStatsProps) {
       subtitle: 'All upcoming scheduled workouts',
     },
     {
-      icon: <BsClock />,
-      title: 'Training time',
-      value: `${summary.trainingTime} min`,
-      subtitle: 'Estimated this week',
+      icon: <FaCheckCircle />,
+      title: 'Completed workouts',
+      value: `${summary.completedWorkouts} workouts`,
+      subtitle: 'Completed this month',
     },
     {
       icon: <FaFire />,

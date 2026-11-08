@@ -12,7 +12,13 @@ export class DashboardService {
   private historyRepository = new HistoryRepository();
 
   async getDashboard(userId: number): Promise<DashboardResult> {
-    const [weeklyOverview, plannedWorkouts, workoutSessions] = await Promise.all([this.dashboardRepository.getWeeklyOverview(userId), this.dashboardRepository.getAllPlannedWorkouts(userId), this.historyRepository.getWorkoutSessionsForStreak(userId)]);
+    const [weeklyOverview, plannedWorkouts, workoutSessions, monthlyCompletedWorkouts] = await Promise.all([
+      this.dashboardRepository.getWeeklyOverview(userId),
+      this.dashboardRepository.getAllPlannedWorkouts(userId),
+      this.historyRepository.getWorkoutSessionsForStreak(userId),
+      this.dashboardRepository.getMonthlyCompletedWorkouts(userId),
+    ]);
+
     const weeklyOverviewViewModel = mapWeeklyOverview(weeklyOverview);
     const plannedWorkoutsViewModel = mapWeeklyOverview(plannedWorkouts);
 
@@ -34,12 +40,9 @@ export class DashboardService {
       return total + Math.max(0, duration);
     }, 0);
 
-    const durationMinutes = Math.floor(totalDurationMs / 60000);
-
     const weeklySummary = {
-      workouts: weeklyOverviewViewModel.length,
       plannedWorkouts: plannedWorkouts.length,
-      trainingTime: durationMinutes,
+      completedWorkouts: monthlyCompletedWorkouts,
       streak: calculateStreak(workoutSessions),
     };
 

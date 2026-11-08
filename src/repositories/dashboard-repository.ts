@@ -97,4 +97,23 @@ export class DashboardRepository {
       },
     });
   }
+
+  async getMonthlyCompletedWorkouts(userId: number) {
+    const now = new Date();
+
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    return prisma.workoutSession.count({
+      where: {
+        userId,
+        status: 'COMPLETED',
+        finishedAt: {
+          gte: startOfMonth,
+          lt: startOfNextMonth,
+        },
+      },
+    });
+  }
 }
