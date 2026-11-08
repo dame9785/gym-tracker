@@ -13,6 +13,7 @@ import { requireAuth } from '@/lib/auth';
 import ProgressService from '@/services/progress-service';
 import GoalProgress from '@/components/progress/progress-goal';
 import WeightProgressChart from '@/components/log-weight/weight-progress-chart';
+import Header from '@/components/ui/header';
 
 type Props = {
   searchParams: Promise<{
@@ -51,24 +52,16 @@ export default async function LogWeight({ searchParams }: Props) {
   const totalPage = data.pagination.totalPages;
 
   return (
-    <div className="mx-auto w-full max-w-7xl min-w-0 px-0">
-      {/* Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-3xl font-bold text-white sm:text-4xl">Weight</h1>
-
-          <p className="mt-2 text-sm text-zinc-400 sm:text-base">Track your weight over time.</p>
-        </div>
-
-        <div className="w-full sm:w-auto">
-          <Link href="/log-weight/create" className="block">
-            <Button type="button" variant="primary">
-              Log weight
-            </Button>
-          </Link>
-        </div>
-      </div>
-
+    <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+      <Header
+        title="YOUR PROGRESS"
+        subTitle="Weight tracking"
+        description="Track your weight over time and monitor your progress towards your fitness goals."
+        action={{
+          label: 'Add weight',
+          href: '/log-weight/create',
+        }}
+      />
       {/* Statistics */}
       <div className="mb-6 min-w-0 sm:mb-8">
         <Statistic currentWeight={currentWeight} startWeight={startWeight} />
@@ -117,6 +110,6 @@ export default async function LogWeight({ searchParams }: Props) {
       <div className="mt-4 min-w-0">
         <Pagination currentPage={currentPage} totalPages={totalPage} />
       </div>
-    </div>
+    </section>
   );
 }

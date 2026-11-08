@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -13,12 +12,10 @@ import { toast } from 'sonner';
 
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
-import {
-  registerWorkoutSchema,
-  type AddWorkoutDto,
-} from '@/schemas/workout-schemas';
+import { registerWorkoutSchema, type AddWorkoutDto } from '@/schemas/workout-schemas';
 
 import { registerWorkoutAction } from '@/actions/workout-actions';
+import Button from '@/components/button/button';
 
 // --------------------------------------------------
 // Props
@@ -32,12 +29,11 @@ type Props = {
 // Component
 // --------------------------------------------------
 
-export default function AddWorkoutForm({
-  exericses,
-}: Props) {
+export default function AddWorkoutForm({ exericses }: Props) {
   const router = useRouter();
 
   const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState<AddWorkoutDto>({
     name: '',
@@ -57,17 +53,16 @@ export default function AddWorkoutForm({
     const validation = registerWorkoutSchema.safeParse(formData);
 
     if (!validation.success) {
-      setErrors(
-        validation.error.flatten().fieldErrors as Record<string, string[]>
-      );
+      setErrors(validation.error.flatten().fieldErrors as Record<string, string[]>);
 
       return;
     }
 
+    setIsSaving(true);
+    setErrors({});
+
     try {
-      const response = await registerWorkoutAction(
-        validation.data
-      );
+      const response = await registerWorkoutAction(validation.data);
 
       if (!response.success) {
         setErrors(response.errors ?? {});
@@ -76,9 +71,7 @@ export default function AddWorkoutForm({
         return;
       }
 
-      toast.success(
-        response.message ?? 'Workout was successfully created.'
-      );
+      toast.success(response.message ?? 'Workout was successfully created.');
 
       router.push('/workout');
     } catch (error) {
@@ -116,9 +109,7 @@ export default function AddWorkoutForm({
   const removeExercise = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      workoutExercises: prev.workoutExercises.filter(
-        (_, i) => i !== index
-      ),
+      workoutExercises: prev.workoutExercises.filter((_, i) => i !== index),
     }));
   };
 
@@ -126,11 +117,7 @@ export default function AddWorkoutForm({
   // Update exercise
   // --------------------------------------------------
 
-  const updateExercise = (
-    index: number,
-    field: keyof AddWorkoutDto['workoutExercises'][number],
-    value: number | string
-  ) => {
+  const updateExercise = (index: number, field: keyof AddWorkoutDto['workoutExercises'][number], value: number | string) => {
     setFormData((prev) => {
       const updatedExercises = [...prev.workoutExercises];
       const current = updatedExercises[index];
@@ -161,17 +148,11 @@ export default function AddWorkoutForm({
         Add <span>Workout</span>
       </h1>
 
-      <form
-        onSubmit={handleSubmit}
-        className={`${FormStyles.form} mx-auto`}
-      >
+      <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
         {/* Workout name */}
 
         <div className={FormStyles.formGroup}>
-          <label
-            htmlFor="name"
-            className={FormStyles.formLabel}
-          >
+          <label htmlFor="name" className={FormStyles.formLabel}>
             Workout name *
           </label>
 
@@ -191,12 +172,7 @@ export default function AddWorkoutForm({
           />
 
           {errors.name?.map((error, index) => (
-            <p
-              key={index}
-              id="name-error"
-              className="text-red-500"
-              role="alert"
-            >
+            <p key={index} id="name-error" className="text-red-500" role="alert">
               {error}
             </p>
           ))}
@@ -205,10 +181,7 @@ export default function AddWorkoutForm({
         {/* Description */}
 
         <div className={FormStyles.formGroup}>
-          <label
-            htmlFor="description"
-            className={FormStyles.formLabel}
-          >
+          <label htmlFor="description" className={FormStyles.formLabel}>
             Description
           </label>
 
@@ -227,12 +200,7 @@ export default function AddWorkoutForm({
           />
 
           {errors.description?.map((error, index) => (
-            <p
-              key={index}
-              id="description-error"
-              className="text-red-500"
-              role="alert"
-            >
+            <p key={index} id="description-error" className="text-red-500" role="alert">
               {error}
             </p>
           ))}
@@ -241,38 +209,29 @@ export default function AddWorkoutForm({
         {/* Exercises */}
 
         <div className={FormStyles.exerciseSection}>
-          <h2 className={FormStyles.sectionTitle}>
-            Exercises
-          </h2>
+          <h2 className={FormStyles.sectionTitle}>Exercises</h2>
 
           {formData.workoutExercises.map((exercise, index) => (
-            <WorkoutExerciseCard
-              key={index}
-              index={index}
-              exercise={exercise}
-              exercises={exericses}
-              onUpdate={updateExercise}
-              onRemove={removeExercise}
-            />
+            <WorkoutExerciseCard key={index} index={index} exercise={exercise} exercises={exericses} onUpdate={updateExercise} onRemove={removeExercise} />
           ))}
 
-          <button
-            type="button"
-            className={FormStyles.addExerciseButton}
-            onClick={addExercise}
-          >
+          <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>
             + Add more exercises
           </button>
         </div>
 
         {/* Submit button */}
+        <div className="flex gap-2">
+          <div className="flex flex-wrap gap-3">
+            <Button type="submit" variant="primary" size="md" loading={isSaving}>
+              Save Workout
+            </Button>
 
-        <button
-          type="submit"
-          className={FormStyles.submitButton}
-        >
-          Save Workout
-        </button>
+            <Button href="/log-weight" variant="secondary" size="md">
+              Gå tillbaka
+            </Button>
+          </div>
+        </div>
       </form>
     </div>
   );

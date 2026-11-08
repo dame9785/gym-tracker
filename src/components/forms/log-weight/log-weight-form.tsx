@@ -1,15 +1,11 @@
 'use client';
 
-//Next Link & Hooks
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 //Alert
 import { toast } from 'sonner';
 
-//CSS Modules
-import buttonStyles from '@/components/button/button.module.css';
 import FormStyles from '@/components/forms/form.module.css';
 
 //Components
@@ -86,8 +82,8 @@ export default function LogWeightForm() {
   return (
     <div className={FormStyles.formContainer}>
       <h1 className={FormStyles.formTitle}>
-        Lägg till
-        <span> Vikt</span>
+        Track your
+        <span> weight</span>
       </h1>
       <form className={FormStyles.form} onSubmit={handleSumbit}>
         <div className={FormStyles.formGroup}>
@@ -106,12 +102,15 @@ export default function LogWeightForm() {
         </div>
 
         <div className="flex gap-2">
-          <Button type="submit" variant="primary" disabled={isSaving}>
-            Logga vikt
-          </Button>
-          <Link href="/log-weight" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
-            Gå tillbaks
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Button type="submit" variant="primary" size="md" loading={isSaving}>
+              Logga vikt
+            </Button>
+
+            <Button href="/log-weight" variant="secondary" size="md">
+              Gå tillbaka
+            </Button>
+          </div>
         </div>
       </form>
     </div>

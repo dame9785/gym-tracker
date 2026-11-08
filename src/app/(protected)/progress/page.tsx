@@ -4,6 +4,7 @@ import ExerciseProgress from '@/components/progress/progress-exercise';
 
 import { requireAuth } from '@/lib/auth';
 import ProgressService from '@/services/progress-service';
+import Header from '@/components/ui/header';
 
 export default async function ProgressPage() {
   const user = await requireAuth();
@@ -13,9 +14,7 @@ export default async function ProgressPage() {
 
   return (
     <main className="mx-auto w-full max-w-7xl px-0 py-6 sm:px-6 sm:py-8 lg:px-8">
-      <div className="mb-10">
-        <ProgressHeader />
-      </div>
+      <Header title="YOUR TRAINING" subTitle="Progress" description="Track your progress. Reach your goals. Keep track of your workouts, monitor your progress, and stay focused on your fitness goals." />
 
       <section>
         <div className="mb-5 border-b border-zinc-800 pb-4">

@@ -1,60 +1,146 @@
 .button {
-  border-radius: 25px;
-  border: none;
-  font-size: var(--font-size-s);
-  color: #fff;
-  cursor: pointer;
-  line-height: 1.2;
-  letter-spacing: 2px;
-  padding: 0.6rem;
-  display: flex;
-  justify-content: center;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  border: 1px solid transparent;
+  border-radius: 999px;
+
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.025em;
   text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
-.small {
-  padding: 6px 12px;
-  font-size: 0.875rem;
+/* Sizes */
+
+.sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
 }
 
-.medium {
-  padding: 10px 18px;
+.md {
+  padding: 0.7rem 1.25rem;
+  font-size: 0.9rem;
+}
+
+.lg {
+  padding: 0.85rem 1.75rem;
   font-size: 1rem;
 }
 
-.large {
-  padding: 14px 24px;
-  font-size: 1.125rem;
-}
+/* Primary */
 
 .primary {
-  background-color: var(--btn-bg-primary);
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-1px);
-    background-color: oklch(0.63 0.15 69.21 / 0.94);
-  }
+  color: #18181b;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-color: #f59e0b;
+  box-shadow: 0 3px 12px rgb(245 158 11 / 12%);
 }
+
+.primary:hover:not(.disabled) {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  border-color: #fbbf24;
+  box-shadow: 0 4px 18px rgb(245 158 11 / 25%);
+  transform: translateY(-1px);
+}
+
+/* Secondary */
 
 .secondary {
-  background-color: var(--btn-bg-secondary);
-  transition: all 0.2s ease;
+  color: #e4e4e7;
+  background: #18181b;
+  border-color: #3f3f46;
+}
 
-  &:hover {
-    transform: translateY(-1px);
-    background-color: #1b49af;
+.secondary:hover:not(.disabled) {
+  color: #fbbf24;
+  background: #27272a;
+  border-color: #f59e0b;
+}
+
+/* Ghost */
+
+.ghost {
+  color: #f59e0b;
+  background: transparent;
+}
+
+.ghost:hover:not(.disabled) {
+  color: #fbbf24;
+  background: rgb(245 158 11 / 8%);
+}
+
+/* Danger */
+
+.danger {
+  color: #fee2e2;
+  background: #7f1d1d;
+  border-color: #991b1b;
+}
+
+.danger:hover:not(.disabled) {
+  background: #991b1b;
+  border-color: #b91c1c;
+}
+
+/* Focus */
+
+.button:focus-visible {
+  outline: 2px solid #fbbf24;
+  outline-offset: 3px;
+}
+
+/* Disabled */
+
+.disabled,
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: auto;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Loading spinner */
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-.delete {
-  background-color: color-mix(in oklab, var(--color-red-500) 20%, transparent);
-  transition: all 0.2s ease;
-  color: var(--color-red-400);
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
 
-  &:hover {
-    transform: translateY(-1px);
-    background-color: color-mix(in oklab, lab(55 75.08 48.85 / 0.56) 20%, transparent);
+  .spinner {
+    animation-duration: 1.5s;
   }
 }

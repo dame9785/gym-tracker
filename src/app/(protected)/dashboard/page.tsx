@@ -1,10 +1,10 @@
 import DashboardStats from '@/components/dashboard/dashboard-stats';
-import DashboardHeader from '@/components/dashboard/dashboard-header';
 import WeeklyOverview from '@/components/dashboard/weekly-overview';
 import DashboardCalendar from '@/components/dashboard/dashboard-calendar';
 
 import { requireAuth } from '@/lib/auth';
 import { DashboardService } from '@/services/dashboard-service';
+import Header from '@/components/ui/header';
 
 export default async function DashboardPage() {
   const user = await requireAuth();
@@ -16,7 +16,7 @@ export default async function DashboardPage() {
     <div className="w-full min-w-0 space-y-5 sm:space-y-8">
       {/* Header */}
       <section className="min-w-0">
-        <DashboardHeader />
+        <Header title="YOUR TRAINING" subTitle="Dashboard" description="Track your progress. Reach your goals. Keep track of your workouts, monitor your progress, and stay focused on your fitness goals." />
       </section>
 
       {/* Statistics */}
