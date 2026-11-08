@@ -53,12 +53,6 @@ export default function GoalProgress({ weightData }: Props) {
 
   const percentage = totalChange === 0 ? 100 : isGoalReached ? 100 : Math.min(100, Math.max(0, (currentChange / totalChange) * 100));
 
-  // Visar nuvarande vikt i förhållande till startvikten.
-  // Den orange indikatorn visas bara när vikten gått åt fel håll.
-  const recoveryPercentage = start > 0 ? Math.min(100, Math.max(0, (current / start) * 100)) : 0;
-
-  const needsReturnToStart = isBelowStart || isAboveStart;
-
   const formatWeight = (value: number) =>
     value.toLocaleString('sv-SE', {
       minimumFractionDigits: 1,
