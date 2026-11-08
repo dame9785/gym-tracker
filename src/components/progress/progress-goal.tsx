@@ -1,4 +1,4 @@
-import { Target, TrendingUp, TrendingDown, CheckCircle2 } from 'lucide-react';
+import { Target, CheckCircle2 } from 'lucide-react';
 import type { WeightProgress } from '@/types/progress-type';
 
 type Props = {
@@ -59,55 +59,25 @@ export default function GoalProgress({ weightData }: Props) {
       maximumFractionDigits: 1,
     });
 
-  const changeLabel = currentChange > 0 ? `+${formatWeight(currentChange)} kg` : `${formatWeight(currentChange)} kg`;
-
   return (
-    <section className="mb-10 overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 p-6 sm:p-8">
+    <section className="mb-10 overflow-hidden rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 via-zinc-950 to-zinc-900 p-6 sm:p-8">
       {/* Header */}
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
             <Target className="h-6 w-6" />
           </div>
 
           <div>
-            <p className="text-xs font-bold tracking-[0.18em] text-purple-400 uppercase">Ditt mål</p>
+            <p className="text-xs font-bold tracking-[0.18em] text-orange-400 uppercase">Ditt mål</p>
             <h2 className="mt-1 text-xl font-bold text-white sm:text-2xl">Målprogression</h2>
             <p className="mt-1 text-sm text-zinc-400">Din utveckling från startvikt till målvikt</p>
           </div>
         </div>
 
-        <div className="rounded-xl border border-purple-400/20 bg-purple-500/[0.06] px-4 py-3 sm:text-right">
+        <div className="rounded-xl border border-orange-400/20 bg-orange-500/6 px-4 py-3 sm:text-right">
           <p className="text-sm text-zinc-400">Måluppfyllelse</p>
-          <p className="mt-1 text-3xl font-extrabold text-purple-400">{percentage.toFixed(0)}%</p>
-        </div>
-      </div>
-
-      {/* Weight cards */}
-      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
-          <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase">Startvikt</p>
-          <p className="mt-2 text-2xl font-bold text-white">
-            {formatWeight(start)} <span className="text-sm text-zinc-500">kg</span>
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-blue-400/15 bg-blue-500/[0.05] p-4">
-          <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase">Nuvarande vikt</p>
-          <p className="mt-2 text-2xl font-bold text-blue-400">
-            {formatWeight(current)} <span className="text-sm text-zinc-500">kg</span>
-          </p>
-          <p className="mt-1 flex items-center gap-1 text-xs text-zinc-400">
-            {currentChange >= 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
-            {changeLabel} sedan start
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-purple-400/15 bg-purple-500/[0.05] p-4">
-          <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase">Målvikt</p>
-          <p className="mt-2 text-2xl font-bold text-purple-400">
-            {formatWeight(goal)} <span className="text-sm text-zinc-500">kg</span>
-          </p>
+          <p className="mt-1 text-3xl font-extrabold text-orange-400">{percentage.toFixed(0)}%</p>
         </div>
       </div>
 
@@ -115,11 +85,11 @@ export default function GoalProgress({ weightData }: Props) {
       <div className="mt-7">
         <div className="mb-2 flex items-center justify-between gap-3">
           <p className="text-sm font-medium text-zinc-300">{isGoalReached ? 'Målet är uppnått!' : 'Framsteg mot målet'}</p>
-          <p className="text-sm font-semibold text-purple-300">{percentage.toFixed(0)}%</p>
+          <p className="text-sm font-semibold text-orange-400">{percentage.toFixed(0)}%</p>
         </div>
 
         <div className="h-3 overflow-hidden rounded-full bg-zinc-800" role="progressbar" aria-label="Måluppfyllelse" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(percentage)}>
-          <div className="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-700" style={{ width: `${percentage}%` }} />
+          <div className="h-full rounded-full bg-linear-to-r from-orange-500 to-blue-500 transition-all duration-700" style={{ width: `${percentage}%` }} />
         </div>
       </div>
 

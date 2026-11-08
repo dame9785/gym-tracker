@@ -51,7 +51,7 @@ export default async function LogWeight({ searchParams }: Props) {
   const totalPage = data.pagination.totalPages;
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-7xl px-0">
+    <div className="mx-auto w-full max-w-7xl min-w-0 px-0">
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
@@ -87,8 +87,6 @@ export default async function LogWeight({ searchParams }: Props) {
           <WeightProgressChart history={weightProgress.history} startWeight={weightProgress.startWeight} goalWeight={weightProgress.goalWeight} />
         </div>
       )}
-
-     
 
       {/* Weight History */}
       <section className="min-w-0 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 sm:p-6" id="history-section-weight">

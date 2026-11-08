@@ -48,7 +48,7 @@ export default function LogHistory({ logItem }: PageProps) {
   };
 
   return (
-    <article className="group min-w-0 rounded-xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950 p-4 transition-all duration-200 hover:border-orange-500/30 hover:shadow-lg hover:shadow-orange-500/5 sm:p-5">
+    <article className="group min-w-0 rounded-xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-950 p-4 transition-all duration-200 hover:border-orange-500/30 hover:shadow-lg hover:shadow-orange-500/5 sm:p-5">
       {/* Main content */}
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         {/* Date */}
@@ -69,7 +69,7 @@ export default function LogHistory({ logItem }: PageProps) {
             <Scale className="h-4 w-4" />
           </div>
 
-          <span className="text-lg font-bold tabular-nums text-white sm:text-xl">{logItem.weight.toString()} kg</span>
+          <span className="text-lg font-bold text-white tabular-nums sm:text-xl">{logItem.weight.toString()} kg</span>
         </div>
       </div>
 
@@ -81,11 +81,7 @@ export default function LogHistory({ logItem }: PageProps) {
 
         <div className="flex shrink-0 items-center gap-2">
           {/* Edit */}
-          <Link
-            href={`/log-weight/edit/${logItem.id}`}
-            aria-label="Redigera vikt"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800/70 text-zinc-400 transition-all duration-200 hover:border-blue-500/40 hover:bg-blue-500/10 hover:text-blue-400"
-          >
+          <Link href={`/log-weight/edit/${logItem.id}`} aria-label="Redigera vikt" className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800/70 text-zinc-400 transition-all duration-200 hover:border-blue-500/40 hover:bg-blue-500/10 hover:text-blue-400">
             <Pencil className="h-4 w-4" />
           </Link>
 
