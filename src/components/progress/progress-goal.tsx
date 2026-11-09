@@ -74,11 +74,6 @@ export default function GoalProgress({ weightData }: Props) {
             <p className="mt-1 text-sm text-zinc-400">Din utveckling från startvikt till målvikt</p>
           </div>
         </div>
-
-        <div className="rounded-xl border border-orange-400/20 bg-orange-500/6 px-4 py-3 sm:text-right">
-          <p className="text-sm text-zinc-400">Måluppfyllelse</p>
-          <p className="mt-1 text-3xl font-extrabold text-orange-400">{percentage.toFixed(0)}%</p>
-        </div>
       </div>
 
       {/* Main goal progress */}
