@@ -126,90 +126,96 @@ export class WorkoutSessionRepository {
     }
 
     try {
-      return await prisma.$transaction(async (tx): Promise<WorkoutSession> => {
-        // Fetch and validate the workout inside the transaction.
-        const workout = await tx.workout.findFirst({
-          where: {
-            id: workoutId,
-            userId,
-            archivedAt: null,
-          },
-          include: {
-            exercises: {
-              where: {
-                archivedAt: null,
-                exercise: {
-                  is: {
-                    archivedAt: null,
+      return await prisma.$transaction(
+        async (tx): Promise<WorkoutSession> => {
+          // Fetch and validate workout inside transaction.
+          const workout = await tx.workout.findFirst({
+            where: {
+              id: workoutId,
+              userId,
+              archivedAt: null,
+            },
+            include: {
+              exercises: {
+                where: {
+                  archivedAt: null,
+                  exercise: {
+                    is: {
+                      archivedAt: null,
+                    },
                   },
                 },
-              },
-              include: {
-                exercise: {
-                  include: {
-                    muscles: {
-                      include: {
-                        muscleGroup: true,
+                include: {
+                  exercise: {
+                    include: {
+                      muscles: {
+                        include: {
+                          muscleGroup: true,
+                        },
                       },
                     },
                   },
                 },
+                orderBy: {
+                  order: 'asc',
+                },
               },
-              orderBy: {
-                order: 'asc',
-              },
-            },
-          },
-        });
-
-        if (!workout) {
-          throw new Error('Workout hittades inte.');
-        }
-
-        if (workout.exercises.length === 0) {
-          throw new Error('Workout innehåller inga övningar.');
-        }
-
-        const workoutSession = await tx.workoutSession.create({
-          data: {
-            userId,
-            workoutId,
-            workoutScheduleId: workoutScheduleId ?? null,
-            workoutName: workout.name,
-            workoutDescription: workout.description,
-            startedAt: new Date(),
-            activeKey,
-          },
-        });
-
-        for (const workoutExercise of workout.exercises) {
-          const exercise = workoutExercise.exercise;
-
-          const primaryMuscle = exercise.muscles.find((muscle) => muscle.role === 'PRIMARY')?.muscleGroup.name ?? '';
-
-          const secondaryMuscles = exercise.muscles.filter((muscle) => muscle.role === 'SECONDARY').map((muscle) => muscle.muscleGroup.name);
-
-          const sessionExercise = await tx.workoutSessionExercise.create({
-            data: {
-              workoutSessionId: workoutSession.id,
-              workoutExerciseId: workoutExercise.id,
-              order: workoutExercise.order,
-
-              // Exercise snapshots.
-              exerciseName: exercise.name,
-              exerciseImagePath: exercise.imagePath,
-              exerciseEquipment: exercise.equipment,
-              exerciseDescription: exercise.description,
-              exerciseInstructions: exercise.instructions,
-              exerciseTechniqueTips: exercise.techniqueTips,
-              primaryMuscle,
-              secondaryMuscles: JSON.stringify(secondaryMuscles),
             },
           });
 
-          for (let setNumber = 1; setNumber <= workoutExercise.sets; setNumber++) {
-            await tx.workoutSessionSet.create({
+          if (!workout) {
+            throw new Error('Workout hittades inte.');
+          }
+
+          if (workout.exercises.length === 0) {
+            throw new Error('Workout innehåller inga övningar.');
+          }
+
+          // Create workout session.
+          const workoutSession = await tx.workoutSession.create({
+            data: {
+              userId,
+              workoutId,
+              workoutScheduleId: workoutScheduleId ?? null,
+              workoutName: workout.name,
+              workoutDescription: workout.description,
+              startedAt: new Date(),
+              activeKey,
+            },
+          });
+
+          // Collect all sets for bulk insertion.
+          const setsToCreate: Prisma.WorkoutSessionSetCreateManyInput[] = [];
+
+          // Create session exercises.
+          for (const workoutExercise of workout.exercises) {
+            const exercise = workoutExercise.exercise;
+
+            const primaryMuscle = exercise.muscles.find((muscle) => muscle.role === 'PRIMARY')?.muscleGroup.name ?? '';
+
+            const secondaryMuscles = exercise.muscles.filter((muscle) => muscle.role === 'SECONDARY').map((muscle) => muscle.muscleGroup.name);
+
+            const sessionExercise = await tx.workoutSessionExercise.create({
               data: {
+                workoutSessionId: workoutSession.id,
+                workoutExerciseId: workoutExercise.id,
+                order: workoutExercise.order,
+
+                // Exercise snapshots.
+                exerciseName: exercise.name,
+                exerciseImagePath: exercise.imagePath,
+                exerciseEquipment: exercise.equipment,
+                exerciseDescription: exercise.description,
+                exerciseInstructions: exercise.instructions,
+                exerciseTechniqueTips: exercise.techniqueTips,
+                primaryMuscle,
+                secondaryMuscles: JSON.stringify(secondaryMuscles),
+              },
+            });
+
+            // Prepare sets for bulk insertion.
+            for (let setNumber = 1; setNumber <= workoutExercise.sets; setNumber++) {
+              setsToCreate.push({
                 workoutSessionExerciseId: sessionExercise.id,
                 setNumber,
                 targetReps: workoutExercise.reps ?? 0,
@@ -218,13 +224,24 @@ export class WorkoutSessionRepository {
                 actualReps: null,
                 actualSeconds: null,
                 actualWeight: null,
-              },
+              });
+            }
+          }
+
+          // Insert all workout session sets in one operation.
+          if (setsToCreate.length > 0) {
+            await tx.workoutSessionSet.createMany({
+              data: setsToCreate,
             });
           }
-        }
 
-        return workoutSession;
-      });
+          return workoutSession;
+        },
+        {
+          maxWait: 10000,
+          timeout: 20000,
+        },
+      );
     } catch (error: unknown) {
       // Handle only Prisma unique constraint conflicts.
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
@@ -293,6 +310,7 @@ export class WorkoutSessionRepository {
       });
     });
   }
+
   async finish(id: number, userId: number): Promise<WorkoutSession | null> {
     return prisma.$transaction(async (tx) => {
       const result = await tx.workoutSession.updateMany({
