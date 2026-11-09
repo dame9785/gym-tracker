@@ -1,4 +1,5 @@
 import { TotalTrainingTimeViewModel } from '@/types/history-types';
+import { Clock3, Layers3 } from 'lucide-react';
 
 type Props = {
   totalTrainingTime: TotalTrainingTimeViewModel;
@@ -6,33 +7,48 @@ type Props = {
 };
 
 export default function TrainingTimeStats({ totalTrainingTime, totalCompletedSets }: Props) {
-  return (
-    <div className="mb-10 grid gap-5 md:grid-cols-2">
-      {/* Total Training Time */}
-      <div className="group rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-800/70 p-6 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-xl">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm font-medium text-zinc-400">Total Training Time</p>
-            <p className="mt-3 text-4xl font-bold tracking-tight text-blue-400">{`${totalTrainingTime.hours} h ${totalTrainingTime.minutes} min ${totalTrainingTime.seconds} s`}</p>
-            <p className="mt-3 text-4xl font-bold tracking-tight text-blue-400">—</p>
-            <p className="mt-2 text-xs text-zinc-500">Time spent training</p>
-          </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-xl">⏱️</div>
-        </div>
-      </div>
+  const formatTrainingTime = () => {
+    const { hours, minutes, seconds } = totalTrainingTime;
 
-      {/* Exercises Completed */}
-      <div className="group rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-800/70 p-6 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:border-purple-500/30 hover:shadow-xl">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm font-medium text-zinc-400">Total sets</p>
-            <p className="mt-3 text-4xl font-bold tracking-tight text-purple-400">{totalCompletedSets}</p>
-            <p className="mt-3 text-4xl font-bold tracking-tight text-purple-400">—</p>
-            <p className="mt-2 text-xs text-zinc-500">Exercises completed</p>
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    if (minutes > 0) return `${minutes}m ${seconds}s`;
+
+    return `${seconds}s`;
+  };
+
+  const stats = [
+    {
+      icon: <Clock3 className="h-5 w-5" />,
+      title: 'Total Training Time',
+      value: formatTrainingTime(),
+      description: 'Time spent training',
+    },
+    {
+      icon: <Layers3 className="h-5 w-5" />,
+      title: 'Completed Sets',
+      value: totalCompletedSets.toLocaleString('en-US'),
+      description: 'Successfully completed sets',
+    },
+  ];
+
+  return (
+    <section className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+      {stats.map((stat) => (
+        <article key={stat.title} className="group relative flex min-w-0 items-center justify-between gap-4 overflow-hidden rounded-2xl border border-zinc-800/80 bg-linear-to-br from-zinc-900 to-zinc-950 p-5 transition-all duration-300 hover:border-orange-500/30 sm:p-6">
+          <div className="absolute inset-y-0 left-0 w-1 bg-orange-500/70 opacity-60 transition-opacity group-hover:opacity-100" />
+
+          <div className="flex min-w-0 items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-orange-500/10 bg-orange-500/10 text-orange-400">{stat.icon}</div>
+
+            <div className="min-w-0">
+              <h3 className="text-sm font-medium text-zinc-400">{stat.title}</h3>
+              <p className="mt-1 text-xs text-zinc-500">{stat.description}</p>
+            </div>
           </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-500/10 text-xl">💪</div>
-        </div>
-      </div>
-    </div>
+
+          <p className="shrink-0 text-xl font-bold tracking-tight text-orange-400 sm:text-2xl">{stat.value}</p>
+        </article>
+      ))}
+    </section>
   );
 }

@@ -7,43 +7,45 @@ type Props = {
 };
 
 export default function HistoryPagination({ currentPage, totalPages }: Props) {
+  if (totalPages <= 1) return null;
+
+  const pages = Array.from(new Set([1, currentPage - 1, currentPage, currentPage + 1, totalPages]))
+    .filter((page) => page >= 1 && page <= totalPages)
+    .sort((a, b) => a - b);
+
+  const linkClass = 'flex h-10 min-w-10 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-sm font-medium text-zinc-400 transition hover:border-orange-500/40 hover:bg-orange-500/5 hover:text-orange-400';
+
   return (
-    <div className="mt-8 flex items-center justify-center gap-2">
-      {/*Left arrow */}
+    <nav aria-label="Workout history pagination" className="mt-8 flex flex-wrap items-center justify-center gap-2">
       {currentPage > 1 && (
-        <Link href={`/history?page=${currentPage - 1}`} scroll={false} className="flex items-center gap-1 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition hover:border-orange-500/40 hover:text-white">
+        <Link href={`/history?page=${currentPage - 1}`} scroll={false} className={`${linkClass} gap-1 px-3`}>
           <ChevronLeft className="h-4 w-4" />
-          Previous
-        </Link>
-      )}
-      {/*First Page*/}
-      {currentPage > 1 && (
-        <Link href={`/history?page=${1}`} scroll={false} className="lex items-center gap-1 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition hover:border-orange-500/40 hover:text-white">
-          1
-        </Link>
-      )}
-      {/*Current Page*/}
-      <button className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white">{currentPage}</button>
-      {/*Number Current Page + 1*/}
-      {currentPage + 1 <= totalPages && (
-        <Link scroll={false} className="lex items-center gap-1 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition hover:border-orange-500/40 hover:text-white" href={`/history?page${currentPage + 2}`}>
-          {currentPage + 1}
-        </Link>
-      )}
-      {/*Number Current Page + 2*/}
-      {currentPage + 2 <= totalPages && (
-        <Link scroll={false} className="lex items-center gap-1 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition hover:border-orange-500/40 hover:text-white" href={`/history?page${currentPage + 2}`}>
-          {currentPage + 2}
+          <span>Previous</span>
         </Link>
       )}
 
-      {/*Right arrow */}
+      {pages.map((page, index) => (
+        <div key={page} className="flex items-center gap-2">
+          {index > 0 && pages[index - 1] !== page - 1 && <span className="px-1 text-zinc-600">...</span>}
+
+          {page === currentPage ? (
+            <span aria-current="page" className="flex h-10 min-w-10 items-center justify-center rounded-xl border border-orange-500/30 bg-orange-500 px-3 text-sm font-bold text-white shadow-lg shadow-orange-500/10">
+              {page}
+            </span>
+          ) : (
+            <Link href={`/history?page=${page}`} scroll={false} className={linkClass}>
+              {page}
+            </Link>
+          )}
+        </div>
+      ))}
+
       {currentPage < totalPages && (
-        <Link scroll={false} href={`/history?page=${currentPage + 1}`} className="flex items-center gap-1 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400 transition hover:border-orange-500/40 hover:text-white">
-          Next
+        <Link href={`/history?page=${currentPage + 1}`} scroll={false} className={`${linkClass} gap-1 px-3`}>
+          <span>Next</span>
           <ChevronRight className="h-4 w-4" />
         </Link>
       )}
-    </div>
+    </nav>
   );
 }
