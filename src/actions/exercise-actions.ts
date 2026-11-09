@@ -73,16 +73,6 @@ function getOptionalString(formData: FormData, key: string): string | undefined 
   return value;
 }
 
-function getBlobToken(): string {
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-
-  if (!token) {
-    throw new Error('BLOB_READ_WRITE_TOKEN is not configured.');
-  }
-
-  return token;
-}
-
 async function uploadExerciseImage(image: File): Promise<string> {
   if (!ALLOWED_IMAGE_TYPES.includes(image.type)) {
     throw new Error('Only JPEG, PNG and WebP images are allowed.');
@@ -92,12 +82,10 @@ async function uploadExerciseImage(image: File): Promise<string> {
     throw new Error('The image must be 5 MB or smaller.');
   }
 
-  const token = getBlobToken();
   const extension = EXTENSION_BY_TYPE[image.type];
 
   const blob = await put(`exercises/${randomUUID()}.${extension}`, image, {
     access: 'public',
-    token,
     contentType: image.type,
   });
 
@@ -105,14 +93,12 @@ async function uploadExerciseImage(image: File): Promise<string> {
 }
 
 async function cleanupUploadedImage(url: string | undefined): Promise<void> {
-  if (!url || !process.env.BLOB_READ_WRITE_TOKEN) {
+  if (!url) {
     return;
   }
 
   try {
-    await del(url, {
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    });
+    await del(url);
   } catch (error: unknown) {
     console.error('Failed to clean up uploaded image:', error);
   }
