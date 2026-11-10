@@ -143,6 +143,7 @@ export class LivsmedelsverketProvider implements FoodProvider {
       name: food.namn,
       brand: null,
       barcode: null,
+      imageUrl: null,
       caloriesPer100g: calories,
       proteinPer100g: protein,
       carbsPer100g: carbs,

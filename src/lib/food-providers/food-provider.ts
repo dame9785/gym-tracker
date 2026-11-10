@@ -7,6 +7,7 @@ export type ExternalFood = {
   name: string;
   brand: string | null;
   barcode: string | null;
+  imageUrl: string | null;
 
   caloriesPer100g: number;
   proteinPer100g: number;

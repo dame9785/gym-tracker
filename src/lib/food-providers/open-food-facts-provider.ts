@@ -13,6 +13,8 @@ const ProductSchema = z.object({
   product_name_sv: z.string().nullish(),
   product_name_en: z.string().nullish(),
   brands: z.union([z.string(), z.array(z.string())]).nullish(),
+  image_url: z.string().nullish(),
+  image_front_url: z.string().nullish(),
   nutriments: z
     .object({
       'energy-kcal_100g': z.number().nullish(),
@@ -34,7 +36,7 @@ const ProductResponseSchema = z.object({
 });
 
 export class OpenFoodFactsProvider implements FoodProvider {
-  private readonly fields = 'code,product_name,product_name_sv,product_name_en,brands,nutriments';
+  private readonly fields = 'code,product_name,product_name_sv,product_name_en,brands,image_url,image_front_url,nutriments';
 
   private async request<T>(url: string, schema: z.ZodType<T>, init: RequestInit = {}): Promise<T> {
     const response = await fetch(url, {
@@ -95,6 +97,7 @@ export class OpenFoodFactsProvider implements FoodProvider {
       name,
       brand,
       barcode: product.code,
+      imageUrl: product.image_front_url ?? product.image_url ?? null,
       caloriesPer100g: calories,
       proteinPer100g: protein,
       carbsPer100g: carbs,

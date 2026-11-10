@@ -3,21 +3,22 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
-  id           Int    @id @default(autoincrement())
-  firstName    String @db.VarChar(50)
-  lastName     String @db.VarChar(50)
-  username     String @unique @db.VarChar(50)
-  email        String @unique @db.VarChar(100)
-  phoneNumber          String @unique @db.VarChar(20)
-  passwordHash         String
-  passwordResetTokens  PasswordResetToken[]
+  id                  Int                  @id @default(autoincrement())
+  firstName           String               @db.VarChar(50)
+  lastName            String               @db.VarChar(50)
+  username            String               @unique @db.VarChar(50)
+  email               String               @unique @db.VarChar(100)
+  phoneNumber         String               @unique @db.VarChar(20)
+  passwordHash        String
+  passwordResetTokens PasswordResetToken[]
 
-   tokenVersion Int @default(0)
+  tokenVersion Int @default(0)
 
   bodyWeight Decimal @db.Decimal(5, 2)
   goalWeight Decimal @db.Decimal(5, 2)
@@ -204,9 +205,9 @@ model WorkoutSession {
   finishedAt         DateTime?
   status             WorkoutSessionStatus @default(ACTIVE)
 
-  user            User            @relation(fields: [userId], references: [id])
-  workout         Workout         @relation(fields: [workoutId], references: [id], onDelete: Restrict)
-  workoutSchedule WorkoutSchedule? @relation(fields: [workoutScheduleId], references: [id], onDelete: SetNull)
+  user            User                     @relation(fields: [userId], references: [id])
+  workout         Workout                  @relation(fields: [workoutId], references: [id], onDelete: Restrict)
+  workoutSchedule WorkoutSchedule?         @relation(fields: [workoutScheduleId], references: [id], onDelete: SetNull)
   exercises       WorkoutSessionExercise[]
 
   @@index([userId])
@@ -270,8 +271,8 @@ model CalorieLog {
 }
 
 model Food {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(191)
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(191)
   brand String? @db.VarChar(191)
 
   caloriesPer100g Float
@@ -282,7 +283,8 @@ model Food {
   source     FoodSource @default(LOCAL)
   externalId String?    @db.VarChar(191)
   barcode    String?    @db.VarChar(64)
-
+  imageUrl   String?    @db.Text
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
