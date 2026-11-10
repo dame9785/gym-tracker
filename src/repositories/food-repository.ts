@@ -86,21 +86,6 @@ export class FoodRepository {
   }
 
   /**
-   * Find a previously saved food using its barcode.
-   */
-  async getFoodByBarcode(userId: number, barcode: string) {
-    return prisma.food.findFirst({
-      where: {
-        userId,
-        barcode,
-      },
-      include: {
-        servings: true,
-      },
-    });
-  }
-
-  /**
    * Get all foods saved by the user.
    */
   async getAllFoods(userId: number) {
@@ -120,12 +105,13 @@ export class FoodRepository {
   /**
    * Get all external foods already imported by the user.
    */
+
   async getImportedFoods(userId: number) {
     return prisma.food.findMany({
       where: {
         userId,
         source: {
-          in: ['OPEN_FOOD_FACTS', 'LIVSMEDELSVERKET', 'USDA'],
+          notIn: ['LOCAL', 'GENERIC'],
         },
       },
       select: {
@@ -139,9 +125,7 @@ export class FoodRepository {
   /**
    * Delete a food belonging to the user.
    */
-  /**
-   * Delete a food belonging to the user.
-   */
+
   async deleteFood(userId: number, foodId: number): Promise<boolean> {
     return prisma.$transaction(async (tx) => {
       const food = await tx.food.findFirst({

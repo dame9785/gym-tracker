@@ -11,19 +11,49 @@ import type { FoodService } from '@/services/food-service';
 
 type Props = {
   initialFoods: Awaited<ReturnType<FoodService['getAllFoods']>>;
+  initialFeaturedFoods: Awaited<ReturnType<FoodService['getFeaturedFoods']>>;
 };
 
 type SearchResult = Awaited<ReturnType<typeof searchFoodsAction>>;
 
-export default function FoodSearch({ initialFoods }: Props) {
+type FoodFilter = 'ALL' | 'LOCAL' | 'IMPORTED' | 'LIVSMEDELSVERKET';
+
+type FoodSort = 'NAME' | 'CALORIES' | 'NEWEST';
+
+export default function FoodSearch({ initialFoods, initialFeaturedFoods }: Props) {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState<SearchResult | null>(null);
   const [savedFoods, setSavedFoods] = useState(initialFoods);
+
+  const [libraryQuery, setLibraryQuery] = useState('');
+  const [foodFilter, setFoodFilter] = useState<FoodFilter>('ALL');
+  const [foodSort, setFoodSort] = useState<FoodSort>('NAME');
 
   const [isPending, startTransition] = useTransition();
   const [importingId, setImportingId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  const filteredFoods = savedFoods
+    .filter((food) => {
+      const matchesQuery = `${food.name} ${food.brand ?? ''}`.toLowerCase().includes(libraryQuery.trim().toLowerCase());
+
+      const matchesFilter = foodFilter === 'ALL' || (foodFilter === 'LOCAL' && food.source === 'LOCAL') || (foodFilter === 'IMPORTED' && food.source !== 'LOCAL') || food.source === foodFilter;
+
+      return matchesQuery && matchesFilter;
+    })
+    .sort((a, b) => {
+      switch (foodSort) {
+        case 'CALORIES':
+          return a.caloriesPer100g - b.caloriesPer100g;
+
+        case 'NEWEST':
+          return b.createdAt.getTime() - a.createdAt.getTime();
+
+        default:
+          return a.name.localeCompare(b.name, 'sv');
+      }
+    });
 
   const handleSearch = () => {
     if (query.trim().length < 2) return;
@@ -41,7 +71,7 @@ export default function FoodSearch({ initialFoods }: Props) {
     setMessage(null);
 
     try {
-      const response = await importExternalFoodByIdAction(food.source as 'OPEN_FOOD_FACTS' | 'LIVSMEDELSVERKET', food.externalId);
+      const response = await importExternalFoodByIdAction('LIVSMEDELSVERKET', food.externalId);
 
       if (!response.success || !response.data) {
         setMessage(response.success ? 'Kunde inte importera livsmedlet.' : response.message);
@@ -96,97 +126,138 @@ export default function FoodSearch({ initialFoods }: Props) {
     }
   };
 
-  const livsmedelsverketFoods = result?.success && result.data ? result.data.externalFoods.filter((food) => food.source === 'LIVSMEDELSVERKET') : [];
+  const externalFoods = result?.success && result.data ? result.data.externalFoods : initialFeaturedFoods;
 
-  const openFoodFactsFoods = result?.success && result.data ? result.data.externalFoods.filter((food) => food.source === 'OPEN_FOOD_FACTS') : [];
+  const livsmedelsverketFoods = externalFoods.filter((food) => food.source === 'LIVSMEDELSVERKET');
 
   return (
     <section className="space-y-10">
       {/* My Food Library */}
       <section className="space-y-5">
-        {/* <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-white sm:text-2xl">My Food Library</h2>
+        {/* Library filters */}
+        <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <input
+            type="search"
+            value={libraryQuery}
+            onChange={(event) => setLibraryQuery(event.target.value)}
+            placeholder="Search your food library..."
+            className="rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-500 focus:border-orange-500 focus:outline-none"
+          />
 
-            <p className="mt-1 text-sm text-zinc-400">Dina sparade livsmedel och deras näringsvärden.</p>
-          </div>
+          <select value={foodFilter} onChange={(event) => setFoodFilter(event.target.value as FoodFilter)} className="rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-white focus:border-orange-500 focus:outline-none">
+            <option value="ALL">All foods</option>
+            <option value="LOCAL">My foods</option>
+            <option value="IMPORTED">Imported foods</option>
 
-          <span className="w-fit rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1 text-xs font-medium text-zinc-400">{savedFoods.length} foods</span>
-        </div> */}
+            <option value="LIVSMEDELSVERKET">Livsmedelsverket</option>
+          </select>
 
+          <select value={foodSort} onChange={(event) => setFoodSort(event.target.value as FoodSort)} className="rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-white focus:border-orange-500 focus:outline-none">
+            <option value="NAME">Sort by name</option>
+            <option value="CALORIES">Sort by calories</option>
+            <option value="NEWEST">Newest first</option>
+          </select>
+        </div>
+
+        {/* Saved foods */}
         {savedFoods.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {savedFoods.map((food) => (
-              <article key={food.id} className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 transition hover:border-zinc-700">
-                <div className="flex items-start gap-3">
-                  <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-zinc-800">
-                    {food.imageUrl ? (
-                      <img
-                        src={food.imageUrl}
-                        alt={food.name}
-                        className="size-full object-contain"
-                        onError={(event) => {
-                          event.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <span className="text-2xl" aria-hidden="true">
-                        🍎
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-semibold text-white">{food.name}</h3>
-
-                    {food.brand && <p className="mt-1 truncate text-xs text-zinc-400">{food.brand}</p>}
-
-                    <p className="mt-1 text-xs text-zinc-500">{food.source === 'OPEN_FOOD_FACTS' ? 'Open Food Facts' : food.source === 'LIVSMEDELSVERKET' ? 'Livsmedelsverket' : food.source === 'USDA' ? 'USDA' : 'Lokalt'}</p>
-                  </div>
-
-                  <button type="button" onClick={() => handleDelete(food.id, food.name)} disabled={deletingId === food.id} aria-label={`Ta bort ${food.name}`} className="shrink-0 text-xs font-medium text-red-400 transition hover:text-red-300 disabled:opacity-50">
-                    {deletingId === food.id ? 'Tar bort...' : 'Ta bort'}
-                  </button>
-                </div>
-
-                <div className="mt-4 grid grid-cols-2 gap-y-4 border-t border-zinc-800 pt-4 sm:grid-cols-4">
-                  {[
-                    {
-                      label: 'Kalorier',
-                      value: food.caloriesPer100g,
-                      unit: 'kcal',
-                    },
-                    {
-                      label: 'Protein',
-                      value: food.proteinPer100g,
-                      unit: 'g',
-                    },
-                    {
-                      label: 'Kolhydrater',
-                      value: food.carbsPer100g,
-                      unit: 'g',
-                    },
-                    {
-                      label: 'Fett',
-                      value: food.fatPer100g,
-                      unit: 'g',
-                    },
-                  ].map((item) => (
-                    <div key={item.label}>
-                      <p className="text-xs text-zinc-500">{item.label}</p>
-
-                      <p className="mt-1 font-semibold text-white">
-                        {Number(item.value.toFixed(1))}
-                        <span className="ml-1 text-xs font-normal text-zinc-500">{item.unit}</span>
-                      </p>
+          filteredFoods.length > 0 ? (
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {filteredFoods.map((food) => (
+                <article key={food.id} className="group flex h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/70 p-3 transition-all duration-200 hover:-translate-y-1 hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/5">
+                  {/* Product header */}
+                  <div className="flex items-start gap-3">
+                    <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
+                      {food.imageUrl ? (
+                        <img
+                          src={food.imageUrl}
+                          alt={food.name}
+                          className="size-full object-contain p-1"
+                          onError={(event) => {
+                            event.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <span className="text-2xl" aria-hidden="true">
+                          🍎
+                        </span>
+                      )}
                     </div>
-                  ))}
-                </div>
 
-                <p className="mt-3 text-right text-[11px] text-zinc-500">Per 100 g</p>
-              </article>
-            ))}
-          </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="inline-flex rounded border border-orange-500/20 bg-orange-500/10 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-orange-400 uppercase">
+                        {food.source === 'LIVSMEDELSVERKET' ? 'Livsmedelsverket' : food.source === 'LOCAL' ? 'Eget livsmedel' : food.source === 'GENERIC' ? 'Generiskt livsmedel' : 'Äldre importerat livsmedel'}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(food.id, food.name)}
+                      disabled={deletingId === food.id}
+                      aria-label={`Ta bort ${food.name}`}
+                      title="Ta bort livsmedel"
+                      className="shrink-0 rounded-lg p-2 text-zinc-500 transition hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50"
+                    >
+                      {deletingId === food.id ? (
+                        <span className="text-xs">...</span>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-4">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Nutrition values */}
+                  <div className="mt-3 grid grid-cols-4 gap-1.5">
+                    {[
+                      {
+                        label: 'Kalorier',
+                        value: food.caloriesPer100g,
+                        unit: 'kcal',
+                        color: 'text-orange-400',
+                      },
+                      {
+                        label: 'Protein',
+                        value: food.proteinPer100g,
+                        unit: 'g',
+                        color: 'text-blue-400',
+                      },
+                      {
+                        label: 'Kolhydrater',
+                        value: food.carbsPer100g,
+                        unit: 'g',
+                        color: 'text-amber-400',
+                      },
+                      {
+                        label: 'Fett',
+                        value: food.fatPer100g,
+                        unit: 'g',
+                        color: 'text-emerald-400',
+                      },
+                    ].map((item) => (
+                      <div key={item.label} className="rounded-lg border border-zinc-800 bg-zinc-950/70 px-1 py-2 text-center">
+                        <p className="text-[10px] text-zinc-500">{item.label}</p>
+
+                        <p className={`mt-1 text-sm font-bold ${item.color}`}>{Number(item.value.toFixed(1))}</p>
+
+                        <p className="text-[9px] text-zinc-600">{item.unit}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Footer */}
+                  <div className="mt-3 mt-auto border-t border-zinc-800 pt-2 text-right">
+                    <span className="text-[10px] text-zinc-500">Näringsvärde per 100 g</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-zinc-700 bg-zinc-900/30 px-6 py-10 text-center">
+              <p className="text-sm text-zinc-400">Inga livsmedel matchar din sökning eller filtrering.</p>
+            </div>
+          )
         ) : (
           <div className="rounded-xl border border-dashed border-zinc-700 bg-zinc-900/30 px-6 py-12 text-center">
             <div className="mb-3 text-4xl" aria-hidden="true">
@@ -204,10 +275,10 @@ export default function FoodSearch({ initialFoods }: Props) {
       <section className="space-y-5">
         <div>
           <h2 className="text-xl font-semibold text-white sm:text-2xl">Add New Foods</h2>
-
-          <p className="mt-1 text-sm text-zinc-400">Sök bland svenska livsmedel och internationella märkesprodukter.</p>
+          <p className="mt-1 text-sm text-zinc-400">Sök bland svenska livsmedel från Livsmedelsverket.</p>{' '}
         </div>
 
+        {/* Search input */}
         <div className="flex flex-col gap-3 sm:flex-row">
           <input
             type="search"
@@ -239,16 +310,28 @@ export default function FoodSearch({ initialFoods }: Props) {
         )}
 
         {/* External Search Results */}
-        {result?.success && result.data && (
+        {((result?.success && result.data) || (!result && initialFeaturedFoods.length > 0)) && (
           <div className="space-y-8">
-            <p className="text-sm text-zinc-500">{result.data.externalFoods.length} externa resultat</p>
+            <p className="text-sm text-zinc-500">{externalFoods.length} externa resultat</p>
 
             {/* Livsmedelsverket */}
             <section className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">Svenska livsmedel</h3>
+              <div className="flex items-center justify-between gap-3 border-b border-zinc-800 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-1 rounded-full bg-orange-500" />
+
+                  <div>
+                    <h3 className="text-lg font-bold tracking-tight text-white">Svenska livsmedel</h3>
+
+                    <p className="mt-0.5 text-xs text-zinc-500">Näringsdata från Livsmedelsverket</p>
+                  </div>
+                </div>
+
+                <span className="rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-xs font-semibold text-zinc-300">{livsmedelsverketFoods.length} resultat</span>
+              </div>
 
               {livsmedelsverketFoods.length > 0 ? (
-                <div className="grid gap-3 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
                   {livsmedelsverketFoods.map((food) => (
                     <FoodCard key={`${food.source}:${food.externalId}`} food={food} onImport={handleImport} isImporting={importingId === `${food.source}:${food.externalId}`} />
                   ))}
@@ -258,22 +341,7 @@ export default function FoodSearch({ initialFoods }: Props) {
               )}
             </section>
 
-            {/* Open Food Facts */}
-            <section className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">Märkesprodukter</h3>
-
-              {openFoodFactsFoods.length > 0 ? (
-                <div className="grid gap-3 lg:grid-cols-2">
-                  {openFoodFactsFoods.map((food) => (
-                    <FoodCard key={`${food.source}:${food.externalId}`} food={food} onImport={handleImport} isImporting={importingId === `${food.source}:${food.externalId}`} />
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-zinc-500">Inga märkesprodukter hittades.</p>
-              )}
-            </section>
-
-            {result.data.externalSearchFailed && <p className="text-sm text-red-400">Externa livsmedelskällor kunde inte nås.</p>}
+            {result?.success && result.data?.externalSearchFailed && <p className="text-sm text-red-400">Externa livsmedelskällor kunde inte nås.</p>}
           </div>
         )}
       </section>

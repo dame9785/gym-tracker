@@ -151,6 +151,33 @@ export class LivsmedelsverketProvider implements FoodProvider {
     };
   }
 
+  /**
+   * Get featured foods for the initial food search view.
+   */
+  async getFeaturedFoods(limit = 10): Promise<ExternalFood[]> {
+    const featuredTerms = ['havregryn', 'ägg', 'mjölk', 'kyckling', 'ris', 'potatis', 'banan', 'broccoli', 'lax', 'keso'];
+
+    const foods = await this.getFoodList();
+
+    const normalize = (value: string) =>
+      value
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+    const selectedFoods = featuredTerms
+      .map((term) => foods.find((food) => normalize(food.namn).includes(normalize(term))))
+      .filter((food): food is Food => food !== undefined)
+      .slice(0, Math.min(Math.max(limit, 1), 10));
+
+    const results = await Promise.allSettled(selectedFoods.map((food) => this.mapFood(food)));
+
+    return results
+      .filter((result): result is PromiseFulfilledResult<ExternalFood | null> => result.status === 'fulfilled')
+      .map((result) => result.value)
+      .filter((food): food is ExternalFood => food !== null);
+  }
+
   async searchFoods(query: string, options: FoodSearchOptions = {}): Promise<ExternalFood[]> {
     const normalizedQuery = query.trim().toLowerCase();
 
@@ -170,10 +197,6 @@ export class LivsmedelsverketProvider implements FoodProvider {
       .filter((result): result is PromiseFulfilledResult<ExternalFood | null> => result.status === 'fulfilled')
       .map((result) => result.value)
       .filter((food): food is ExternalFood => food !== null);
-  }
-
-  async getFoodByBarcode(_barcode: string): Promise<ExternalFood | null> {
-    return null;
   }
 
   /**

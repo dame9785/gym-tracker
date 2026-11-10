@@ -1,4 +1,4 @@
-export type FoodProviderSource = 'OPEN_FOOD_FACTS' | 'USDA' | 'LIVSMEDELSVERKET';
+export type FoodProviderSource = 'LIVSMEDELSVERKET';
 
 export type ExternalFood = {
   externalId: string;
@@ -21,6 +21,4 @@ export type FoodSearchOptions = {
 
 export interface FoodProvider {
   searchFoods(query: string, options?: FoodSearchOptions): Promise<ExternalFood[]>;
-
-  getFoodByBarcode(barcode: string): Promise<ExternalFood | null>;
 }

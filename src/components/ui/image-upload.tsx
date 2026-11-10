@@ -19,19 +19,16 @@ const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 export default function ImageUpload({ file, onFileChange, currentImageUrl, currentImageAlt = 'Exercise image', disabled = false }: ImageUploadProps) {
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const previewUrlRef = useRef<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!file) {
-      setPreviewUrl(null);
-      return;
-    }
-
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+    };
+  }, []);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -52,10 +49,25 @@ export default function ImageUpload({ file, onFileChange, currentImageUrl, curre
       return;
     }
 
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+    }
+
+    const url = URL.createObjectURL(selectedFile);
+
+    previewUrlRef.current = url;
+    setPreviewUrl(url);
+
     onFileChange(selectedFile);
   };
 
   const handleRemoveImage = () => {
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+    }
+
+    setPreviewUrl(null);
     onFileChange(null);
 
     if (inputRef.current) {
@@ -63,20 +75,11 @@ export default function ImageUpload({ file, onFileChange, currentImageUrl, curre
     }
   };
 
-  const displayedImage = previewUrl || currentImageUrl;
+  const displayedImage = file ? previewUrl : currentImageUrl;
 
   return (
     <div className="w-full">
-      <input
-        ref={inputRef}
-        className="hidden"
-        id={inputId}
-        name="image"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        onChange={handleImageChange}
-        disabled={disabled}
-      />
+      <input ref={inputRef} className="hidden" id={inputId} name="image" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} disabled={disabled} />
 
       {displayedImage ? (
         <div className="overflow-hidden rounded-xl border border-orange-500/40 bg-zinc-900 p-3">
@@ -87,13 +90,7 @@ export default function ImageUpload({ file, onFileChange, currentImageUrl, curre
             </div>
 
             {file && (
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                disabled={disabled}
-                aria-label="Remove selected image"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50"
-              >
+              <button type="button" onClick={handleRemoveImage} disabled={disabled} aria-label="Remove selected image" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50">
                 <FaTimes />
               </button>
             )}
@@ -115,9 +112,7 @@ export default function ImageUpload({ file, onFileChange, currentImageUrl, curre
       ) : (
         <label
           htmlFor={inputId}
-          className={`group flex min-h-48 flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/60 p-6 text-center transition ${
-            disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-orange-500 hover:bg-orange-500/5'
-          }`}
+          className={`group flex min-h-48 flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/60 p-6 text-center transition ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-orange-500 hover:bg-orange-500/5'}`}
         >
           <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-orange-500/30 bg-orange-500/10 text-2xl text-orange-400 transition group-hover:scale-105 group-hover:bg-orange-500/20">
             <FaCloudUploadAlt />

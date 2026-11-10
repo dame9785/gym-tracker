@@ -8,61 +8,88 @@ type Props = {
 
 export default function FoodCard({ food, onImport, isImporting }: Props) {
   const nutrients = [
-    { label: 'Kalorier', value: food.caloriesPer100g, unit: 'kcal' },
-    { label: 'Protein', value: food.proteinPer100g, unit: 'g' },
-    { label: 'Kolhydrater', value: food.carbsPer100g, unit: 'g' },
-    { label: 'Fett', value: food.fatPer100g, unit: 'g' },
+    {
+      label: 'Kalorier',
+      value: food.caloriesPer100g,
+      unit: 'kcal',
+      color: 'text-orange-400',
+    },
+    {
+      label: 'Protein',
+      value: food.proteinPer100g,
+      unit: 'g',
+      color: 'text-blue-400',
+    },
+    {
+      label: 'Kolhydrater',
+      value: food.carbsPer100g,
+      unit: 'g',
+      color: 'text-amber-400',
+    },
+    {
+      label: 'Fett',
+      value: food.fatPer100g,
+      unit: 'g',
+      color: 'text-emerald-400',
+    },
   ];
 
   return (
-    <article className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 transition hover:border-zinc-700">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex min-w-0 items-start gap-3">
-          <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-zinc-800 bg-zinc-800">
-            <span className="text-2xl" aria-hidden="true">
-              🍽️
-            </span>
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 transition-all duration-200 hover:-translate-y-1 hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/5">
+      {/* Product information */}
+      <div className="flex items-center gap-4">
+        <div className="relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 sm:size-28">
+          <span className="text-5xl" aria-hidden="true">
+            🍽️
+          </span>
 
-            {food.imageUrl && (
-              <img
-                src={food.imageUrl}
-                alt={food.name}
-                className="absolute inset-0 size-full bg-zinc-800 object-contain"
-                onError={(event) => {
-                  event.currentTarget.style.display = 'none';
-                }}
-              />
-            )}
-          </div>
-
-          <div className="min-w-0">
-            <h3 className="font-semibold text-white">{food.name}</h3>
-
-            {food.brand && <p className="mt-1 text-sm text-zinc-400">{food.brand}</p>}
-
-            <p className="mt-1 text-xs text-zinc-500">{food.source === 'OPEN_FOOD_FACTS' ? 'Open Food Facts' : 'Livsmedelsverket'}</p>
-          </div>
+          {food.imageUrl && (
+            <img
+              src={food.imageUrl}
+              alt={food.name}
+              className="absolute inset-0 size-full bg-zinc-950 object-contain p-2"
+              onError={(event) => {
+                event.currentTarget.style.display = 'none';
+              }}
+            />
+          )}
         </div>
 
-        <button type="button" onClick={() => onImport(food)} disabled={isImporting} className="shrink-0 rounded-lg bg-orange-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50">
-          {isImporting ? 'Importerar...' : 'Importera'}
-        </button>
+        <div className="min-w-0 flex-1">
+          <span className="inline-flex rounded-md border border-orange-500/20 bg-orange-500/10 px-2 py-1 text-[10px] font-semibold tracking-wide text-orange-400 uppercase">Livsmedelsverket</span>
+
+          <h3 className="mt-2 line-clamp-3 text-base leading-snug font-bold text-white">{food.name}</h3>
+
+          {food.brand && <p className="mt-1 line-clamp-2 text-sm text-zinc-400">{food.brand}</p>}
+        </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-y-4 border-t border-zinc-800 pt-4 sm:grid-cols-4">
+      {/* Nutrition values */}
+      <div className="mt-5 grid grid-cols-4 gap-2">
         {nutrients.map((item) => (
-          <div key={item.label}>
-            <p className="text-xs text-zinc-500">{item.label}</p>
+          <div key={item.label} className="rounded-xl border border-zinc-800 bg-zinc-950/70 px-1.5 py-3 text-center">
+            <p className="text-[10px] text-zinc-500 sm:text-xs">{item.label}</p>
 
-            <p className="mt-1 font-semibold text-white">
-              {Number(item.value.toFixed(1))}
-              <span className="ml-1 text-xs font-normal text-zinc-500">{item.unit}</span>
-            </p>
+            <p className={`mt-1 text-sm font-bold sm:text-base ${item.color}`}>{Number(item.value.toFixed(1))}</p>
+
+            <p className="mt-0.5 text-[10px] text-zinc-600">{item.unit}</p>
           </div>
         ))}
       </div>
 
-      <p className="mt-4 text-right text-[11px] text-zinc-500">Näringsvärde per 100 g</p>
+      {/* Footer */}
+      <div className="mt-auto pt-4">
+        <p className="mb-2 text-[10px] text-zinc-500">Näringsvärde per 100 g</p>
+
+        <button
+          type="button"
+          onClick={() => onImport(food)}
+          disabled={isImporting}
+          className="flex min-h-11 w-full items-center justify-center rounded-xl bg-orange-500 px-4 text-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isImporting ? 'Importerar...' : '+ Importera livsmedel'}
+        </button>
+      </div>
     </article>
   );
 }

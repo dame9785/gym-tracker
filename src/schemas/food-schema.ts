@@ -19,7 +19,7 @@ export const importExternalFoodSchema = z.object({
 });
 
 export const importExternalFoodByIdSchema = z.object({
-  source: z.enum(['OPEN_FOOD_FACTS', 'LIVSMEDELSVERKET']),
+  source: z.literal('LIVSMEDELSVERKET'),
   externalId: z.string().trim().min(1).max(191),
 });
 

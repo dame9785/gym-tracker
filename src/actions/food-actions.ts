@@ -3,7 +3,7 @@
 import { requireAuth } from '@/lib/auth';
 import { FoodService } from '@/services/food-service';
 
-import { searchFoodSchema, foodBarcodeSchema, importExternalFoodSchema, importExternalFoodByIdSchema, deleteFoodSchema } from '@/schemas/food-schema';
+import { searchFoodSchema, importExternalFoodByIdSchema, deleteFoodSchema } from '@/schemas/food-schema';
 
 import type { FoodService as FoodServiceType } from '@/services/food-service';
 
@@ -56,89 +56,7 @@ export async function searchFoodsAction(query: string): Promise<FoodActionResult
   }
 }
 
-/**
- * Find a food by barcode without importing it.
- */
-export async function getFoodByBarcodeAction(barcode: string): Promise<FoodActionResult<Awaited<ReturnType<FoodServiceType['getFoodByBarcode']>>>> {
-  const user = await requireAuth();
-
-  try {
-    const validation = foodBarcodeSchema.safeParse({ barcode });
-
-    if (!validation.success) {
-      return {
-        success: false,
-        message: 'Validation failed.',
-        errors: validation.error.flatten().fieldErrors,
-      };
-    }
-
-    const result = await foodService.getFoodByBarcode(user.userId, validation.data.barcode);
-
-    if (!result) {
-      return {
-        success: false,
-        message: 'Food product not found.',
-      };
-    }
-
-    return {
-      success: true,
-      data: result,
-    };
-  } catch (error: unknown) {
-    console.error('Get food by barcode action failed:', error);
-
-    return {
-      success: false,
-      message: 'Could not find food product. Please try again.',
-    };
-  }
-}
-
-/**
- * Import a product using its barcode.
- * Nutritional values are fetched server-side.
- */
-export async function importFoodAction(barcode: string): Promise<FoodActionResult<Awaited<ReturnType<FoodServiceType['importFoodByBarcode']>>>> {
-  const user = await requireAuth();
-
-  try {
-    const validation = importExternalFoodSchema.safeParse({ barcode });
-
-    if (!validation.success) {
-      return {
-        success: false,
-        message: 'Validation failed.',
-        errors: validation.error.flatten().fieldErrors,
-      };
-    }
-
-    const food = await foodService.importFoodByBarcode(user.userId, validation.data.barcode);
-
-    return {
-      success: true,
-      message: 'Food imported successfully.',
-      data: food,
-    };
-  } catch (error: unknown) {
-    console.error('Import food action failed:', error);
-
-    if (error instanceof Error && error.message === 'Food product not found.') {
-      return {
-        success: false,
-        message: 'Food product not found.',
-      };
-    }
-
-    return {
-      success: false,
-      message: 'Could not import food. Please try again.',
-    };
-  }
-}
-
-export async function importExternalFoodByIdAction(source: 'OPEN_FOOD_FACTS' | 'LIVSMEDELSVERKET', externalId: string): Promise<FoodActionResult<Awaited<ReturnType<FoodServiceType['importExternalFoodById']>>>> {
+export async function importExternalFoodByIdAction(source: 'LIVSMEDELSVERKET', externalId: string): Promise<FoodActionResult<Awaited<ReturnType<FoodServiceType['importExternalFoodById']>>>> {
   const user = await requireAuth();
 
   try {
@@ -218,6 +136,29 @@ export async function deleteFoodAction(foodId: number): Promise<FoodActionResult
     return {
       success: false,
       message: 'Kunde inte ta bort livsmedlet. Försök igen.',
+    };
+  }
+}
+
+/**
+ * Get featured foods for the initial food search view.
+ */
+export async function getFeaturedFoodsAction(): Promise<FoodActionResult<Awaited<ReturnType<FoodServiceType['getFeaturedFoods']>>>> {
+  const user = await requireAuth();
+
+  try {
+    const foods = await foodService.getFeaturedFoods(user.userId);
+
+    return {
+      success: true,
+      data: foods,
+    };
+  } catch (error: unknown) {
+    console.error('Get featured foods action failed:', error);
+
+    return {
+      success: false,
+      message: 'Could not load featured foods. Please try again.',
     };
   }
 }
