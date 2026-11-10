@@ -180,7 +180,10 @@ export async function importExternalFoodByIdAction(source: 'OPEN_FOOD_FACTS' | '
 }
 
 /**
- * Delete an imported food from the user's food library.
+ * Delete a food from the user's food library.
+ */
+/**
+ * Delete a food from the user's food library.
  */
 export async function deleteFoodAction(foodId: number): Promise<FoodActionResult<boolean>> {
   const user = await requireAuth();
@@ -192,7 +195,6 @@ export async function deleteFoodAction(foodId: number): Promise<FoodActionResult
       return {
         success: false,
         message: 'Validation failed.',
-        errors: validation.error.flatten().fieldErrors,
       };
     }
 
@@ -201,13 +203,13 @@ export async function deleteFoodAction(foodId: number): Promise<FoodActionResult
     if (!deleted) {
       return {
         success: false,
-        message: 'Food not found or cannot be deleted.',
+        message: 'Livsmedlet kunde inte hittas.',
       };
     }
 
     return {
       success: true,
-      message: 'Food deleted successfully.',
+      message: 'Livsmedlet har tagits bort.',
       data: true,
     };
   } catch (error: unknown) {
@@ -215,7 +217,7 @@ export async function deleteFoodAction(foodId: number): Promise<FoodActionResult
 
     return {
       success: false,
-      message: 'Could not delete food. Please try again.',
+      message: 'Kunde inte ta bort livsmedlet. Försök igen.',
     };
   }
 }

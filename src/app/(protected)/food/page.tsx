@@ -1,6 +1,13 @@
 import FoodSearch from '@/components/foods/food-search';
+import { requireAuth } from '@/lib/auth';
+import { FoodService } from '@/services/food-service';
 
-export default function FoodPage(): React.ReactElement {
+const foodService = new FoodService();
+
+export default async function FoodPage(): Promise<React.ReactElement> {
+  const user = await requireAuth();
+  const initialFoods = await foodService.getAllFoods(user.userId);
+
   return (
     <main className="min-h-screen p-4 text-white sm:p-6 lg:p-8">
       <div className="mx-auto max-w-[1800px]">
@@ -10,7 +17,7 @@ export default function FoodPage(): React.ReactElement {
           <p className="mt-2 text-sm text-zinc-400 sm:text-base">Search, import and manage foods in your personal food library.</p>
         </div>
 
-        <FoodSearch />
+        <FoodSearch initialFoods={initialFoods} />
       </div>
     </main>
   );

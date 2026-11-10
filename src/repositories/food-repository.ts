@@ -67,6 +67,7 @@ export class FoodRepository {
         proteinPer100g: food.proteinPer100g,
         carbsPer100g: food.carbsPer100g,
         fatPer100g: food.fatPer100g,
+        imageUrl: food.imageUrl,
       },
       update: {
         name: food.name,
@@ -76,6 +77,7 @@ export class FoodRepository {
         proteinPer100g: food.proteinPer100g,
         carbsPer100g: food.carbsPer100g,
         fatPer100g: food.fatPer100g,
+        imageUrl: food.imageUrl,
       },
       include: {
         servings: true,
@@ -137,17 +139,38 @@ export class FoodRepository {
   /**
    * Delete a food belonging to the user.
    */
-  async deleteFood(userId: number, foodId: number) {
-    const result = await prisma.food.deleteMany({
-      where: {
-        id: foodId,
-        userId,
-        source: {
-          in: ['OPEN_FOOD_FACTS', 'LIVSMEDELSVERKET', 'USDA'],
+  /**
+   * Delete a food belonging to the user.
+   */
+  async deleteFood(userId: number, foodId: number): Promise<boolean> {
+    return prisma.$transaction(async (tx) => {
+      const food = await tx.food.findFirst({
+        where: {
+          id: foodId,
+          userId,
         },
-      },
-    });
+        select: {
+          id: true,
+        },
+      });
 
-    return result.count > 0;
+      if (!food) {
+        return false;
+      }
+
+      await tx.mealItem.deleteMany({
+        where: {
+          foodId,
+        },
+      });
+
+      await tx.food.delete({
+        where: {
+          id: foodId,
+        },
+      });
+
+      return true;
+    });
   }
 }

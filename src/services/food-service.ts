@@ -4,9 +4,79 @@ import { LivsmedelsverketProvider } from '@/lib/food-providers/livsmedelsverket-
 
 import type { ExternalFood } from '@/lib/food-providers/food-provider';
 
+import { put } from '@vercel/blob';
+import { randomUUID } from 'node:crypto';
+
 const MIN_SEARCH_LENGTH = 2;
 const MAX_SEARCH_LENGTH = 100;
 const MAX_RESULTS = 10;
+
+const MAX_FOOD_IMAGE_SIZE = 5 * 1024 * 1024;
+
+const FOOD_IMAGE_TYPES = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+} as const;
+
+async function uploadFoodImage(imageUrl: string | null): Promise<string | null> {
+  if (!imageUrl) {
+    return null;
+  }
+
+  let url: URL;
+
+  try {
+    url = new URL(imageUrl);
+  } catch {
+    return null;
+  }
+
+  if (url.protocol !== 'https:' || url.hostname !== 'images.openfoodfacts.org') {
+    return null;
+  }
+
+  try {
+    const response = await fetch(url, {
+      redirect: 'error',
+      signal: AbortSignal.timeout(10_000),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const contentType = response.headers.get('content-type')?.split(';')[0].trim().toLowerCase();
+
+    if (!contentType || !(contentType in FOOD_IMAGE_TYPES)) {
+      return null;
+    }
+
+    const contentLength = Number(response.headers.get('content-length'));
+
+    if (contentLength > MAX_FOOD_IMAGE_SIZE) {
+      return null;
+    }
+
+    const imageBuffer = Buffer.from(await response.arrayBuffer());
+
+    if (imageBuffer.length === 0 || imageBuffer.length > MAX_FOOD_IMAGE_SIZE) {
+      return null;
+    }
+
+    const extension = FOOD_IMAGE_TYPES[contentType as keyof typeof FOOD_IMAGE_TYPES];
+
+    const blob = await put(`food/${randomUUID()}.${extension}`, imageBuffer, {
+      access: 'public',
+      contentType,
+    });
+
+    return blob.url;
+  } catch (error) {
+    console.error('Failed to upload food image:', error);
+    return null;
+  }
+}
 
 export class FoodService {
   constructor(
@@ -77,7 +147,12 @@ export class FoodService {
     this.validateUserId(userId);
     this.validateExternalFood(food);
 
-    return this.foodRepository.saveExternalFood(userId, food);
+    const imageUrl = await uploadFoodImage(food.imageUrl);
+
+    return this.foodRepository.saveExternalFood(userId, {
+      ...food,
+      imageUrl,
+    });
   }
 
   /**
@@ -186,7 +261,12 @@ export class FoodService {
 
     this.validateExternalFood(externalFood);
 
-    return this.foodRepository.saveExternalFood(userId, externalFood);
+    const imageUrl = await uploadFoodImage(externalFood.imageUrl);
+
+    return this.foodRepository.saveExternalFood(userId, {
+      ...externalFood,
+      imageUrl,
+    });
   }
 
   /**
@@ -229,12 +309,27 @@ export class FoodService {
 
     this.validateExternalFood(externalFood);
 
-    return this.foodRepository.saveExternalFood(userId, externalFood);
+    const imageUrl = await uploadFoodImage(externalFood.imageUrl);
+
+    return this.foodRepository.saveExternalFood(userId, {
+      ...externalFood,
+      imageUrl,
+    });
+  }
+
+  /**
+   * Get all foods saved by the user.
+   */
+  async getAllFoods(userId: number) {
+    this.validateUserId(userId);
+
+    return this.foodRepository.getAllFoods(userId);
   }
 
   /**
    * Delete an imported food from the user's food library.
    */
+
   async deleteFood(userId: number, foodId: number): Promise<boolean> {
     this.validateUserId(userId);
 
