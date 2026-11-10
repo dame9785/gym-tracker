@@ -46,10 +46,18 @@ export default async function Workouts({ searchParams }: Props) {
         title="YOUR TRAINING"
         subTitle="Workouts"
         description="Create, manage, and organize your workouts. Build your routines and keep track of your training."
-        action={{
-          label: 'Create workout',
-          href: '/workout/create',
-        }}
+        actions={[
+          {
+            label: 'Schedule workout',
+            href: '/workout-schedule',
+            variant: 'secondary',
+          },
+          {
+            label: 'Create workout',
+            href: '/workout/register',
+            variant: 'primary',
+          },
+        ]}
       />
 
       <section aria-label="Workout library" className="space-y-5">
