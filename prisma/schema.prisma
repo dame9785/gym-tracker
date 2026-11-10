@@ -271,19 +271,43 @@ model CalorieLog {
 
 model Food {
   id   Int    @id @default(autoincrement())
-  name String
+  name String @db.VarChar(191)
+  brand String? @db.VarChar(191)
 
   caloriesPer100g Float
   proteinPer100g  Float
   carbsPer100g    Float
   fatPer100g      Float
 
+  source     FoodSource @default(LOCAL)
+  externalId String?    @db.VarChar(191)
+  barcode    String?    @db.VarChar(64)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   mealItems MealItem[]
-  userId    Int
-  user      User       @relation(fields: [userId], references: [id])
+  servings  FoodServing[]
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, source, externalId])
+  @@index([userId, name])
+  @@index([barcode])
+}
+
+model FoodServing {
+  id     Int @id @default(autoincrement())
+  foodId Int
+
+  name  String   @db.VarChar(100)
+  unit  FoodUnit
+  grams Float
+
+  food Food @relation(fields: [foodId], references: [id], onDelete: Cascade)
+
+  @@index([foodId])
 }
 
 model Meal {
@@ -307,7 +331,9 @@ model MealItem {
   mealId Int
   foodId Int
 
-  grams Float
+  quantity Float
+  unit     FoodUnit @default(GRAM)
+  grams    Float
 
   calories Float
   protein  Float
@@ -338,4 +364,20 @@ enum MealType {
   LUNCH
   DINNER
   SNACK
+}
+
+enum FoodSource {
+  LOCAL
+  GENERIC
+  OPEN_FOOD_FACTS
+  USDA
+  LIVSMEDELSVERKET
+}
+
+enum FoodUnit {
+  GRAM
+  MILLILITER
+  DECILITER
+  PIECE
+  PORTION
 }
