@@ -1,4 +1,5 @@
 import FoodSearch from '@/components/foods/food-search';
+import Header from '@/components/ui/header';
 import { requireAuth } from '@/lib/auth';
 import { FoodService } from '@/services/food-service';
 
@@ -11,11 +12,9 @@ export default async function FoodPage(): Promise<React.ReactElement> {
   return (
     <main className="min-h-screen p-4 text-white sm:p-6 lg:p-8">
       <div className="mx-auto max-w-[1800px]">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Foods</h1>
-
-          <p className="mt-2 text-sm text-zinc-400 sm:text-base">Search, import and manage foods in your personal food library.</p>
-        </div>
+        <section className="min-w-0">
+          <Header title="YOUR NUTRITION" subTitle="Food & Nutrition" description="Manage your food library, explore Swedish food data from Livsmedelsverket, and track calories, protein, carbohydrates, and fat to support your fitness goals." />
+        </section>
 
         <FoodSearch initialFoods={initialFoods} initialFeaturedFoods={initialFeaturedFoods} />
       </div>
