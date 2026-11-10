@@ -16,7 +16,7 @@ export default async function Exercise(): Promise<React.ReactElement> {
 
   try {
     exercises = await exerciseService.getAllExersise(user.userId);
-    console.log('EXERCISES', exercises);
+    
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Something went wrong while loading your exercises.';
 

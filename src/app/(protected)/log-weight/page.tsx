@@ -54,10 +54,12 @@ export default async function LogWeight({ searchParams }: Props) {
         title="YOUR PROGRESS"
         subTitle="Weight tracking"
         description="Track your weight over time and monitor your progress towards your fitness goals."
-        action={{
-          label: 'Add weight',
-          href: '/log-weight/create',
-        }}
+        actions={[
+          {
+            label: 'Add weight',
+            href: '/log-weight/create',
+          },
+        ]}
       />
       {/* Statistics */}
       <div className="mb-6 min-w-0 sm:mb-8">
