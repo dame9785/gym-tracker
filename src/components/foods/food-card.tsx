@@ -1,4 +1,5 @@
 import type { ExternalFood } from '@/lib/food-providers/food-provider';
+import Button from '@/components/button/button';
 
 type Props = {
   food: ExternalFood;
@@ -78,17 +79,11 @@ export default function FoodCard({ food, onImport, isImporting }: Props) {
       </div>
 
       {/* Footer */}
-      <div className="mt-auto pt-4">
-        <p className="mb-2 text-[10px] text-zinc-500">Näringsvärde per 100 g</p>
-
-        <button
-          type="button"
-          onClick={() => onImport(food)}
-          disabled={isImporting}
-          className="flex min-h-11 w-full items-center justify-center rounded-xl bg-orange-500 px-4 text-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isImporting ? 'Importerar...' : '+ Importera livsmedel'}
-        </button>
+      <div className="mt-auto flex flex-2 gap-5 pt-5">
+        <p className="mb-3 text-[10px] text-zinc-500">Näringsvärde per 100 g</p>
+        <Button variant="primary" size="sm" loading={isImporting} disabled={isImporting} onClick={() => onImport(food)}>
+          Importera
+        </Button>
       </div>
     </article>
   );

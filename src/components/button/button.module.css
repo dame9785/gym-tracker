@@ -28,8 +28,9 @@
 /* Sizes */
 
 .sm {
-  padding: 0.5rem 1rem;
-  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.7rem;
+  gap: 0.35rem;
 }
 
 .md {

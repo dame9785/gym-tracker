@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import Button from '@/components/button/button';
 
 import { searchFoodsAction, importExternalFoodByIdAction, deleteFoodAction } from '@/actions/food-actions';
 
@@ -291,9 +292,9 @@ export default function FoodSearch({ initialFoods, initialFeaturedFoods }: Props
             className="min-h-12 min-w-0 flex-1 rounded-lg border border-zinc-800 bg-zinc-900 px-4 text-sm text-white transition outline-none placeholder:text-zinc-500 focus:border-orange-500"
           />
 
-          <button type="button" onClick={handleSearch} disabled={isPending || query.trim().length < 2} className="min-h-12 rounded-lg bg-orange-500 px-6 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50">
-            {isPending ? 'Söker...' : 'Sök livsmedel'}
-          </button>
+          <Button variant="primary" size="sm" loading={isPending} disabled={query.trim().length < 2} onClick={handleSearch}>
+            {isPending ? 'Söker...' : 'Sök'}
+          </Button>
         </div>
 
         {/* Feedback */}
