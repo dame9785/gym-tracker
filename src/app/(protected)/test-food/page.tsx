@@ -2,6 +2,7 @@ import { searchFoodsAction } from '@/actions/food-actions';
 
 export default async function TestFoodPage() {
   const result = await searchFoodsAction('havregryn');
+  console.log(result);
 
   return (
     <main className="p-6">

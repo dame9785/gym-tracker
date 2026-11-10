@@ -3,7 +3,7 @@
 import { requireAuth } from '@/lib/auth';
 import { FoodService } from '@/services/food-service';
 
-import { searchFoodSchema, foodBarcodeSchema, importExternalFoodSchema } from '@/schemas/food-schema';
+import { searchFoodSchema, foodBarcodeSchema, importExternalFoodSchema, importExternalFoodByIdSchema, deleteFoodSchema } from '@/schemas/food-schema';
 
 import type { FoodService as FoodServiceType } from '@/services/food-service';
 
@@ -134,6 +134,88 @@ export async function importFoodAction(barcode: string): Promise<FoodActionResul
     return {
       success: false,
       message: 'Could not import food. Please try again.',
+    };
+  }
+}
+
+export async function importExternalFoodByIdAction(source: 'OPEN_FOOD_FACTS' | 'LIVSMEDELSVERKET', externalId: string): Promise<FoodActionResult<Awaited<ReturnType<FoodServiceType['importExternalFoodById']>>>> {
+  const user = await requireAuth();
+
+  try {
+    const validation = importExternalFoodByIdSchema.safeParse({
+      source,
+      externalId,
+    });
+
+    if (!validation.success) {
+      return {
+        success: false,
+        message: 'Validation failed.',
+        errors: validation.error.flatten().fieldErrors,
+      };
+    }
+
+    const food = await foodService.importExternalFoodById(user.userId, validation.data.source, validation.data.externalId);
+
+    return {
+      success: true,
+      message: 'Food imported successfully.',
+      data: food,
+    };
+  } catch (error: unknown) {
+    console.error('Import external food action failed:', error);
+
+    if (error instanceof Error && error.message === 'Food product not found.') {
+      return {
+        success: false,
+        message: 'Food product not found.',
+      };
+    }
+
+    return {
+      success: false,
+      message: 'Could not import food. Please try again.',
+    };
+  }
+}
+
+/**
+ * Delete an imported food from the user's food library.
+ */
+export async function deleteFoodAction(foodId: number): Promise<FoodActionResult<boolean>> {
+  const user = await requireAuth();
+
+  try {
+    const validation = deleteFoodSchema.safeParse({ foodId });
+
+    if (!validation.success) {
+      return {
+        success: false,
+        message: 'Validation failed.',
+        errors: validation.error.flatten().fieldErrors,
+      };
+    }
+
+    const deleted = await foodService.deleteFood(user.userId, validation.data.foodId);
+
+    if (!deleted) {
+      return {
+        success: false,
+        message: 'Food not found or cannot be deleted.',
+      };
+    }
+
+    return {
+      success: true,
+      message: 'Food deleted successfully.',
+      data: true,
+    };
+  } catch (error: unknown) {
+    console.error('Delete food action failed:', error);
+
+    return {
+      success: false,
+      message: 'Could not delete food. Please try again.',
     };
   }
 }

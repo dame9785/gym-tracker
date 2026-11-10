@@ -116,9 +116,6 @@ export class FoodRepository {
   }
 
   /**
-   * Get external foods already imported by the user.
-   */
-  /**
    * Get all external foods already imported by the user.
    */
   async getImportedFoods(userId: number) {
@@ -135,5 +132,22 @@ export class FoodRepository {
         source: true,
       },
     });
+  }
+
+  /**
+   * Delete a food belonging to the user.
+   */
+  async deleteFood(userId: number, foodId: number) {
+    const result = await prisma.food.deleteMany({
+      where: {
+        id: foodId,
+        userId,
+        source: {
+          in: ['OPEN_FOOD_FACTS', 'LIVSMEDELSVERKET', 'USDA'],
+        },
+      },
+    });
+
+    return result.count > 0;
   }
 }

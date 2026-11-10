@@ -174,4 +174,23 @@ export class LivsmedelsverketProvider implements FoodProvider {
   async getFoodByBarcode(_barcode: string): Promise<ExternalFood | null> {
     return null;
   }
+
+  /**
+   * Get a food directly by its Livsmedelsverket ID.
+   */
+  async getFoodById(foodId: number): Promise<ExternalFood | null> {
+    if (!Number.isInteger(foodId) || foodId <= 0) {
+      return null;
+    }
+
+    const foods = await this.getFoodList();
+
+    const food = foods.find((item) => item.nummer === foodId);
+
+    if (!food) {
+      return null;
+    }
+
+    return this.mapFood(food);
+  }
 }

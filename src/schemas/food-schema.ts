@@ -18,6 +18,16 @@ export const importExternalFoodSchema = z.object({
     .regex(/^\d{8,14}$/, 'Ogiltig streckkod.'),
 });
 
+export const importExternalFoodByIdSchema = z.object({
+  source: z.enum(['OPEN_FOOD_FACTS', 'LIVSMEDELSVERKET']),
+  externalId: z.string().trim().min(1).max(191),
+});
+
+export const deleteFoodSchema = z.object({
+  foodId: z.number().int().positive(),
+});
+
 export type SearchFoodDto = z.infer<typeof searchFoodSchema>;
 export type FoodBarcodeDto = z.infer<typeof foodBarcodeSchema>;
 export type ImportExternalFoodDto = z.infer<typeof importExternalFoodSchema>;
+export type ImportExternalFoodByIdDto = z.infer<typeof importExternalFoodByIdSchema>;

@@ -188,4 +188,60 @@ export class FoodService {
 
     return this.foodRepository.saveExternalFood(userId, externalFood);
   }
+
+  /**
+   * Import an external food using its source and external ID.
+   */
+  async importExternalFoodById(userId: number, source: 'OPEN_FOOD_FACTS' | 'LIVSMEDELSVERKET', externalId: string) {
+    this.validateUserId(userId);
+
+    const normalizedId = externalId.trim();
+
+    if (!normalizedId || normalizedId.length > 191) {
+      throw new Error('Invalid external food ID.');
+    }
+
+    let externalFood: ExternalFood | null = null;
+
+    if (source === 'OPEN_FOOD_FACTS') {
+      externalFood = await this.foodProvider.getFoodByBarcode(normalizedId);
+
+      if (externalFood?.externalId !== normalizedId) {
+        externalFood = null;
+      }
+    }
+
+    if (source === 'LIVSMEDELSVERKET') {
+      if (!/^\d+$/.test(normalizedId)) {
+        throw new Error('Invalid Livsmedelsverket food ID.');
+      }
+
+      externalFood = await this.livsmedelsverketProvider.getFoodById(Number(normalizedId));
+    }
+
+    if (!externalFood) {
+      throw new Error('Food product not found.');
+    }
+
+    if (externalFood.source !== source) {
+      throw new Error('Food source mismatch.');
+    }
+
+    this.validateExternalFood(externalFood);
+
+    return this.foodRepository.saveExternalFood(userId, externalFood);
+  }
+
+  /**
+   * Delete an imported food from the user's food library.
+   */
+  async deleteFood(userId: number, foodId: number): Promise<boolean> {
+    this.validateUserId(userId);
+
+    if (!Number.isInteger(foodId) || foodId <= 0) {
+      throw new Error('Invalid food ID.');
+    }
+
+    return this.foodRepository.deleteFood(userId, foodId);
+  }
 }

@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 import type { ExternalFood, FoodProvider, FoodSearchOptions } from './food-provider';
 
-const BASE_URL = 'https://world.openfoodfacts.org';
+const SEARCH_URL = 'https://search.openfoodfacts.org/search';
+const PRODUCT_BASE_URL = 'https://world.openfoodfacts.org';
 
 const USER_AGENT = 'GymTracker/1.0 (food-data-integration)';
 
@@ -11,7 +12,7 @@ const ProductSchema = z.object({
   product_name: z.string().nullish(),
   product_name_sv: z.string().nullish(),
   product_name_en: z.string().nullish(),
-  brands: z.string().nullish(),
+  brands: z.union([z.string(), z.array(z.string())]).nullish(),
   nutriments: z
     .object({
       'energy-kcal_100g': z.number().nullish(),
@@ -24,21 +25,24 @@ const ProductSchema = z.object({
 });
 
 const SearchResponseSchema = z.object({
-  products: z.array(z.unknown()),
+  hits: z.array(z.unknown()),
 });
 
 const ProductResponseSchema = z.object({
-  status: z.number(),
+  status: z.union([z.literal('success'), z.number(), z.string()]),
   product: z.unknown().optional(),
 });
 
 export class OpenFoodFactsProvider implements FoodProvider {
   private readonly fields = 'code,product_name,product_name_sv,product_name_en,brands,nutriments';
 
-  private async request<T>(url: string, schema: z.ZodType<T>): Promise<T> {
+  private async request<T>(url: string, schema: z.ZodType<T>, init: RequestInit = {}): Promise<T> {
     const response = await fetch(url, {
+      ...init,
       headers: {
+        Accept: 'application/json',
         'User-Agent': USER_AGENT,
+        ...init.headers,
       },
       signal: AbortSignal.timeout(10_000),
       cache: 'no-store',
@@ -83,11 +87,13 @@ export class OpenFoodFactsProvider implements FoodProvider {
       return null;
     }
 
+    const brand = Array.isArray(product.brands) ? product.brands.join(', ') : product.brands?.trim() || null;
+
     return {
       externalId: product.code,
       source: 'OPEN_FOOD_FACTS',
       name,
-      brand: product.brands?.trim() || null,
+      brand,
       barcode: product.code,
       caloriesPer100g: calories,
       proteinPer100g: protein,
@@ -105,17 +111,21 @@ export class OpenFoodFactsProvider implements FoodProvider {
 
     const limit = Math.min(Math.max(options.limit ?? 10, 1), 20);
 
-    const params = new URLSearchParams({
-      search_terms: normalizedQuery,
-      page_size: String(limit),
-      fields: this.fields,
+    const response = await this.request(SEARCH_URL, SearchResponseSchema, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        q: normalizedQuery,
+        langs: ['sv', 'en'],
+        page_size: limit * 5,
+      }),
     });
 
-    const url = `${BASE_URL}/api/v2/search?${params}`;
+    const results = response.hits.map((product) => this.mapProduct(product)).filter((food): food is ExternalFood => food !== null);
 
-    const response = await this.request(url, SearchResponseSchema);
-
-    return response.products.map((product) => this.mapProduct(product)).filter((food): food is ExternalFood => food !== null);
+    return results.slice(0, limit);
   }
 
   async getFoodByBarcode(barcode: string): Promise<ExternalFood | null> {
@@ -129,11 +139,14 @@ export class OpenFoodFactsProvider implements FoodProvider {
       fields: this.fields,
     });
 
-    const url = `${BASE_URL}/api/v3/product/` + `${encodeURIComponent(normalizedBarcode)}?${params}`;
+    const url = `${PRODUCT_BASE_URL}/api/v3/product/` + `${encodeURIComponent(normalizedBarcode)}?${params}`;
 
     const response = await this.request(url, ProductResponseSchema);
+    if (response.status !== 'success' && response.status !== 1) {
+      return null;
+    }
 
-    if (response.status !== 1 || !response.product) {
+    if (!response.product) {
       return null;
     }
 
