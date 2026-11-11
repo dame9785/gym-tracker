@@ -270,6 +270,10 @@ model CalorieLog {
   @@index([userId])
 }
 
+// ==========================================
+// Personal food library
+// ==========================================
+
 model Food {
   id    Int     @id @default(autoincrement())
   name  String  @db.VarChar(191)
@@ -284,7 +288,7 @@ model Food {
   externalId String?    @db.VarChar(191)
   barcode    String?    @db.VarChar(64)
   imageUrl   String?    @db.Text
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -299,6 +303,41 @@ model Food {
   @@index([barcode])
 }
 
+// ==========================================
+// Shared branded product library
+// ==========================================
+
+model Product {
+  id      Int     @id @default(autoincrement())
+  name    String  @db.VarChar(191)
+  brand   String  @db.VarChar(191)
+  barcode String? @unique @db.VarChar(64)
+
+  category String? @db.VarChar(100)
+  imageUrl String? @db.Text
+
+  caloriesPer100g Float
+  proteinPer100g  Float
+  carbsPer100g    Float
+  fatPer100g      Float
+
+  sourceUrl  String?   @db.Text
+  verifiedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mealItems MealItem[]
+
+  @@index([name])
+  @@index([brand])
+  @@index([category])
+}
+
+// ==========================================
+// Food servings
+// ==========================================
+
 model FoodServing {
   id     Int @id @default(autoincrement())
   foodId Int
@@ -311,6 +350,10 @@ model FoodServing {
 
   @@index([foodId])
 }
+
+// ==========================================
+// Meals
+// ==========================================
 
 model Meal {
   id       Int      @id @default(autoincrement())
@@ -331,7 +374,10 @@ model Meal {
 model MealItem {
   id     Int @id @default(autoincrement())
   mealId Int
-  foodId Int
+
+  // Exactly one of foodId or productId must be supplied by the service.
+  foodId    Int?
+  productId Int?
 
   quantity Float
   unit     FoodUnit @default(GRAM)
@@ -343,11 +389,18 @@ model MealItem {
   fat      Float
 
   meal Meal @relation(fields: [mealId], references: [id], onDelete: Cascade)
-  food Food @relation(fields: [foodId], references: [id])
+
+  food    Food?    @relation(fields: [foodId], references: [id], onDelete: Restrict)
+  product Product? @relation(fields: [productId], references: [id], onDelete: Restrict)
 
   @@index([mealId])
   @@index([foodId])
+  @@index([productId])
 }
+
+// ==========================================
+// Enums
+// ==========================================
 
 enum Gender {
   MALE

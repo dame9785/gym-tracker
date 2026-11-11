@@ -217,4 +217,41 @@ export class LivsmedelsverketProvider implements FoodProvider {
 
     return this.mapFood(food);
   }
+
+  /**
+   * Get all foods with complete nutritional values.
+   * Uses controlled concurrency to avoid overwhelming the API.
+   */
+  async getAllFoods(): Promise<{
+    foods: ExternalFood[];
+    total: number;
+    skipped: number;
+  }> {
+    const foodList = await this.getFoodList();
+
+    const foods: ExternalFood[] = [];
+    let skipped = 0;
+
+    const batchSize = 5;
+
+    for (let i = 0; i < foodList.length; i += batchSize) {
+      const batch = foodList.slice(i, i + batchSize);
+
+      const results = await Promise.allSettled(batch.map((food) => this.mapFood(food)));
+
+      for (const result of results) {
+        if (result.status === 'fulfilled' && result.value !== null) {
+          foods.push(result.value);
+        } else {
+          skipped++;
+        }
+      }
+    }
+
+    return {
+      foods,
+      total: foodList.length,
+      skipped,
+    };
+  }
 }

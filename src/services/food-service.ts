@@ -114,6 +114,49 @@ export class FoodService {
   }
 
   /**
+   * Create a manually registered food.
+   */
+  async createManualFood(
+    userId: number,
+    food: {
+      name: string;
+      brand?: string | null;
+      caloriesPer100g: number;
+      proteinPer100g: number;
+      carbsPer100g: number;
+      fatPer100g: number;
+    },
+  ) {
+    this.validateUserId(userId);
+
+    const name = food.name.trim();
+    const brand = food.brand?.trim() || null;
+
+    if (!name || name.length > 191) {
+      throw new Error('Invalid food name.');
+    }
+
+    if (brand && brand.length > 191) {
+      throw new Error('Invalid food brand.');
+    }
+
+    const nutrients = [food.caloriesPer100g, food.proteinPer100g, food.carbsPer100g, food.fatPer100g];
+
+    if (nutrients.some((value) => !Number.isFinite(value) || value < 0 || value > 1000)) {
+      throw new Error('Invalid nutritional values.');
+    }
+
+    return this.foodRepository.createManualFood(userId, {
+      name,
+      brand,
+      caloriesPer100g: food.caloriesPer100g,
+      proteinPer100g: food.proteinPer100g,
+      carbsPer100g: food.carbsPer100g,
+      fatPer100g: food.fatPer100g,
+    });
+  }
+
+  /**
    * Import an external food using its Livsmedelsverket ID.
    */
   async importExternalFoodById(userId: number, source: 'LIVSMEDELSVERKET', externalId: string) {
@@ -146,6 +189,48 @@ export class FoodService {
     this.validateExternalFood(externalFood);
 
     return this.foodRepository.saveExternalFood(userId, externalFood);
+  }
+
+  /**
+   * Import all available foods from Livsmedelsverket.
+   */
+  async importAllLivsmedelsverketFoods(userId: number) {
+    this.validateUserId(userId);
+
+    const result = await this.livsmedelsverketProvider.getAllFoods();
+
+    let imported = 0;
+    let failed = 0;
+
+    const batchSize = 25;
+
+    for (let i = 0; i < result.foods.length; i += batchSize) {
+      const batch = result.foods.slice(i, i + batchSize);
+
+      const saveResults = await Promise.allSettled(
+        batch.map((food) => {
+          this.validateExternalFood(food);
+
+          return this.foodRepository.saveExternalFood(userId, food);
+        }),
+      );
+
+      for (const saveResult of saveResults) {
+        if (saveResult.status === 'fulfilled') {
+          imported++;
+        } else {
+          failed++;
+          console.error('Failed to import Livsmedelsverket food:', saveResult.reason);
+        }
+      }
+    }
+
+    return {
+      total: result.total,
+      imported,
+      skipped: result.skipped,
+      failed,
+    };
   }
 
   /**

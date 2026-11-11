@@ -3,7 +3,7 @@
 import { requireAuth } from '@/lib/auth';
 import { FoodService } from '@/services/food-service';
 
-import { searchFoodSchema, importExternalFoodByIdSchema, deleteFoodSchema } from '@/schemas/food-schema';
+import { searchFoodSchema, importExternalFoodByIdSchema, deleteFoodSchema, createManualFoodSchema } from '@/schemas/food-schema';
 
 import type { FoodService as FoodServiceType } from '@/services/food-service';
 
@@ -22,6 +22,40 @@ export interface FoodActionSuccess<T = undefined> {
 }
 
 export type FoodActionResult<T = undefined> = FoodActionSuccess<T> | FoodActionError;
+
+/**
+ * Create a manually registered food.
+ */
+export async function createManualFoodAction(food: { name: string; brand?: string | null; caloriesPer100g: number; proteinPer100g: number; carbsPer100g: number; fatPer100g: number }): Promise<FoodActionResult<Awaited<ReturnType<FoodServiceType['createManualFood']>>>> {
+  const user = await requireAuth();
+
+  try {
+    const validation = createManualFoodSchema.safeParse(food);
+
+    if (!validation.success) {
+      return {
+        success: false,
+        message: 'Validation failed.',
+        errors: validation.error.flatten().fieldErrors,
+      };
+    }
+
+    const createdFood = await foodService.createManualFood(user.userId, validation.data);
+
+    return {
+      success: true,
+      message: 'Livsmedlet har sparats.',
+      data: createdFood,
+    };
+  } catch (error: unknown) {
+    console.error('Create manual food action failed:', error);
+
+    return {
+      success: false,
+      message: 'Kunde inte spara livsmedlet. Försök igen.',
+    };
+  }
+}
 
 /**
  * Search local and external foods.

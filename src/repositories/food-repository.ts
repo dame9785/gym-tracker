@@ -123,6 +123,37 @@ export class FoodRepository {
   }
 
   /**
+   * Create a manually registered food.
+   */
+  async createManualFood(
+    userId: number,
+    food: {
+      name: string;
+      brand?: string | null;
+      caloriesPer100g: number;
+      proteinPer100g: number;
+      carbsPer100g: number;
+      fatPer100g: number;
+    },
+  ) {
+    return prisma.food.create({
+      data: {
+        userId,
+        name: food.name,
+        brand: food.brand ?? null,
+        caloriesPer100g: food.caloriesPer100g,
+        proteinPer100g: food.proteinPer100g,
+        carbsPer100g: food.carbsPer100g,
+        fatPer100g: food.fatPer100g,
+        source: 'LOCAL',
+      },
+      include: {
+        servings: true,
+      },
+    });
+  }
+
+  /**
    * Delete a food belonging to the user.
    */
 
