@@ -18,7 +18,7 @@ export class WorkoutScheduleService {
     return this.workoutScheduleRepository.create(
       {
         ...validation.data,
-        date: validation.data.date.toISOString(),
+        date: validation.data.date,
       },
       userId,
     );

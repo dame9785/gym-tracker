@@ -1,16 +1,38 @@
 import { z } from 'zod';
 
+// --------------------------------------------------
+// Shared validation
+// --------------------------------------------------
+
+const positiveIdSchema = z.number().int().positive();
+
+const nonNegativeNumberSchema = z.number().finite().min(0);
+
+const nonNegativeIntegerSchema = z.number().int().finite().min(0);
+
+// --------------------------------------------------
+// Create workout session
+// --------------------------------------------------
+
 export const createWorkoutSessionSchema = z.object({
-  workoutId: z.number().int().positive(),
-  workoutScheduleId: z.number().int().positive().optional(),
+  workoutId: positiveIdSchema,
+  workoutScheduleId: positiveIdSchema.optional(),
 });
+
+// --------------------------------------------------
+// Update workout session set
+// --------------------------------------------------
 
 export const updateWorkoutSessionSetSchema = z.object({
-  actualReps: z.number().int().finite().min(0),
-  actualWeight: z.number().finite().min(0),
-  actualSeconds: z.number().finite().min(0),
+  actualReps: nonNegativeIntegerSchema,
+  actualWeight: nonNegativeNumberSchema,
+  actualSeconds: nonNegativeNumberSchema,
 });
 
-export const workoutSessionIdSchema = z.number().int().positive();
+// --------------------------------------------------
+// IDs
+// --------------------------------------------------
 
-export const workoutSessionSetIdSchema = z.number().int().positive();
+export const workoutSessionIdSchema = positiveIdSchema;
+
+export const workoutSessionSetIdSchema = positiveIdSchema;

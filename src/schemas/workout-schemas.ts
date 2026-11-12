@@ -5,12 +5,12 @@ import { z } from 'zod';
 // --------------------------------------------------
 
 const requiredNumber = z.preprocess((value) => {
-  if (value === null || value === undefined || (typeof value === 'string' && value.trim() === '')) {
+  if (value === null || value === undefined || (typeof value === 'string' && value.trim() === '') || (typeof value !== 'string' && typeof value !== 'number')) {
     return Number.NaN;
   }
 
   return value;
-}, z.coerce.number().finite());
+}, z.coerce.number().finite('Värdet måste vara ett giltigt nummer.'));
 
 const requiredInteger = requiredNumber.pipe(z.number().int());
 
