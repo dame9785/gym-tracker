@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useSyncExternalStore } from 'react';
-import { Check, Circle, Dumbbell, Moon, X } from 'lucide-react';
+import { Dumbbell, Moon } from 'lucide-react';
+import { getISOWeek } from 'date-fns';
 
 import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
+import { WORKOUT_STATUS_CONFIG } from '@/components/shared/workout-status';
 import SelectedWorkout from './selected-workout';
 import Modal from '@/components/modal/modal';
 import WorkoutDayCard from './workout-day-card';
-
-import { getISOWeek } from 'date-fns';
 
 interface WeeklyOverviewProps {
   workouts: WeeklyWorkoutViewModel[];
@@ -24,6 +24,12 @@ const week = [
   { name: 'Lördag', short: 'Lör' },
   { name: 'Söndag', short: 'Sön' },
 ];
+
+const plannedStatus = {
+  label: 'Planned',
+  badgeClassName: 'bg-blue-500/10 text-blue-400',
+  icon: <Dumbbell className="h-3.5 w-3.5 text-blue-400" />,
+};
 
 function getTodayIndex() {
   const day = new Date().getDay();
@@ -45,9 +51,6 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
 
   const selectedDayIndex = manualSelectedDayIndex ?? todayIndex ?? 0;
 
-  const setSelectedDayIndex = setManualSelectedDayIndex;
-
-  //GETTING Current Number of the week.
   const weekNumber = getISOWeek(new Date());
 
   const getWorkoutForDay = (day: string) => {
@@ -59,54 +62,24 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
     );
   };
 
-  const selectedDay = week[selectedDayIndex];
-  const selectedDayWorkout = getWorkoutForDay(selectedDay.name);
-
   const getDayIndicator = (workout?: WeeklyWorkoutViewModel) => {
     if (!workout) {
       return <Moon className="h-3.5 w-3.5 text-zinc-500" />;
     }
 
-    switch (workout.status) {
-      case 'COMPLETED':
-        return <Check className="h-3.5 w-3.5 text-emerald-400" />;
-
-      case 'ACTIVE':
-        return <Circle className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />;
-
-      case 'NOTCOMPLETED':
-        return <X className="h-3.5 w-3.5 text-red-400" />;
-
-      default:
-        return <Dumbbell className="h-3.5 w-3.5 text-blue-400" />;
+    if (!workout.status) {
+      return plannedStatus.icon;
     }
+
+    return WORKOUT_STATUS_CONFIG[workout.status].icon;
   };
 
-  const getStatusLabel = (status: WeeklyWorkoutViewModel['status']) => {
-    switch (status) {
-      case 'COMPLETED':
-        return <Check className="h-3.5 w-3.5 text-emerald-400" />;
-      case 'ACTIVE':
-        return 'Active';
-      case 'NOTCOMPLETED':
-        return 'Missed';
-      default:
-        return 'Planned';
-    }
+  const getWorkoutStatus = (workout: WeeklyWorkoutViewModel) => {
+    return workout.status ? WORKOUT_STATUS_CONFIG[workout.status] : plannedStatus;
   };
 
-  const getStatusStyle = (status: WeeklyWorkoutViewModel['status']) => {
-    switch (status) {
-      case 'COMPLETED':
-        return 'border border-emerald-500/30 bg-emerald-500/15 text-emerald-300';
-      case 'ACTIVE':
-        return 'bg-orange-500/10 text-orange-400';
-      case 'NOTCOMPLETED':
-        return 'bg-red-500/10 text-red-400';
-      default:
-        return 'bg-blue-500/10 text-blue-400';
-    }
-  };
+  const selectedDay = week[selectedDayIndex];
+  const selectedDayWorkout = getWorkoutForDay(selectedDay.name);
 
   return (
     <section className="min-w-0">
@@ -127,12 +100,12 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
               <button
                 key={day.name}
                 type="button"
-                onClick={() => setSelectedDayIndex(index)}
+                onClick={() => setManualSelectedDayIndex(index)}
                 aria-label={`${day.name}${isToday ? ', today' : ''}`}
                 aria-pressed={isSelected}
                 className={`flex min-w-0 flex-col items-center justify-center gap-2 rounded-xl border px-1 py-3 transition-all duration-200 ${
                   isSelected ? 'border-orange-500 bg-orange-500/15 text-orange-400 shadow-lg shadow-orange-950/20' : 'border-zinc-800 bg-zinc-950/80 text-zinc-400 hover:border-zinc-600'
-                } `}
+                }`}
               >
                 <span className="text-xs font-semibold sm:text-sm">{day.short}</span>
 
@@ -152,7 +125,12 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
             <p className="mt-1 text-sm leading-5 text-zinc-500">{selectedDayWorkout ? 'Träningspass planerat eller registrerat' : 'Ingen träning planerad'}</p>
           </div>
 
-          {selectedDayWorkout && <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusStyle(selectedDayWorkout.status)} `}>{getStatusLabel(selectedDayWorkout.status)}</span>}
+          {selectedDayWorkout && (
+            <span className={`flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${getWorkoutStatus(selectedDayWorkout).badgeClassName}`}>
+              {getWorkoutStatus(selectedDayWorkout).icon}
+              {getWorkoutStatus(selectedDayWorkout).label}
+            </span>
+          )}
         </div>
 
         {/* Selected day card */}
@@ -168,11 +146,11 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
 
         {/* Previous / next day */}
         <div className="mt-3 flex items-center justify-between">
-          <button type="button" onClick={() => setSelectedDayIndex((current) => ((current ?? todayIndex ?? 0) + 6) % 7)} className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white">
+          <button type="button" onClick={() => setManualSelectedDayIndex((current) => ((current ?? todayIndex ?? 0) + 6) % 7)} className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white">
             ← Föregående
           </button>
 
-          <button type="button" onClick={() => setSelectedDayIndex((current) => ((current ?? todayIndex ?? 0) + 1) % 7)} className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white">
+          <button type="button" onClick={() => setManualSelectedDayIndex((current) => ((current ?? todayIndex ?? 0) + 1) % 7)} className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white">
             Nästa →
           </button>
         </div>

@@ -1,6 +1,5 @@
 import type { ExerciseViewModel } from '@/types/exercise-types';
-
-import ExericseCard from '@/components/exericses/exercise-card';
+import ExerciseCard from '@/components/exericses/exercise-card';
 
 type Props = {
   exercises: ExerciseViewModel[];
@@ -20,7 +19,7 @@ export default function Exercises({ exercises }: Props) {
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {exercises.map((exercise) => (
-        <ExericseCard key={exercise.id} exercise={exercise} />
+        <ExerciseCard key={exercise.id} exercise={exercise} />
       ))}
     </div>
   );

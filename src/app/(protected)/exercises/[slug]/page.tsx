@@ -4,15 +4,17 @@ import { Activity, ArrowLeft, Dumbbell, FileText, Lightbulb, ListChecks, Pencil 
 import { notFound } from 'next/navigation';
 
 import ErrorMessage from '@/components/ui/error-message';
+
 import { ExerciseService } from '@/services/exercise-service';
 import { requireAuth } from '@/lib/auth';
+
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function ExerciseDetailsPage({ params }: PageProps): Promise<React.ReactElement> {
+export default async function ExerciseDetailsPage({ params }: PageProps) {
   const user = await requireAuth();
   const { slug } = await params;
 
@@ -56,12 +58,14 @@ export default async function ExerciseDetailsPage({ params }: PageProps): Promis
   return (
     <main className="min-h-screen p-4 text-white sm:p-6 lg:p-8">
       <div className="mx-auto max-w-6xl">
+        {/* Back navigation */}
         <Link href="/exercises" className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition hover:text-orange-400">
           <ArrowLeft className="h-4 w-4" />
           Back to exercises
         </Link>
 
         <article className="overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900 to-zinc-950 shadow-2xl shadow-black/20">
+          {/* Hero image */}
           <div className="relative h-64 bg-zinc-900 sm:h-80 lg:h-[420px]">
             <Image src={exercise.imagePath || '/placeholder.png'} alt={exercise.name} fill priority sizes="(max-width: 768px) 100vw, 1152px" className="object-cover" />
 
@@ -71,22 +75,20 @@ export default async function ExerciseDetailsPage({ params }: PageProps): Promis
               <span className="mb-3 inline-flex items-center rounded-full border border-blue-400/40 bg-blue-950/90 px-3 py-1.5 text-xs font-semibold text-blue-200 backdrop-blur-sm">{exercise.primaryMuscle}</span>
 
               <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">{exercise.name}</h1>
-
-              <div className="mt-3 flex items-center gap-2 text-sm text-zinc-300">
-                <Dumbbell className="h-4 w-4 text-orange-400" />
-                {exercise.equipment || 'Bodyweight'}
-              </div>
             </div>
           </div>
 
           <div className="p-5 sm:p-8">
+            {/* Muscle groups */}
             <section>
               <div className="mb-4 flex items-center gap-2">
                 <Activity className="h-5 w-5 text-orange-400" />
+
                 <h2 className="text-lg font-semibold text-white">Muscle groups</h2>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
+                {/* Primary muscle */}
                 <div className="rounded-xl border border-blue-500/20 bg-blue-500/[0.05] p-5">
                   <p className="mb-4 text-xs font-bold tracking-wider text-blue-300 uppercase">Primary muscle</p>
 
@@ -96,6 +98,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps): Promis
                   </span>
                 </div>
 
+                {/* Secondary muscles */}
                 <div className="rounded-xl border border-violet-500/20 bg-violet-500/[0.05] p-5">
                   <p className="mb-4 text-xs font-bold tracking-wider text-violet-300 uppercase">Secondary muscles</p>
 
@@ -115,9 +118,11 @@ export default async function ExerciseDetailsPage({ params }: PageProps): Promis
               </div>
             </section>
 
+            {/* Description */}
             <section className="mt-8">
               <div className="mb-4 flex items-center gap-2">
                 <FileText className="h-5 w-5 text-orange-400" />
+
                 <h2 className="text-lg font-semibold text-white">Description</h2>
               </div>
 
@@ -126,9 +131,11 @@ export default async function ExerciseDetailsPage({ params }: PageProps): Promis
               </div>
             </section>
 
+            {/* Instructions */}
             <section className="mt-8">
               <div className="mb-4 flex items-center gap-2">
                 <ListChecks className="h-5 w-5 text-orange-400" />
+
                 <h2 className="text-lg font-semibold text-white">How to perform</h2>
               </div>
 
@@ -149,10 +156,12 @@ export default async function ExerciseDetailsPage({ params }: PageProps): Promis
               )}
             </section>
 
+            {/* Technique tips */}
             {exercise.techniqueTips && (
               <section className="mt-8">
                 <div className="mb-4 flex items-center gap-2">
                   <Lightbulb className="h-5 w-5 text-amber-400" />
+
                   <h2 className="text-lg font-semibold text-white">Technique tips</h2>
                 </div>
 
@@ -162,9 +171,11 @@ export default async function ExerciseDetailsPage({ params }: PageProps): Promis
               </section>
             )}
 
+            {/* Equipment */}
             <section className="mt-8">
               <div className="mb-4 flex items-center gap-2">
                 <Dumbbell className="h-5 w-5 text-orange-400" />
+
                 <h2 className="text-lg font-semibold text-white">Equipment</h2>
               </div>
 
@@ -175,11 +186,13 @@ export default async function ExerciseDetailsPage({ params }: PageProps): Promis
 
                 <div>
                   <p className="font-semibold text-white">{exercise.equipment || 'Bodyweight'}</p>
+
                   <p className="mt-1 text-xs text-zinc-500">Required equipment for this exercise</p>
                 </div>
               </div>
             </section>
 
+            {/* Actions */}
             <div className="mt-8 flex flex-col gap-3 border-t border-zinc-800 pt-6 sm:flex-row sm:justify-end">
               <Link href="/exercises" className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-700 px-5 py-3 text-sm font-semibold text-zinc-300 transition hover:border-zinc-600 hover:bg-zinc-800">
                 <ArrowLeft className="h-4 w-4" />
