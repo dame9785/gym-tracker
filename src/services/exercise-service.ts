@@ -1,14 +1,14 @@
 import { ExerciseRepository } from '@/repositories/exercise-repository';
-import { ExerciseMapper } from '@/mapping/exericse-mapping';
+import { ExerciseMapper } from '@/mapping/exercise-mapping';
 
-import type { ExerciseListResult, ExerciseResult } from '@/types/exercise-types';
+import type { ExerciseViewModel } from '@/types/exercise-types';
 
 import { registerExerciseSchema, updateExerciseSchema, type RegisterExericseDto, type UpdateExericseDto } from '@/schemas/exercise-schema';
 
 export class ExerciseService {
-  private exerciseRepository = new ExerciseRepository();
+  private readonly exerciseRepository = new ExerciseRepository();
 
-  async getAllExersise(userId: number): Promise<ExerciseListResult> {
+  async getAllExersise(userId: number): Promise<ExerciseViewModel[]> {
     const exercises = await this.exerciseRepository.getAllExersise(userId);
 
     return exercises.map((exercise) => ExerciseMapper.exerciseModelToViewModel(exercise));
@@ -18,7 +18,7 @@ export class ExerciseService {
     await this.exerciseRepository.delete(id, userId);
   }
 
-  async registerExercise(dto: RegisterExericseDto, userId: number): Promise<ExerciseResult> {
+  async registerExercise(dto: RegisterExericseDto, userId: number): Promise<ExerciseViewModel> {
     const validation = registerExerciseSchema.safeParse(dto);
 
     if (!validation.success) {
@@ -30,7 +30,7 @@ export class ExerciseService {
     return ExerciseMapper.exerciseModelToViewModel(exercise);
   }
 
-  async getById(id: number, userId: number): Promise<ExerciseResult> {
+  async getById(id: number, userId: number): Promise<ExerciseViewModel> {
     const exercise = await this.exerciseRepository.getById(id, userId);
 
     if (!exercise) {
@@ -40,7 +40,7 @@ export class ExerciseService {
     return ExerciseMapper.exerciseModelToViewModel(exercise);
   }
 
-  async getBySlug(slug: string, userId: number): Promise<ExerciseResult> {
+  async getBySlug(slug: string, userId: number): Promise<ExerciseViewModel> {
     const exercise = await this.exerciseRepository.getBySlug(slug, userId);
 
     if (!exercise) {

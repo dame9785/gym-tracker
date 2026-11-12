@@ -17,33 +17,43 @@ export default function UserSettingsTabs({ user }: Props) {
 
   return (
     <div className="mx-auto w-full max-w-5xl">
-      <div className="mb-8 flex gap-3 border-b border-gray-700">
+      <div role="tablist" aria-label="User settings" className="mb-8 flex gap-3 border-b border-gray-700">
         <button
+          id="user-settings-tab"
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'user-settings'}
+          aria-controls="user-settings-panel"
           onClick={() => setActiveTab('user-settings')}
-          className={`px-5 py-3 font-semibold transition-colors ${
-            activeTab === 'user-settings' ? 'border-b-2 border-orange-500 text-orange-500' : 'text-gray-400 hover:text-white'
-          }`}
+          className={`px-5 py-3 font-semibold transition-colors ${activeTab === 'user-settings' ? 'border-b-2 border-orange-500 text-orange-500' : 'text-gray-400 hover:text-white'}`}
         >
           User Settings
         </button>
 
         <button
+          id="change-password-tab"
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'change-password'}
+          aria-controls="change-password-panel"
           onClick={() => setActiveTab('change-password')}
-          className={`px-5 py-3 font-semibold transition-colors ${
-            activeTab === 'change-password' ? 'border-b-2 border-orange-500 text-orange-500' : 'text-gray-400 hover:text-white'
-          }`}
+          className={`px-5 py-3 font-semibold transition-colors ${activeTab === 'change-password' ? 'border-b-2 border-orange-500 text-orange-500' : 'text-gray-400 hover:text-white'}`}
         >
           Change Password
         </button>
       </div>
 
-      <div>
-        {activeTab === 'user-settings' && <UpdateUserForm user={user} />}
+      {activeTab === 'user-settings' && (
+        <div id="user-settings-panel" role="tabpanel" aria-labelledby="user-settings-tab">
+          <UpdateUserForm user={user} />
+        </div>
+      )}
 
-        {activeTab === 'change-password' && <ChangePasswordForm />}
-      </div>
+      {activeTab === 'change-password' && (
+        <div id="change-password-panel" role="tabpanel" aria-labelledby="change-password-tab">
+          <ChangePasswordForm />
+        </div>
+      )}
     </div>
   );
 }

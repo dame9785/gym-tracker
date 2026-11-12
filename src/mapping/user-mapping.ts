@@ -1,14 +1,11 @@
-//Prisma
-import { Prisma } from '@prisma/client';
+import { Prisma, type User } from '@prisma/client';
 
-//Types
-import type { UserSettingsViewModel, UserViewModel } from '@/types/user-types';
+import type { UserViewModel, UserSettingsViewModel } from '@/types/user-types';
+
 import type { UpdateUserDto, RegisterUserDto } from '@/schemas/auth-schemas';
 
-import type { User } from '@prisma/client';
-
 export class UserMapper {
-  static userModelToUserSettingsViewModel(user: User): UserSettingsViewModel {
+  private static mapUserToViewModel(user: User): UserViewModel {
     return {
       id: user.id,
       email: user.email,
@@ -28,24 +25,12 @@ export class UserMapper {
     };
   }
 
+  static userModelToUserSettingsViewModel(user: User): UserSettingsViewModel {
+    return this.mapUserToViewModel(user);
+  }
+
   static userDbToViewModel(user: User): UserViewModel {
-    return {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phoneNumber: user.phoneNumber,
-      bodyWeight: user.bodyWeight.toNumber(),
-      height: user.height.toNumber(),
-      goalWeight: user.goalWeight.toNumber(),
-      birthDate: user.birthDate.toISOString(),
-      goalDate: user.goalDate.toISOString(),
-      createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString(),
-      goalType: user.goalType,
-      gender: user.gender,
-    };
+    return this.mapUserToViewModel(user);
   }
 
   static createUserDtoToDbModel(dto: RegisterUserDto, passwordHash: string): Prisma.UserCreateInput {

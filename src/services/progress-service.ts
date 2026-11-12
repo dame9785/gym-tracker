@@ -1,13 +1,12 @@
 import { ProgressRepository } from '@/repositories/progress-repository';
+
 import type { ExerciseProgress, ProgressApiResponse } from '@/types/progress-type';
 
 export default class ProgressService {
-  private progressRepository = new ProgressRepository();
+  private readonly progressRepository = new ProgressRepository();
 
   async getProgress(userId: number): Promise<ProgressApiResponse> {
-    const weightProgress = await this.progressRepository.getWeightProgress(userId);
-
-    const exerciseSessions = await this.progressRepository.getExerciseProgress(userId);
+    const [weightProgress, exerciseSessions] = await Promise.all([this.progressRepository.getWeightProgress(userId), this.progressRepository.getExerciseProgress(userId)]);
 
     const exerciseMap = new Map<number, ExerciseProgress>();
 
@@ -21,16 +20,19 @@ export default class ProgressService {
       for (const sessionExercise of session.exercises) {
         const exercise = sessionExercise.workoutExercise.exercise;
 
-        if (!exerciseMap.has(exercise.id)) {
-          exerciseMap.set(exercise.id, {
+        let exerciseProgress = exerciseMap.get(exercise.id);
+
+        if (!exerciseProgress) {
+          exerciseProgress = {
             exerciseId: exercise.id,
             exerciseName: exercise.name,
             equipment: exercise.equipment,
             history: [],
-          });
+          };
+
+          exerciseMap.set(exercise.id, exerciseProgress);
         }
 
-        const exerciseProgress = exerciseMap.get(exercise.id)!;
         const isPlank = /plank/i.test(exercise.name);
 
         for (const set of sessionExercise.sets) {

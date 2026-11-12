@@ -1,5 +1,3 @@
-import { WorkoutSessionSetViewModel } from '@/types/workout-types';
-
 export interface Exercise {
   exerciseId: number;
 }
@@ -52,11 +50,14 @@ export interface WorkoutSessionExerciseViewModel {
   sets: WorkoutSessionSetViewModel[];
 }
 
-export type ExerciseResult = ExerciseViewModel;
-
-export type ExerciseListResult = ExerciseViewModel[];
-
-export interface DeleteExerciseResult {
-  success: true;
-  message: string;
+export interface WorkoutSessionSetViewModel {
+  id: number;
+  setNumber: number;
+  targetReps: number;
+  targetWeight: number | null;
+  actualReps: number | null;
+  actualWeight: number | null;
+  actualSeconds: number | null;
+  targetSeconds: number | null;
+  completed: boolean;
 }

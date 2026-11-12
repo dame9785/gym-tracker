@@ -1,31 +1,47 @@
+import { MuscleRole } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
+
 import { prisma } from '@/lib/prisma';
+
 import type { RegisterExericseDto, UpdateExericseDto } from '@/schemas/exercise-schema';
-import { MuscleRole, Prisma } from '@prisma/client';
+
+const exerciseWithMusclesInclude = {
+  muscles: {
+    include: {
+      muscleGroup: true,
+    },
+  },
+} as const;
+
+type ExerciseWithMuscles = Prisma.ExerciseGetPayload<{
+  include: typeof exerciseWithMusclesInclude;
+}>;
 
 type MuscleInput = {
   primaryMuscle: string;
   secondaryMuscles: string[];
 };
 
+type MuscleRelation = {
+  name: string;
+  role: MuscleRole;
+};
+
 export class ExerciseRepository {
-  async getAllExersise(userId: number) {
+  async getAllExersise(userId: number): Promise<ExerciseWithMuscles[]> {
     return prisma.exercise.findMany({
       where: {
         userId,
         archivedAt: null,
       },
-      include: {
-        muscles: {
-          include: {
-            muscleGroup: true,
-          },
-        },
+      include: exerciseWithMusclesInclude,
+      orderBy: {
+        id: 'desc',
       },
-      orderBy: { id: 'desc' },
     });
   }
 
-  async register(dto: RegisterExericseDto, userId: number) {
+  async register(dto: RegisterExericseDto, userId: number): Promise<ExerciseWithMuscles> {
     const muscleRelations = this.buildMuscleRelations({
       primaryMuscle: dto.primaryMuscle,
       secondaryMuscles: dto.secondaryMuscles,
@@ -45,23 +61,23 @@ export class ExerciseRepository {
             role,
             muscleGroup: {
               connectOrCreate: {
-                where: { name },
-                create: { name },
+                where: {
+                  name,
+                },
+                create: {
+                  name,
+                },
               },
             },
           })),
         },
       },
-      include: {
-        muscles: {
-          include: { muscleGroup: true },
-        },
-      },
+      include: exerciseWithMusclesInclude,
     });
   }
 
   async delete(id: number, userId: number): Promise<void> {
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx): Promise<void> => {
       const archivedAt = new Date();
 
       const result = await tx.exercise.updateMany({
@@ -95,18 +111,14 @@ export class ExerciseRepository {
   }
 
   async update(id: number, dto: UpdateExericseDto, userId: number): Promise<void> {
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx): Promise<void> => {
       const existing = await tx.exercise.findFirst({
         where: {
           id,
           userId,
           archivedAt: null,
         },
-        include: {
-          muscles: {
-            include: { muscleGroup: true },
-          },
-        },
+        include: exerciseWithMusclesInclude,
       });
 
       if (!existing) {
@@ -116,7 +128,9 @@ export class ExerciseRepository {
       const musclesChanged = dto.primaryMuscle !== undefined || dto.secondaryMuscles !== undefined;
 
       const data: Prisma.ExerciseUpdateInput = {
-        ...(dto.name !== undefined && { name: dto.name }),
+        ...(dto.name !== undefined && {
+          name: dto.name,
+        }),
         ...(dto.equipment !== undefined && {
           equipment: dto.equipment || null,
         }),
@@ -138,6 +152,7 @@ export class ExerciseRepository {
         where: {
           id,
           userId,
+          archivedAt: null,
         },
         data,
       });
@@ -149,8 +164,7 @@ export class ExerciseRepository {
           throw new Error('A primary muscle group is required.');
         }
 
-        const secondaryMuscles =
-          dto.secondaryMuscles ?? existing.muscles.filter((muscle) => muscle.role === MuscleRole.SECONDARY).map((muscle) => muscle.muscleGroup.name);
+        const secondaryMuscles = dto.secondaryMuscles ?? existing.muscles.filter((muscle) => muscle.role === MuscleRole.SECONDARY).map((muscle) => muscle.muscleGroup.name);
 
         const relations = this.buildMuscleRelations({
           primaryMuscle,
@@ -158,13 +172,19 @@ export class ExerciseRepository {
         });
 
         await tx.exerciseMuscle.deleteMany({
-          where: { exerciseId: id },
+          where: {
+            exerciseId: id,
+          },
         });
 
         for (const relation of relations) {
           const muscleGroup = await tx.muscleGroup.upsert({
-            where: { name: relation.name },
-            create: { name: relation.name },
+            where: {
+              name: relation.name,
+            },
+            create: {
+              name: relation.name,
+            },
             update: {},
           });
 
@@ -180,37 +200,29 @@ export class ExerciseRepository {
     });
   }
 
-  async getById(id: number, userId: number) {
+  async getById(id: number, userId: number): Promise<ExerciseWithMuscles | null> {
     return prisma.exercise.findFirst({
       where: {
         id,
         userId,
         archivedAt: null,
       },
-      include: {
-        muscles: {
-          include: { muscleGroup: true },
-        },
-      },
+      include: exerciseWithMusclesInclude,
     });
   }
 
-  async getBySlug(slug: string, userId: number) {
+  async getBySlug(slug: string, userId: number): Promise<ExerciseWithMuscles | null> {
     return prisma.exercise.findFirst({
       where: {
         slug,
         userId,
         archivedAt: null,
       },
-      include: {
-        muscles: {
-          include: { muscleGroup: true },
-        },
-      },
+      include: exerciseWithMusclesInclude,
     });
   }
 
-  private buildMuscleRelations(input: MuscleInput) {
+  private buildMuscleRelations(input: MuscleInput): MuscleRelation[] {
     const primaryMuscle = input.primaryMuscle.trim();
 
     if (!primaryMuscle) {
@@ -223,9 +235,7 @@ export class ExerciseRepository {
       throw new Error('Muscle group names cannot be empty.');
     }
 
-    const uniqueSecondary = [...new Map(normalizedSecondary.map((name) => [name.toLowerCase(), name])).values()].filter(
-      (name) => name.toLowerCase() !== primaryMuscle.toLowerCase(),
-    );
+    const uniqueSecondary = [...new Map(normalizedSecondary.map((name) => [name.toLowerCase(), name])).values()].filter((name) => name.toLowerCase() !== primaryMuscle.toLowerCase());
 
     return [
       {

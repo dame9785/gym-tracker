@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { updateWorkoutSessionSetAction } from '@/actions/workout-session-actions';
-import type { WorkoutSessionSetViewModel } from '@/types/workout-types';
+import type { WorkoutSessionSetViewModel } from '@/types/exercise-types';
 
 interface WorkoutSessionSetCardProps {
   set: WorkoutSessionSetViewModel;
@@ -21,15 +21,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
   const handleSave = async () => {
     if (isSaving) return;
 
-    if (
-      !Number.isFinite(actualReps) ||
-      !Number.isInteger(actualReps) ||
-      actualReps < 0 ||
-      !Number.isFinite(actualWeight) ||
-      actualWeight < 0 ||
-      !Number.isFinite(actualSeconds) ||
-      actualSeconds < 0
-    ) {
+    if (!Number.isFinite(actualReps) || !Number.isInteger(actualReps) || actualReps < 0 || !Number.isFinite(actualWeight) || actualWeight < 0 || !Number.isFinite(actualSeconds) || actualSeconds < 0) {
       toast.error('Enter valid, non-negative values.');
       return;
     }
@@ -63,13 +55,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
     <div className={`border-t px-4 py-4 transition first:border-t-0 ${isSaved ? 'bg-green-500/[0.02]' : 'bg-transparent'}`}>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
         <div className="flex min-w-[170px] items-center gap-3 lg:pb-2">
-          <div
-            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
-              isSaved ? 'bg-green-500/10 text-green-400' : 'bg-blue-500/10 text-blue-400'
-            }`}
-          >
-            {set.setNumber}
-          </div>
+          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${isSaved ? 'bg-green-500/10 text-green-400' : 'bg-blue-500/10 text-blue-400'}`}>{set.setNumber}</div>
 
           <div>
             <p className="text-sm font-semibold text-white">Set {set.setNumber}</p>
@@ -98,7 +84,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
                 setActualReps(Number(event.target.value));
                 setIsSaved(false);
               }}
-              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white transition outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
             />
           </div>
 
@@ -117,7 +103,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
                 setActualWeight(Number(event.target.value));
                 setIsSaved(false);
               }}
-              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white transition outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
             />
           </div>
 
@@ -136,7 +122,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
                 setActualSeconds(Number(event.target.value));
                 setIsSaved(false);
               }}
-              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white transition outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
             />
           </div>
         </div>
@@ -146,9 +132,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className={`h-10 w-full cursor-pointer rounded-lg px-5 text-sm font-semibold transition lg:w-auto ${
-              isSaved ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-blue-600 text-white hover:bg-blue-500'
-            } disabled:cursor-not-allowed disabled:opacity-50`}
+            className={`h-10 w-full cursor-pointer rounded-lg px-5 text-sm font-semibold transition lg:w-auto ${isSaved ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-blue-600 text-white hover:bg-blue-500'} disabled:cursor-not-allowed disabled:opacity-50`}
           >
             {isSaving ? 'Saving...' : isSaved ? '✓ Saved' : 'Save'}
           </button>

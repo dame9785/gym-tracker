@@ -20,8 +20,6 @@ export class ForgotPasswordService {
       return;
     }
 
-    const token = await this.passwordResetService.createToken(user.id);
-
     const appUrl = process.env.APP_URL;
 
     if (!appUrl) {
@@ -29,6 +27,9 @@ export class ForgotPasswordService {
     }
 
     const resetUrl = new URL('/account/reset-password', appUrl);
+
+    const token = await this.passwordResetService.createToken(user.id);
+
     resetUrl.searchParams.set('token', token);
 
     await this.emailService.sendPasswordResetEmail(user.email, resetUrl.toString());

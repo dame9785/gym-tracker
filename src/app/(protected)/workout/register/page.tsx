@@ -2,14 +2,14 @@ import RegisterWorkoutForm from '@/components/forms/workout/register-workout-for
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
 import { ExerciseService } from '@/services/exercise-service';
-import type { ExerciseListResult } from '@/types/exercise-types';
+import type { ExerciseViewModel } from '@/types/exercise-types';
 
 const exerciseService = new ExerciseService();
 
 export default async function RegisterWorkout(): Promise<React.ReactElement> {
   const user = await requireAuth();
 
-  let exercises: ExerciseListResult;
+  let exercises: ExerciseViewModel[];
 
   try {
     exercises = await exerciseService.getAllExersise(user.userId);

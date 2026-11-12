@@ -1,14 +1,30 @@
 import ExerciseProgress from '@/components/progress/progress-exercise';
 
+import ErrorMessage from '@/components/ui/error-message';
+import Header from '@/components/ui/header';
+
 import { requireAuth } from '@/lib/auth';
 import ProgressService from '@/services/progress-service';
-import Header from '@/components/ui/header';
 
 export default async function ProgressPage() {
   const user = await requireAuth();
 
   const progressService = new ProgressService();
-  const response = await progressService.getProgress(user.userId);
+
+  let exerciseProgress: Awaited<ReturnType<typeof progressService.getProgress>>['exerciseProgress'];
+
+  try {
+    const response = await progressService.getProgress(user.userId);
+    exerciseProgress = response.exerciseProgress;
+  } catch (error: unknown) {
+    console.error('Failed to load exercise progress:', error);
+
+    return (
+      <main className="mx-auto w-full max-w-7xl px-0 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <ErrorMessage title="Unable to load progress" message="We couldn't retrieve your exercise progress. Please try again later." />
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto w-full max-w-7xl px-0 py-6 sm:px-6 sm:py-8 lg:px-8">
@@ -21,7 +37,7 @@ export default async function ProgressPage() {
           <p className="mt-1 text-sm leading-6 text-zinc-400">Följ utvecklingen för dina övningar, jämför resultat och se dina rekord över tid.</p>
         </div>
 
-        <ExerciseProgress exerciseProgress={response.exerciseProgress} metric="weight" />
+        <ExerciseProgress exerciseProgress={exerciseProgress} metric="weight" />
       </section>
     </main>
   );

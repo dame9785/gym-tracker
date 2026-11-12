@@ -5,12 +5,21 @@ import DashboardCalendar from '@/components/dashboard/dashboard-calendar';
 import { requireAuth } from '@/lib/auth';
 import { DashboardService } from '@/services/dashboard-service';
 import Header from '@/components/ui/header';
+import ErrorMessage from '@/components/ui/error-message';
 
 export default async function DashboardPage() {
   const user = await requireAuth();
 
   const dashboardService = new DashboardService();
-  const result = await dashboardService.getDashboard(user.userId);
+  let result: Awaited<ReturnType<DashboardService['getDashboard']>>;
+
+  try {
+    result = await dashboardService.getDashboard(user.userId);
+  } catch (error) {
+    console.error('Failed to fetch dashboard data:', error);
+
+    return <ErrorMessage title="Kunde inte ladda dashboard" message="Vi kunde inte hämta din träningsdata. Försök igen senare." />;
+  }
 
   return (
     <div className="w-full min-w-0 space-y-5 sm:space-y-8">

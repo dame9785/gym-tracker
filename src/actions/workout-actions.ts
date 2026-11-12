@@ -9,29 +9,28 @@ import { registerWorkoutSchema, updateWorkoutSchema } from '@/schemas/workout-sc
 import type { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
 import { WorkoutService } from '@/services/workout-service';
+import type { AppActionResult } from '@/types/action-types';
+import type { WorkoutViewModel } from '@/types/workout-types';
+import { getActionErrorMessage, getActionValidationErrors } from '@/utils/action-error';
 
-import type { DeleteWorkoutActionResult, RegisterWorkoutActionResult, UpdateWorkoutActionResult } from '@/types/workout-types';
+import { isValidId } from '@/utils/validation';
 
 const workoutService = new WorkoutService();
 
-function isValidId(id: number): boolean {
-  return Number.isSafeInteger(id) && id > 0;
-}
-
-export async function registerWorkoutAction(dto: AddWorkoutDto): Promise<RegisterWorkoutActionResult> {
+export async function registerWorkoutAction(dto: AddWorkoutDto): Promise<AppActionResult<WorkoutViewModel>> {
   const user = await requireAuth();
 
+  const validation = registerWorkoutSchema.safeParse(dto);
+
+  if (!validation.success) {
+    return {
+      success: false,
+      message: 'Validation failed.',
+      errors: validation.error.flatten().fieldErrors,
+    };
+  }
+
   try {
-    const validation = registerWorkoutSchema.safeParse(dto);
-
-    if (!validation.success) {
-      return {
-        success: false,
-        message: 'Validation failed.',
-        errors: validation.error.flatten().fieldErrors,
-      };
-    }
-
     const workout = await workoutService.create(validation.data, user.userId);
 
     revalidatePath('/workout');
@@ -43,16 +42,15 @@ export async function registerWorkoutAction(dto: AddWorkoutDto): Promise<Registe
       data: workout,
     };
   } catch (error: unknown) {
-    console.error('Register workout action failed:', error);
-
     return {
       success: false,
-      message: 'Could not create workout. Please try again.',
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }
 
-export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutDto): Promise<UpdateWorkoutActionResult> {
+export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutDto): Promise<AppActionResult<WorkoutViewModel>> {
   const user = await requireAuth();
 
   if (!isValidId(workoutId)) {
@@ -62,17 +60,17 @@ export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutD
     };
   }
 
+  const validation = updateWorkoutSchema.safeParse(dto);
+
+  if (!validation.success) {
+    return {
+      success: false,
+      message: 'Validation failed.',
+      errors: validation.error.flatten().fieldErrors,
+    };
+  }
+
   try {
-    const validation = updateWorkoutSchema.safeParse(dto);
-
-    if (!validation.success) {
-      return {
-        success: false,
-        message: 'Validation failed.',
-        errors: validation.error.flatten().fieldErrors,
-      };
-    }
-
     const workout = await workoutService.update(workoutId, validation.data, user.userId);
 
     revalidatePath('/workout');
@@ -85,16 +83,15 @@ export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutD
       data: workout,
     };
   } catch (error: unknown) {
-    console.error('Update workout action failed:', error);
-
     return {
       success: false,
-      message: error instanceof Error && error.message === 'Could not find workout.' ? error.message : 'Could not update workout. Please try again.',
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }
 
-export async function deleteWorkoutAction(id: number): Promise<DeleteWorkoutActionResult> {
+export async function deleteWorkoutAction(id: number): Promise<AppActionResult> {
   const user = await requireAuth();
 
   if (!isValidId(id)) {
@@ -115,11 +112,10 @@ export async function deleteWorkoutAction(id: number): Promise<DeleteWorkoutActi
       message: 'Workout deleted successfully.',
     };
   } catch (error: unknown) {
-    console.error('Delete workout action failed:', error);
-
     return {
       success: false,
-      message: 'Could not delete workout. Please try again.',
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }

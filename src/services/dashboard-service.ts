@@ -3,13 +3,13 @@ import { mapWeeklyOverview } from '@/mapping/dashboard-mapping';
 import { DashboardRepository } from '@/repositories/dashboard-repository';
 import { HistoryRepository } from '@/repositories/history-repository';
 
-import type { DashboardResult } from '@/types/api-types';
+import type { DashboardResult } from '@/types/dashboard-types';
 
 import { calculateStreak } from '@/utils/calculate-streak';
 
 export class DashboardService {
-  private dashboardRepository = new DashboardRepository();
-  private historyRepository = new HistoryRepository();
+  private readonly dashboardRepository = new DashboardRepository();
+  private readonly historyRepository = new HistoryRepository();
 
   async getDashboard(userId: number): Promise<DashboardResult> {
     const [weeklyOverview, plannedWorkouts, workoutSessions, monthlyCompletedWorkouts] = await Promise.all([

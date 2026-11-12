@@ -2,30 +2,17 @@ import { WorkoutRepository } from '@/repositories/workout-repository';
 import { ExerciseRepository } from '@/repositories/exercise-repository';
 
 import { WorkoutMapper } from '@/mapping/workout-mapping';
-import { ExerciseMapper } from '@/mapping/exericse-mapping';
+import { ExerciseMapper } from '@/mapping/exercise-mapping';
 
-import type { WorkoutViewModel } from '@/types/workout-types';
-import type { ExerciseViewModel } from '@/types/exercise-types';
+import type { WorkoutViewModel, WorkoutDetailsResult, WorkoutListResult } from '@/types/workout-types';
+
 import type { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
-export interface WorkoutDetailsResult {
-  workout: WorkoutViewModel;
-  exercises: ExerciseViewModel[];
-}
-
-export interface WorkoutListResult {
-  workouts: WorkoutViewModel[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    pageSize: number;
-    totalItems: number;
-  };
-}
-
 export class WorkoutService {
-  private workoutRepository = new WorkoutRepository();
-  private exerciseRepository = new ExerciseRepository();
+  private readonly workoutRepository = new WorkoutRepository();
+  private readonly exerciseRepository = new ExerciseRepository();
+
+  private readonly pageSize = 100;
 
   async create(dto: AddWorkoutDto, userId: number): Promise<WorkoutViewModel> {
     const workout = await this.workoutRepository.create(dto, userId);
@@ -44,19 +31,16 @@ export class WorkoutService {
   }
 
   async getAll(page: number, userId: number): Promise<WorkoutListResult> {
-    const totalNumberWorkouts = await this.workoutRepository.getTotalNumberOfWorkouts(userId);
+    const [totalNumberWorkouts, workouts] = await Promise.all([this.workoutRepository.getTotalNumberOfWorkouts(userId), this.workoutRepository.getAll(userId, page, this.pageSize)]);
 
-    const pageSize = 100;
-    const totalPages = Math.ceil(totalNumberWorkouts / pageSize);
-
-    const workouts = await this.workoutRepository.getAll(userId, page, pageSize);
+    const totalPages = Math.ceil(totalNumberWorkouts / this.pageSize);
 
     return {
       workouts: WorkoutMapper.workoutDtosToViewModels(workouts),
       pagination: {
         currentPage: page,
         totalPages,
-        pageSize,
+        pageSize: this.pageSize,
         totalItems: totalNumberWorkouts,
       },
     };

@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 
 import { getWorkoutSchedulesByMonthAction } from '@/actions/workout-schedule-actions';
 
-import type { CalendarWorkoutViewModel } from '@/types/calender-types';
+import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import Modal from '@/components/modal/modal';
 import SelectedWorkout from '@/components/dashboard/selected-workout';
+import { WORKOUT_STATUS_CONFIG } from '@/components/shared/workout-status';
 
 const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -33,10 +34,18 @@ function getCalendarDays(year: number, month: number) {
   return days;
 }
 
+function getDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
 export default function WorkoutCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [workouts, setWorkouts] = useState<CalendarWorkoutViewModel[]>([]);
-  const [selectedWorkout, setSelectedWorkout] = useState<CalendarWorkoutViewModel>();
+  const [workouts, setWorkouts] = useState<WeeklyWorkoutViewModel[]>([]);
+  const [selectedWorkout, setSelectedWorkout] = useState<WeeklyWorkoutViewModel>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,19 +54,16 @@ export default function WorkoutCalendar() {
 
   const calendarDays = getCalendarDays(currentYear, currentMonth);
 
-  const getWorkoutsForDay = (day: Date) => {
-    return workouts.filter((workout) => {
-      const workoutDate = new Date(workout.date);
+  const workoutsByDate = workouts.reduce<Record<string, WeeklyWorkoutViewModel[]>>((groups, workout) => {
+    const dateKey = workout.date.slice(0, 10);
 
-      return workoutDate.getFullYear() === day.getFullYear() && workoutDate.getMonth() === day.getMonth() && workoutDate.getDate() === day.getDate();
-    });
-  };
+    groups[dateKey] ??= [];
+    groups[dateKey].push(workout);
 
-  const isToday = (day: Date) => {
-    const today = new Date();
+    return groups;
+  }, {});
 
-    return day.getFullYear() === today.getFullYear() && day.getMonth() === today.getMonth() && day.getDate() === today.getDate();
-  };
+  const todayKey = getDateKey(new Date());
 
   useEffect(() => {
     let isActive = true;
@@ -77,7 +83,7 @@ export default function WorkoutCalendar() {
           return;
         }
 
-        setWorkouts(result.data);
+        setWorkouts(result.data ?? []);
       } catch (error) {
         console.error('Failed to load calendar workouts:', error);
 
@@ -99,51 +105,23 @@ export default function WorkoutCalendar() {
     };
   }, [currentYear, currentMonth]);
 
-  const getStatusStyle = (status: CalendarWorkoutViewModel['status']) => {
-    switch (status) {
-      case 'COMPLETED':
-        return 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-300';
-
-      case 'ACTIVE':
-        return 'border-orange-500/30 bg-orange-500/15 text-orange-400';
-
-      case 'NOTCOMPLETED':
-        return 'border-red-500/30 bg-red-500/15 text-red-400';
-
-      default:
-        return 'border-blue-500/30 bg-blue-500/15 text-blue-300';
-    }
-  };
-
   return (
     <>
       <section className="w-full min-w-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950/50 p-3 sm:p-5 lg:p-6">
         {/* Calendar header */}
         <div className="mb-4 flex items-center justify-between gap-2 sm:mb-6">
-          <button
-            type="button"
-            onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() - 1, 1))}
-            className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl text-white transition hover:bg-zinc-800 hover:text-orange-400 sm:h-14 sm:w-14"
-            aria-label="Previous month"
-          >
+          <button type="button" onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() - 1, 1))} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white transition hover:bg-zinc-800 hover:text-orange-400 sm:h-14 sm:w-14" aria-label="Previous month">
             <ChevronLeft size={25} strokeWidth={2.5} />
           </button>
 
-          <div className="flex min-w-0 items-center justify-center gap-2 sm:gap-4">
-            <h2 className="truncate text-base font-semibold text-white capitalize sm:text-xl">
-              {currentDate.toLocaleDateString('en-US', {
-                month: 'long',
-                year: 'numeric',
-              })}
-            </h2>
-          </div>
+          <h2 className="truncate text-base font-semibold text-white capitalize sm:text-xl">
+            {currentDate.toLocaleDateString('en-US', {
+              month: 'long',
+              year: 'numeric',
+            })}
+          </h2>
 
-          <button
-            type="button"
-            onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() + 1, 1))}
-            className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl text-white transition hover:bg-zinc-800 hover:text-orange-400 sm:h-14 sm:w-14"
-            aria-label="Next month"
-          >
+          <button type="button" onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() + 1, 1))} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white transition hover:bg-zinc-800 hover:text-orange-400 sm:h-14 sm:w-14" aria-label="Next month">
             <ChevronRight size={25} strokeWidth={2.5} />
           </button>
         </div>
@@ -160,28 +138,35 @@ export default function WorkoutCalendar() {
         {/* Calendar days */}
         <div className="grid grid-cols-7">
           {calendarDays.map((day, index) => {
-            const dayWorkouts = day ? getWorkoutsForDay(day) : [];
+            const dateKey = day ? getDateKey(day) : null;
+            const dayWorkouts = dateKey ? (workoutsByDate[dateKey] ?? []) : [];
+
+            const isCurrentDay = dateKey === todayKey;
 
             return (
-              <div key={index} className={`min-h-[76px] min-w-0 border-r border-b border-white/10 p-1 sm:min-h-24 sm:p-2 ${day && isToday(day) ? 'ring-1 ring-orange-500 ring-inset sm:ring-2' : ''}`}>
+              <div key={dateKey ?? `empty-${index}`} className={`min-h-[76px] min-w-0 border-r border-b border-white/10 p-1 sm:min-h-24 sm:p-2 ${isCurrentDay ? 'ring-1 ring-orange-500 ring-inset sm:ring-2' : ''}`}>
                 {day && (
                   <>
-                    <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs sm:h-7 sm:w-7 sm:text-sm ${isToday(day) ? 'bg-orange-500 font-bold text-black' : 'text-white'}`}>{day.getDate()}</span>
+                    <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs sm:h-7 sm:w-7 sm:text-sm ${isCurrentDay ? 'bg-orange-500 font-bold text-black' : 'text-white'}`}>{day.getDate()}</span>
 
                     <div className="mt-1 space-y-1 sm:mt-2">
-                      {dayWorkouts.map((workout) => (
-                        <button
-                          key={workout.id}
-                          type="button"
-                          onClick={() => setSelectedWorkout(workout)}
-                          title={`${workout.workoutName} - Click to view workout`}
-                          className={`block w-full min-w-0 cursor-pointer truncate rounded border px-1 py-1 text-left text-xs transition hover:brightness-125 sm:px-2 ${getStatusStyle(workout.status)}`}
-                        >
-                          <span className="hidden sm:inline">💪 </span>
-                          <span className="sm:hidden">💪</span>
-                          <span className="hidden sm:inline">{workout.workoutName}</span>
-                        </button>
-                      ))}
+                      {dayWorkouts.map((workout) => {
+                        const status = workout.status ? WORKOUT_STATUS_CONFIG[workout.status] : null;
+
+                        return (
+                          <button
+                            key={workout.id}
+                            type="button"
+                            onClick={() => setSelectedWorkout(workout)}
+                            title={`${workout.workoutName} - Click to view workout`}
+                            className={`block w-full min-w-0 cursor-pointer truncate rounded border px-1 py-1 text-left text-xs transition hover:brightness-125 sm:px-2 ${status?.badgeClassName ?? 'border-blue-500/30 bg-blue-500/15 text-blue-300'}`}
+                          >
+                            <span className="hidden sm:inline">💪 </span>
+                            <span className="sm:hidden">💪</span>
+                            <span className="hidden sm:inline">{workout.workoutName}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </>
                 )}

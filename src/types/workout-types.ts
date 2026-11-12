@@ -1,9 +1,8 @@
-//Types
-import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
-import type { WorkoutSessionExerciseViewModel, WorkoutExerciseViewModel } from '@/types/exercise-types';
+import type { WorkoutSessionStatus } from '@prisma/client';
 
-//Prisma
-import { $Enums, WorkoutSessionStatus } from '@prisma/client';
+import type { ExerciseViewModel, WorkoutSessionExerciseViewModel, WorkoutExerciseViewModel } from '@/types/exercise-types';
+
+import type { PaginationViewModel } from '@/types/pagination-types';
 
 export interface WorkoutViewModel {
   id: number;
@@ -25,11 +24,6 @@ interface WorkoutExercisesViewModel {
   order: number;
 }
 
-export interface RegisterWorkoutScheduleDto {
-  workoutId: number;
-  date: string;
-}
-
 export interface EditWorkoutViewModel {
   id: number;
   name: string;
@@ -44,18 +38,6 @@ export interface WorkoutSessionViewModel {
   finishedAt: Date | null;
   status: string;
   exercises: WorkoutSessionExerciseViewModel[];
-}
-
-export interface WorkoutSessionSetViewModel {
-  id: number;
-  setNumber: number;
-  targetReps: number;
-  targetWeight: number | null;
-  actualReps: number | null;
-  actualWeight: number | null;
-  actualSeconds: number | null;
-  targetSeconds: number | null;
-  completed: boolean;
 }
 
 export interface WeeklyWorkoutViewModel {
@@ -76,26 +58,29 @@ export interface WorkoutSessionFinishViewModel {
   workoutId: number;
   startedAt: Date;
   finishedAt: Date | null;
-  status: $Enums.WorkoutSessionStatus;
+  status: WorkoutSessionStatus;
 }
 
-export type WorkoutActionResult<T = undefined> =
-  | {
-      success: true;
-      message: string;
-      data: T;
-    }
-  | {
-      success: false;
-      message: string;
-      errors?: Partial<Record<keyof UpdateWorkoutDto, string[]>>;
-    };
+export interface WorkoutDetailsResult {
+  workout: WorkoutViewModel;
+  exercises: ExerciseViewModel[];
+}
 
-export type RegisterWorkoutActionResult = WorkoutActionResult<WorkoutViewModel>;
+export interface WorkoutListResult {
+  workouts: WorkoutViewModel[];
+  pagination: PaginationViewModel;
+}
 
-export type UpdateWorkoutActionResult = WorkoutActionResult<WorkoutViewModel>;
-
-export type DeleteWorkoutActionResult = {
-  success: boolean;
-  message: string;
-};
+export interface UpdatedSetViewModel {
+  id: number;
+  actualReps: number | null;
+  actualWeight: number | null;
+  actualSeconds: number | null;
+  setNumber: number;
+  workoutSessionExerciseId: number;
+  targetReps: number;
+  targetWeight: number | null;
+  targetSeconds: number | null;
+  completed: boolean;
+  completedAt: Date | null;
+}

@@ -1,5 +1,7 @@
+import type { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/prisma';
+
 import type { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
 const workoutExerciseInclude = {
@@ -12,20 +14,54 @@ const workoutExerciseInclude = {
       },
     },
   },
-} as const;
+} satisfies Prisma.WorkoutExerciseInclude;
+
+const workoutWithExercisesInclude = {
+  exercises: {
+    where: {
+      archivedAt: null,
+    },
+    include: workoutExerciseInclude,
+    orderBy: {
+      order: 'asc',
+    },
+  },
+} satisfies Prisma.WorkoutInclude;
+
+type WorkoutWithExercises = Prisma.WorkoutGetPayload<{
+  include: typeof workoutWithExercisesInclude;
+}>;
+
+type WorkoutWithExistingExercises = Prisma.WorkoutGetPayload<{
+  select: {
+    id: true;
+    exercises: {
+      where: {
+        archivedAt: null;
+      };
+      orderBy: {
+        order: 'asc';
+      };
+    };
+  };
+}>;
 
 export class WorkoutRepository {
-  async create(dto: AddWorkoutDto, userId: number) {
+  async create(dto: AddWorkoutDto, userId: number): Promise<WorkoutWithExercises> {
     return prisma.$transaction(async (tx) => {
-      const exerciseIds = [
-        ...new Set(
-          dto.workoutExercises.map((exercise) => exercise.exerciseId)
-        ),
-      ];
+      const exerciseIds = dto.workoutExercises.map((exercise) => exercise.exerciseId);
+
+      if (new Set(exerciseIds).size !== exerciseIds.length) {
+        throw new Error('Duplicate exercises are not allowed.');
+      }
+
+      const uniqueExerciseIds = [...new Set(exerciseIds)];
 
       const ownedExercises = await tx.exercise.findMany({
         where: {
-          id: { in: exerciseIds },
+          id: {
+            in: uniqueExerciseIds,
+          },
           userId,
           archivedAt: null,
         },
@@ -34,7 +70,7 @@ export class WorkoutRepository {
         },
       });
 
-      if (ownedExercises.length !== exerciseIds.length) {
+      if (ownedExercises.length !== uniqueExerciseIds.length) {
         throw new Error('One or more exercises are invalid or archived.');
       }
 
@@ -69,28 +105,17 @@ export class WorkoutRepository {
         where: {
           id: workout.id,
         },
-        include: {
-          exercises: {
-            include: workoutExerciseInclude,
-            orderBy: {
-              order: 'asc',
-            },
-          },
-        },
+        include: workoutWithExercisesInclude,
       });
     });
   }
 
-  async getAll(userId: number, page: number, pageSize: number) {
+  async getAll(userId: number, page: number, pageSize: number): Promise<WorkoutWithExercises[]> {
     if (!Number.isSafeInteger(page) || page < 1) {
       throw new Error('Invalid page number.');
     }
 
-    if (
-      !Number.isSafeInteger(pageSize) ||
-      pageSize < 1 ||
-      pageSize > 100
-    ) {
+    if (!Number.isSafeInteger(pageSize) || pageSize < 1 || pageSize > 100) {
       throw new Error('Invalid page size.');
     }
 
@@ -105,17 +130,7 @@ export class WorkoutRepository {
         userId,
         archivedAt: null,
       },
-      include: {
-        exercises: {
-          where: {
-            archivedAt: null,
-          },
-          include: workoutExerciseInclude,
-          orderBy: {
-            order: 'asc',
-          },
-        },
-      },
+      include: workoutWithExercisesInclude,
       orderBy: {
         createdAt: 'asc',
       },
@@ -124,9 +139,15 @@ export class WorkoutRepository {
     });
   }
 
-  async update(id: number, dto: UpdateWorkoutDto, userId: number) {
+  async update(id: number, dto: UpdateWorkoutDto, userId: number): Promise<WorkoutWithExercises | null> {
     return prisma.$transaction(async (tx) => {
-      const workout = await tx.workout.findFirst({
+      const exerciseIds = dto.workoutExercises.map((exercise) => exercise.exerciseId);
+
+      if (new Set(exerciseIds).size !== exerciseIds.length) {
+        throw new Error('Duplicate exercises are not allowed.');
+      }
+
+      const workout: WorkoutWithExistingExercises | null = await tx.workout.findFirst({
         where: {
           id,
           userId,
@@ -151,18 +172,16 @@ export class WorkoutRepository {
 
       // Existing exercises may remain even if they have been archived.
       // Only newly added exercises must be active and owned by the user.
-      const existingExerciseIds = new Set(
-        workout.exercises.map((exercise) => exercise.exerciseId)
-      );
+      const existingExerciseIds = new Set(workout.exercises.map((exercise) => exercise.exerciseId));
 
-      const newExerciseIds = dto.workoutExercises
-        .map((exercise) => exercise.exerciseId)
-        .filter((exerciseId) => !existingExerciseIds.has(exerciseId));
+      const newExerciseIds = exerciseIds.filter((exerciseId) => !existingExerciseIds.has(exerciseId));
 
       if (newExerciseIds.length > 0) {
         const availableExercises = await tx.exercise.findMany({
           where: {
-            id: { in: newExerciseIds },
+            id: {
+              in: newExerciseIds,
+            },
             userId,
             archivedAt: null,
           },
@@ -172,9 +191,7 @@ export class WorkoutRepository {
         });
 
         if (availableExercises.length !== newExerciseIds.length) {
-          throw new Error(
-            'One or more exercises are invalid or archived.'
-          );
+          throw new Error('One or more exercises are invalid or archived.');
         }
       }
 
@@ -196,9 +213,7 @@ export class WorkoutRepository {
       let order = 1;
 
       for (const exercise of dto.workoutExercises) {
-        const existing = existingExercises.find(
-          (item) => item.exerciseId === exercise.exerciseId
-        );
+        const existing = existingExercises.find((item) => item.exerciseId === exercise.exerciseId);
 
         if (existing) {
           retainedIds.add(existing.id);
@@ -235,9 +250,7 @@ export class WorkoutRepository {
         order++;
       }
 
-      const removedExerciseIds = existingExercises
-        .filter((exercise) => !retainedIds.has(exercise.id))
-        .map((exercise) => exercise.id);
+      const removedExerciseIds = existingExercises.filter((exercise) => !retainedIds.has(exercise.id)).map((exercise) => exercise.id);
 
       if (removedExerciseIds.length > 0) {
         await tx.workoutExercise.updateMany({
@@ -260,39 +273,19 @@ export class WorkoutRepository {
           userId,
           archivedAt: null,
         },
-        include: {
-          exercises: {
-            where: {
-              archivedAt: null,
-            },
-            include: workoutExerciseInclude,
-            orderBy: {
-              order: 'asc',
-            },
-          },
-        },
+        include: workoutWithExercisesInclude,
       });
     });
   }
 
-  async getById(id: number, userId: number) {
+  async getById(id: number, userId: number): Promise<WorkoutWithExercises | null> {
     return prisma.workout.findFirst({
       where: {
         id,
         userId,
         archivedAt: null,
       },
-      include: {
-        exercises: {
-          where: {
-            archivedAt: null,
-          },
-          include: workoutExerciseInclude,
-          orderBy: {
-            order: 'asc',
-          },
-        },
-      },
+      include: workoutWithExercisesInclude,
     });
   }
 

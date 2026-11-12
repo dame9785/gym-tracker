@@ -1,97 +1,20 @@
 'use server';
 
-import { cookies } from 'next/headers';
+import { setAuthCookie, clearAuthCookie } from '@/utils/auth-cookie';
 
 import { requireAuth } from '@/lib/auth';
-import {
-  loginSchema,
-  registerUserSchema,
-  updateUserSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
-  type ChangePasswordDto,
-  type LoginDto,
-  type RegisterUserDto,
-  type UpdateUserDto,
-  type ForgotPasswordDto,
-  type ResetPasswordDto,
-} from '@/schemas/auth-schemas';
+import { loginSchema, registerUserSchema, updateUserSchema, forgotPasswordSchema, resetPasswordSchema, type ChangePasswordDto, type LoginDto, type RegisterUserDto, type UpdateUserDto, type ForgotPasswordDto, type ResetPasswordDto } from '@/schemas/auth-schemas';
 import { AuthService } from '@/services/auth-service';
-import type { UserActionResult } from '@/types/user-types';
+import type { AppActionResult } from '@/types/action-types';
 import { ForgotPasswordService } from '@/services/forgot-password-service';
 import { PasswordResetService } from '@/services/password-reset-service';
+import { getActionErrorMessage, getActionValidationErrors } from '@/utils/action-error';
 
 const authService = new AuthService();
 const forgotPasswordService = new ForgotPasswordService();
 const passwordResetService = new PasswordResetService();
 
-function getErrorMessage(error: unknown): string {
-  if (!(error instanceof Error)) {
-    return 'Something went wrong.';
-  }
-
-  if (
-    error.message.startsWith('Validation failed: ') ||
-    error.message.startsWith('Registration failed: ') ||
-    error.message.startsWith('User update failed: ') ||
-    error.message.startsWith('User already exists: ')
-  ) {
-    return 'Please correct the highlighted fields.';
-  }
-
-  if (error.message === 'Invalid email or password.') {
-    return 'Invalid email or password.';
-  }
-
-  if (error.message === 'User not found.') {
-    return 'User not found.';
-  }
-
-  console.error('[UserAction] Unexpected error:', error);
-
-  return 'Something went wrong.';
-}
-
-function getValidationErrors(error: unknown): Record<string, string[]> | undefined {
-  if (!(error instanceof Error)) {
-    return undefined;
-  }
-
-  const prefixes = ['Validation failed: ', 'Registration failed: ', 'User update failed: ', 'User already exists: '];
-  const prefix = prefixes.find((item) => error.message.startsWith(item));
-
-  if (!prefix) {
-    return undefined;
-  }
-
-  try {
-    const parsed: unknown = JSON.parse(error.message.slice(prefix.length));
-
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-      return undefined;
-    }
-
-    const errors: Record<string, string[]> = {};
-
-    for (const [field, value] of Object.entries(parsed)) {
-      if (typeof value === 'string') {
-        errors[field] = [value];
-      } else if (Array.isArray(value)) {
-        const messages = value.filter((item): item is string => typeof item === 'string');
-
-        if (messages.length > 0) {
-          errors[field] = messages;
-        }
-      }
-    }
-
-    return Object.keys(errors).length > 0 ? errors : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-export async function resetPasswordAction(dto: ResetPasswordDto): Promise<UserActionResult<undefined>> {
+export async function resetPasswordAction(dto: ResetPasswordDto): Promise<AppActionResult> {
   const validation = resetPasswordSchema.safeParse(dto);
 
   if (!validation.success) {
@@ -127,7 +50,7 @@ export async function resetPasswordAction(dto: ResetPasswordDto): Promise<UserAc
   }
 }
 
-export async function forgotPasswordAction(dto: ForgotPasswordDto): Promise<UserActionResult<undefined>> {
+export async function forgotPasswordAction(dto: ForgotPasswordDto): Promise<AppActionResult> {
   const validation = forgotPasswordSchema.safeParse(dto);
 
   if (!validation.success) {
@@ -156,40 +79,39 @@ export async function forgotPasswordAction(dto: ForgotPasswordDto): Promise<User
   }
 }
 
-export async function changePasswordAction(dto: ChangePasswordDto): Promise<UserActionResult<undefined>> {
-  try {
-    const user = await requireAuth();
+export async function changePasswordAction(dto: ChangePasswordDto): Promise<AppActionResult> {
+  const user = await requireAuth();
 
+  try {
     await authService.changePassword(dto, user.userId);
 
     return {
       success: true,
       message: 'Password changed successfully.',
-      data: undefined,
     };
   } catch (error: unknown) {
     return {
       success: false,
-      message: getErrorMessage(error),
-      errors: getValidationErrors(error),
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }
 
-export async function updateUserAction(dto: UpdateUserDto): Promise<UserActionResult<{ userId: number }>> {
+export async function updateUserAction(dto: UpdateUserDto): Promise<AppActionResult<{ userId: number }>> {
+  const user = await requireAuth();
+
+  const validation = updateUserSchema.safeParse(dto);
+
+  if (!validation.success) {
+    return {
+      success: false,
+      message: 'Validation failed.',
+      errors: validation.error.flatten().fieldErrors,
+    };
+  }
+
   try {
-    const user = await requireAuth();
-
-    const validation = updateUserSchema.safeParse(dto);
-
-    if (!validation.success) {
-      return {
-        success: false,
-        message: 'Validation failed.',
-        errors: validation.error.flatten().fieldErrors,
-      };
-    }
-
     const updatedUser = await authService.updateUser(validation.data, user.userId);
 
     return {
@@ -202,13 +124,13 @@ export async function updateUserAction(dto: UpdateUserDto): Promise<UserActionRe
   } catch (error: unknown) {
     return {
       success: false,
-      message: getErrorMessage(error),
-      errors: getValidationErrors(error),
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }
 
-export async function registerUserAction(dto: RegisterUserDto): Promise<UserActionResult<{ userId: number }>> {
+export async function registerUserAction(dto: RegisterUserDto): Promise<AppActionResult<{ userId: number }>> {
   const validation = registerUserSchema.safeParse(dto);
 
   if (!validation.success) {
@@ -221,15 +143,8 @@ export async function registerUserAction(dto: RegisterUserDto): Promise<UserActi
 
   try {
     const response = await authService.register(validation.data);
-    const cookieStore = await cookies();
 
-    cookieStore.set('token', response.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-    });
+    await setAuthCookie(response.token);
 
     return {
       success: true,
@@ -241,19 +156,14 @@ export async function registerUserAction(dto: RegisterUserDto): Promise<UserActi
   } catch (error: unknown) {
     return {
       success: false,
-      message: getErrorMessage(error),
-      errors: getValidationErrors(error),
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }
 
-export async function logoutAction(): Promise<{
-  success: true;
-  message: string;
-}> {
-  const cookieStore = await cookies();
-
-  cookieStore.delete('token');
+export async function logoutAction(): Promise<AppActionResult> {
+  await clearAuthCookie();
 
   return {
     success: true,
@@ -261,7 +171,7 @@ export async function logoutAction(): Promise<{
   };
 }
 
-export async function loginUserAction(dto: LoginDto): Promise<UserActionResult<{ userId: number }>> {
+export async function loginUserAction(dto: LoginDto): Promise<AppActionResult<{ userId: number }>> {
   const validation = loginSchema.safeParse(dto);
 
   if (!validation.success) {
@@ -274,15 +184,8 @@ export async function loginUserAction(dto: LoginDto): Promise<UserActionResult<{
 
   try {
     const response = await authService.login(validation.data);
-    const cookieStore = await cookies();
 
-    cookieStore.set('token', response.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-    });
+    await setAuthCookie(response.token);
 
     return {
       success: true,
@@ -295,8 +198,8 @@ export async function loginUserAction(dto: LoginDto): Promise<UserActionResult<{
     console.error('[loginUserAction] Login failed:', error);
     return {
       success: false,
-      message: getErrorMessage(error),
-      errors: getValidationErrors(error),
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }

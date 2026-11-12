@@ -2,6 +2,10 @@ import { Prisma, type WorkoutSession, type WorkoutSessionSet } from '@prisma/cli
 
 import { prisma } from '@/lib/prisma';
 
+// --------------------------------------------------
+// Prisma includes
+// --------------------------------------------------
+
 const sessionDetailsInclude = {
   exercises: {
     orderBy: {
@@ -45,6 +49,10 @@ const sessionWithSetsInclude = {
   },
 } satisfies Prisma.WorkoutSessionInclude;
 
+// --------------------------------------------------
+// Prisma result types
+// --------------------------------------------------
+
 type SessionWithDetails = Prisma.WorkoutSessionGetPayload<{
   include: typeof sessionDetailsInclude;
 }>;
@@ -52,6 +60,10 @@ type SessionWithDetails = Prisma.WorkoutSessionGetPayload<{
 type SessionWithSets = Prisma.WorkoutSessionGetPayload<{
   include: typeof sessionWithSetsInclude;
 }>;
+
+// --------------------------------------------------
+// Repository
+// --------------------------------------------------
 
 export class WorkoutSessionRepository {
   async create(workoutId: number, userId: number, workoutScheduleId?: number): Promise<WorkoutSession> {
@@ -87,7 +99,7 @@ export class WorkoutSessionRepository {
       }
     }
 
-    const activeKey = workoutScheduleId ? `${userId}:schedule:${workoutScheduleId}` : `${userId}:workout:${workoutId}`;
+    const activeKey = workoutScheduleId !== undefined ? `${userId}:schedule:${workoutScheduleId}` : `${userId}:workout:${workoutId}`;
 
     // Reuse an existing active workout session.
     const existingSession = await prisma.workoutSession.findFirst({
@@ -273,7 +285,7 @@ export class WorkoutSessionRepository {
   }
 
   async updateSet(id: number, actualReps: number, actualWeight: number, actualSeconds: number, userId: number): Promise<WorkoutSessionSet | null> {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx): Promise<WorkoutSessionSet | null> => {
       const result = await tx.workoutSessionSet.updateMany({
         where: {
           id,
@@ -312,7 +324,7 @@ export class WorkoutSessionRepository {
   }
 
   async finish(id: number, userId: number): Promise<WorkoutSession | null> {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx): Promise<WorkoutSession | null> => {
       const result = await tx.workoutSession.updateMany({
         where: {
           id,

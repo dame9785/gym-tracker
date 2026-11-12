@@ -1,56 +1,33 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
 
 import { requireAuth } from '@/lib/auth';
 import { WorkoutScheduleService } from '@/services/workout-schedule-service';
-import type { CalendarWorkoutViewModel } from '@/types/calender-types';
-import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
+
+import { calendarMonthSchema, createWorkoutScheduleSchema } from '@/schemas/schedelue-workout-schemas';
+
+import type { AppActionResult } from '@/types/action-types';
+import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
+import { getActionErrorMessage, getActionValidationErrors } from '@/utils/action-error';
 
 const workoutScheduleService = new WorkoutScheduleService();
 
-const createWorkoutScheduleSchema = z.object({
-  workoutId: z.number().int().positive(),
-  date: z.string().min(1),
-});
-
-const calendarMonthSchema = z.object({
-  year: z.number().int().min(2000).max(2100),
-  month: z.number().int().min(1).max(12),
-});
-
-type ActionError = {
-  success: false;
-  message: string;
-};
-
-type ActionSuccess = {
-  success: true;
-  message: string;
-};
-
-type CalendarActionResult =
-  | {
-      success: true;
-      data: CalendarWorkoutViewModel[];
-    }
-  | ActionError;
-
-export async function createWorkoutScheduleAction(dto: unknown): Promise<ActionSuccess | ActionError> {
+export async function createWorkoutScheduleAction(dto: unknown): Promise<AppActionResult> {
   const user = await requireAuth();
 
+  const validation = createWorkoutScheduleSchema.safeParse(dto);
+
+  if (!validation.success) {
+    return {
+      success: false,
+      message: 'Invalid workout schedule data.',
+      errors: validation.error.flatten().fieldErrors,
+    };
+  }
+
   try {
-    const validation = createWorkoutScheduleSchema.safeParse(dto);
-
-    if (!validation.success) {
-      return {
-        success: false,
-        message: 'Invalid workout schedule data.',
-      };
-    }
-
-    await workoutScheduleService.create(validation.data as RegisterWorkoutScheduleDto, user.userId);
+    await workoutScheduleService.create(validation.data, user.userId);
 
     revalidatePath('/dashboard');
     revalidatePath('/workout-schedule');
@@ -60,28 +37,31 @@ export async function createWorkoutScheduleAction(dto: unknown): Promise<ActionS
       message: 'Workout scheduled successfully.',
     };
   } catch (error: unknown) {
-    console.error('Create workout schedule action failed:', error);
-
     return {
       success: false,
-      message: 'Could not schedule workout. Please try again.',
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }
 
-export async function getWorkoutSchedulesByMonthAction(year: number, month: number): Promise<CalendarActionResult> {
+export async function getWorkoutSchedulesByMonthAction(year: number, month: number): Promise<AppActionResult<WeeklyWorkoutViewModel[]>> {
   const user = await requireAuth();
 
+  const validation = calendarMonthSchema.safeParse({
+    year,
+    month,
+  });
+
+  if (!validation.success) {
+    return {
+      success: false,
+      message: 'Invalid calendar month.',
+      errors: validation.error.flatten().fieldErrors,
+    };
+  }
+
   try {
-    const validation = calendarMonthSchema.safeParse({ year, month });
-
-    if (!validation.success) {
-      return {
-        success: false,
-        message: 'Invalid calendar month.',
-      };
-    }
-
     const workoutSchedules = await workoutScheduleService.getByMonth(user.userId, validation.data.year, validation.data.month);
 
     return {
@@ -89,11 +69,10 @@ export async function getWorkoutSchedulesByMonthAction(year: number, month: numb
       data: workoutSchedules,
     };
   } catch (error: unknown) {
-    console.error('Get workout schedules by month action failed:', error);
-
     return {
       success: false,
-      message: 'Could not load workout schedules.',
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }

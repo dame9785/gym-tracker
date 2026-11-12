@@ -4,13 +4,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { FaLock } from 'react-icons/fa6';
+import Link from 'next/link';
 
 import styles from '@/components/forms/form.module.css';
+
 import Button from '@/components/button/button';
+import FormField from '@/components/ui/form-field';
+import FormInput from '@/components/ui/form-input';
 
 import { resetPasswordAction } from '@/actions/user-actions';
 import { resetPasswordSchema, type ResetPasswordDto } from '@/schemas/auth-schemas';
-import Link from 'next/link';
 
 interface Props {
   token: string;
@@ -35,6 +38,13 @@ export default function ResetPasswordForm({ token }: Props) {
       ...prev,
       [name]: value,
     }));
+
+    setErrors((prev) => {
+      const updatedErrors = { ...prev };
+      delete updatedErrors[name];
+
+      return updatedErrors;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,7 +64,7 @@ export default function ResetPasswordForm({ token }: Props) {
       const response = await resetPasswordAction(validation.data);
 
       if (!response.success) {
-        setErrors(response.errors ?? {});
+        setErrors(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined)));
         toast.error(response.message);
         return;
       }
@@ -80,45 +90,35 @@ export default function ResetPasswordForm({ token }: Props) {
       </div>
 
       <div className={styles.formGroup}>
-        <div className={styles.labelWrapper}>
-          <FaLock className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="newPassword">
-            New password
-          </label>
-        </div>
-
-        <input
-          className={styles.formInput}
-          type="password"
-          id="newPassword"
-          name="newPassword"
-          autoComplete="new-password"
-          value={formData.newPassword}
-          onChange={handleChange}
-        />
-
-        {errors.newPassword?.[0] && <p className={styles.fieldErrorMessage}>{errors.newPassword[0]}</p>}
+        <FormField
+          htmlFor="newPassword"
+          label={
+            <span className="flex items-center gap-2">
+              <FaLock className={styles.formIcon} />
+              New password
+            </span>
+          }
+          required
+          error={errors.newPassword?.[0]}
+        >
+          <FormInput type="password" id="newPassword" name="newPassword" autoComplete="new-password" value={formData.newPassword} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.newPassword?.length} required />
+        </FormField>
       </div>
 
       <div className={styles.formGroup}>
-        <div className={styles.labelWrapper}>
-          <FaLock className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="confirmNewPassword">
-            Confirm new password
-          </label>
-        </div>
-
-        <input
-          className={styles.formInput}
-          type="password"
-          id="confirmNewPassword"
-          name="confirmNewPassword"
-          autoComplete="new-password"
-          value={formData.confirmNewPassword}
-          onChange={handleChange}
-        />
-
-        {errors.confirmNewPassword?.[0] && <p className={styles.fieldErrorMessage}>{errors.confirmNewPassword[0]}</p>}
+        <FormField
+          htmlFor="confirmNewPassword"
+          label={
+            <span className="flex items-center gap-2">
+              <FaLock className={styles.formIcon} />
+              Confirm new password
+            </span>
+          }
+          required
+          error={errors.confirmNewPassword?.[0]}
+        >
+          <FormInput type="password" id="confirmNewPassword" name="confirmNewPassword" autoComplete="new-password" value={formData.confirmNewPassword} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.confirmNewPassword?.length} required />
+        </FormField>
       </div>
 
       <Button type="submit" variant="primary" disabled={isSaving}>

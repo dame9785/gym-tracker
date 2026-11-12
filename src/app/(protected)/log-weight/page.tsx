@@ -1,16 +1,16 @@
 import Statistic from '@/components/log-weight/log-weight-statistics';
 import LogHistoryList from '@/components/log-weight/log-history-list';
-
 import Pagination from '@/components/log-weight/log-pagination';
 
-import { WeightLogService } from '@/services/weight-log-service';
 import ErrorMessage from '@/components/ui/error-message';
-import { requireAuth } from '@/lib/auth';
+import Header from '@/components/ui/header';
 
-import ProgressService from '@/services/progress-service';
 import GoalProgress from '@/components/progress/progress-goal';
 import WeightProgressChart from '@/components/log-weight/weight-progress-chart';
-import Header from '@/components/ui/header';
+
+import { WeightLogService } from '@/services/weight-log-service';
+import ProgressService from '@/services/progress-service';
+import { requireAuth } from '@/lib/auth';
 
 type Props = {
   searchParams: Promise<{
@@ -18,31 +18,53 @@ type Props = {
   }>;
 };
 
-const weightLogService = new WeightLogService();
-const progressService = new ProgressService();
-
 export default async function LogWeight({ searchParams }: Props) {
   const params = await searchParams;
-  const page = Number(params.page) || 1;
+  const parsedPage = Number(params.page);
+  const page = Number.isSafeInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
   const user = await requireAuth();
 
-  const response = await weightLogService.getAll(page, user.userId);
+  const weightLogService = new WeightLogService();
+  const progressService = new ProgressService();
 
-  const progressResponse = await progressService.getProgress(user.userId);
-  const weightProgress = progressResponse.weightProgress;
+  let response: Awaited<ReturnType<typeof weightLogService.getAll>>;
 
-  if (!response.success || !response.data) {
+  try {
+    response = await weightLogService.getAll(page, user.userId);
+  } catch (error: unknown) {
+    console.error('Failed to load weight history:', error);
+
     return (
       <main className="w-full min-w-0">
-        <ErrorMessage title="Unable to load weight history" message={response.message ?? 'Something went wrong while loading your weight history.'} />
+        <ErrorMessage title="Unable to load weight history" message="We couldn't retrieve your weight history. Please try again later." />
       </main>
     );
   }
 
+  if (!response.success || !response.data) {
+    return (
+      <main className="w-full min-w-0">
+        <ErrorMessage title="Unable to load weight history" message="Something went wrong while loading your weight history." />
+      </main>
+    );
+  }
+
+  let weightProgress: Awaited<ReturnType<typeof progressService.getProgress>>['weightProgress'] | undefined;
+
+  let progressError = false;
+
+  try {
+    const progressResponse = await progressService.getProgress(user.userId);
+    weightProgress = progressResponse.weightProgress;
+  } catch (error: unknown) {
+    console.error('Failed to load weight progress:', error);
+    progressError = true;
+  }
+
   const data = response.data;
 
-  const LogList = data.logList;
+  const logList = data.logList;
   const currentWeight = data.currentWeight;
   const startWeight = data.startWeight;
   const currentPage = data.pagination.currentPage;
@@ -61,23 +83,31 @@ export default async function LogWeight({ searchParams }: Props) {
           },
         ]}
       />
+
       {/* Statistics */}
       <div className="mb-6 min-w-0 sm:mb-8">
         <Statistic currentWeight={currentWeight} startWeight={startWeight} />
       </div>
 
-      {/* Goal Progress */}
-      {weightProgress && (
-        <div className="mb-6 min-w-0 sm:mb-8">
-          <GoalProgress weightData={weightProgress} />
+      {/* Goal Progress and Weight Chart */}
+      {progressError ? (
+        <div className="mb-6 sm:mb-8">
+          <ErrorMessage title="Unable to load weight progress" message="We couldn't retrieve your weight progress. Please try again later." />
         </div>
-      )}
+      ) : (
+        weightProgress && (
+          <>
+            {/* Goal Progress */}
+            <div className="mb-6 min-w-0 sm:mb-8">
+              <GoalProgress weightData={weightProgress} />
+            </div>
 
-      {/* Weight Progress Chart */}
-      {weightProgress && (
-        <div className="mb-6 min-w-0 sm:mb-10">
-          <WeightProgressChart history={weightProgress.history} startWeight={weightProgress.startWeight} goalWeight={weightProgress.goalWeight} />
-        </div>
+            {/* Weight Progress Chart */}
+            <div className="mb-6 min-w-0 sm:mb-10">
+              <WeightProgressChart history={weightProgress.history} startWeight={weightProgress.startWeight} goalWeight={weightProgress.goalWeight} />
+            </div>
+          </>
+        )
       )}
 
       {/* Weight History */}
@@ -89,12 +119,12 @@ export default async function LogWeight({ searchParams }: Props) {
             <p className="mt-1 text-xs text-zinc-500">Your previous weight entries</p>
           </div>
 
-          <span className="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs font-medium text-zinc-400">{LogList.length} entries</span>
+          <span className="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs font-medium text-zinc-400">{logList.length} entries</span>
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {LogList.length > 0 ? (
-            LogList.map((item) => <LogHistoryList key={item.id} logItem={item} />)
+          {logList.length > 0 ? (
+            logList.map((item) => <LogHistoryList key={item.id} logItem={item} />)
           ) : (
             <div className="col-span-full rounded-xl border border-dashed border-zinc-800 px-4 py-10 text-center">
               <p className="text-sm font-medium text-zinc-400">No weight entries yet</p>

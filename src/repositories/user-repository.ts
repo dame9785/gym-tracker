@@ -1,9 +1,26 @@
-//Prisma
-import { Prisma, User } from '@prisma/client';
+import type { Prisma, User } from '@prisma/client';
+
 import { prisma } from '@/lib/prisma';
 
+// --------------------------------------------------
+// Prisma result types
+// --------------------------------------------------
+
+type UserCredentials = Prisma.UserGetPayload<{
+  select: {
+    id: true;
+    email: true;
+    passwordHash: true;
+    tokenVersion: true;
+  };
+}>;
+
+// --------------------------------------------------
+// Repository
+// --------------------------------------------------
+
 export class UserRepository {
-  async findByEmail(email: string) {
+  async findByEmail(email: string): Promise<UserCredentials | null> {
     return prisma.user.findUnique({
       where: {
         email,
@@ -17,23 +34,20 @@ export class UserRepository {
     });
   }
 
-  //Register User
   async create(data: Prisma.UserCreateInput): Promise<User> {
     return prisma.user.create({
       data,
     });
   }
 
-  //Fins User by UserName
-  async findByUsername(username: string) {
-    return await prisma.user.findUnique({
+  async findByUsername(username: string): Promise<User | null> {
+    return prisma.user.findUnique({
       where: {
         username,
       },
     });
   }
 
-  //Update User
   async update(id: number, data: Prisma.UserUpdateInput): Promise<User> {
     return prisma.user.update({
       where: {
@@ -43,7 +57,7 @@ export class UserRepository {
     });
   }
 
-  async findById(id: number) {
+  async findById(id: number): Promise<User | null> {
     return prisma.user.findUnique({
       where: {
         id,

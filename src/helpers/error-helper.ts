@@ -6,39 +6,44 @@ import type { RegisterUserDto, UpdateUserDto } from '@/schemas/auth-schemas';
 export class ErrorsHelper {
   // Zod errors -> Form errors
   static getFormErrors<T>(issues: ZodIssue[]): Partial<Record<keyof T, string>> {
-    return Object.fromEntries(issues.map((issue) => [String(issue.path[0]), issue.message])) as Partial<
-      Record<keyof T, string>
-    >;
+    return Object.fromEntries(issues.filter((issue) => issue.path.length > 0).map((issue) => [String(issue.path[0]), issue.message])) as Partial<Record<keyof T, string>>;
   }
 
   // API errors -> Form errors
   static getFormErrorsFromApi<T>(errors: Record<string, string[]>): Partial<Record<keyof T, string>> {
-    return Object.fromEntries(Object.entries(errors).map(([field, messages]) => [field, messages[0]])) as Partial<
-      Record<keyof T, string>
-    >;
+    return Object.fromEntries(
+      Object.entries(errors)
+        .filter(([, messages]) => messages.length > 0)
+        .map(([field, messages]) => [field, messages[0]]),
+    ) as Partial<Record<keyof T, string>>;
   }
 
   // Form errors -> API errors
   static toApiFieldErrors<T>(fieldErrors: Partial<Record<keyof T, string>>): Record<string, string[]> {
-    return Object.fromEntries(Object.entries(fieldErrors).map(([field, message]) => [field, [message as string]]));
+    return Object.fromEntries(
+      Object.entries(fieldErrors)
+        .filter((entry): entry is [string, string] => typeof entry[1] === 'string')
+        .map(([field, message]) => [field, [message]]),
+    );
   }
 
   /**
    * Maps Prisma unique constraint violations
    * to field-specific validation errors.
    */
-  static getUniqueConstraintFieldErrors<T extends RegisterUserDto | UpdateUserDto>(
-    error: Prisma.PrismaClientKnownRequestError,
-  ): Partial<Record<keyof T, string>> {
+  static getUniqueConstraintFieldErrors<T extends RegisterUserDto | UpdateUserDto>(error: Prisma.PrismaClientKnownRequestError): Partial<Record<keyof T, string>> {
     const fieldErrors: Partial<Record<keyof T, string>> = {};
-
     const target = error.meta?.target;
 
-    if (Array.isArray(target) && target.includes('email')) {
+    if (!Array.isArray(target)) {
+      return fieldErrors;
+    }
+
+    if (target.includes('email')) {
       fieldErrors.email = 'E-postadressen används redan.';
     }
 
-    if (Array.isArray(target) && target.includes('username')) {
+    if (target.includes('username')) {
       fieldErrors.username = 'Användarnamnet används redan.';
     }
 

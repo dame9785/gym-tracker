@@ -1,14 +1,25 @@
-//Prisma
+import type { Prisma } from '@prisma/client';
+
 import { prisma } from '@/lib/prisma';
-import { AddWeightDto, UpdateWeightDto } from '@/schemas/weight-log.schemas';
+import type { AddWeightDto, UpdateWeightDto } from '@/schemas/weight-log.schemas';
+
+// --------------------------------------------------
+// Prisma result types
+// --------------------------------------------------
+
+type WeightLog = Prisma.WeightLogGetPayload<Record<string, never>>;
+
+// --------------------------------------------------
+// Repository
+// --------------------------------------------------
 
 export class WeightLogRepository {
-  async getAll(userId: number, page: number, pageSize: number) {
+  async getAll(userId: number, page: number, pageSize: number): Promise<WeightLog[]> {
     const skip = (page - 1) * pageSize;
 
     return prisma.weightLog.findMany({
       where: {
-        userId: userId,
+        userId,
       },
       orderBy: {
         loggedAt: 'desc',
@@ -18,16 +29,16 @@ export class WeightLogRepository {
     });
   }
 
-  async getTotalNumberOfLogs(userId: number) {
+  async getTotalNumberOfLogs(userId: number): Promise<number> {
     return prisma.weightLog.count({
       where: {
-        userId: userId,
+        userId,
       },
     });
   }
 
-  async firstLog(userId: number) {
-    return await prisma.weightLog.findFirst({
+  async firstLog(userId: number): Promise<WeightLog | null> {
+    return prisma.weightLog.findFirst({
       where: {
         userId,
       },
@@ -37,7 +48,7 @@ export class WeightLogRepository {
     });
   }
 
-  async delete(id: number, userId: number) {
+  async delete(id: number, userId: number): Promise<WeightLog | null> {
     const weightLog = await prisma.weightLog.findFirst({
       where: {
         id,
@@ -49,15 +60,15 @@ export class WeightLogRepository {
       return null;
     }
 
-    return await prisma.weightLog.delete({
+    return prisma.weightLog.delete({
       where: {
         id: weightLog.id,
       },
     });
   }
 
-  async lastLog(userId: number) {
-    return await prisma.weightLog.findFirst({
+  async lastLog(userId: number): Promise<WeightLog | null> {
+    return prisma.weightLog.findFirst({
       where: {
         userId,
       },
@@ -67,7 +78,7 @@ export class WeightLogRepository {
     });
   }
 
-  async create(dto: AddWeightDto, userId: number) {
+  async create(dto: AddWeightDto, userId: number): Promise<WeightLog> {
     return prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: {
@@ -88,7 +99,7 @@ export class WeightLogRepository {
     });
   }
 
-  async update(logWeightId: number, userId: number, dto: UpdateWeightDto) {
+  async update(logWeightId: number, userId: number, dto: UpdateWeightDto): Promise<WeightLog | null> {
     const weightLog = await prisma.weightLog.findFirst({
       where: {
         id: logWeightId,
@@ -111,10 +122,10 @@ export class WeightLogRepository {
     });
   }
 
-  async getById(id: number, userId: number) {
-    return await prisma.weightLog.findUnique({
+  async getById(id: number, userId: number): Promise<WeightLog | null> {
+    return prisma.weightLog.findUnique({
       where: {
-        id: id,
+        id,
         userId,
       },
     });

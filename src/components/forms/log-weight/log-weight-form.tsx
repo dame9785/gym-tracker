@@ -2,27 +2,26 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-//Alert
 import { toast } from 'sonner';
 
 import FormStyles from '@/components/forms/form.module.css';
 
-//Components
 import Button from '@/components/button/button';
+import FormField from '@/components/ui/form-field';
+import FormInput from '@/components/ui/form-input';
+import FormTextarea from '@/components/ui/form-textarea';
 
-// Schemas
 import { AddWeightDto, addWeightSchema } from '@/schemas/weight-log.schemas';
-
-//Helpers
 import { ErrorsHelper } from '@/helpers/error-helper';
-
 import { CreateWeightLogAction } from '@/actions/log-weight-actions';
 
 export default function LogWeightForm() {
   const router = useRouter();
+
   const [isSaving, setIsSaving] = useState(false);
+
   const [errors, setErrors] = useState<Partial<Record<keyof AddWeightDto, string>>>({});
+
   const [formData, setFormData] = useState<AddWeightDto>({
     weight: 0,
     note: '',
@@ -30,9 +29,10 @@ export default function LogWeightForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === 'weight' ? Number(value) : value,
     }));
 
     setErrors((prev) => ({
@@ -41,15 +41,14 @@ export default function LogWeightForm() {
     }));
   };
 
-  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const LogWeightDto = {
-      weight: Number(formData.weight),
+    const validation = addWeightSchema.safeParse({
+      weight: formData.weight,
       note: formData.note,
-    };
+    });
 
-    const validation = addWeightSchema.safeParse(LogWeightDto);
     if (!validation.success) {
       setErrors(ErrorsHelper.getFormErrors<AddWeightDto>(validation.error.issues));
       return;
@@ -57,12 +56,13 @@ export default function LogWeightForm() {
 
     setIsSaving(true);
     setErrors({});
+
     try {
       const response = await CreateWeightLogAction(validation.data);
 
       if (!response.success) {
         if (response.errors) {
-          setErrors(ErrorsHelper.getFormErrorsFromApi<AddWeightDto>(response.errors));
+          setErrors(ErrorsHelper.getFormErrorsFromApi<AddWeightDto>(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined))));
         }
 
         toast.error(response.message);
@@ -72,7 +72,7 @@ export default function LogWeightForm() {
       toast.success(response.message);
       router.push('/log-weight');
     } catch (error) {
-      console.error('Failed to update exercise:', error);
+      console.error('Failed to create weight log:', error);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);
@@ -85,20 +85,18 @@ export default function LogWeightForm() {
         Track your
         <span> weight</span>
       </h1>
-      <form className={FormStyles.form} onSubmit={handleSumbit}>
+
+      <form className={FormStyles.form} onSubmit={handleSubmit}>
         <div className={FormStyles.formGroup}>
-          <label className={FormStyles.formLabel} htmlFor="weight">
-            Vikt
-          </label>
-          <input className={FormStyles.formInput} id="weight" name="weight" type="number" step="0.1" placeholder="T.ex. 50" onChange={handleChange}></input>
-          {errors.weight && <p className={FormStyles.fieldErrorMessage}>{errors.weight}</p>}
+          <FormField htmlFor="weight" label="Vikt" error={errors.weight}>
+            <FormInput id="weight" name="weight" type="number" step="0.1" placeholder="T.ex. 50" value={formData.weight || ''} onChange={handleChange} aria-invalid={!!errors.weight} />
+          </FormField>
         </div>
+
         <div className={FormStyles.formGroup}>
-          <label className={FormStyles.formLabel} htmlFor="note">
-            Notering
-          </label>
-          <textarea className={FormStyles.formInput} id="note" name="note" placeholder="T.ex. morgonen" onChange={handleChange}></textarea>
-          {errors.note && <p className={FormStyles.fieldErrorMessage}>{errors.note}</p>}
+          <FormField htmlFor="note" label="Notering" error={errors.note}>
+            <FormTextarea id="note" name="note" placeholder="T.ex. morgonen" value={formData.note ?? ''} onChange={handleChange} aria-invalid={!!errors.note} />
+          </FormField>
         </div>
 
         <div className="flex gap-2">
