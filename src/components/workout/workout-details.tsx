@@ -3,7 +3,7 @@ import type { WorkoutViewModel, WorkoutSessionViewModel } from '@/types/workout-
 import { FaDumbbell, FaFire } from 'react-icons/fa';
 import { BsClock } from 'react-icons/bs';
 
-import DashboardStatCard from '@/components/ui/stats-card';
+import StatsCard from '@/components/ui/stats-card';
 
 interface Props {
   workout: WorkoutViewModel;
@@ -116,18 +116,17 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
       </header>
 
       {/* Statistics */}
-
       <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
         <div className="col-span-1">
-          <DashboardStatCard icon={<FaDumbbell />} title="Övningar" value={totalExercises} subtitle="Övningar i träningspasset" />
+          <StatsCard icon={<FaDumbbell />} title="Övningar" value={totalExercises} subtitle="Övningar i träningspasset" />
         </div>
 
         <div className="col-span-1">
-          <DashboardStatCard icon={<BsClock />} title="Planerade set" value={totalSets} subtitle="Totalt antal set" />
+          <StatsCard icon={<BsClock />} title="Planerade set" value={totalSets} subtitle="Totalt antal set" />
         </div>
 
         <div className="col-span-2 xl:col-span-1">
-          <DashboardStatCard icon={<FaFire />} title="Träningstid" value={totalSeconds > 0 ? formatDuration(totalSeconds) : '—'} subtitle="Beräknad tid för tidsövningar" />
+          <StatsCard icon={<FaFire />} title="Träningstid" value={totalSeconds > 0 ? formatDuration(totalSeconds) : '—'} subtitle="Beräknad tid för tidsövningar" />
         </div>
       </div>
 

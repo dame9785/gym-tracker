@@ -1,11 +1,13 @@
-export type DashboardStatCardProps = {
-  icon: React.ReactNode;
+import type { ReactNode } from 'react';
+
+export type StatsCardProps = {
+  icon: ReactNode;
   title: string;
   value: string | number;
   subtitle?: string;
 };
 
-export default function DashboardStatCard({ icon, title, value, subtitle }: DashboardStatCardProps) {
+export default function StatsCard({ icon, title, value, subtitle }: StatsCardProps) {
   return (
     <div className="group relative flex min-h-30 min-w-0 items-center justify-between gap-2 overflow-hidden rounded-xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-950 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 sm:min-h-[155px] sm:gap-4 sm:rounded-2xl sm:p-5 lg:p-6">
       {/* Top accent */}
@@ -24,7 +26,7 @@ export default function DashboardStatCard({ icon, title, value, subtitle }: Dash
 
       {/* Right value */}
       <div className="min-w-0 shrink-0 text-right">
-        <span className="lg:text-l text-lg leading-tight font-bold tracking-wide text-orange-400 sm:text-2xl">{value}</span>
+        <span className="text-lg leading-tight font-bold tracking-wide text-orange-400 sm:text-2xl lg:text-3xl">{value}</span>
       </div>
     </div>
   );
