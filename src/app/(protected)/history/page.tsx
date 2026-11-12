@@ -18,23 +18,33 @@ type Props = {
   }>;
 };
 
-const historyService = new HistoryService();
-
 export default async function HistoryPage({ searchParams }: Props) {
   const user = await requireAuth();
-
   const params = await searchParams;
 
   const parsedPage = Number(params.page ?? '1');
-
   const page = Number.isSafeInteger(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
 
-  const response = await historyService.getHistory(page, user.userId);
+  const historyService = new HistoryService();
+
+  let response: Awaited<ReturnType<typeof historyService.getHistory>>;
+
+  try {
+    response = await historyService.getHistory(page, user.userId);
+  } catch (error: unknown) {
+    console.error('Failed to load workout history:', error);
+
+    return (
+      <main className="mx-auto w-full max-w-7xl px-0 py-8">
+        <ErrorMessage title="Unable to load workout history" message="Something went wrong while loading your workout history. Please try again later." />
+      </main>
+    );
+  }
 
   if (!response.success || !response.data) {
     return (
       <main className="mx-auto w-full max-w-7xl px-0 py-8">
-        <ErrorMessage title="Unable to load workout history" message={response.message ?? 'Something went wrong while loading your workout history.'} />
+        <ErrorMessage title="Unable to load workout history" message="Something went wrong while loading your workout history." />
       </main>
     );
   }
