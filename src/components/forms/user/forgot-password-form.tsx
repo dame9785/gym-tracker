@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { FaEnvelope } from 'react-icons/fa6';
+import Link from 'next/link';
 
 import styles from '@/components/forms/form.module.css';
+
 import Button from '@/components/button/button';
+import FormField from '@/components/ui/form-field';
+import FormInput from '@/components/ui/form-input';
 
 import { forgotPasswordAction } from '@/actions/user-actions';
 import { forgotPasswordSchema, type ForgotPasswordDto } from '@/schemas/auth-schemas';
-
-import Link from 'next/link';
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState('');
@@ -71,25 +73,38 @@ export default function ForgotPasswordForm() {
       </div>
 
       <div className={styles.formGroup}>
-        <div className={styles.labelWrapper}>
-          <FaEnvelope className={styles.formIcon} />
-          <label className={styles.formLabel} htmlFor="email">
-            Email
-          </label>
-        </div>
+        <FormField
+          htmlFor="email"
+          label={
+            <span className="flex items-center gap-2">
+              <FaEnvelope className={styles.formIcon} />
+              Email
+            </span>
+          }
+          required
+          error={errors.email?.[0]}
+        >
+          <FormInput
+            type="email"
+            id="email"
+            name="email"
+            autoComplete="email"
+            placeholder="Enter your email address"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
 
-        <input
-          className={styles.formInput}
-          type="email"
-          id="email"
-          name="email"
-          autoComplete="email"
-          placeholder="Enter your email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        {errors.email?.[0] && <p className={styles.fieldErrorMessage}>{errors.email[0]}</p>}
+              setErrors((prev) => {
+                const updatedErrors = { ...prev };
+                delete updatedErrors.email;
+                return updatedErrors;
+              });
+            }}
+            disabled={isSubmitting}
+            aria-invalid={!!errors.email?.length}
+            required
+          />
+        </FormField>
       </div>
 
       <Button type="submit" variant="primary" disabled={isSubmitting}>

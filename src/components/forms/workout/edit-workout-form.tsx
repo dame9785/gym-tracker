@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -19,24 +18,16 @@ import type { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 import { updateWorkoutAction } from '@/actions/workout-actions';
 
 import Button from '@/components/button/button';
-
-// --------------------------------------------------
-// Props
-// --------------------------------------------------
+import FormField from '@/components/ui/form-field';
+import FormInput from '@/components/ui/form-input';
+import FormTextarea from '@/components/ui/form-textarea';
 
 type Props = {
   workout: WorkoutViewModel;
   exericses: ExerciseViewModel[];
 };
 
-// --------------------------------------------------
-// Component
-// --------------------------------------------------
-
-export default function EditWorkoutForm({
-  workout,
-  exericses,
-}: Props) {
+export default function EditWorkoutForm({ workout, exericses }: Props) {
   const router = useRouter();
 
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -55,15 +46,7 @@ export default function EditWorkoutForm({
     })),
   });
 
-  // --------------------------------------------------
-  // Update exercise
-  // --------------------------------------------------
-
-  const updateExercise = (
-    index: number,
-    field: keyof UpdateWorkoutDto['workoutExercises'][number],
-    value: number | string
-  ) => {
+  const updateExercise = (index: number, field: keyof UpdateWorkoutDto['workoutExercises'][number], value: number | string) => {
     setFormData((prev) => {
       const updated = [...prev.workoutExercises];
       const current = updated[index];
@@ -84,22 +67,12 @@ export default function EditWorkoutForm({
     });
   };
 
-  // --------------------------------------------------
-  // Remove exercise
-  // --------------------------------------------------
-
   const removeExercise = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      workoutExercises: prev.workoutExercises.filter(
-        (_, i) => i !== index
-      ),
+      workoutExercises: prev.workoutExercises.filter((_, i) => i !== index),
     }));
   };
-
-  // --------------------------------------------------
-  // Add exercise
-  // --------------------------------------------------
 
   const addExercise = () => {
     setFormData((prev) => ({
@@ -118,10 +91,6 @@ export default function EditWorkoutForm({
     }));
   };
 
-  // --------------------------------------------------
-  // Submit
-  // --------------------------------------------------
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -129,10 +98,7 @@ export default function EditWorkoutForm({
     setErrors({});
 
     try {
-      const response = await updateWorkoutAction(
-        workout.id,
-        formData
-      );
+      const response = await updateWorkoutAction(workout.id, formData);
 
       if (!response.success) {
         if (response.errors) {
@@ -147,16 +113,11 @@ export default function EditWorkoutForm({
       router.push('/workout');
     } catch (error) {
       console.error('Failed to update workout:', error);
-
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
-
-  // --------------------------------------------------
-  // Render
-  // --------------------------------------------------
 
   return (
     <div className={FormStyles.formContainer}>
@@ -164,115 +125,61 @@ export default function EditWorkoutForm({
         Uppdatera <span>träningspass</span>
       </h1>
 
-      <form
-        onSubmit={handleSubmit}
-        className={`${FormStyles.form} mx-auto`}
-      >
-        {/* Workout name */}
-
+      <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
         <div className={FormStyles.formGroup}>
-          <label
-            htmlFor="name"
-            className={FormStyles.formLabel}
-          >
-            Workout namn *
-          </label>
-
-          <input
-            required
-            id="name"
-            type="text"
-            className={FormStyles.formInput}
-            placeholder="T.ex. Push Day"
-            value={formData.name}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }))
-            }
-          />
-
-          {errors.name?.map((error, index) => (
-            <p
-              key={index}
-              className={FormStyles.fieldErrorMessage}
-            >
-              {error}
-            </p>
-          ))}
+          <FormField htmlFor="name" label="Workout namn" required error={errors.name?.[0]}>
+            <FormInput
+              required
+              id="name"
+              name="name"
+              type="text"
+              placeholder="T.ex. Push Day"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  name: e.target.value,
+                }))
+              }
+              disabled={isSaving}
+              aria-invalid={!!errors.name?.length}
+            />
+          </FormField>
         </div>
 
-        {/* Description */}
-
         <div className={FormStyles.formGroup}>
-          <label
-            htmlFor="description"
-            className={FormStyles.formLabel}
-          >
-            Beskrivning
-          </label>
-
-          <textarea
-            id="description"
-            rows={4}
-            className={FormStyles.formTextarea}
-            placeholder="Fokusera på axlar, bröst..."
-            value={formData.description}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }
-          />
-
-          {errors.description?.map((error, index) => (
-            <p
-              key={index}
-              className={FormStyles.fieldErrorMessage}
-            >
-              {error}
-            </p>
-          ))}
+          <FormField htmlFor="description" label="Beskrivning" error={errors.description?.[0]}>
+            <FormTextarea
+              id="description"
+              name="description"
+              rows={4}
+              placeholder="Fokusera på axlar, bröst..."
+              value={formData.description}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+              disabled={isSaving}
+              aria-invalid={!!errors.description?.length}
+            />
+          </FormField>
         </div>
-
-        {/* Exercises */}
 
         <div className={FormStyles.exerciseSection}>
-          <h2 className={FormStyles.sectionTitle}>
-            Övningar
-          </h2>
+          <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
-          {formData.workoutExercises.map(
-            (workoutExercise, index) => (
-              <EditWorkoutExericeCard
-                key={index}
-                index={index}
-                workoutExericse={workoutExercise}
-                exercises={exericses}
-                onUpdate={updateExercise}
-                onRemove={removeExercise}
-              />
-            )
-          )}
+          {formData.workoutExercises.map((workoutExercise, index) => (
+            <EditWorkoutExericeCard key={index} index={index} workoutExericse={workoutExercise} exercises={exericses} onUpdate={updateExercise} onRemove={removeExercise} />
+          ))}
 
-          <button
-            type="button"
-            className={FormStyles.addExerciseButton}
-            onClick={addExercise}
-          >
+          <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise} disabled={isSaving}>
             + Lägg till övning
           </button>
         </div>
 
-        {/* Submit button */}
-
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={isSaving}
-        >
+        <Button type="submit" variant="primary" disabled={isSaving}>
           {isSaving ? 'Updating workout...' : 'Update workout'}
         </Button>
       </form>

@@ -1,33 +1,21 @@
-
 'use client';
 
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import {
-  FaEnvelope,
-  FaWeightScale,
-  FaPhone,
-  FaRulerVertical,
-  FaMars,
-  FaCakeCandles,
-  FaWeightHanging,
-  FaFlagCheckered,
-  FaUser,
-  FaSignature,
-  FaBullseye,
-} from 'react-icons/fa6';
+import { FaEnvelope, FaWeightScale, FaPhone, FaRulerVertical, FaMars, FaCakeCandles, FaWeightHanging, FaFlagCheckered, FaUser, FaSignature, FaBullseye } from 'react-icons/fa6';
 
 import { Gender, GoalType } from '@prisma/client';
 
 import Button from '@/components/button/button';
 import FormStyles from '@/components/forms/form.module.css';
 
-import {
-  updateUserSchema,
-  type UpdateUserDto,
-} from '@/schemas/auth-schemas';
+import FormField from '@/components/ui/form-field';
+import FormInput from '@/components/ui/form-input';
+import FormSelect from '@/components/ui/form-select';
+
+import { updateUserSchema, type UpdateUserDto } from '@/schemas/auth-schemas';
 
 import type { UserSettingsViewModel } from '@/types/user-types';
 import { updateUserAction } from '@/actions/user-actions';
@@ -64,18 +52,12 @@ export default function UpdateUserForm({ user }: Props) {
   });
 
   // Handle input changes
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: ['bodyWeight', 'height', 'goalWeight'].includes(name)
-        ? value === ''
-          ? 0
-          : Number(value)
-        : value,
+      [name]: ['bodyWeight', 'height', 'goalWeight'].includes(name) ? (value === '' ? 0 : Number(value)) : value,
     }));
 
     // Remove validation error for changed field
@@ -85,19 +67,6 @@ export default function UpdateUserForm({ user }: Props) {
 
       return updatedErrors;
     });
-  };
-
-  // Render field validation error
-  const renderFieldError = (name: keyof UpdateUserDto) => {
-    const error = errors[name]?.[0];
-
-    if (!error) return null;
-
-    return (
-      <p className={FormStyles.fieldErrorMessage} role="alert">
-        {error}
-      </p>
-    );
   };
 
   // Submit form
@@ -144,315 +113,217 @@ export default function UpdateUserForm({ user }: Props) {
       </div>
 
       <div className={FormStyles.formGrid}>
-
         {/* LEFT COLUMN */}
         <div className={FormStyles['form-left']}>
-
           {/* EMAIL */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaEnvelope className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="email">
-                Email
-              </label>
-            </div>
-
-            <input
-              className={FormStyles.formInput}
-              name="email"
-              type="email"
-              id="email"
-              autoComplete="email"
-              value={formData.email}
-              placeholder="E-post..."
-              onChange={handleChange}
-            />
-
-            {renderFieldError('email')}
+            <FormField
+              htmlFor="email"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaEnvelope className={FormStyles.formIcon} />
+                  Email
+                </span>
+              }
+              error={errors.email?.[0]}
+            >
+              <FormInput name="email" type="email" id="email" autoComplete="email" value={formData.email} placeholder="E-post..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.email?.length} />
+            </FormField>
           </div>
 
           {/* USERNAME */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaUser className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="username">
-                Användarnamn
-              </label>
-            </div>
-
-            <input
-              className={FormStyles.formInput}
-              name="username"
-              type="text"
-              id="username"
-              autoComplete="username"
-              value={formData.username}
-              placeholder="Användarnamn..."
-              onChange={handleChange}
-            />
-
-            {renderFieldError('username')}
+            <FormField
+              htmlFor="username"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaUser className={FormStyles.formIcon} />
+                  Användarnamn
+                </span>
+              }
+              error={errors.username?.[0]}
+            >
+              <FormInput name="username" type="text" id="username" autoComplete="username" value={formData.username} placeholder="Användarnamn..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.username?.length} />
+            </FormField>
           </div>
 
           {/* FIRST NAME */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaSignature className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="firstName">
-                Namn
-              </label>
-            </div>
-
-            <input
-              className={FormStyles.formInput}
-              name="firstName"
-              type="text"
-              id="firstName"
-              autoComplete="given-name"
-              value={formData.firstName}
-              placeholder="Namn..."
-              onChange={handleChange}
-            />
-
-            {renderFieldError('firstName')}
+            <FormField
+              htmlFor="firstName"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaSignature className={FormStyles.formIcon} />
+                  Namn
+                </span>
+              }
+              error={errors.firstName?.[0]}
+            >
+              <FormInput name="firstName" type="text" id="firstName" autoComplete="given-name" value={formData.firstName} placeholder="Namn..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.firstName?.length} />
+            </FormField>
           </div>
 
           {/* LAST NAME */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaSignature className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="lastName">
-                Efternamn
-              </label>
-            </div>
-
-            <input
-              className={FormStyles.formInput}
-              name="lastName"
-              type="text"
-              id="lastName"
-              autoComplete="family-name"
-              value={formData.lastName}
-              placeholder="Efternamn..."
-              onChange={handleChange}
-            />
-
-            {renderFieldError('lastName')}
+            <FormField
+              htmlFor="lastName"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaSignature className={FormStyles.formIcon} />
+                  Efternamn
+                </span>
+              }
+              error={errors.lastName?.[0]}
+            >
+              <FormInput name="lastName" type="text" id="lastName" autoComplete="family-name" value={formData.lastName} placeholder="Efternamn..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.lastName?.length} />
+            </FormField>
           </div>
 
           {/* PHONE */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaPhone className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="phoneNumber">
-                Telefonnummer
-              </label>
-            </div>
-
-            <input
-              className={FormStyles.formInput}
-              name="phoneNumber"
-              type="tel"
-              id="phoneNumber"
-              autoComplete="tel"
-              inputMode="tel"
-              value={formData.phoneNumber}
-              placeholder="076-123 45 67"
-              onChange={handleChange}
-            />
-
-           
-<small className={FormStyles.fieldErrorMessage}>
-  Exempel: 076-123 45 67 or +46 76 123 45 67
-</small>
-
-            {renderFieldError('phoneNumber')}
+            <FormField
+              htmlFor="phoneNumber"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaPhone className={FormStyles.formIcon} />
+                  Telefonnummer
+                </span>
+              }
+              hint="Exempel: 076-123 45 67 eller +46 76 123 45 67"
+              error={errors.phoneNumber?.[0]}
+            >
+              <FormInput name="phoneNumber" type="tel" id="phoneNumber" autoComplete="tel" inputMode="tel" value={formData.phoneNumber} placeholder="076-123 45 67" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.phoneNumber?.length} />
+            </FormField>
           </div>
 
           {/* BODY WEIGHT */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaWeightScale className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="bodyWeight">
-                Kroppsvikt (kg)
-              </label>
-            </div>
-
-            <input
-              className={FormStyles.formInput}
-              name="bodyWeight"
-              type="number"
-              step="0.1"
-              min="20"
-              max="400"
-              id="bodyWeight"
-              value={formData.bodyWeight || ''}
-              placeholder="Exempel: 70.5"
-              onChange={handleChange}
-            />
-
-            {renderFieldError('bodyWeight')}
+            <FormField
+              htmlFor="bodyWeight"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaWeightScale className={FormStyles.formIcon} />
+                  Kroppsvikt (kg)
+                </span>
+              }
+              error={errors.bodyWeight?.[0]}
+            >
+              <FormInput name="bodyWeight" type="number" step="0.1" min="20" max="400" id="bodyWeight" value={formData.bodyWeight || ''} placeholder="Exempel: 70.5" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.bodyWeight?.length} />
+            </FormField>
           </div>
         </div>
 
         {/* RIGHT COLUMN */}
         <div className={FormStyles['form-right']}>
-
           {/* HEIGHT */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaRulerVertical className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="height">
-                Längd (cm)
-              </label>
-            </div>
-
-            <input
-              className={FormStyles.formInput}
-              name="height"
-              type="number"
-              step="0.1"
-              min="100"
-              max="250"
-              id="height"
-              value={formData.height || ''}
-              placeholder="Exempel: 175"
-              onChange={handleChange}
-            />
-
-            {renderFieldError('height')}
+            <FormField
+              htmlFor="height"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaRulerVertical className={FormStyles.formIcon} />
+                  Längd (cm)
+                </span>
+              }
+              error={errors.height?.[0]}
+            >
+              <FormInput name="height" type="number" step="0.1" min="100" max="250" id="height" value={formData.height || ''} placeholder="Exempel: 175" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.height?.length} />
+            </FormField>
           </div>
 
           {/* GENDER */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaMars className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="gender">
-                Kön
-              </label>
-            </div>
-
-            <select
-              className={FormStyles.formSelect}
-              id="gender"
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
+            <FormField
+              htmlFor="gender"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaMars className={FormStyles.formIcon} />
+                  Kön
+                </span>
+              }
+              error={errors.gender?.[0]}
             >
-              <option value={Gender.MALE}>Man</option>
-              <option value={Gender.FEMALE}>Kvinna</option>
-              <option value={Gender.OTHER}>Annat</option>
-            </select>
-
-            {renderFieldError('gender')}
+              <FormSelect id="gender" name="gender" value={formData.gender} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.gender?.length}>
+                <option value={Gender.MALE}>Man</option>
+                <option value={Gender.FEMALE}>Kvinna</option>
+                <option value={Gender.OTHER}>Annat</option>
+              </FormSelect>
+            </FormField>
           </div>
 
           {/* BIRTH DATE */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaCakeCandles className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="birthDate">
-                Född
-              </label>
-            </div>
-
-            <input
-              className={FormStyles.formInput}
-              name="birthDate"
-              type="date"
-              id="birthDate"
-              value={formData.birthDate}
-              onChange={handleChange}
-            />
-
-            {renderFieldError('birthDate')}
+            <FormField
+              htmlFor="birthDate"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaCakeCandles className={FormStyles.formIcon} />
+                  Född
+                </span>
+              }
+              error={errors.birthDate?.[0]}
+            >
+              <FormInput name="birthDate" type="date" id="birthDate" value={formData.birthDate} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.birthDate?.length} />
+            </FormField>
           </div>
 
           {/* GOAL TYPE */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaBullseye className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="goalType">
-                Träningsmål
-              </label>
-            </div>
-
-            <select
-              className={FormStyles.formSelect}
-              id="goalType"
-              name="goalType"
-              value={formData.goalType}
-              onChange={handleChange}
+            <FormField
+              htmlFor="goalType"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaBullseye className={FormStyles.formIcon} />
+                  Träningsmål
+                </span>
+              }
+              error={errors.goalType?.[0]}
             >
-              <option value={GoalType.MUSCLE_GAIN}>
-                Muskelökning
-              </option>
-              <option value={GoalType.WEIGHT_LOSS}>
-                Viktnedgång
-              </option>
-              <option value={GoalType.MAINTENANCE}>
-                Behålla vikten
-              </option>
-            </select>
-
-            {renderFieldError('goalType')}
+              <FormSelect id="goalType" name="goalType" value={formData.goalType} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.goalType?.length}>
+                <option value={GoalType.MUSCLE_GAIN}>Muskelökning</option>
+                <option value={GoalType.WEIGHT_LOSS}>Viktnedgång</option>
+                <option value={GoalType.MAINTENANCE}>Behålla vikten</option>
+              </FormSelect>
+            </FormField>
           </div>
 
           {/* GOAL WEIGHT */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaWeightHanging className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="goalWeight">
-                Målvikt (kg)
-              </label>
-            </div>
-
-            <input
-              className={FormStyles.formInput}
-              name="goalWeight"
-              type="number"
-              step="0.1"
-              min="20"
-              max="400"
-              id="goalWeight"
-              value={formData.goalWeight || ''}
-              placeholder="Exempel: 75"
-              onChange={handleChange}
-            />
-
-            {renderFieldError('goalWeight')}
+            <FormField
+              htmlFor="goalWeight"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaWeightHanging className={FormStyles.formIcon} />
+                  Målvikt (kg)
+                </span>
+              }
+              error={errors.goalWeight?.[0]}
+            >
+              <FormInput name="goalWeight" type="number" step="0.1" min="20" max="400" id="goalWeight" value={formData.goalWeight || ''} placeholder="Exempel: 75" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.goalWeight?.length} />
+            </FormField>
           </div>
 
           {/* GOAL DATE */}
           <div className={FormStyles.formGroup}>
-            <div className={FormStyles.labelWrapper}>
-              <FaFlagCheckered className={FormStyles.formIcon} />
-              <label className={FormStyles.formLabel} htmlFor="goalDate">
-                Måldatum
-              </label>
-            </div>
-
-            <input
-              className={FormStyles.formInput}
-              name="goalDate"
-              type="date"
-              id="goalDate"
-              value={formData.goalDate}
-              onChange={handleChange}
-            />
-
-            {renderFieldError('goalDate')}
+            <FormField
+              htmlFor="goalDate"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaFlagCheckered className={FormStyles.formIcon} />
+                  Måldatum
+                </span>
+              }
+              error={errors.goalDate?.[0]}
+            >
+              <FormInput name="goalDate" type="date" id="goalDate" value={formData.goalDate} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.goalDate?.length} />
+            </FormField>
           </div>
         </div>
       </div>
 
       {/* SUBMIT BUTTON */}
-      <div className="grid grid-2">
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={isSaving}
-        >
+      <div className="grid-2 grid">
+        <Button type="submit" variant="primary" disabled={isSaving}>
           {isSaving ? 'Sparar...' : 'Spara ändringar'}
         </Button>
       </div>

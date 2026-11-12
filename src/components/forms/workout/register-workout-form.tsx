@@ -15,19 +15,15 @@ import type { ExerciseViewModel } from '@/types/exercise-types';
 import { registerWorkoutSchema, type AddWorkoutDto } from '@/schemas/workout-schemas';
 
 import { registerWorkoutAction } from '@/actions/workout-actions';
-import Button from '@/components/button/button';
 
-// --------------------------------------------------
-// Props
-// --------------------------------------------------
+import Button from '@/components/button/button';
+import FormField from '@/components/ui/form-field';
+import FormInput from '@/components/ui/form-input';
+import FormTextarea from '@/components/ui/form-textarea';
 
 type Props = {
   exericses: ExerciseViewModel[];
 };
-
-// --------------------------------------------------
-// Component
-// --------------------------------------------------
 
 export default function AddWorkoutForm({ exericses }: Props) {
   const router = useRouter();
@@ -41,10 +37,6 @@ export default function AddWorkoutForm({ exericses }: Props) {
     workoutExercises: [],
   });
 
-  // --------------------------------------------------
-  // Submit
-  // --------------------------------------------------
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -54,36 +46,29 @@ export default function AddWorkoutForm({ exericses }: Props) {
 
     if (!validation.success) {
       setErrors(validation.error.flatten().fieldErrors as Record<string, string[]>);
-
       return;
     }
 
     setIsSaving(true);
-    setErrors({});
 
     try {
       const response = await registerWorkoutAction(validation.data);
 
       if (!response.success) {
         setErrors(response.errors ?? {});
-
         toast.error(response.message);
         return;
       }
 
       toast.success(response.message ?? 'Workout was successfully created.');
-
       router.push('/workout');
     } catch (error) {
       console.error('Failed to create workout:', error);
-
       toast.error('Something went wrong. Please try again.');
+    } finally {
+      setIsSaving(false);
     }
   };
-
-  // --------------------------------------------------
-  // Add exercise
-  // --------------------------------------------------
 
   const addExercise = () => {
     setFormData((prev) => ({
@@ -102,20 +87,12 @@ export default function AddWorkoutForm({ exericses }: Props) {
     }));
   };
 
-  // --------------------------------------------------
-  // Remove exercise
-  // --------------------------------------------------
-
   const removeExercise = (index: number) => {
     setFormData((prev) => ({
       ...prev,
       workoutExercises: prev.workoutExercises.filter((_, i) => i !== index),
     }));
   };
-
-  // --------------------------------------------------
-  // Update exercise
-  // --------------------------------------------------
 
   const updateExercise = (index: number, field: keyof AddWorkoutDto['workoutExercises'][number], value: number | string) => {
     setFormData((prev) => {
@@ -138,10 +115,6 @@ export default function AddWorkoutForm({ exericses }: Props) {
     });
   };
 
-  // --------------------------------------------------
-  // Render
-  // --------------------------------------------------
-
   return (
     <div className={FormStyles.formContainer}>
       <h1 className={FormStyles.formTitle}>
@@ -149,64 +122,46 @@ export default function AddWorkoutForm({ exericses }: Props) {
       </h1>
 
       <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
-        {/* Workout name */}
-
         <div className={FormStyles.formGroup}>
-          <label htmlFor="name" className={FormStyles.formLabel}>
-            Workout name *
-          </label>
-
-          <input
-            required
-            id="name"
-            type="text"
-            className={FormStyles.formInput}
-            placeholder="Example. Push Day"
-            value={formData.name}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }))
-            }
-          />
-
-          {errors.name?.map((error, index) => (
-            <p key={index} id="name-error" className="text-red-500" role="alert">
-              {error}
-            </p>
-          ))}
+          <FormField htmlFor="name" label="Workout name" required error={errors.name?.[0]}>
+            <FormInput
+              required
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Example. Push Day"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  name: e.target.value,
+                }))
+              }
+              disabled={isSaving}
+              aria-invalid={!!errors.name?.length}
+            />
+          </FormField>
         </div>
 
-        {/* Description */}
-
         <div className={FormStyles.formGroup}>
-          <label htmlFor="description" className={FormStyles.formLabel}>
-            Description
-          </label>
-
-          <textarea
-            id="description"
-            rows={4}
-            className={FormStyles.formTextarea}
-            placeholder="Example. Focus on arms, chest..."
-            value={formData.description}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }
-          />
-
-          {errors.description?.map((error, index) => (
-            <p key={index} id="description-error" className="text-red-500" role="alert">
-              {error}
-            </p>
-          ))}
+          <FormField htmlFor="description" label="Description" error={errors.description?.[0]}>
+            <FormTextarea
+              id="description"
+              name="description"
+              rows={4}
+              placeholder="Example. Focus on arms, chest..."
+              value={formData.description}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+              disabled={isSaving}
+              aria-invalid={!!errors.description?.length}
+            />
+          </FormField>
         </div>
-
-        {/* Exercises */}
 
         <div className={FormStyles.exerciseSection}>
           <h2 className={FormStyles.sectionTitle}>Exercises</h2>
@@ -215,12 +170,11 @@ export default function AddWorkoutForm({ exericses }: Props) {
             <WorkoutExerciseCard key={index} index={index} exercise={exercise} exercises={exericses} onUpdate={updateExercise} onRemove={removeExercise} />
           ))}
 
-          <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise}>
+          <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise} disabled={isSaving}>
             + Add more exercises
           </button>
         </div>
 
-        {/* Submit button */}
         <div className="flex gap-2">
           <div className="flex flex-wrap gap-3">
             <Button type="submit" variant="primary" size="md" loading={isSaving}>
