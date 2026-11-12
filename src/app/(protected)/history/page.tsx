@@ -1,14 +1,13 @@
 import { redirect } from 'next/navigation';
 
-// Services
 import { HistoryService } from '@/services/history-service';
 import { requireAuth } from '@/lib/auth';
 
-// Components
 import HistoryTopStats from '@/components/history/history-top-stats';
 import HistoryMiddleStats from '@/components/history/history-middle-stats';
 import WorkoutSessions from '@/components/history/workout-sessions';
 import HistoryPagination from '@/components/history/history-pagination';
+
 import ErrorMessage from '@/components/ui/error-message';
 import Header from '@/components/ui/header';
 
@@ -23,6 +22,7 @@ export default async function HistoryPage({ searchParams }: Props) {
   const params = await searchParams;
 
   const parsedPage = Number(params.page ?? '1');
+
   const page = Number.isSafeInteger(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
 
   const historyService = new HistoryService();
@@ -53,8 +53,8 @@ export default async function HistoryPage({ searchParams }: Props) {
   const pagination = response.data.pagination;
 
   // Redirect to the last valid page if the requested page is too high.
-  if (pagination.totalPages > 0 && page > pagination.totalPages) {
-    redirect(pagination.totalPages === 1 ? '/history' : `/history?page=${pagination.totalPages}`);
+  if (page > Math.max(pagination.totalPages, 1)) {
+    redirect(pagination.totalPages <= 1 ? '/history' : `/history?page=${pagination.totalPages}`);
   }
 
   return (

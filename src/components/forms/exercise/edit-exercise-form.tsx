@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Activity, ArrowLeft, Check, Dumbbell, FileText, Image as ImageIcon, LoaderCircle, Plus } from 'lucide-react';
@@ -34,7 +34,6 @@ export default function EditExercise({ exericse }: Props) {
 
   const [isSaving, setIsSaving] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [errors, setErrors] = useState<Partial<Record<keyof UpdateExericseDto, string>>>({});
 
@@ -47,14 +46,6 @@ export default function EditExercise({ exericse }: Props) {
     instructions: exericse.instructions,
     techniqueTips: exericse.techniqueTips ?? '',
   });
-
-  useEffect(() => {
-    return () => {
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
-    };
-  }, [imagePreview]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -93,13 +84,8 @@ export default function EditExercise({ exericse }: Props) {
   };
 
   const handleImageChange = (file: File | null) => {
-    if (imagePreview) {
-      URL.revokeObjectURL(imagePreview);
-    }
-
     if (!file) {
       setSelectedImage(null);
-      setImagePreview(null);
       return;
     }
 
@@ -114,7 +100,6 @@ export default function EditExercise({ exericse }: Props) {
     }
 
     setSelectedImage(file);
-    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -190,7 +175,6 @@ export default function EditExercise({ exericse }: Props) {
 
       toast.success(response.message);
       router.push('/exercises');
-      router.refresh();
     } catch (error) {
       console.error('Failed to update exercise:', error);
       toast.error('Something went wrong. Please try again.');

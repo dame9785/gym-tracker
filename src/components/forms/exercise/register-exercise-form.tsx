@@ -116,7 +116,6 @@ export default function RegisterForm() {
 
       toast.success(response.message);
       router.push('/exercises');
-      router.refresh();
     } catch (error) {
       console.error('Failed to create exercise:', error);
       toast.error('Something went wrong. Please try again.');
@@ -131,7 +130,7 @@ export default function RegisterForm() {
     <div className="mx-auto w-full max-w-4xl min-w-0 px-3 pt-5 pb-8 sm:px-6 sm:pt-8 sm:pb-12 lg:pt-10">
       {/* Page header */}
       <div className="mb-8 flex items-start gap-4">
-        <Link href="/exercise" aria-label="Back to exercises" className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-orange-500/50 hover:text-orange-400">
+        <Link href="/exercises" aria-label="Back to exercises" className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-orange-500/50 hover:text-orange-400">
           <ArrowLeft className="h-5 w-5" />
         </Link>
 
@@ -334,7 +333,7 @@ export default function RegisterForm() {
         {/* Form actions */}
 
         <div className="flex flex-col-reverse gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/95 p-3 shadow-xl sm:sticky sm:bottom-3 sm:z-10 sm:flex-row sm:justify-end sm:backdrop-blur-xl">
-          <Link href="/exercise" className="w-full sm:w-auto">
+          <Link href="/exercises" className="w-full sm:w-auto">
             <span className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-zinc-700 px-5 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800">
               <ArrowLeft className="h-4 w-4" />
               Cancel
