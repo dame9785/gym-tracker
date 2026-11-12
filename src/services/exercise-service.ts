@@ -1,6 +1,5 @@
 import { ExerciseRepository } from '@/repositories/exercise-repository';
-import { ExerciseMapper } from '@/mapping/exericse-mapping';
-
+import { ExerciseMapper } from '@/mapping/exercise-mapping';
 import type { ExerciseListResult, ExerciseResult } from '@/types/exercise-types';
 
 import { registerExerciseSchema, updateExerciseSchema, type RegisterExericseDto, type UpdateExericseDto } from '@/schemas/exercise-schema';

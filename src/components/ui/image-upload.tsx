@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { FaCloudUploadAlt, FaImage, FaTimes } from 'react-icons/fa';
+import Image from 'next/image';
 
 type ImageUploadProps = {
   file: File | null;
@@ -96,7 +97,7 @@ export default function ImageUpload({ file, onFileChange, currentImageUrl, curre
             )}
           </div>
 
-          <img src={displayedImage} alt={file ? 'Preview of selected image' : currentImageAlt} className="max-h-64 w-full rounded-lg object-contain" />
+          <Image src={displayedImage} alt={file ? 'Preview of selected image' : currentImageAlt} width={1200} height={800} unoptimized className="max-h-64 w-full rounded-lg object-contain" />
 
           {file && <p className="mt-3 truncate text-sm text-zinc-300">{file.name}</p>}
 

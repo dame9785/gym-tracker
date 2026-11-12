@@ -1,7 +1,5 @@
-//Repository
 import { WeightLogRepository } from '@/repositories/weight-log-repository';
 
-//Mapping
 import { LogWeightMapper } from '@/mapping/log-weight-mapping';
 import { AddWeightDto, addWeightSchema, UpdateWeightDto, updateWeightSchema } from '@/schemas/weight-log.schemas';
 import { ApiResponse, SuccessResponse, DeleteLogWeightResponse, EditLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
@@ -38,7 +36,8 @@ export class WeightLogService {
           },
         },
       } satisfies SuccessResponse<UserLogWeightResponse>;
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('[WeightLogService.getAll]', error);
       return errorResponse('An error occurred on the server.');
     }
   }
@@ -50,12 +49,14 @@ export class WeightLogService {
 
     try {
       await this.weightLogRepository.delete(id, userId);
+
       return {
         success: true,
         message: 'Weight log deleted successfully',
         data: [],
       } satisfies SuccessResponse<DeleteLogWeightResponse>;
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('[WeightLogService.delete]', error);
       return errorResponse('An error occurred on the server.');
     }
   }
@@ -77,8 +78,8 @@ export class WeightLogService {
         message: 'Weight log created successfully.',
         data: viewModel,
       } satisfies SuccessResponse<LogWeightResponse>;
-    } catch (error) {
-      console.error('Weight-log created failed:', error);
+    } catch (error: unknown) {
+      console.error('[WeightLogService.create]', error);
       return errorResponse('An error occurred on the server.');
     }
   }
@@ -93,6 +94,7 @@ export class WeightLogService {
 
     try {
       const updatedData = await this.weightLogRepository.update(Number(weightId), userId, validation.data);
+
       if (!updatedData) {
         return errorResponse('Could not find weight log');
       }
@@ -104,7 +106,8 @@ export class WeightLogService {
         data: viewModel,
         message: 'Weight log updated successfully.',
       } satisfies SuccessResponse<EditLogWeightResponse>;
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('[WeightLogService.update]', error);
       return errorResponse('An error occurred on the server.');
     }
   }
@@ -112,6 +115,7 @@ export class WeightLogService {
   async getById(id: number, userId: number): Promise<ApiResponse<LogWeightResponse>> {
     try {
       const data = await this.weightLogRepository.getById(id, userId);
+
       if (!data) {
         return errorResponse('Could not find weight log.');
       }
@@ -120,8 +124,8 @@ export class WeightLogService {
         success: true,
         data: LogWeightMapper.mapLogItemToViewModel(data),
       } satisfies SuccessResponse<LogWeightResponse>;
-    } catch (error) {
-      console.error('getById error:', error);
+    } catch (error: unknown) {
+      console.error('[WeightLogService.getById]', error);
       return errorResponse('An error occurred on the server.');
     }
   }

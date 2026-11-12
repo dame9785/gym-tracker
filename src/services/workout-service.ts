@@ -2,7 +2,7 @@ import { WorkoutRepository } from '@/repositories/workout-repository';
 import { ExerciseRepository } from '@/repositories/exercise-repository';
 
 import { WorkoutMapper } from '@/mapping/workout-mapping';
-import { ExerciseMapper } from '@/mapping/exericse-mapping';
+import { ExerciseMapper } from '@/mapping/exercise-mapping';
 
 import type { WorkoutViewModel } from '@/types/workout-types';
 import type { ExerciseViewModel } from '@/types/exercise-types';
