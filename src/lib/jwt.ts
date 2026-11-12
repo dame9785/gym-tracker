@@ -1,9 +1,17 @@
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 
+// --------------------------------------------------
+// Types
+// --------------------------------------------------
+
 interface TokenPayload extends JwtPayload {
   userId: number;
   tokenVersion: number;
 }
+
+// --------------------------------------------------
+// JWT configuration
+// --------------------------------------------------
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -15,12 +23,16 @@ function getJwtSecret(): string {
   return secret;
 }
 
+// --------------------------------------------------
+// Generate token
+// --------------------------------------------------
+
 export function generateToken(userId: number, tokenVersion: number): string {
-  if (!Number.isInteger(userId) || userId <= 0) {
+  if (!Number.isSafeInteger(userId) || userId <= 0) {
     throw new Error('Invalid user ID.');
   }
 
-  if (!Number.isInteger(tokenVersion) || tokenVersion < 0) {
+  if (!Number.isSafeInteger(tokenVersion) || tokenVersion < 0) {
     throw new Error('Invalid token version.');
   }
 
@@ -30,20 +42,16 @@ export function generateToken(userId: number, tokenVersion: number): string {
   });
 }
 
+// --------------------------------------------------
+// Verify token
+// --------------------------------------------------
+
 export function verifyToken(token: string): TokenPayload {
   const payload = jwt.verify(token, getJwtSecret(), {
     algorithms: ['HS256'],
   });
 
-  if (
-    typeof payload === 'string' ||
-    typeof payload.userId !== 'number' ||
-    !Number.isInteger(payload.userId) ||
-    payload.userId <= 0 ||
-    typeof payload.tokenVersion !== 'number' ||
-    !Number.isInteger(payload.tokenVersion) ||
-    payload.tokenVersion < 0
-  ) {
+  if (typeof payload !== 'object' || payload === null || !Number.isSafeInteger(payload.userId) || payload.userId <= 0 || !Number.isSafeInteger(payload.tokenVersion) || payload.tokenVersion < 0) {
     throw new Error('Invalid token payload.');
   }
 

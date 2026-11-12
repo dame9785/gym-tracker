@@ -1,10 +1,17 @@
-import { verifyToken } from '@/lib/jwt';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+
 import { prisma } from '@/lib/prisma';
+import { verifyToken } from '@/lib/jwt';
+
+// --------------------------------------------------
+// Token validation
+// --------------------------------------------------
 
 export function getUserFromToken(token: string) {
-  if (!token) return null;
+  if (!token) {
+    return null;
+  }
 
   try {
     return verifyToken(token);
@@ -13,10 +20,19 @@ export function getUserFromToken(token: string) {
   }
 }
 
+// --------------------------------------------------
+// Cookie handling
+// --------------------------------------------------
+
 export async function getTokenFromCookieStore(): Promise<string | undefined> {
   const cookieStore = await cookies();
+
   return cookieStore.get('token')?.value;
 }
+
+// --------------------------------------------------
+// Authentication
+// --------------------------------------------------
 
 export async function requireAuth() {
   const token = await getTokenFromCookieStore();
@@ -32,8 +48,12 @@ export async function requireAuth() {
   }
 
   const dbUser = await prisma.user.findUnique({
-    where: { id: user.userId },
-    select: { tokenVersion: true },
+    where: {
+      id: user.userId,
+    },
+    select: {
+      tokenVersion: true,
+    },
   });
 
   if (!dbUser || dbUser.tokenVersion !== user.tokenVersion) {
