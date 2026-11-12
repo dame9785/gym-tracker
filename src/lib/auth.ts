@@ -31,20 +31,20 @@ export async function getTokenFromCookieStore(): Promise<string | undefined> {
 }
 
 // --------------------------------------------------
-// Authentication
+// Authenticated user
 // --------------------------------------------------
 
-export async function requireAuth() {
+export async function getAuthenticatedUser() {
   const token = await getTokenFromCookieStore();
 
   if (!token) {
-    redirect('/account/login');
+    return null;
   }
 
   const user = getUserFromToken(token);
 
   if (!user) {
-    redirect('/account/login');
+    return null;
   }
 
   const dbUser = await prisma.user.findUnique({
@@ -57,6 +57,20 @@ export async function requireAuth() {
   });
 
   if (!dbUser || dbUser.tokenVersion !== user.tokenVersion) {
+    return null;
+  }
+
+  return user;
+}
+
+// --------------------------------------------------
+// Require authentication
+// --------------------------------------------------
+
+export async function requireAuth() {
+  const user = await getAuthenticatedUser();
+
+  if (!user) {
     redirect('/account/login');
   }
 

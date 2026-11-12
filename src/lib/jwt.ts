@@ -49,9 +49,10 @@ export function generateToken(userId: number, tokenVersion: number): string {
 export function verifyToken(token: string): TokenPayload {
   const payload = jwt.verify(token, getJwtSecret(), {
     algorithms: ['HS256'],
+    complete: false,
   });
 
-  if (typeof payload !== 'object' || payload === null || !Number.isSafeInteger(payload.userId) || payload.userId <= 0 || !Number.isSafeInteger(payload.tokenVersion) || payload.tokenVersion < 0) {
+  if (typeof payload !== 'object' || payload === null || typeof payload.exp !== 'number' || !Number.isSafeInteger(payload.userId) || payload.userId <= 0 || !Number.isSafeInteger(payload.tokenVersion) || payload.tokenVersion < 0) {
     throw new Error('Invalid token payload.');
   }
 
