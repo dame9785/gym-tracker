@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  A full-stack workout tracking application built with Next.js, TypeScript, Prisma and MySQL.
+  A full-stack workout tracking application built with Next.js, React, TypeScript, Prisma and MySQL.
 </p>
 
 <p align="center">
@@ -23,14 +23,14 @@
 
 - [Features](#-features)
 - [Technology Stack](#️-technology-stack)
+- [Architecture](#-architecture)
 - [Prerequisites](#-prerequisites)
 - [Getting Started](#-getting-started)
 - [Environment Variables](#-environment-variables)
-- [Database Setup](#️-database-setup)
-- [Database Migrations](#-database-migrations)
-- [Baseline SQL](#-baseline-sql)
+- [Database and Prisma](#️-database-and-prisma)
 - [Available Scripts](#-available-scripts)
 - [Project Structure](#-project-structure)
+- [Validation and Code Quality](#-validation-and-code-quality)
 - [Deployment](#️-deployment)
 - [Troubleshooting](#-troubleshooting)
 - [Screenshots](#-screenshots)
@@ -40,48 +40,140 @@
 
 ## ✨ Features
 
-- 🔐 User registration and authentication
-- 🛡️ Protected application routes
-- 🏋️ Workout creation and management
-- 💪 Exercise management and exercise images
-- 📅 Workout scheduling
-- ⏱️ Workout sessions and exercise tracking
-- 🔢 Tracking of repetitions, sets, weights and duration
-- 📊 Dashboard with weekly training information
-- 📜 Workout history
-- 📈 Exercise progress tracking
-- ⚖️ Weight and calorie logging
-- 🥗 Food and meal tracking
-- 🎯 Personal goals and nutrition targets
-- 🗄️ MySQL database with Prisma ORM
-- ✅ Server-side validation with Zod
-- 🧱 Service and repository architecture
-- 📱 Responsive user interface
+### Authentication and Account Management
+
+- User registration and login
+- JWT-based authentication
+- Protected application routes
+- Password change
+- Forgot password and password reset
+- Token versioning for session invalidation
+
+### Workout Management
+
+- Create, edit and manage workouts
+- Add exercises to workouts
+- Configure sets, repetitions, weights and duration
+- Organize exercises within workouts
+- Archive workouts and exercises
+- View detailed exercise information
+
+### Exercise Management
+
+- Create and manage personal exercises
+- Exercise descriptions and instructions
+- Exercise images
+- Equipment information
+- Primary and secondary muscle groups
+- Individual exercise pages
+
+### Workout Scheduling and Sessions
+
+- Schedule workouts
+- Track active workout sessions
+- Record completed sets
+- Track actual repetitions, weights and duration
+- Review completed and unfinished sessions
+- Preserve exercise and workout information in historical sessions
+
+### Dashboard and Progress
+
+- Dashboard with weekly training information
+- Workout history
+- Exercise progress
+- Weight logging
+- Personal goals
+- Progress statistics and charts
+
+### Infrastructure
+
+- MySQL-compatible database
+- Prisma ORM and database migrations
+- Server-side validation with Zod
+- Service and repository architecture
+- Exercise image storage using Vercel Blob
+- Password reset emails using Resend
+- Responsive user interface
+
+---
 
 ## 🛠️ Technology Stack
 
-| Technology         | Purpose                                           |
-| ------------------ | ------------------------------------------------- |
-| Next.js            | Full-stack React framework                        |
-| React              | User interface                                    |
-| TypeScript         | Static typing                                     |
-| Prisma ORM         | Database access, schema management and migrations |
-| MySQL / TiDB Cloud | Relational database                               |
-| Zod                | Data validation                                   |
-| JWT                | Authentication tokens                             |
-| Vercel             | Application hosting and deployment                |
-| Vercel Blob        | Exercise image storage                            |
+| Technology         | Purpose                        |
+| ------------------ | ------------------------------ |
+| Next.js 16         | Full-stack React framework     |
+| React 19           | User interface                 |
+| TypeScript         | Static typing                  |
+| Tailwind CSS 4     | Styling                        |
+| Prisma ORM 6       | Database access and migrations |
+| MySQL / TiDB Cloud | Relational database            |
+| Zod 4              | Data validation                |
+| JSON Web Token     | Authentication                 |
+| bcryptjs           | Password hashing               |
+| Recharts           | Charts and statistics          |
+| Sonner             | Notifications                  |
+| Vercel Blob        | Image storage                  |
+| Resend             | Transactional emails           |
+| Vercel             | Application hosting            |
+
+---
+
+## 🏗️ Architecture
+
+GymTracker follows a layered architecture to separate application responsibilities and make the codebase easier to maintain.
+
+### App Router
+
+- Handles application routes and pages.
+- Uses Next.js Server Components and Client Components.
+- Organizes protected and public application routes.
+
+### Actions
+
+- Handle application mutations.
+- Validate incoming data.
+- Coordinate service calls.
+- Return standardized action results.
+
+### Services
+
+- Contain business logic.
+- Coordinate repositories and other services.
+- Handle application workflows.
+
+### Repositories
+
+- Handle database queries through Prisma.
+- Keep database access separate from business logic.
+
+### Schemas
+
+- Define validation rules using Zod.
+- Validate incoming data on the server.
+
+### Mapping
+
+- Converts database models into application types and response objects.
+
+### Types
+
+- Contains shared TypeScript types and interfaces.
+
+### Lib and Utils
+
+- Contains shared infrastructure and utilities.
+- Includes authentication, JWT configuration, Prisma client and helper functions.
 
 ---
 
 ## 📋 Prerequisites
 
-Install the following before setting up the project:
+Before setting up the project, install:
 
-- Node.js compatible with the project
+- Node.js
 - npm
 - Git
-- MySQL or a compatible database
+- MySQL or a compatible MySQL database
 - Access to the GitHub repository
 
 A code editor such as Visual Studio Code is recommended.
@@ -89,8 +181,6 @@ A code editor such as Visual Studio Code is recommended.
 ---
 
 ## 🚀 Getting Started
-
-Follow these steps to set up GymTracker locally after cloning the repository.
 
 ### 1. Clone the repository
 
@@ -109,59 +199,23 @@ npm install
 
 Create a `.env` file in the project root.
 
-Add your database connection string:
+See [Environment Variables](#-environment-variables) for the required configuration.
 
-```dotenv
-DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/DATABASE_NAME"
-```
-
-Replace the placeholders with your local database connection details.
-
-For local development, the connection string could point to a database named `gymtracker_local`.
-
-Do not commit `.env` or any file containing database credentials, API tokens or secrets to Git.
-
-See [Environment Variables](#-environment-variables) for more information.
-
-### 4. Create a local database
-
-Create an empty MySQL database for local development.
-
-For example, using MySQL Workbench:
-
-```sql
-CREATE DATABASE gymtracker_local
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
-```
-
-Configure `DATABASE_URL` in `.env` to point to this database.
-
-**Important:** Use a local development database for development and testing. Do not point your local environment at the production database unless you have a specific, approved reason to do so.
-
-### 5. Apply database migrations
-
-Run the committed Prisma migrations:
-
-```bash
-npm run db:migrate:deploy
-```
-
-This applies the existing migrations from `prisma/migrations/` to the database configured by `DATABASE_URL`.
-
-The migrations create the database schema, including the tables, indexes and relationships defined by the migration history.
-
-**Do not run the separate baseline SQL file as part of a normal fresh installation.** The active Prisma migration history is the official source for creating the database from scratch.
-
-### 6. Generate Prisma Client
+### 4. Generate Prisma Client
 
 ```bash
 npm run db:generate
 ```
 
-This generates the Prisma Client used by the application.
+### 5. Run database migrations
 
-### 7. Start the development server
+For local development:
+
+```bash
+npm run db:migrate:dev
+```
+
+### 6. Start the development server
 
 ```bash
 npm run dev
@@ -173,35 +227,50 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 🔐 Environment Variables
 
-The application requires environment variables for database access and may require additional configuration for authentication, image storage and deployment.
+The application uses environment variables for database access, authentication and external services.
 
-| Variable or configuration | Purpose                                                                   |
-| ------------------------- | ------------------------------------------------------------------------- |
-| `DATABASE_URL`            | Database connection used by Prisma                                        |
-| Authentication secrets    | Required if referenced by the application's authentication implementation |
-| Vercel Blob configuration | Required for image uploads and storage when used by the application       |
+Create a `.env` file in the project root.
 
-Use the exact variable names expected by the application code and deployment configuration.
+| Variable                | Description                                              |
+| ----------------------- | -------------------------------------------------------- |
+| `DATABASE_URL`          | MySQL database connection string                         |
+| `SHADOW_DATABASE_URL`   | Shadow database connection string used by Prisma Migrate |
+| `JWT_SECRET`            | Secret used to sign and verify JWT tokens                |
+| `RESEND_API_KEY`        | API key for Resend email delivery                        |
+| `RESEND_FROM_EMAIL`     | Sender email address used for outgoing emails            |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob storage access token                         |
 
-### Local development
+Example:
 
-Store local development values in `.env`. Keep this file out of version control.
+```env
+DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/DATABASE"
+SHADOW_DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/SHADOW_DATABASE"
 
-Ensure that `DATABASE_URL` points to the intended local database before running Prisma commands.
+JWT_SECRET="replace-with-a-secure-secret-of-at-least-32-characters"
 
-### Production
+RESEND_API_KEY="re_your_api_key"
+RESEND_FROM_EMAIL="GymTracker <noreply@example.com>"
 
-Configure production environment variables in the Vercel project settings.
+BLOB_READ_WRITE_TOKEN="your_vercel_blob_token"
+```
 
-A local `.env.production.local` file is not automatically uploaded to Vercel. Changing a local environment file does not change the environment variables configured in the deployed application.
+**Important:**
 
-Never include real credentials in this README.
+- Replace the example values with your own credentials.
+- Use a separate shadow database for Prisma development migrations.
+- Never commit `.env` files or production credentials to Git.
+- Use secure secrets in production.
+- Configure production environment variables in your hosting provider.
 
 ---
 
-## 🗄️ Database Setup
+## 🗄️ Database and Prisma
 
-GymTracker uses Prisma ORM with a MySQL-compatible database.
+GymTracker uses Prisma ORM with a MySQL-compatible relational database.
+
+The project supports MySQL and TiDB Cloud.
+
+### Prisma Schema
 
 The Prisma schema is located at:
 
@@ -209,260 +278,190 @@ The Prisma schema is located at:
 prisma/schema.prisma
 ```
 
-The active migration history is located at:
+It defines the application's database models, relationships and enums.
+
+The main models include:
+
+- User
+- PasswordResetToken
+- Goal
+- WeightLog
+- Exercise
+- MuscleGroup
+- ExerciseMuscle
+- Workout
+- WorkoutExercise
+- WorkoutSchedule
+- WorkoutSession
+- WorkoutSessionExercise
+- WorkoutSessionSet
+
+### Database Migrations
+
+Migrations are stored in:
 
 ```text
 prisma/migrations/
 ```
 
-### Check migration status
+Each migration represents a database schema change.
+
+Use the following commands depending on your environment.
+
+For local development:
+
+```bash
+npm run db:migrate:dev
+```
+
+For production deployment:
+
+```bash
+npm run db:migrate:deploy
+```
+
+To check migration status:
 
 ```bash
 npm run db:migrate:status
 ```
 
-This checks the migration history for the database selected by the current environment configuration.
-
-Always verify which database is configured before running database commands.
-
-### Inspect the Prisma schema
-
-After changing `prisma/schema.prisma`, you can generate SQL representing the current schema without applying it to a database:
-
-```bash
-npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script
-```
-
-This generates SQL representing the schema. It does not apply the SQL to a database.
-
----
-
-## 🔄 Database Migrations
-
-All committed database changes must be represented in the active Prisma migration history.
-
-The `prisma/schema.prisma` file describes the desired database schema, while `prisma/migrations/` contains the ordered history of database changes.
-
-**When you add a table, column, index or relationship, create a new migration. Do not manually update the original SQL installation file for every schema change.**
-
-### Creating a migration
-
-After changing `prisma/schema.prisma`, create a migration against your local development database:
-
-```bash
-npm run db:migrate:dev -- --name describe_your_change
-```
-
-For example:
-
-```bash
-npm run db:migrate:dev -- --name add_exercise_description
-```
-
-Prisma creates a new migration directory under `prisma/migrations/`, generates the migration SQL and applies the migration to your development database.
-
-Review the generated SQL before committing the changes. Make sure it contains the intended changes and does not include unexpected destructive operations.
-
-### Testing a migration
-
-After creating a migration:
-
-1. Review the generated migration SQL.
-2. Generate Prisma Client.
-3. Run the application locally.
-4. Test the affected functionality.
-5. Run the production build.
+To regenerate Prisma Client:
 
 ```bash
 npm run db:generate
-npm run build
 ```
 
-For additional confidence, test the migration history against a separate, empty test database.
+**Important:**
 
-### Committing migrations
-
-Commit both the updated Prisma schema and the new migration directory to Git.
-
-```bash
-git add prisma/schema.prisma prisma/migrations package.json
-git commit -m "Add database migration"
-```
-
-Include other changed files when appropriate.
-
-The migration files must be committed and pushed so other developers and deployment environments can apply the same database changes.
-
-### Deploying migrations
-
-Apply approved migrations to the intended database using:
-
-```bash
-npm run db:migrate:deploy
-```
-
-Use `migrate dev` for development and migration creation. Use `migrate deploy` to apply existing migrations in the target environment.
-
-Before deploying a migration:
-
-- Verify the target database.
-- Ensure that an appropriate backup exists for important data.
-- Review the migration SQL.
-- Confirm that the deployment environment has the correct database connection.
-- Test the application after deployment.
-
-A successful migration does not automatically mean that the application code is compatible with the updated database. Test the affected functionality after deployment.
-
-### Important migration rules
-
-- Keep the complete migration history in `prisma/migrations/`.
-- Commit new migration files to Git.
-- Do not delete migrations that have already been applied to shared or production databases.
-- Do not modify an already-applied migration to represent a new schema change. Create a new migration instead.
-- Do not manually apply SQL and then assume Prisma's migration history has been updated.
-- Use a separate test database when verifying migration changes.
-- Never run `npx prisma migrate reset` against a database containing data that must be preserved.
-- Do not run development migrations against production databases.
+- Do not manually edit migrations that have already been applied.
+- Create a new migration when changing the database schema.
+- Review generated SQL before applying migrations to production.
+- Keep the Prisma schema and migration history synchronized.
 
 ---
 
-## 📦 Baseline SQL
+## 📜 Available Scripts
 
-A separate baseline SQL snapshot is stored in:
+| Command                     | Description                                        |
+| --------------------------- | -------------------------------------------------- |
+| `npm run dev`               | Starts the development server                      |
+| `npm run build`             | Generates Prisma Client and builds the application |
+| `npm run start`             | Starts the production server                       |
+| `npm run lint`              | Runs ESLint                                        |
+| `npm run db:generate`       | Generates Prisma Client                            |
+| `npm run db:migrate:dev`    | Creates and applies development migrations         |
+| `npm run db:migrate:deploy` | Applies pending production migrations              |
+| `npm run db:migrate:status` | Checks migration status                            |
 
-```text
-prisma/migrations-baseline/
-```
-
-The directory contains:
-
-```text
-prisma/migrations-baseline/
-├── migration_lock.toml
-└── 20261027000000_baseline/
-    └── migration.sql
-```
-
-The baseline snapshot represents the database schema at the time it was generated. It has been compared with the SQL generated from the current Prisma schema, and the files matched during verification.
-
-**The baseline directory is separate from the active Prisma migration history.**
-
-Prisma does not automatically apply this snapshot when running:
+TypeScript can be checked separately:
 
 ```bash
-npm run db:migrate:deploy
+npx tsc --noEmit
 ```
-
-For a normal fresh installation, use the active migration history in `prisma/migrations/` as described in [Getting Started](#-getting-started).
-
-Do not manually apply the baseline SQL and then run the entire existing migration history against the same database without first establishing a proper Prisma baselining procedure. Doing so can cause migration conflicts.
-
-The baseline snapshot is retained as a separate reference and is not a replacement for the active migration history.
-
----
-
-## 💻 Available Scripts
-
-| Command                                   | Description                                              |
-| ----------------------------------------- | -------------------------------------------------------- |
-| `npm run dev`                             | Start the Next.js development server                     |
-| `npm run build`                           | Generate Prisma Client and build the Next.js application |
-| `npm run start`                           | Start the production server                              |
-| `npm run lint`                            | Run ESLint                                               |
-| `npm run db:generate`                     | Generate Prisma Client                                   |
-| `npm run db:migrate:dev -- --name <name>` | Create and apply a development migration                 |
-| `npm run db:migrate:deploy`               | Apply pending migrations to the configured database      |
-| `npm run db:migrate:status`               | Check migration status                                   |
-
-**Important:** `db:migrate:deploy` uses the database configured by `DATABASE_URL`. Always verify the target database before running it.
 
 ---
 
 ## 📁 Project Structure
 
-The project uses a layered architecture to separate routing, business logic, data access and validation.
+The following is a high-level overview of the project structure.
 
 ```text
 gym-tracker/
+│
 ├── prisma/
-│   ├── schema.prisma
 │   ├── migrations/
-│   └── migrations-baseline/
+│   └── schema.prisma
+│
 ├── public/
-│   ├── exercises/
-│   └── images/
+│
+├── screenshots/
+│
 ├── src/
+│   ├── actions/
 │   ├── app/
-│   │   └── api/
+│   ├── assets/
+│   ├── components/
+│   ├── helpers/
+│   ├── lib/
+│   ├── mapping/
 │   ├── repositories/
-│   ├── services/
 │   ├── schemas/
+│   ├── services/
 │   ├── types/
-│   └── ...
-├── .env
+│   └── utils/
+│
+├── .gitignore
+├── eslint.config.mjs
+├── next.config.ts
 ├── package.json
+├── package-lock.json
+├── postcss.config.mjs
+├── tsconfig.json
 └── README.md
 ```
 
-This is a high-level overview. Exact file and directory names may differ as the project evolves.
-
-### Architectural responsibilities
-
-- **App Router and API routes:** Application pages and server endpoints.
-- **Services:** Business logic and orchestration.
-- **Repositories:** Database access through Prisma.
-- **Schemas:** Input validation, including Zod schemas.
-- **Types:** Shared TypeScript types.
-- **Prisma:** Database schema and migration history.
-- **Public assets and Blob storage:** Exercise images and other static or uploaded media.
-
 ---
 
-## ☁️ Deployment
+## ✅ Validation and Code Quality
 
-The application is deployed using Vercel.
+The project uses TypeScript and ESLint to help maintain code quality.
 
-### Deployment checklist
+Before committing changes, run:
 
-1. Push the approved changes to the GitHub repository.
-2. Confirm that the correct branch is connected to Vercel.
-3. Configure the required production environment variables in Vercel.
-4. Ensure pending Prisma migrations are applied to the intended production database through the approved deployment workflow.
-5. Verify that the build succeeds.
-6. Open the deployed application and test authentication, dashboard data, workout sessions and other affected functionality.
-
-A successful application build does not, by itself, prove that the database migration has been applied.
-
-Do not assume that Vercel automatically runs `prisma migrate deploy` unless that behavior has been configured and verified in the deployment process.
-
-### Production database migrations
-
-Before applying migrations to TiDB Cloud or another production database, confirm that the deployment workflow targets the correct database and that the migration SQL has been reviewed.
-
-Avoid using your local `.env` as a way to control production deployments. Configure the appropriate environment variables in the deployment environment.
-
----
-
-## 🔍 Troubleshooting
-
-### Prisma cannot connect to the database
-
-- Check that the database server is reachable.
-- Verify the database name, username, password, host and port.
-- Confirm that `DATABASE_URL` points to the intended environment.
-- Check whether the database provider requires SSL or additional connection parameters.
-
-### Prisma reports pending migrations
-
-Check the migration status:
+### TypeScript
 
 ```bash
-npm run db:migrate:status
+npx tsc --noEmit
 ```
 
-Review the migration history and apply the appropriate migrations to the intended database. Do not reset a database containing data you need to preserve.
+### ESLint
 
-### Prisma Client is out of date
+```bash
+npm run lint
+```
+
+### Production build
+
+```bash
+npm run build
+```
+
+Resolve any reported errors before committing changes.
+
+---
+
+## 🚀 Deployment
+
+GymTracker is designed to be deployed using Vercel.
+
+### Production deployment checklist
+
+1. Connect the GitHub repository to Vercel.
+2. Configure the required production environment variables.
+3. Configure the production MySQL-compatible database.
+4. Ensure the production database schema is up to date.
+5. Apply pending migrations using:
+
+```bash
+npm run db:migrate:deploy
+```
+
+6. Deploy the application.
+
+The build command is configured as:
+
+```bash
+prisma generate && next build
+```
+
+This ensures that Prisma Client is generated before the Next.js production build.
+
+---
+
+## 🔧 Troubleshooting
+
+### Prisma Client is outdated
 
 Run:
 
@@ -470,42 +469,70 @@ Run:
 npm run db:generate
 ```
 
-### The application builds locally but fails on Vercel
+### Database connection errors
 
-- Inspect the Vercel build logs.
-- Check imports and file-name casing.
-- Verify that required environment variables exist in Vercel.
-- Confirm that the deployed branch contains the expected commits.
-- Verify that the database schema is compatible with the deployed application code.
+Check:
 
-### A database migration fails
+- `DATABASE_URL`
+- Database credentials
+- Database host and port
+- Network access to the database
+- Database availability
 
-Stop and inspect the error and migration SQL before retrying. Do not manually drop tables or alter migration history without understanding the cause.
+### Migration errors
 
-Use a separate test database to reproduce the issue where possible.
+Check migration status:
+
+```bash
+npm run db:migrate:status
+```
+
+Review the Prisma error message and migration history before attempting to resolve the problem.
+
+### JWT configuration errors
+
+Ensure that `JWT_SECRET` is configured and contains a sufficiently long secure value.
+
+### Vercel Blob upload errors
+
+Verify that `BLOB_READ_WRITE_TOKEN` is configured correctly in the relevant environment.
+
+### Email delivery errors
+
+Verify:
+
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+- Sender domain configuration in Resend
 
 ---
 
 ## 📸 Screenshots
 
-### 🏠 Dashboard
+### Dashboard
 
-![GymTracker Dashboard](./screenshots/Dashboard.png)
+![Dashboard](screenshots/Dashboard.png)
 
-### 💪 Exercise Management
+### Exercises
 
-![Exercise Management](./screenshots/Exericses.png)
+![Exercises](screenshots/Exericses.png)
 
-### ⚖️ Weight Tracking
+### Weight Log
 
-![Weight Tracking](./screenshots/WeightLog.png)
+![Weight Log](screenshots/WeightLog.png)
 
-### 🏋️ Workout Details
+### Workout
 
-![Workout Details](./screenshots/Workout-item.png)
+![Workout](screenshots/Workout-item.png)
 
 ---
 
 ## 📄 License
 
-Add license information here if the project is distributed under a specific license.
+GymTracker is proprietary software.
+
+Copyright (c) 2026 David Söderberg. All rights reserved.
+
+See [LICENSE](./LICENSE) for the full license terms.
+
+Third-party dependencies and their respective licenses are documented in [Third-party notices](./2.%20THIRD-PARTY-NOTICES.md).
