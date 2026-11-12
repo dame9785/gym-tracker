@@ -11,16 +11,17 @@ export default async function ProgressPage() {
 
   const progressService = new ProgressService();
 
-  let response: Awaited<ReturnType<typeof progressService.getProgress>>;
+  let exerciseProgress: Awaited<ReturnType<typeof progressService.getProgress>>['exerciseProgress'];
 
   try {
-    response = await progressService.getProgress(user.userId);
+    const response = await progressService.getProgress(user.userId);
+    exerciseProgress = response.exerciseProgress;
   } catch (error: unknown) {
-    console.error('Failed to load progress:', error);
+    console.error('Failed to load exercise progress:', error);
 
     return (
       <main className="mx-auto w-full max-w-7xl px-0 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <ErrorMessage title="Unable to load progress" message="We couldn't retrieve your training progress. Please try again later." />
+        <ErrorMessage title="Unable to load progress" message="We couldn't retrieve your exercise progress. Please try again later." />
       </main>
     );
   }
@@ -36,7 +37,7 @@ export default async function ProgressPage() {
           <p className="mt-1 text-sm leading-6 text-zinc-400">Följ utvecklingen för dina övningar, jämför resultat och se dina rekord över tid.</p>
         </div>
 
-        <ExerciseProgress exerciseProgress={response.exerciseProgress} metric="weight" />
+        <ExerciseProgress exerciseProgress={exerciseProgress} metric="weight" />
       </section>
     </main>
   );
