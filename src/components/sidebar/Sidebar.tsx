@@ -7,7 +7,7 @@ import { useSyncExternalStore } from 'react';
 import Button from '@/components/button/button';
 import { logoutAction } from '@/actions/user-actions';
 
-import { FaDumbbell, FaWeight, FaHistory, FaHome, FaUtensils } from 'react-icons/fa';
+import { FaDumbbell, FaWeight, FaHistory, FaHome } from 'react-icons/fa';
 import { BsBarChartLine } from 'react-icons/bs';
 import { IoIosSettings } from 'react-icons/io';
 import { FaPersonRunning } from 'react-icons/fa6';
@@ -20,7 +20,6 @@ const navigationItems = [
   { label: 'Weight', href: '/log-weight', icon: FaWeight },
   { label: 'Progress', href: '/progress', icon: BsBarChartLine },
   { label: 'Exercises', href: '/exercises', icon: FaPersonRunning },
-  { label: 'Foods', href: '/foods', icon: FaUtensils },
   { label: 'History', href: '/history', icon: FaHistory },
   { label: 'Settings', href: '/account/setting', icon: IoIosSettings },
 ];
