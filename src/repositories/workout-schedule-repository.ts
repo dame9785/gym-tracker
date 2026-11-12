@@ -1,8 +1,50 @@
+import type { Prisma } from '@prisma/client';
+
 import { prisma } from '@/lib/prisma';
 import type { RegisterWorkoutScheduleDto } from '@/types/workout-schedule-types';
 
+// --------------------------------------------------
+// Prisma includes
+// --------------------------------------------------
+
+const workoutScheduleInclude = {
+  sessions: {
+    orderBy: {
+      startedAt: 'desc',
+    },
+    take: 1,
+  },
+  workout: {
+    include: {
+      exercises: {
+        where: {
+          archivedAt: null,
+        },
+        include: {
+          exercise: true,
+        },
+        orderBy: {
+          order: 'asc',
+        },
+      },
+    },
+  },
+} satisfies Prisma.WorkoutScheduleInclude;
+
+// --------------------------------------------------
+// Prisma result types
+// --------------------------------------------------
+
+type WorkoutScheduleWithDetails = Prisma.WorkoutScheduleGetPayload<{
+  include: typeof workoutScheduleInclude;
+}>;
+
+// --------------------------------------------------
+// Repository
+// --------------------------------------------------
+
 export class WorkoutScheduleRepository {
-  async create(dto: RegisterWorkoutScheduleDto, userId: number): Promise<Awaited<ReturnType<typeof prisma.workoutSchedule.create>>> {
+  async create(dto: RegisterWorkoutScheduleDto, userId: number): Promise<Prisma.WorkoutScheduleGetPayload<Record<string, never>>> {
     return prisma.$transaction(async (tx) => {
       const workout = await tx.workout.findFirst({
         where: {
@@ -29,7 +71,7 @@ export class WorkoutScheduleRepository {
     });
   }
 
-  async getByMonth(userId: number, year: number, month: number) {
+  async getByMonth(userId: number, year: number, month: number): Promise<WorkoutScheduleWithDetails[]> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 1);
 
@@ -47,28 +89,11 @@ export class WorkoutScheduleRepository {
         },
       },
       include: {
+        ...workoutScheduleInclude,
         sessions: {
+          ...workoutScheduleInclude.sessions,
           where: {
             userId,
-          },
-          orderBy: {
-            startedAt: 'desc',
-          },
-          take: 1,
-        },
-        workout: {
-          include: {
-            exercises: {
-              where: {
-                archivedAt: null,
-              },
-              include: {
-                exercise: true,
-              },
-              orderBy: {
-                order: 'asc',
-              },
-            },
           },
         },
       },

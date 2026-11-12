@@ -6,9 +6,9 @@ import { schedelueWorkoutSchema } from '@/schemas/schedelue-workout-schemas';
 import { mapWeeklyOverview } from '@/mapping/dashboard-mapping';
 
 export class WorkoutScheduleService {
-  private workoutScheduleRepository = new WorkoutScheduleRepository();
+  private readonly workoutScheduleRepository = new WorkoutScheduleRepository();
 
-  async create(dto: RegisterWorkoutScheduleDto, userId: number) {
+  async create(dto: RegisterWorkoutScheduleDto, userId: number): Promise<Awaited<ReturnType<WorkoutScheduleRepository['create']>>> {
     const validation = schedelueWorkoutSchema.safeParse(dto);
 
     if (!validation.success) {

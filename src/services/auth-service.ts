@@ -5,16 +5,7 @@ import { UserRepository } from '@/repositories/user-repository';
 import { generateToken } from '@/lib/jwt';
 import { UserMapper } from '@/mapping/user-mapping';
 import { ErrorsHelper } from '@/helpers/error-helper';
-import {
-  loginSchema,
-  registerUserSchema,
-  updateUserSchema,
-  changePasswordSchema,
-  type LoginDto,
-  type RegisterUserDto,
-  type UpdateUserDto,
-  type ChangePasswordDto,
-} from '@/schemas/auth-schemas';
+import { loginSchema, registerUserSchema, updateUserSchema, changePasswordSchema, type LoginDto, type RegisterUserDto, type UpdateUserDto, type ChangePasswordDto } from '@/schemas/auth-schemas';
 import type { LoginResponse, RegisterResponse, UpdateUserResponse, UserResponse } from '@/types/user-types';
 
 export class AuthService {
@@ -67,11 +58,7 @@ export class AuthService {
 
     const data = validation.data;
 
-    const [existingEmail, existingUsername, existingPhoneNumber] = await Promise.all([
-      this.userRepository.emailExists(data.email),
-      this.userRepository.usernameExists(data.username),
-      this.userRepository.phoneNumberExists(data.phoneNumber),
-    ]);
+    const [existingEmail, existingUsername, existingPhoneNumber] = await Promise.all([this.userRepository.emailExists(data.email), this.userRepository.usernameExists(data.username), this.userRepository.phoneNumberExists(data.phoneNumber)]);
 
     const fieldErrors: Partial<Record<keyof RegisterUserDto, string>> = {};
 
@@ -180,11 +167,7 @@ export class AuthService {
 
     const data = validation.data;
 
-    const [existingEmail, existingUsername, existingPhoneNumber] = await Promise.all([
-      this.userRepository.emailExists(data.email, userId),
-      this.userRepository.usernameExists(data.username, userId),
-      this.userRepository.phoneNumberExists(data.phoneNumber, userId),
-    ]);
+    const [existingEmail, existingUsername, existingPhoneNumber] = await Promise.all([this.userRepository.emailExists(data.email, userId), this.userRepository.usernameExists(data.username, userId), this.userRepository.phoneNumberExists(data.phoneNumber, userId)]);
 
     const fieldErrors: Partial<Record<keyof UpdateUserDto, string>> = {};
 

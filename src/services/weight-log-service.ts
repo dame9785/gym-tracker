@@ -1,28 +1,26 @@
 import { WeightLogRepository } from '@/repositories/weight-log-repository';
 import { LogWeightMapper } from '@/mapping/log-weight-mapping';
 
-import type { ServiceResponse, SuccessResponse } from '@/types/service-types';
-
-import type { LogItemViewModel, UserLogWeightResponse } from '@/types/log-weight-types';
-
 import { errorResponse } from '@/helpers/service-response-helper';
 
 import { addWeightSchema, updateWeightSchema } from '@/schemas/weight-log.schemas';
 
 import type { AddWeightDto, UpdateWeightDto } from '@/schemas/weight-log.schemas';
 
+import type { ServiceResponse, SuccessResponse } from '@/types/service-types';
+
+import type { LogItemViewModel, UserLogWeightResponse } from '@/types/log-weight-types';
+
 export class WeightLogService {
-  private weightLogRepository = new WeightLogRepository();
+  private readonly weightLogRepository = new WeightLogRepository();
+
+  private readonly pageSize = 7;
 
   async getAll(page: number, userId: number): Promise<ServiceResponse<UserLogWeightResponse>> {
     try {
-      const lastLog = await this.weightLogRepository.lastLog(userId);
-      const firstLog = await this.weightLogRepository.firstLog(userId);
+      const [lastLog, firstLog, totalLogs, allLogs] = await Promise.all([this.weightLogRepository.lastLog(userId), this.weightLogRepository.firstLog(userId), this.weightLogRepository.getTotalNumberOfLogs(userId), this.weightLogRepository.getAll(userId, page, this.pageSize)]);
 
-      const pageSize = 7;
-      const totalLogs = await this.weightLogRepository.getTotalNumberOfLogs(userId);
-      const totalPages = Math.ceil(totalLogs / pageSize);
-      const allLogs = await this.weightLogRepository.getAll(userId, page, pageSize);
+      const totalPages = Math.ceil(totalLogs / this.pageSize);
 
       const viewModel = LogWeightMapper.mapLogViewModel(allLogs, firstLog, lastLog);
 
@@ -36,7 +34,7 @@ export class WeightLogService {
           pagination: {
             currentPage: page,
             totalPages,
-            pageSize,
+            pageSize: this.pageSize,
             totalItems: totalLogs,
           },
         },
@@ -53,7 +51,11 @@ export class WeightLogService {
     }
 
     try {
-      await this.weightLogRepository.delete(id, userId);
+      const deletedLog = await this.weightLogRepository.delete(id, userId);
+
+      if (!deletedLog) {
+        return errorResponse('Could not find weight log.');
+      }
 
       return {
         success: true,
@@ -75,6 +77,7 @@ export class WeightLogService {
 
     try {
       const createdLog = await this.weightLogRepository.create(validation.data, userId);
+
       const viewModel = LogWeightMapper.mapLogItemToViewModel(createdLog);
 
       return {
@@ -97,7 +100,7 @@ export class WeightLogService {
     }
 
     try {
-      const updatedData = await this.weightLogRepository.update(Number(weightId), userId, validation.data);
+      const updatedData = await this.weightLogRepository.update(weightId, userId, validation.data);
 
       if (!updatedData) {
         return errorResponse('Could not find weight log');

@@ -4,7 +4,7 @@ import { WorkoutSessionRepository } from '@/repositories/workout-session-reposit
 import type { WorkoutSessionFinishViewModel, WorkoutSessionViewModel, UpdatedSetViewModel } from '@/types/workout-types';
 
 export class WorkoutSessionService {
-  private workoutSessionRepository = new WorkoutSessionRepository();
+  private readonly workoutSessionRepository = new WorkoutSessionRepository();
 
   async create(workoutId: number, userId: number, workoutScheduleId?: number): Promise<number> {
     const workoutSession = await this.workoutSessionRepository.create(workoutId, userId, workoutScheduleId);

@@ -1,7 +1,60 @@
+import type { Prisma } from '@prisma/client';
+
 import { prisma } from '@/lib/prisma';
 
+// --------------------------------------------------
+// Result types
+// --------------------------------------------------
+
+type WeightProgress = {
+  startWeight: number;
+  currentWeight: number;
+  goalWeight: number;
+  history: {
+    weight: number;
+    loggedAt: string;
+  }[];
+};
+
+const exerciseProgressSelect = {
+  finishedAt: true,
+  exercises: {
+    select: {
+      workoutExercise: {
+        select: {
+          exercise: {
+            select: {
+              id: true,
+              name: true,
+              equipment: true,
+            },
+          },
+        },
+      },
+      sets: {
+        where: {
+          completed: true,
+        },
+        select: {
+          actualReps: true,
+          actualWeight: true,
+          actualSeconds: true,
+        },
+      },
+    },
+  },
+} satisfies Prisma.WorkoutSessionSelect;
+
+type ExerciseProgress = Prisma.WorkoutSessionGetPayload<{
+  select: typeof exerciseProgressSelect;
+}>;
+
+// --------------------------------------------------
+// Repository
+// --------------------------------------------------
+
 export class ProgressRepository {
-  async getWeightProgress(userId: number) {
+  async getWeightProgress(userId: number): Promise<WeightProgress | null> {
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
@@ -40,7 +93,7 @@ export class ProgressRepository {
     };
   }
 
-  async getExerciseProgress(userId: number) {
+  async getExerciseProgress(userId: number): Promise<ExerciseProgress[]> {
     return prisma.workoutSession.findMany({
       where: {
         userId,
@@ -49,34 +102,7 @@ export class ProgressRepository {
       orderBy: {
         finishedAt: 'asc',
       },
-      select: {
-        finishedAt: true,
-        exercises: {
-          select: {
-            workoutExercise: {
-              select: {
-                exercise: {
-                  select: {
-                    id: true,
-                    name: true,
-                    equipment: true,
-                  },
-                },
-              },
-            },
-            sets: {
-              where: {
-                completed: true,
-              },
-              select: {
-                actualReps: true,
-                actualWeight: true,
-                actualSeconds: true,
-              },
-            },
-          },
-        },
-      },
+      select: exerciseProgressSelect,
     });
   }
 }

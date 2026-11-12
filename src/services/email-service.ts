@@ -2,10 +2,16 @@ import { getResendClient } from '@/lib/resend';
 
 export class EmailService {
   async sendPasswordResetEmail(email: string, resetUrl: string): Promise<void> {
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
+
+    if (!fromEmail) {
+      throw new Error('RESEND_FROM_EMAIL is not configured.');
+    }
+
     const resend = getResendClient();
 
     const { error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL!,
+      from: fromEmail,
       to: email,
       subject: 'Reset your GymTracker password',
       html: `
@@ -42,6 +48,7 @@ export class EmailService {
 
     if (error) {
       console.error('[EmailService] Failed to send password reset email:', error);
+
       throw new Error('Failed to send password reset email.');
     }
   }

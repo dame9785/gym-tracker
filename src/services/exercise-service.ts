@@ -6,7 +6,7 @@ import type { ExerciseViewModel } from '@/types/exercise-types';
 import { registerExerciseSchema, updateExerciseSchema, type RegisterExericseDto, type UpdateExericseDto } from '@/schemas/exercise-schema';
 
 export class ExerciseService {
-  private exerciseRepository = new ExerciseRepository();
+  private readonly exerciseRepository = new ExerciseRepository();
 
   async getAllExersise(userId: number): Promise<ExerciseViewModel[]> {
     const exercises = await this.exerciseRepository.getAllExersise(userId);
