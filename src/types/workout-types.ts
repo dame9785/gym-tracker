@@ -1,8 +1,8 @@
+import type { WorkoutSessionStatus } from '@prisma/client';
+
 import type { ExerciseViewModel, WorkoutSessionExerciseViewModel, WorkoutExerciseViewModel } from '@/types/exercise-types';
 
 import type { PaginationViewModel } from '@/types/pagination-types';
-
-import { WorkoutSessionStatus } from '@prisma/client';
 
 export interface WorkoutViewModel {
   id: number;
@@ -38,18 +38,6 @@ export interface WorkoutSessionViewModel {
   finishedAt: Date | null;
   status: string;
   exercises: WorkoutSessionExerciseViewModel[];
-}
-
-export interface WorkoutSessionSetViewModel {
-  id: number;
-  setNumber: number;
-  targetReps: number;
-  targetWeight: number | null;
-  actualReps: number | null;
-  actualWeight: number | null;
-  actualSeconds: number | null;
-  targetSeconds: number | null;
-  completed: boolean;
 }
 
 export interface WeeklyWorkoutViewModel {

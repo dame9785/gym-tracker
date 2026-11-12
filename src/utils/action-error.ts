@@ -1,5 +1,7 @@
 const VALIDATION_ERROR_PREFIXES = ['Validation failed: ', 'Registration failed: ', 'User update failed: ', 'User already exists: '];
 
+const SAFE_ERROR_MESSAGES = ['Invalid email or password.', 'User not found.', 'Only JPEG, PNG and WebP images are allowed.', 'The image must be 5 MB or smaller.', 'Invalid secondary muscle groups.', 'Invalid image file.', 'Workout hittades inte.', 'Workout innehåller inga övningar.'];
+
 export function getActionErrorMessage(error: unknown): string {
   if (!(error instanceof Error)) {
     return 'Something went wrong.';
@@ -9,7 +11,7 @@ export function getActionErrorMessage(error: unknown): string {
     return 'Please correct the highlighted fields.';
   }
 
-  if (error.message === 'Invalid email or password.' || error.message === 'User not found.') {
+  if (SAFE_ERROR_MESSAGES.includes(error.message) || error.message.startsWith('Invalid value for ')) {
     return error.message;
   }
 

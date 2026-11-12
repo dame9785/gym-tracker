@@ -1,4 +1,5 @@
 import { MuscleRole, Prisma } from '@prisma/client';
+
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
 type ExerciseWithMuscles = Prisma.ExerciseGetPayload<{

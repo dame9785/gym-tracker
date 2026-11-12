@@ -1,9 +1,7 @@
-//Types
+import type { Prisma } from '@prisma/client';
+
 import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 import type { WorkoutExerciseViewModel } from '@/types/exercise-types';
-
-//Prisma
-import { Prisma } from '@prisma/client';
 
 type WeeklyOverview = Prisma.WorkoutScheduleGetPayload<{
   include: {
@@ -32,8 +30,13 @@ export function mapWeeklyOverview(workouts: WeeklyOverview[]): WeeklyWorkoutView
       seconds: workoutExercise.seconds ?? 0,
     }));
 
-    // Get the latest session belonging to this specific schedule.
-    const latestSession = [...workoutSchedule.sessions].sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime())[0];
+    const latestSession = workoutSchedule.sessions.reduce<(typeof workoutSchedule.sessions)[number] | null>((latest, session) => {
+      if (!latest || session.startedAt > latest.startedAt) {
+        return session;
+      }
+
+      return latest;
+    }, null);
 
     return {
       id: workoutSchedule.id,

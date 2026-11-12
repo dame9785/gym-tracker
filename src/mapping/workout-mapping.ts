@@ -1,8 +1,6 @@
-//Types
-import type { WorkoutViewModel, EditWorkoutViewModel } from '@/types/workout-types';
+import type { Prisma } from '@prisma/client';
 
-//Prisma
-import { Prisma } from '@prisma/client';
+import type { WorkoutViewModel, EditWorkoutViewModel } from '@/types/workout-types';
 
 type WorkoutWithExercises = Prisma.WorkoutGetPayload<{
   include: {
@@ -15,6 +13,19 @@ type WorkoutWithExercises = Prisma.WorkoutGetPayload<{
 }>;
 
 export class WorkoutMapper {
+  private static mapWorkoutExercises(workout: WorkoutWithExercises) {
+    return workout.exercises.map((workoutExercise) => ({
+      exerciseId: workoutExercise.exerciseId,
+      name: workoutExercise.exercise.name,
+      sets: workoutExercise.sets,
+      reps: workoutExercise.reps ?? 0,
+      weight: workoutExercise.weight ?? 0,
+      seconds: workoutExercise.seconds ?? 0,
+      note: workoutExercise.note ?? '',
+      order: workoutExercise.order,
+    }));
+  }
+
   static workoutDtoToViewModel(workout: WorkoutWithExercises): WorkoutViewModel {
     return {
       id: workout.id,
@@ -22,16 +33,7 @@ export class WorkoutMapper {
       description: workout.description ?? '',
       createdAt: workout.createdAt,
       updatedAt: workout.updatedAt,
-      workoutExercises: workout.exercises.map((we) => ({
-        exerciseId: we.exerciseId,
-        name: we.exercise.name,
-        sets: we.sets,
-        reps: we.reps ?? 0,
-        weight: we.weight ?? 0,
-        seconds: we.seconds ?? 0,
-        note: we.note ?? '',
-        order: we.order,
-      })),
+      workoutExercises: this.mapWorkoutExercises(workout),
     };
   }
 
@@ -40,20 +42,11 @@ export class WorkoutMapper {
       id: workout.id,
       name: workout.name,
       description: workout.description ?? '',
-      workoutExercises: workout.exercises.map((we) => ({
-        exerciseId: we.exerciseId,
-        name: we.exercise.name,
-        sets: we.sets,
-        reps: we.reps ?? 0,
-        weight: we.weight ?? 0,
-        seconds: we.seconds ?? 0,
-        note: we.note ?? '',
-        order: we.order,
-      })),
+      workoutExercises: this.mapWorkoutExercises(workout),
     };
   }
 
   static workoutDtosToViewModels(workouts: WorkoutWithExercises[]): WorkoutViewModel[] {
-    return workouts.map(this.workoutDtoToViewModel);
+    return workouts.map((workout) => this.workoutDtoToViewModel(workout));
   }
 }

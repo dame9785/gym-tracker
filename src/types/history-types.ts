@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma, WorkoutSessionStatus } from '@prisma/client';
 
 import type { PaginationViewModel } from '@/types/pagination-types';
 
@@ -33,7 +33,7 @@ export interface WorkoutSessionWithExercisesViewModel {
   workoutDescription: string | null;
   startedAt: Date;
   finishedAt: Date | null;
-  status: string;
+  status: WorkoutSessionStatus;
   exercises: HistorySessionExerciseViewModel[];
 }
 

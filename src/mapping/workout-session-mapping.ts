@@ -1,6 +1,7 @@
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 import type { WorkoutSessionViewModel } from '@/types/workout-types';
+
 import type { WorkoutSessionWithExercisesViewModel, WorkoutSessionWithRelations } from '@/types/history-types';
 
 type WorkoutSessionWithExercises = Prisma.WorkoutSessionGetPayload<{
@@ -34,7 +35,6 @@ export class WorkoutSessionMapper {
       startedAt: workoutSession.startedAt,
       finishedAt: workoutSession.finishedAt,
       status: workoutSession.status,
-
       exercises: workoutSession.exercises.map((exercise) => ({
         id: exercise.id,
         exerciseId: exercise.workoutExercise.exerciseId,
@@ -48,7 +48,6 @@ export class WorkoutSessionMapper {
         order: exercise.order,
         note: exercise.workoutExercise.note,
         workoutExerciseId: exercise.workoutExerciseId,
-
         sets: exercise.sets.map((set) => ({
           id: set.id,
           setNumber: set.setNumber,
@@ -73,7 +72,6 @@ export class WorkoutSessionMapper {
       startedAt: workoutSession.startedAt,
       finishedAt: workoutSession.finishedAt,
       status: workoutSession.status,
-
       exercises: workoutSession.exercises.map((exercise) => ({
         id: exercise.id,
         name: exercise.exerciseName,
@@ -85,7 +83,6 @@ export class WorkoutSessionMapper {
         techniqueTips: exercise.exerciseTechniqueTips,
         order: exercise.order,
         note: null,
-
         sets: exercise.sets.map((set) => ({
           id: set.id,
           setNumber: set.setNumber,
@@ -106,11 +103,11 @@ export class WorkoutSessionMapper {
     try {
       const parsed: unknown = JSON.parse(value);
 
-      if (Array.isArray(parsed)) {
-        return parsed.filter((muscle): muscle is string => typeof muscle === 'string');
+      if (!Array.isArray(parsed)) {
+        return [];
       }
 
-      return [];
+      return parsed.filter((muscle): muscle is string => typeof muscle === 'string');
     } catch {
       return [];
     }

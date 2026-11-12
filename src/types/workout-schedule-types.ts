@@ -1,14 +1,14 @@
 import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
-export type ActionError = {
+export interface ActionError {
   success: false;
   message: string;
-};
+}
 
-export type ActionSuccess = {
+export interface ActionSuccess {
   success: true;
   message: string;
-};
+}
 
 export type CalendarActionResult =
   | {
