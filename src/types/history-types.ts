@@ -1,4 +1,6 @@
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
+
+import type { PaginationViewModel } from '@/types/pagination-types';
 
 export interface HistoryViewModel {
   totalWorkouts: number;
@@ -8,11 +10,11 @@ export interface HistoryViewModel {
   workoutSessions: WorkoutSessionWithExercisesViewModel[];
 }
 
-export type TotalTrainingTimeViewModel = {
+export interface TotalTrainingTimeViewModel {
   seconds: number;
   minutes: number;
   hours: number;
-};
+}
 
 export type WorkoutSessionWithRelations = Prisma.WorkoutSessionGetPayload<{
   include: {
@@ -24,7 +26,7 @@ export type WorkoutSessionWithRelations = Prisma.WorkoutSessionGetPayload<{
   };
 }>;
 
-export type WorkoutSessionWithExercisesViewModel = {
+export interface WorkoutSessionWithExercisesViewModel {
   id: number;
   workoutId: number;
   workoutName: string;
@@ -32,10 +34,10 @@ export type WorkoutSessionWithExercisesViewModel = {
   startedAt: Date;
   finishedAt: Date | null;
   status: string;
-  exercises: WorkoutSessionExerciseViewModel[];
-};
+  exercises: HistorySessionExerciseViewModel[];
+}
 
-type WorkoutSessionExerciseViewModel = {
+interface HistorySessionExerciseViewModel {
   id: number;
   name: string;
   primaryMuscle: string;
@@ -46,10 +48,10 @@ type WorkoutSessionExerciseViewModel = {
   techniqueTips: string | null;
   order: number;
   note: string | null;
-  sets: WorkoutSessionSetViewModel[];
-};
+  sets: HistorySessionSetViewModel[];
+}
 
-type WorkoutSessionSetViewModel = {
+interface HistorySessionSetViewModel {
   id: number;
   setNumber: number;
   targetReps: number;
@@ -60,4 +62,9 @@ type WorkoutSessionSetViewModel = {
   actualWeight: number | null;
   completed: boolean;
   completedAt: Date | null;
-};
+}
+
+export interface HistoryResponse {
+  history: HistoryViewModel;
+  pagination: PaginationViewModel;
+}

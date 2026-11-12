@@ -67,7 +67,7 @@ export default function EditWeightForm({ logWeight }: Props) {
 
       if (!response.success) {
         if (response.errors) {
-          setErrors(ErrorsHelper.getFormErrorsFromApi<UpdateWeightDto>(response.errors));
+          setErrors(ErrorsHelper.getFormErrorsFromApi<UpdateWeightDto>(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined))));
         }
 
         toast.error(response.message);

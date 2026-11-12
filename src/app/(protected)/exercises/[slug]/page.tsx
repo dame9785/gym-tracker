@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation';
 import ErrorMessage from '@/components/ui/error-message';
 import { ExerciseService } from '@/services/exercise-service';
 import { requireAuth } from '@/lib/auth';
-import type { ExerciseResult } from '@/types/exercise-types';
+import type { ExerciseViewModel } from '@/types/exercise-types';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -18,7 +18,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps): Promis
 
   const exerciseService = new ExerciseService();
 
-  let exercise: ExerciseResult;
+  let exercise: ExerciseViewModel;
 
   try {
     exercise = await exerciseService.getBySlug(slug, user.userId);

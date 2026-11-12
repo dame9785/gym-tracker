@@ -4,7 +4,7 @@ import EditExerciseForm from '@/components/forms/exercise/edit-exercise-form';
 import ErrorMessage from '@/components/ui/error-message';
 import { requireAuth } from '@/lib/auth';
 import { ExerciseService } from '@/services/exercise-service';
-import type { ExerciseResult } from '@/types/exercise-types';
+import type { ExerciseViewModel } from '@/types/exercise-types';
 
 type PageProps = {
   params: Promise<{
@@ -24,7 +24,7 @@ export default async function EditExercises({ params }: PageProps): Promise<Reac
     notFound();
   }
 
-  let exercise: ExerciseResult;
+  let exercise: ExerciseViewModel;
 
   try {
     exercise = await exerciseService.getById(exerciseId, user.userId);

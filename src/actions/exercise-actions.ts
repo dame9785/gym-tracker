@@ -7,7 +7,8 @@ import { registerExerciseSchema, updateExerciseSchema } from '@/schemas/exercise
 import { put, del } from '@vercel/blob';
 import { randomUUID } from 'node:crypto';
 
-import type { ExerciseViewModel } from '@/types/exercise-types';
+import type { AppActionResult } from '@/types/action-types';
+import { ExerciseViewModel } from '@/types/exercise-types';
 
 const exerciseService = new ExerciseService();
 
@@ -20,20 +21,6 @@ const EXTENSION_BY_TYPE: Record<string, string> = {
   'image/png': 'png',
   'image/webp': 'webp',
 };
-
-export interface ExerciseActionError {
-  success: false;
-  message: string;
-  errors?: Record<string, string[] | undefined>;
-}
-
-export interface ExerciseActionSuccess<T = undefined> {
-  success: true;
-  message?: string;
-  data?: T;
-}
-
-export type ExerciseActionResult<T = undefined> = ExerciseActionSuccess<T> | ExerciseActionError;
 
 function parseSecondaryMuscles(value: FormDataEntryValue | null): string[] {
   if (value === null || value === '') {
@@ -136,7 +123,7 @@ function getActionErrorMessage(error: unknown, fallback: string): string {
   return fallback;
 }
 
-export async function registerExerciseAction(formData: FormData): Promise<ExerciseActionResult<ExerciseViewModel>> {
+export async function registerExerciseAction(formData: FormData): Promise<AppActionResult<ExerciseViewModel>> {
   let uploadedImageUrl: string | undefined;
 
   try {
@@ -193,7 +180,7 @@ export async function registerExerciseAction(formData: FormData): Promise<Exerci
   }
 }
 
-export async function deleteExerciseAction(id: number): Promise<ExerciseActionResult> {
+export async function deleteExerciseAction(id: number): Promise<AppActionResult> {
   try {
     const user = await requireAuth();
 
@@ -220,7 +207,7 @@ export async function deleteExerciseAction(id: number): Promise<ExerciseActionRe
   }
 }
 
-export async function updateExerciseAction(id: number, formData: FormData): Promise<ExerciseActionResult> {
+export async function updateExerciseAction(id: number, formData: FormData): Promise<AppActionResult> {
   let uploadedImageUrl: string | undefined;
 
   try {

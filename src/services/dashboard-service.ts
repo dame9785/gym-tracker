@@ -3,7 +3,7 @@ import { mapWeeklyOverview } from '@/mapping/dashboard-mapping';
 import { DashboardRepository } from '@/repositories/dashboard-repository';
 import { HistoryRepository } from '@/repositories/history-repository';
 
-import type { DashboardResult } from '@/types/api-types';
+import type { DashboardResult } from '@/types/dashboard-types';
 
 import { calculateStreak } from '@/utils/calculate-streak';
 

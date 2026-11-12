@@ -1,44 +1,18 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
 
 import { requireAuth } from '@/lib/auth';
 import { WorkoutSessionService } from '@/services/workout-session-service';
 
+import { createWorkoutSessionSchema, updateWorkoutSessionSetSchema, workoutSessionIdSchema } from '@/schemas/workout-session-schema';
+
+import type { AppActionResult } from '@/types/action-types';
+
 const workoutSessionService = new WorkoutSessionService();
 
-// Validation schemas
-const createWorkoutSessionSchema = z.object({
-  workoutId: z.number().int().positive(),
-  workoutScheduleId: z.number().int().positive().optional(),
-});
-
-const updateWorkoutSessionSetSchema = z.object({
-  actualReps: z.number().int().finite().min(0),
-  actualWeight: z.number().finite().min(0),
-  actualSeconds: z.number().finite().min(0),
-});
-
-const workoutSessionIdSchema = z.number().int().positive();
-
-// Action result types
-type ActionError = {
-  success: false;
-  message: string;
-  errors?: Record<string, string[] | undefined>;
-};
-
-type ActionSuccess<T = undefined> = {
-  success: true;
-  message: string;
-  data?: T;
-};
-
-type ActionResult<T = undefined> = ActionSuccess<T> | ActionError;
-
 // Create workout session
-export async function createWorkoutSessionAction(workoutId: number, workoutScheduleId?: number): Promise<ActionResult<number>> {
+export async function createWorkoutSessionAction(workoutId: number, workoutScheduleId?: number): Promise<AppActionResult<number>> {
   const user = await requireAuth();
 
   try {
@@ -75,7 +49,7 @@ export async function createWorkoutSessionAction(workoutId: number, workoutSched
 }
 
 // Update workout session set
-export async function updateWorkoutSessionSetAction(setId: number, dto: unknown): Promise<ActionResult> {
+export async function updateWorkoutSessionSetAction(setId: number, dto: unknown): Promise<AppActionResult> {
   const user = await requireAuth();
 
   try {
@@ -115,7 +89,7 @@ export async function updateWorkoutSessionSetAction(setId: number, dto: unknown)
 }
 
 // Finish workout session
-export async function finishWorkoutSessionAction(sessionId: number): Promise<ActionResult> {
+export async function finishWorkoutSessionAction(sessionId: number): Promise<AppActionResult> {
   const user = await requireAuth();
 
   try {
@@ -148,7 +122,7 @@ export async function finishWorkoutSessionAction(sessionId: number): Promise<Act
 }
 
 // Set workout session to not performed
-export async function setWorkoutSessionNotPerformedAction(sessionId: number): Promise<ActionResult> {
+export async function setWorkoutSessionNotPerformedAction(sessionId: number): Promise<AppActionResult> {
   const user = await requireAuth();
 
   try {

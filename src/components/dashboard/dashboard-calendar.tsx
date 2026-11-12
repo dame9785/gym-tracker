@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { getWorkoutSchedulesByMonthAction } from '@/actions/workout-schedule-actions';
 
-import type { CalendarWorkoutViewModel } from '@/types/calender-types';
+import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -35,8 +35,8 @@ function getCalendarDays(year: number, month: number) {
 
 export default function WorkoutCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [workouts, setWorkouts] = useState<CalendarWorkoutViewModel[]>([]);
-  const [selectedWorkout, setSelectedWorkout] = useState<CalendarWorkoutViewModel>();
+  const [workouts, setWorkouts] = useState<WeeklyWorkoutViewModel[]>([]);
+  const [selectedWorkout, setSelectedWorkout] = useState<WeeklyWorkoutViewModel>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,7 +77,7 @@ export default function WorkoutCalendar() {
           return;
         }
 
-        setWorkouts(result.data);
+        setWorkouts(result.data ?? []);
       } catch (error) {
         console.error('Failed to load calendar workouts:', error);
 
@@ -99,7 +99,7 @@ export default function WorkoutCalendar() {
     };
   }, [currentYear, currentMonth]);
 
-  const getStatusStyle = (status: CalendarWorkoutViewModel['status']) => {
+  const getStatusStyle = (status: WeeklyWorkoutViewModel['status']) => {
     switch (status) {
       case 'COMPLETED':
         return 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-300';

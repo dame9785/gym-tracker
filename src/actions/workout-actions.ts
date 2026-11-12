@@ -9,8 +9,8 @@ import { registerWorkoutSchema, updateWorkoutSchema } from '@/schemas/workout-sc
 import type { AddWorkoutDto, UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
 import { WorkoutService } from '@/services/workout-service';
-
-import type { DeleteWorkoutActionResult, RegisterWorkoutActionResult, UpdateWorkoutActionResult } from '@/types/workout-types';
+import type { AppActionResult } from '@/types/action-types';
+import type { WorkoutViewModel } from '@/types/workout-types';
 
 const workoutService = new WorkoutService();
 
@@ -18,7 +18,7 @@ function isValidId(id: number): boolean {
   return Number.isSafeInteger(id) && id > 0;
 }
 
-export async function registerWorkoutAction(dto: AddWorkoutDto): Promise<RegisterWorkoutActionResult> {
+export async function registerWorkoutAction(dto: AddWorkoutDto): Promise<AppActionResult<WorkoutViewModel>> {
   const user = await requireAuth();
 
   try {
@@ -52,7 +52,7 @@ export async function registerWorkoutAction(dto: AddWorkoutDto): Promise<Registe
   }
 }
 
-export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutDto): Promise<UpdateWorkoutActionResult> {
+export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutDto): Promise<AppActionResult<WorkoutViewModel>> {
   const user = await requireAuth();
 
   if (!isValidId(workoutId)) {
@@ -94,7 +94,7 @@ export async function updateWorkoutAction(workoutId: number, dto: UpdateWorkoutD
   }
 }
 
-export async function deleteWorkoutAction(id: number): Promise<DeleteWorkoutActionResult> {
+export async function deleteWorkoutAction(id: number): Promise<AppActionResult> {
   const user = await requireAuth();
 
   if (!isValidId(id)) {

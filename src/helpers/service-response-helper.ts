@@ -1,6 +1,6 @@
-import type { ApiResponse } from '@/types/api-types';
+import type { ServiceResponse } from '@/types/service-types';
 
-export function errorResponse<T>(message: string, errors?: Record<string, string[]>): ApiResponse<T> {
+export function errorResponse<T>(message: string, errors?: Record<string, string[]>): ServiceResponse<T> {
   return {
     success: false,
     message,

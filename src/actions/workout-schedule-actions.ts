@@ -1,43 +1,18 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
 
 import { requireAuth } from '@/lib/auth';
 import { WorkoutScheduleService } from '@/services/workout-schedule-service';
-import type { CalendarWorkoutViewModel } from '@/types/calender-types';
-import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
+import type { RegisterWorkoutScheduleDto } from '@/types/workout-schedule-types';
+import type { AppActionResult } from '@/types/action-types';
+import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
+
+import { calendarMonthSchema, createWorkoutScheduleSchema } from '@/schemas/schedelue-workout-schemas';
 
 const workoutScheduleService = new WorkoutScheduleService();
 
-const createWorkoutScheduleSchema = z.object({
-  workoutId: z.number().int().positive(),
-  date: z.string().min(1),
-});
-
-const calendarMonthSchema = z.object({
-  year: z.number().int().min(2000).max(2100),
-  month: z.number().int().min(1).max(12),
-});
-
-type ActionError = {
-  success: false;
-  message: string;
-};
-
-type ActionSuccess = {
-  success: true;
-  message: string;
-};
-
-type CalendarActionResult =
-  | {
-      success: true;
-      data: CalendarWorkoutViewModel[];
-    }
-  | ActionError;
-
-export async function createWorkoutScheduleAction(dto: unknown): Promise<ActionSuccess | ActionError> {
+export async function createWorkoutScheduleAction(dto: unknown): Promise<AppActionResult> {
   const user = await requireAuth();
 
   try {
@@ -69,7 +44,7 @@ export async function createWorkoutScheduleAction(dto: unknown): Promise<ActionS
   }
 }
 
-export async function getWorkoutSchedulesByMonthAction(year: number, month: number): Promise<CalendarActionResult> {
+export async function getWorkoutSchedulesByMonthAction(year: number, month: number): Promise<AppActionResult<WeeklyWorkoutViewModel[]>> {
   const user = await requireAuth();
 
   try {

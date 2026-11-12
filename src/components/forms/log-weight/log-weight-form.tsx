@@ -62,7 +62,7 @@ export default function LogWeightForm() {
 
       if (!response.success) {
         if (response.errors) {
-          setErrors(ErrorsHelper.getFormErrorsFromApi<AddWeightDto>(response.errors));
+          setErrors(ErrorsHelper.getFormErrorsFromApi<AddWeightDto>(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined))));
         }
 
         toast.error(response.message);

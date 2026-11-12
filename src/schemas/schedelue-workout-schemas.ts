@@ -18,4 +18,14 @@ export const schedelueWorkoutSchema = z.object({
   ),
 });
 
+export const createWorkoutScheduleSchema = z.object({
+  workoutId: z.number().int().positive(),
+  date: z.string().min(1),
+});
+
+export const calendarMonthSchema = z.object({
+  year: z.number().int().min(2000).max(2100),
+  month: z.number().int().min(1).max(12),
+});
+
 export type SchedelueWorkoutDto = z.infer<typeof schedelueWorkoutSchema>;

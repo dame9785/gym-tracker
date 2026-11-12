@@ -1,14 +1,20 @@
 import { WeightLogRepository } from '@/repositories/weight-log-repository';
-
 import { LogWeightMapper } from '@/mapping/log-weight-mapping';
-import { AddWeightDto, addWeightSchema, UpdateWeightDto, updateWeightSchema } from '@/schemas/weight-log.schemas';
-import { ApiResponse, SuccessResponse, DeleteLogWeightResponse, EditLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
+
+import type { ServiceResponse, SuccessResponse } from '@/types/service-types';
+
+import type { LogItemViewModel, UserLogWeightResponse } from '@/types/log-weight-types';
+
 import { errorResponse } from '@/helpers/service-response-helper';
+
+import { addWeightSchema, updateWeightSchema } from '@/schemas/weight-log.schemas';
+
+import type { AddWeightDto, UpdateWeightDto } from '@/schemas/weight-log.schemas';
 
 export class WeightLogService {
   private weightLogRepository = new WeightLogRepository();
 
-  async getAll(page: number, userId: number): Promise<ApiResponse<UserLogWeightResponse>> {
+  async getAll(page: number, userId: number): Promise<ServiceResponse<UserLogWeightResponse>> {
     try {
       const lastLog = await this.weightLogRepository.lastLog(userId);
       const firstLog = await this.weightLogRepository.firstLog(userId);
@@ -41,7 +47,7 @@ export class WeightLogService {
     }
   }
 
-  async delete(id: number, userId: number): Promise<ApiResponse<DeleteLogWeightResponse>> {
+  async delete(id: number, userId: number): Promise<ServiceResponse<void>> {
     if (!Number.isInteger(id) || id <= 0) {
       return errorResponse('Invalid weight log ID');
     }
@@ -52,15 +58,14 @@ export class WeightLogService {
       return {
         success: true,
         message: 'Weight log deleted successfully',
-        data: [],
-      } satisfies SuccessResponse<DeleteLogWeightResponse>;
+      } satisfies SuccessResponse<void>;
     } catch (error: unknown) {
       console.error('[WeightLogService.delete]', error);
       return errorResponse('An error occurred on the server.');
     }
   }
 
-  async create(dto: AddWeightDto, userId: number): Promise<ApiResponse<LogWeightResponse>> {
+  async create(dto: AddWeightDto, userId: number): Promise<ServiceResponse<LogItemViewModel>> {
     const validation = addWeightSchema.safeParse(dto);
 
     if (!validation.success) {
@@ -76,14 +81,14 @@ export class WeightLogService {
         success: true,
         message: 'Weight log created successfully.',
         data: viewModel,
-      } satisfies SuccessResponse<LogWeightResponse>;
+      } satisfies SuccessResponse<LogItemViewModel>;
     } catch (error: unknown) {
       console.error('[WeightLogService.create]', error);
       return errorResponse('An error occurred on the server.');
     }
   }
 
-  async update(weightId: number, dto: UpdateWeightDto, userId: number): Promise<ApiResponse<EditLogWeightResponse>> {
+  async update(weightId: number, dto: UpdateWeightDto, userId: number): Promise<ServiceResponse<LogItemViewModel>> {
     const validation = updateWeightSchema.safeParse(dto);
 
     if (!validation.success) {
@@ -104,14 +109,14 @@ export class WeightLogService {
         success: true,
         data: viewModel,
         message: 'Weight log updated successfully.',
-      } satisfies SuccessResponse<EditLogWeightResponse>;
+      } satisfies SuccessResponse<LogItemViewModel>;
     } catch (error: unknown) {
       console.error('[WeightLogService.update]', error);
       return errorResponse('An error occurred on the server.');
     }
   }
 
-  async getById(id: number, userId: number): Promise<ApiResponse<LogWeightResponse>> {
+  async getById(id: number, userId: number): Promise<ServiceResponse<LogItemViewModel>> {
     try {
       const data = await this.weightLogRepository.getById(id, userId);
 
@@ -122,7 +127,7 @@ export class WeightLogService {
       return {
         success: true,
         data: LogWeightMapper.mapLogItemToViewModel(data),
-      } satisfies SuccessResponse<LogWeightResponse>;
+      } satisfies SuccessResponse<LogItemViewModel>;
     } catch (error: unknown) {
       console.error('[WeightLogService.getById]', error);
       return errorResponse('An error occurred on the server.');

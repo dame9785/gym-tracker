@@ -1,30 +1,22 @@
 import { WorkoutSessionMapper } from '@/mapping/workout-session-mapping';
 import { HistoryRepository } from '@/repositories/history-repository';
-
-import type { ErrorResponse, ApiResponse, HistoryApiResponse } from '@/types/api-types';
+import type { ServiceResponse } from '@/types/service-types';
+import type { HistoryResponse } from '@/types/history-types';
 
 export class HistoryService {
   private historyRepository = new HistoryRepository();
 
-  async getHistory(page: number, userId: number): Promise<ApiResponse<HistoryApiResponse>> {
+  async getHistory(page: number, userId: number): Promise<ServiceResponse<HistoryResponse>> {
     try {
-      
       const pageSize = 9;
 
-
-      const [
-  totalWorkouts,
-  totalCompleted,
-  totalTrainingTime,
-  totalCompletedSets,
-  workoutSessions,
-] = await Promise.all([
-  this.historyRepository.getAllWorkoutSessionsCount(userId),
-  this.historyRepository.getTotalCompletedWorkout(userId),
-  this.historyRepository.getTotalTrainingTime(userId),
-  this.historyRepository.getTotalSets(userId),
-  this.historyRepository.getAllWorkoutSessions(userId, page, pageSize),
-]);
+      const [totalWorkouts, totalCompleted, totalTrainingTime, totalCompletedSets, workoutSessions] = await Promise.all([
+        this.historyRepository.getAllWorkoutSessionsCount(userId),
+        this.historyRepository.getTotalCompletedWorkout(userId),
+        this.historyRepository.getTotalTrainingTime(userId),
+        this.historyRepository.getTotalSets(userId),
+        this.historyRepository.getAllWorkoutSessions(userId, page, pageSize),
+      ]);
 
       const totalPages = Math.ceil(totalWorkouts / pageSize);
 
@@ -51,14 +43,14 @@ export class HistoryService {
             totalItems: totalWorkouts,
           },
         },
-      } satisfies ApiResponse<HistoryApiResponse>;
+      } satisfies ServiceResponse<HistoryResponse>;
     } catch (error) {
       console.error('Error while fetching history data', error);
 
       return {
         success: false,
         message: 'Could not load workout history.',
-      } satisfies ErrorResponse;
+      } satisfies ServiceResponse<HistoryResponse>;
     }
   }
 }

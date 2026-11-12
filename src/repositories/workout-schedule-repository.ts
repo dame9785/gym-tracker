@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
+import type { RegisterWorkoutScheduleDto } from '@/types/workout-schedule-types';
 
 export class WorkoutScheduleRepository {
   async create(dto: RegisterWorkoutScheduleDto, userId: number): Promise<Awaited<ReturnType<typeof prisma.workoutSchedule.create>>> {

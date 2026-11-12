@@ -1,5 +1,5 @@
-import type { RegisterWorkoutScheduleDto } from '@/types/workout-types';
-import type { CalendarWorkoutViewModel } from '@/types/calender-types';
+import type { RegisterWorkoutScheduleDto } from '@/types/workout-schedule-types';
+import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 import { WorkoutScheduleRepository } from '@/repositories/workout-schedule-repository';
 import { schedelueWorkoutSchema } from '@/schemas/schedelue-workout-schemas';
@@ -24,7 +24,7 @@ export class WorkoutScheduleService {
     );
   }
 
-  async getByMonth(userId: number, year: number, month: number): Promise<CalendarWorkoutViewModel[]> {
+  async getByMonth(userId: number, year: number, month: number): Promise<WeeklyWorkoutViewModel[]> {
     const workoutSchedules = await this.workoutScheduleRepository.getByMonth(userId, year, month);
 
     return mapWeeklyOverview(workoutSchedules);

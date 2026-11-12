@@ -7,13 +7,13 @@ import ErrorMessage from '@/components/ui/error-message';
 import { ExerciseService } from '@/services/exercise-service';
 import { requireAuth } from '@/lib/auth';
 
-import type { ExerciseListResult } from '@/types/exercise-types';
+import type { ExerciseViewModel } from '@/types/exercise-types';
 
 export default async function Exercise(): Promise<React.ReactElement> {
   const user = await requireAuth();
   const exerciseService = new ExerciseService();
 
-  let exercises: ExerciseListResult;
+  let exercises: ExerciseViewModel[];
 
   try {
     exercises = await exerciseService.getAllExersise(user.userId);

@@ -1,9 +1,8 @@
-//Types
-import { UpdateWorkoutDto } from '@/schemas/workout-schemas';
-import type { WorkoutSessionExerciseViewModel, WorkoutExerciseViewModel } from '@/types/exercise-types';
+import type { ExerciseViewModel, WorkoutSessionExerciseViewModel, WorkoutExerciseViewModel } from '@/types/exercise-types';
 
-//Prisma
-import { $Enums, WorkoutSessionStatus } from '@prisma/client';
+import type { PaginationViewModel } from '@/types/pagination-types';
+
+import { WorkoutSessionStatus } from '@prisma/client';
 
 export interface WorkoutViewModel {
   id: number;
@@ -23,11 +22,6 @@ interface WorkoutExercisesViewModel {
   seconds: number;
   note: string;
   order: number;
-}
-
-export interface RegisterWorkoutScheduleDto {
-  workoutId: number;
-  date: string;
 }
 
 export interface EditWorkoutViewModel {
@@ -76,26 +70,29 @@ export interface WorkoutSessionFinishViewModel {
   workoutId: number;
   startedAt: Date;
   finishedAt: Date | null;
-  status: $Enums.WorkoutSessionStatus;
+  status: WorkoutSessionStatus;
 }
 
-export type WorkoutActionResult<T = undefined> =
-  | {
-      success: true;
-      message: string;
-      data: T;
-    }
-  | {
-      success: false;
-      message: string;
-      errors?: Partial<Record<keyof UpdateWorkoutDto, string[]>>;
-    };
+export interface WorkoutDetailsResult {
+  workout: WorkoutViewModel;
+  exercises: ExerciseViewModel[];
+}
 
-export type RegisterWorkoutActionResult = WorkoutActionResult<WorkoutViewModel>;
+export interface WorkoutListResult {
+  workouts: WorkoutViewModel[];
+  pagination: PaginationViewModel;
+}
 
-export type UpdateWorkoutActionResult = WorkoutActionResult<WorkoutViewModel>;
-
-export type DeleteWorkoutActionResult = {
-  success: boolean;
-  message: string;
-};
+export interface UpdatedSetViewModel {
+  id: number;
+  actualReps: number | null;
+  actualWeight: number | null;
+  actualSeconds: number | null;
+  setNumber: number;
+  workoutSessionExerciseId: number;
+  targetReps: number;
+  targetWeight: number | null;
+  targetSeconds: number | null;
+  completed: boolean;
+  completedAt: Date | null;
+}
