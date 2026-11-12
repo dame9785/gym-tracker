@@ -27,6 +27,8 @@ export default async function Workouts({ searchParams }: Props) {
     workoutData = await workoutService.getAll(page, user.userId);
   } catch (error) {
     console.error('Failed to load workouts:', error);
+
+    return <ErrorMessage title="Kunde inte hämta träningspass" message="Det gick inte att ladda dina träningspass. Försök igen senare." />;
   }
 
   if (!workoutData) {
