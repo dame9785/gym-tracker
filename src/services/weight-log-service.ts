@@ -3,8 +3,7 @@ import { WeightLogRepository } from '@/repositories/weight-log-repository';
 import { LogWeightMapper } from '@/mapping/log-weight-mapping';
 import { AddWeightDto, addWeightSchema, UpdateWeightDto, updateWeightSchema } from '@/schemas/weight-log.schemas';
 import { ApiResponse, SuccessResponse, DeleteLogWeightResponse, EditLogWeightResponse, LogWeightResponse, UserLogWeightResponse } from '@/types/api-types';
-
-import { errorResponse } from '@/utils/api-error';
+import { errorResponse } from '@/helpers/service-response-helper';
 
 export class WeightLogService {
   private weightLogRepository = new WeightLogRepository();
