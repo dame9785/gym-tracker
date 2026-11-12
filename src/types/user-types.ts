@@ -50,15 +50,3 @@ export interface RegisterResponse {
 }
 
 export type UpdateUserResponse = UserViewModel;
-
-export type UserActionResult<T = undefined> =
-  | {
-      success: true;
-      message: string;
-      data: T;
-    }
-  | {
-      success: false;
-      message: string;
-      errors?: Record<string, string[]>;
-    };

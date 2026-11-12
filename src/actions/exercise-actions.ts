@@ -9,6 +9,9 @@ import { uploadImage, cleanupUploadedImage } from '@/utils/image-upload';
 import type { AppActionResult } from '@/types/action-types';
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
+import { isValidId } from '@/utils/validation';
+import { getActionErrorMessage, getActionValidationErrors } from '@/utils/action-error';
+
 const exerciseService = new ExerciseService();
 
 function parseSecondaryMuscles(value: FormDataEntryValue | null): string[] {
@@ -63,30 +66,11 @@ function getImageFile(formData: FormData): File | null {
   return image.size > 0 ? image : null;
 }
 
-function getActionErrorMessage(error: unknown, fallback: string): string {
-  if (!(error instanceof Error)) {
-    return fallback;
-  }
-
-  const safeMessages = ['Only JPEG, PNG and WebP images are allowed.', 'The image must be 5 MB or smaller.', 'Invalid secondary muscle groups.', 'Invalid image file.'];
-
-  if (safeMessages.includes(error.message) || error.message.startsWith('Invalid value for ')) {
-    return error.message;
-  }
-
-  if (error.message.startsWith('Validation failed:')) {
-    return error.message;
-  }
-
-  return fallback;
-}
-
 export async function registerExerciseAction(formData: FormData): Promise<AppActionResult<ExerciseViewModel>> {
+  const user = await requireAuth();
   let uploadedImageUrl: string | undefined;
 
   try {
-    const user = await requireAuth();
-
     const dto = {
       name: getOptionalString(formData, 'name') ?? '',
       primaryMuscle: getOptionalString(formData, 'primaryMuscle') ?? '',
@@ -127,28 +111,27 @@ export async function registerExerciseAction(formData: FormData): Promise<AppAct
       data: exercise,
     };
   } catch (error: unknown) {
-    console.error('Register exercise action failed:', error);
-
     await cleanupUploadedImage(uploadedImageUrl);
 
     return {
       success: false,
-      message: getActionErrorMessage(error, 'Could not create exercise. Please try again.'),
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }
 
 export async function deleteExerciseAction(id: number): Promise<AppActionResult> {
+  const user = await requireAuth();
+
+  if (!isValidId(id)) {
+    return {
+      success: false,
+      message: 'Invalid exercise ID.',
+    };
+  }
+
   try {
-    const user = await requireAuth();
-
-    if (!Number.isSafeInteger(id) || id <= 0) {
-      return {
-        success: false,
-        message: 'Invalid exercise ID.',
-      };
-    }
-
     await exerciseService.delete(id, user.userId);
 
     return {
@@ -156,22 +139,20 @@ export async function deleteExerciseAction(id: number): Promise<AppActionResult>
       message: 'Exercise deleted successfully.',
     };
   } catch (error: unknown) {
-    console.error('Delete exercise action failed:', error);
-
     return {
       success: false,
-      message: 'Something went wrong. Please try again.',
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }
 
 export async function updateExerciseAction(id: number, formData: FormData): Promise<AppActionResult> {
+  const user = await requireAuth();
   let uploadedImageUrl: string | undefined;
 
   try {
-    const user = await requireAuth();
-
-    if (!Number.isSafeInteger(id) || id <= 0) {
+    if (!isValidId(id)) {
       return {
         success: false,
         message: 'Invalid exercise ID.',
@@ -224,13 +205,12 @@ export async function updateExerciseAction(id: number, formData: FormData): Prom
       message: 'Exercise updated successfully.',
     };
   } catch (error: unknown) {
-    console.error('Update exercise action failed:', error);
-
     await cleanupUploadedImage(uploadedImageUrl);
 
     return {
       success: false,
-      message: getActionErrorMessage(error, 'Something went wrong. Please try again.'),
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }

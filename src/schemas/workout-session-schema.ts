@@ -12,3 +12,5 @@ export const updateWorkoutSessionSetSchema = z.object({
 });
 
 export const workoutSessionIdSchema = z.number().int().positive();
+
+export const workoutSessionSetIdSchema = z.number().int().positive();

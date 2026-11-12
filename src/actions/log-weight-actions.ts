@@ -1,20 +1,31 @@
 'use server';
 
-import { WeightLogService } from '@/services/weight-log-service';
 import { requireAuth } from '@/lib/auth';
+import { WeightLogService } from '@/services/weight-log-service';
 
 import { addWeightSchema, updateWeightSchema } from '@/schemas/weight-log.schemas';
 
 import type { AddWeightDto, UpdateWeightDto } from '@/schemas/weight-log.schemas';
 
 import type { AppActionResult } from '@/types/action-types';
+import type { LogItemViewModel } from '@/types/log-weight-types';
+import { getActionErrorMessage, getActionValidationErrors } from '@/utils/action-error';
+
+import { isValidId } from '@/utils/validation';
 
 const weightLogService = new WeightLogService();
 
 export async function deleteLogWeight(id: number): Promise<AppActionResult> {
-  try {
-    const user = await requireAuth();
+  const user = await requireAuth();
 
+  if (!isValidId(id)) {
+    return {
+      success: false,
+      message: 'Invalid weight log ID.',
+    };
+  }
+
+  try {
     const result = await weightLogService.delete(id, user.userId);
 
     if (!result.success) {
@@ -26,59 +37,65 @@ export async function deleteLogWeight(id: number): Promise<AppActionResult> {
       message: result.message,
     };
   } catch (error: unknown) {
-    console.error('Delete weight log action failed:', error);
-
     return {
       success: false,
-      message: 'Something went wrong. Please try again.',
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }
 
-export async function CreateWeightLogAction(dto: AddWeightDto): Promise<AppActionResult<unknown>> {
+export async function CreateWeightLogAction(dto: AddWeightDto): Promise<AppActionResult<LogItemViewModel>> {
+  const user = await requireAuth();
+
+  const validation = addWeightSchema.safeParse(dto);
+
+  if (!validation.success) {
+    return {
+      success: false,
+      message: 'Validation failed.',
+      errors: validation.error.flatten().fieldErrors,
+    };
+  }
+
   try {
-    const user = await requireAuth();
-    const validation = addWeightSchema.safeParse(dto);
-
-    if (!validation.success) {
-      return {
-        success: false,
-        message: 'Validation failed.',
-        errors: validation.error.flatten().fieldErrors,
-      };
-    }
-
     return await weightLogService.create(validation.data, user.userId);
   } catch (error: unknown) {
-    console.error('Create weight log action failed:', error);
-
     return {
       success: false,
-      message: 'Could not create weight log. Please try again.',
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }
 
-export async function updateLogWeightAction(id: number, dto: UpdateWeightDto): Promise<AppActionResult<unknown>> {
-  try {
-    const user = await requireAuth();
-    const validation = updateWeightSchema.safeParse(dto);
+export async function updateLogWeightAction(id: number, dto: UpdateWeightDto): Promise<AppActionResult<LogItemViewModel>> {
+  const user = await requireAuth();
 
-    if (!validation.success) {
-      return {
-        success: false,
-        message: 'Validation failed.',
-        errors: validation.error.flatten().fieldErrors,
-      };
-    }
-
-    return await weightLogService.update(id, validation.data, user.userId);
-  } catch (error: unknown) {
-    console.error('Update weight log action failed:', error);
-
+  if (!isValidId(id)) {
     return {
       success: false,
-      message: 'Something went wrong. Please try again.',
+      message: 'Invalid weight log ID.',
+    };
+  }
+
+  const validation = updateWeightSchema.safeParse(dto);
+
+  if (!validation.success) {
+    return {
+      success: false,
+      message: 'Validation failed.',
+      errors: validation.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    return await weightLogService.update(id, validation.data, user.userId);
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
     };
   }
 }

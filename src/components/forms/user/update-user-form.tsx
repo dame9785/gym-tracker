@@ -87,7 +87,7 @@ export default function UpdateUserForm({ user }: Props) {
       const response = await updateUserAction(validation.data);
 
       if (!response.success) {
-        setErrors(response.errors ?? {});
+        setErrors(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined)));
         toast.error(response.message);
         return;
       }

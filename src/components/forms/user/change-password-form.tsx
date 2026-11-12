@@ -56,7 +56,7 @@ export default function ChangePasswordForm() {
       const response = await changePasswordAction(validation.data);
 
       if (!response.success) {
-        setErrors(response.errors ?? {});
+        setErrors(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined)));
         toast.error(response.message);
         return;
       }
