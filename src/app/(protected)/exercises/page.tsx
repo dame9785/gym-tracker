@@ -3,26 +3,26 @@ import Link from 'next/link';
 import Button from '@/components/button/button';
 import Exercises from '@/components/exericses/exercises';
 import ErrorMessage from '@/components/ui/error-message';
+
 import { ExerciseService } from '@/services/exercise-service';
 import { requireAuth } from '@/lib/auth';
-import type { ExerciseListResult } from '@/types/exercise-types';
 
-const exerciseService = new ExerciseService();
+import type { ExerciseListResult } from '@/types/exercise-types';
 
 export default async function Exercise(): Promise<React.ReactElement> {
   const user = await requireAuth();
+  const exerciseService = new ExerciseService();
 
   let exercises: ExerciseListResult;
 
   try {
     exercises = await exerciseService.getAllExersise(user.userId);
-    
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Something went wrong while loading your exercises.';
+    console.error('Failed to fetch exercises:', error);
 
     return (
       <main className="p-5">
-        <ErrorMessage title="Unable to load exercises" message={message} />
+        <ErrorMessage title="Unable to load exercises" message="We couldn't retrieve your exercises. Please try again later." />
       </main>
     );
   }

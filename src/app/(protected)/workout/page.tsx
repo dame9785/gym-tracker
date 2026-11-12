@@ -1,10 +1,10 @@
 import WorkoutTable from '@/components/workout/workout-detail-card';
 import Pagination from '@/components/workout/pagination';
 import ErrorMessage from '@/components/ui/error-message';
+import Header from '@/components/ui/header';
 
 import { WorkoutService } from '@/services/workout-service';
 import { requireAuth } from '@/lib/auth';
-import Header from '@/components/ui/header';
 
 type Props = {
   searchParams: Promise<{
@@ -12,31 +12,22 @@ type Props = {
   }>;
 };
 
-const workoutService = new WorkoutService();
-
 export default async function Workouts({ searchParams }: Props) {
   const params = await searchParams;
   const parsedPage = Number(params.page);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
   const user = await requireAuth();
+  const workoutService = new WorkoutService();
 
-  let workoutData: Awaited<ReturnType<typeof workoutService.getAll>> | null = null;
+  let workoutData: Awaited<ReturnType<typeof workoutService.getAll>>;
 
   try {
     workoutData = await workoutService.getAll(page, user.userId);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to load workouts:', error);
 
     return <ErrorMessage title="Kunde inte hämta träningspass" message="Det gick inte att ladda dina träningspass. Försök igen senare." />;
-  }
-
-  if (!workoutData) {
-    return (
-      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <ErrorMessage title="Unable to load workouts" message="Something went wrong while loading your workouts." />
-      </main>
-    );
   }
 
   const { workouts, pagination } = workoutData;
