@@ -4,23 +4,12 @@ import { requireAuth } from '@/lib/auth';
 import { ExerciseService } from '@/services/exercise-service';
 import { registerExerciseSchema, updateExerciseSchema } from '@/schemas/exercise-schema';
 
-import { put, del } from '@vercel/blob';
-import { randomUUID } from 'node:crypto';
+import { uploadImage, cleanupUploadedImage } from '@/utils/image-upload';
 
 import type { AppActionResult } from '@/types/action-types';
-import { ExerciseViewModel } from '@/types/exercise-types';
+import type { ExerciseViewModel } from '@/types/exercise-types';
 
 const exerciseService = new ExerciseService();
-
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-
-const EXTENSION_BY_TYPE: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-};
 
 function parseSecondaryMuscles(value: FormDataEntryValue | null): string[] {
   if (value === null || value === '') {
@@ -58,37 +47,6 @@ function getOptionalString(formData: FormData, key: string): string | undefined 
   }
 
   return value;
-}
-
-async function uploadExerciseImage(image: File): Promise<string> {
-  if (!ALLOWED_IMAGE_TYPES.includes(image.type)) {
-    throw new Error('Only JPEG, PNG and WebP images are allowed.');
-  }
-
-  if (image.size > MAX_IMAGE_SIZE) {
-    throw new Error('The image must be 5 MB or smaller.');
-  }
-
-  const extension = EXTENSION_BY_TYPE[image.type];
-
-  const blob = await put(`exercises/${randomUUID()}.${extension}`, image, {
-    access: 'public',
-    contentType: image.type,
-  });
-
-  return blob.url;
-}
-
-async function cleanupUploadedImage(url: string | undefined): Promise<void> {
-  if (!url) {
-    return;
-  }
-
-  try {
-    await del(url);
-  } catch (error: unknown) {
-    console.error('Failed to clean up uploaded image:', error);
-  }
 }
 
 function getImageFile(formData: FormData): File | null {
@@ -152,7 +110,7 @@ export async function registerExerciseAction(formData: FormData): Promise<AppAct
     const image = getImageFile(formData);
 
     if (image) {
-      uploadedImageUrl = await uploadExerciseImage(image);
+      uploadedImageUrl = await uploadImage(image, 'exercises');
     }
 
     const exercise = await exerciseService.registerExercise(
@@ -249,7 +207,7 @@ export async function updateExerciseAction(id: number, formData: FormData): Prom
     const image = getImageFile(formData);
 
     if (image) {
-      uploadedImageUrl = await uploadExerciseImage(image);
+      uploadedImageUrl = await uploadImage(image, 'exercises');
     }
 
     await exerciseService.update(
