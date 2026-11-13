@@ -12,6 +12,8 @@ import type { WorkoutViewModel } from '@/types/workout-types';
 import { toast } from 'sonner';
 
 import WorkoutExerciseFields from '@/components/forms/workout/workout-exercise-fields';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
+import { Dumbbell } from 'lucide-react';
 
 import type { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
@@ -121,9 +123,8 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
 
   return (
     <div className={FormStyles.formContainer}>
-      <h1 className={FormStyles.formTitle}>
-        Uppdatera <span>träningspass</span>
-      </h1>
+      {/* Page header */}
+      <FormPageHeader backHref="/workout" backLabel="Back to workouts" showBackButton={false} eyebrow="Workout library" title="Edit" highlightedTitle="Workout" description="Update the exercises, sets, reps and weights in your workout." icon={Dumbbell} />
 
       <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
         <div className={FormStyles.formGroup}>

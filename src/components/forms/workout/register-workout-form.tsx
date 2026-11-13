@@ -8,7 +8,8 @@ import FormStyles from '@/components/forms/form.module.css';
 
 import { toast } from 'sonner';
 
-import WorkoutExerciseFields from '@/components/forms/workout/workout-exercise-fields';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
+import { Dumbbell } from 'lucide-react';
 
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
@@ -20,6 +21,7 @@ import Button from '@/components/button/button';
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
 import FormTextarea from '@/components/ui/form-textarea';
+import WorkoutExerciseFields from '@/components/forms/workout/workout-exercise-fields';
 
 type Props = {
   exericses: ExerciseViewModel[];
@@ -117,9 +119,8 @@ export default function AddWorkoutForm({ exericses }: Props) {
 
   return (
     <div className={FormStyles.formContainer}>
-      <h1 className={FormStyles.formTitle}>
-        Add <span>Workout</span>
-      </h1>
+      {/* Page header */}
+      <FormPageHeader backHref="/workout" backLabel="Back to workouts" showBackButton={false} eyebrow="Workout library" title="Add" highlightedTitle="Workout" description="Create a workout by adding exercises, sets, reps and weights." icon={Dumbbell} />
 
       <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
         <div className={FormStyles.formGroup}>

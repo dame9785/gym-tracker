@@ -10,14 +10,17 @@ type Props = {
   highlightedTitle: string;
   description: string;
   icon: LucideIcon;
+  showBackButton?: boolean;
 };
 
-export default function FormPageHeader({ backHref, backLabel, eyebrow, title, highlightedTitle, description, icon: Icon }: Props) {
+export default function FormPageHeader({ backHref, backLabel, eyebrow, title, highlightedTitle, description, icon: Icon, showBackButton = true }: Props) {
   return (
     <div className="mb-8 flex items-start gap-4">
-      <Link href={backHref} aria-label={backLabel} className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-orange-500/50 hover:text-orange-400">
-        <ArrowLeft className="h-5 w-5" />
-      </Link>
+      {showBackButton && (
+        <Link href={backHref} aria-label={backLabel} className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-orange-500/50 hover:text-orange-400">
+          <ArrowLeft className="h-5 w-5" />
+        </Link>
+      )}
 
       <div>
         <div className="mb-2 flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-orange-400 uppercase">
