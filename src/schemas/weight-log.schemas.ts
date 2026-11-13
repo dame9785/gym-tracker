@@ -4,9 +4,9 @@ import { z } from 'zod';
 // Shared schemas
 // --------------------------------------------------
 
-const weightSchema = z.coerce.number().finite('Vikten måste vara ett giltigt nummer.').positive('Vikten måste vara större än 0.');
+const weightSchema = z.coerce.number().finite('Weight must be a valid number.').positive('Weight must be greater than 0.');
 
-const noteSchema = z.string().trim().min(1, 'Du måste fylla i anteckning');
+const noteSchema = z.string().trim().min(1, 'Note is required.');
 
 // --------------------------------------------------
 // Add weight schema

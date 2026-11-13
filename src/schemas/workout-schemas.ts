@@ -10,7 +10,7 @@ const requiredNumber = z.preprocess((value) => {
   }
 
   return value;
-}, z.coerce.number().finite('Värdet måste vara ett giltigt nummer.'));
+}, z.coerce.number().finite('Value must be a valid number.'));
 
 const requiredInteger = requiredNumber.pipe(z.number().int());
 
@@ -19,17 +19,17 @@ const requiredInteger = requiredNumber.pipe(z.number().int());
 // --------------------------------------------------
 
 export const updateWorkoutExerciseSchema = z.object({
-  exerciseId: requiredInteger.pipe(z.number().positive('Ogiltigt övnings-ID.')),
+  exerciseId: requiredInteger.pipe(z.number().positive('Invalid exercise ID.')),
 
-  sets: requiredInteger.pipe(z.number().min(0, 'Antal set kan inte vara negativt.')),
+  sets: requiredInteger.pipe(z.number().min(0, 'Number of sets cannot be negative.')),
 
-  reps: requiredInteger.pipe(z.number().min(0, 'Antal repetitioner kan inte vara negativt.')),
+  reps: requiredInteger.pipe(z.number().min(0, 'Number of repetitions cannot be negative.')),
 
-  weight: requiredNumber.pipe(z.number().min(0, 'Vikten kan inte vara negativ.')),
+  weight: requiredNumber.pipe(z.number().min(0, 'Weight cannot be negative.')),
 
-  seconds: requiredInteger.pipe(z.number().min(0, 'Sekunder kan inte vara negativa.')),
+  seconds: requiredInteger.pipe(z.number().min(0, 'Duration cannot be negative.')),
 
-  note: z.string().trim().max(500, 'Anteckningen får innehålla högst 500 tecken.'),
+  note: z.string().trim().max(500, 'Note cannot exceed 500 characters.'),
 });
 
 // --------------------------------------------------
@@ -49,7 +49,7 @@ const workoutFields = {
         ctx.addIssue({
           code: 'custom',
           path: [index, 'exerciseId'],
-          message: 'Samma övning kan inte läggas till flera gånger.',
+          message: 'The same exercise cannot be added more than once.',
         });
       }
 

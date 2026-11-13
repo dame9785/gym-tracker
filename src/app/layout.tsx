@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv" className={`${roboto.variable} min-h-full antialiased`}>
+    <html lang="en" className={`${roboto.variable} min-h-full antialiased`}>
       <body className="min-h-dvh min-h-screen w-full">
         {children}
         <Analytics />
