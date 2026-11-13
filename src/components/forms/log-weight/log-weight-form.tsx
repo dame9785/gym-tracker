@@ -14,6 +14,8 @@ import FormTextarea from '@/components/ui/form-textarea';
 import { AddWeightDto, addWeightSchema } from '@/schemas/weight-log.schemas';
 import { ErrorsHelper } from '@/helpers/error-helper';
 import { CreateWeightLogAction } from '@/actions/log-weight-actions';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
+import { Scale } from 'lucide-react';
 
 export default function LogWeightForm() {
   const router = useRouter();
@@ -81,10 +83,7 @@ export default function LogWeightForm() {
 
   return (
     <div className={FormStyles.formContainer}>
-      <h1 className={FormStyles.formTitle}>
-        Track your
-        <span> weight</span>
-      </h1>
+      <FormPageHeader backHref="/log-weight" backLabel="Back to weight tracking" eyebrow="Weight tracking" title="Track your" highlightedTitle="weight" description="Record your weight and keep track of your progress over time." icon={Scale} />
 
       <form className={FormStyles.form} onSubmit={handleSubmit}>
         <div className={FormStyles.formGroup}>
@@ -103,10 +102,6 @@ export default function LogWeightForm() {
           <div className="flex flex-wrap gap-3">
             <Button type="submit" variant="primary" size="md" loading={isSaving}>
               Logga vikt
-            </Button>
-
-            <Button href="/log-weight" variant="secondary" size="md">
-              Gå tillbaka
             </Button>
           </div>
         </div>

@@ -2,15 +2,12 @@
 
 import { FaEnvelope, FaWeightScale, FaPhone, FaRulerVertical, FaMars, FaCakeCandles, FaWeightHanging, FaFlagCheckered, FaUser, FaSignature, FaLock } from 'react-icons/fa6';
 
-import { toast } from 'sonner';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 
 import Button from '@/components/button/button';
 
 import FormStyles from '@/components/forms/form.module.css';
-import buttonStyles from '@/components/button/button.module.css';
 
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
@@ -20,6 +17,10 @@ import { registerUserSchema, type RegisterUserDto } from '@/schemas/auth-schemas
 
 import { Gender, GoalType } from '@prisma/client';
 import { registerUserAction } from '@/actions/user-actions';
+
+import FormPageHeader from '@/components/forms/shared/form-page-header';
+import { UserRoundPlus } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -143,12 +144,7 @@ export default function RegisterForm() {
 
   return (
     <form className={FormStyles.form} onSubmit={handleSubmit}>
-      <div className={FormStyles.formWrapper}>
-        <h1 className={FormStyles.formTitle}>
-          Registera
-          <span> Konto</span>
-        </h1>
-      </div>
+      <FormPageHeader backHref="/account/login" backLabel="Back to login" eyebrow="GymTracker account" title="Create" highlightedTitle="account" description="Create your account to manage workouts, track your progress, and reach your fitness goals." icon={UserRoundPlus} />
 
       <div className={FormStyles.formGrid}>
         <div className={FormStyles.formLeft}>
@@ -413,10 +409,6 @@ export default function RegisterForm() {
         <Button type="submit" variant="primary" disabled={isSaving}>
           {isSaving ? 'Skapar konto...' : 'Skapa konto'}
         </Button>
-
-        <Link href="/account/login" className={`${buttonStyles.button} ${buttonStyles.secondary}`}>
-          Gå tillbaka
-        </Link>
       </div>
     </form>
   );

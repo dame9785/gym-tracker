@@ -2,13 +2,14 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import Link from 'next/link';
+
 import { toast } from 'sonner';
 
 import FormStyles from '@/components/forms/form.module.css';
 
 import Button from '@/components/button/button';
-import ButtonStyle from '@/components/button/button.module.css';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
+import { Scale } from 'lucide-react';
 
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
@@ -86,10 +87,7 @@ export default function EditWeightForm({ logWeight }: Props) {
 
   return (
     <div className={FormStyles.formContainer}>
-      <h1 className={FormStyles.formTitle}>
-        Update
-        <span> Weight</span>
-      </h1>
+      <FormPageHeader backHref="/log-weight" backLabel="Back to weight tracking" eyebrow="Weight tracking" title="Edit" highlightedTitle="weight" description="Update your weight entry and keep your progress accurate." icon={Scale} />
 
       <form className={FormStyles.form} onSubmit={handleSubmit}>
         <div className={FormStyles.formGroup}>
@@ -108,10 +106,6 @@ export default function EditWeightForm({ logWeight }: Props) {
           <Button type="submit" variant="primary" disabled={isSaving}>
             {isSaving ? 'Updating...' : 'Update weight'}
           </Button>
-
-          <Link href="/log-weight" className={`${ButtonStyle.button} ${ButtonStyle.secondary}`}>
-            Gå tillbaks
-          </Link>
         </div>
       </form>
     </div>

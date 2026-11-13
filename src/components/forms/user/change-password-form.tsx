@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { FaLock } from 'react-icons/fa6';
+import { LockKeyhole } from 'lucide-react';
 
-import styles from '@/components/forms/form.module.css';
+import FormStyles from '@/components/forms/form.module.css';
 
 import Button from '@/components/button/button';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
 
@@ -57,6 +59,7 @@ export default function ChangePasswordForm() {
 
       if (!response.success) {
         setErrors(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined)));
+
         toast.error(response.message);
         return;
       }
@@ -77,19 +80,15 @@ export default function ChangePasswordForm() {
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
-      <div className={styles.formWrapper}>
-        <h2 className={styles.formTitle}>
-          Change <span>Password</span>
-        </h2>
-      </div>
+    <form className={`${FormStyles.form} mx-auto`} onSubmit={handleSubmit}>
+      <FormPageHeader backHref="/account" backLabel="Back to account" showBackButton={false} eyebrow="Account security" title="Change" highlightedTitle="password" description="Keep your account secure by updating your password regularly." icon={LockKeyhole} />
 
-      <div className={styles.formGroup}>
+      <div className={FormStyles.formGroup}>
         <FormField
           htmlFor="currentPassword"
           label={
             <span className="flex items-center gap-2">
-              <FaLock className={styles.formIcon} />
+              <FaLock className={FormStyles.formIcon} />
               Current password
             </span>
           }
@@ -100,12 +99,12 @@ export default function ChangePasswordForm() {
         </FormField>
       </div>
 
-      <div className={styles.formGroup}>
+      <div className={FormStyles.formGroup}>
         <FormField
           htmlFor="newPassword"
           label={
             <span className="flex items-center gap-2">
-              <FaLock className={styles.formIcon} />
+              <FaLock className={FormStyles.formIcon} />
               New password
             </span>
           }
@@ -116,12 +115,12 @@ export default function ChangePasswordForm() {
         </FormField>
       </div>
 
-      <div className={styles.formGroup}>
+      <div className={FormStyles.formGroup}>
         <FormField
           htmlFor="confirmNewPassword"
           label={
             <span className="flex items-center gap-2">
-              <FaLock className={styles.formIcon} />
+              <FaLock className={FormStyles.formIcon} />
               Confirm new password
             </span>
           }

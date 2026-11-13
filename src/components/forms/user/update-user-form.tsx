@@ -10,6 +10,7 @@ import { Gender, GoalType } from '@prisma/client';
 
 import Button from '@/components/button/button';
 import FormStyles from '@/components/forms/form.module.css';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
 
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
@@ -19,6 +20,8 @@ import { updateUserSchema, type UpdateUserDto } from '@/schemas/auth-schemas';
 
 import type { UserSettingsViewModel } from '@/types/user-types';
 import { updateUserAction } from '@/actions/user-actions';
+
+import { UserRoundCog } from 'lucide-react';
 
 interface Props {
   user: UserSettingsViewModel;
@@ -88,6 +91,7 @@ export default function UpdateUserForm({ user }: Props) {
 
       if (!response.success) {
         setErrors(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined)));
+
         toast.error(response.message);
         return;
       }
@@ -103,14 +107,8 @@ export default function UpdateUserForm({ user }: Props) {
   };
 
   return (
-    <form className={FormStyles.form} onSubmit={handleSubmit}>
-      {/* FORM TITLE */}
-      <div className={FormStyles.formWrapper}>
-        <h1 className={FormStyles.formTitle}>
-          Ändra konto
-          <span> Inställningar</span>
-        </h1>
-      </div>
+    <form className={`${FormStyles.form} mx-auto`} onSubmit={handleSubmit}>
+      <FormPageHeader backHref="/account" backLabel="Back to account" showBackButton={false} eyebrow="Account settings" title="Update" highlightedTitle="profile" description="Manage your personal information, body measurements, and fitness goals." icon={UserRoundCog} />
 
       <div className={FormStyles.formGrid}>
         {/* LEFT COLUMN */}
@@ -127,7 +125,7 @@ export default function UpdateUserForm({ user }: Props) {
               }
               error={errors.email?.[0]}
             >
-              <FormInput name="email" type="email" id="email" autoComplete="email" value={formData.email} placeholder="E-post..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.email?.length} />
+              <FormInput name="email" type="email" id="email" autoComplete="email" value={formData.email} placeholder="Email..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.email?.length} />
             </FormField>
           </div>
 
@@ -138,12 +136,12 @@ export default function UpdateUserForm({ user }: Props) {
               label={
                 <span className="flex items-center gap-2">
                   <FaUser className={FormStyles.formIcon} />
-                  Användarnamn
+                  Username
                 </span>
               }
               error={errors.username?.[0]}
             >
-              <FormInput name="username" type="text" id="username" autoComplete="username" value={formData.username} placeholder="Användarnamn..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.username?.length} />
+              <FormInput name="username" type="text" id="username" autoComplete="username" value={formData.username} placeholder="Username..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.username?.length} />
             </FormField>
           </div>
 
@@ -154,12 +152,12 @@ export default function UpdateUserForm({ user }: Props) {
               label={
                 <span className="flex items-center gap-2">
                   <FaSignature className={FormStyles.formIcon} />
-                  Namn
+                  First name
                 </span>
               }
               error={errors.firstName?.[0]}
             >
-              <FormInput name="firstName" type="text" id="firstName" autoComplete="given-name" value={formData.firstName} placeholder="Namn..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.firstName?.length} />
+              <FormInput name="firstName" type="text" id="firstName" autoComplete="given-name" value={formData.firstName} placeholder="First name..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.firstName?.length} />
             </FormField>
           </div>
 
@@ -170,12 +168,12 @@ export default function UpdateUserForm({ user }: Props) {
               label={
                 <span className="flex items-center gap-2">
                   <FaSignature className={FormStyles.formIcon} />
-                  Efternamn
+                  Last name
                 </span>
               }
               error={errors.lastName?.[0]}
             >
-              <FormInput name="lastName" type="text" id="lastName" autoComplete="family-name" value={formData.lastName} placeholder="Efternamn..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.lastName?.length} />
+              <FormInput name="lastName" type="text" id="lastName" autoComplete="family-name" value={formData.lastName} placeholder="Last name..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.lastName?.length} />
             </FormField>
           </div>
 
@@ -186,10 +184,10 @@ export default function UpdateUserForm({ user }: Props) {
               label={
                 <span className="flex items-center gap-2">
                   <FaPhone className={FormStyles.formIcon} />
-                  Telefonnummer
+                  Phone number
                 </span>
               }
-              hint="Exempel: 076-123 45 67 eller +46 76 123 45 67"
+              hint="Example: 076-123 45 67 or +46 76 123 45 67"
               error={errors.phoneNumber?.[0]}
             >
               <FormInput name="phoneNumber" type="tel" id="phoneNumber" autoComplete="tel" inputMode="tel" value={formData.phoneNumber} placeholder="076-123 45 67" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.phoneNumber?.length} />
@@ -203,12 +201,12 @@ export default function UpdateUserForm({ user }: Props) {
               label={
                 <span className="flex items-center gap-2">
                   <FaWeightScale className={FormStyles.formIcon} />
-                  Kroppsvikt (kg)
+                  Body weight (kg)
                 </span>
               }
               error={errors.bodyWeight?.[0]}
             >
-              <FormInput name="bodyWeight" type="number" step="0.1" min="20" max="400" id="bodyWeight" value={formData.bodyWeight || ''} placeholder="Exempel: 70.5" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.bodyWeight?.length} />
+              <FormInput name="bodyWeight" type="number" step="0.1" min="20" max="400" id="bodyWeight" value={formData.bodyWeight || ''} placeholder="Example: 70.5" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.bodyWeight?.length} />
             </FormField>
           </div>
         </div>
@@ -222,12 +220,12 @@ export default function UpdateUserForm({ user }: Props) {
               label={
                 <span className="flex items-center gap-2">
                   <FaRulerVertical className={FormStyles.formIcon} />
-                  Längd (cm)
+                  Height (cm)
                 </span>
               }
               error={errors.height?.[0]}
             >
-              <FormInput name="height" type="number" step="0.1" min="100" max="250" id="height" value={formData.height || ''} placeholder="Exempel: 175" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.height?.length} />
+              <FormInput name="height" type="number" step="0.1" min="100" max="250" id="height" value={formData.height || ''} placeholder="Example: 175" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.height?.length} />
             </FormField>
           </div>
 
@@ -238,27 +236,27 @@ export default function UpdateUserForm({ user }: Props) {
               label={
                 <span className="flex items-center gap-2">
                   <FaMars className={FormStyles.formIcon} />
-                  Kön
+                  Gender
                 </span>
               }
               error={errors.gender?.[0]}
             >
               <FormSelect id="gender" name="gender" value={formData.gender} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.gender?.length}>
-                <option value={Gender.MALE}>Man</option>
-                <option value={Gender.FEMALE}>Kvinna</option>
-                <option value={Gender.OTHER}>Annat</option>
+                <option value={Gender.MALE}>Male</option>
+                <option value={Gender.FEMALE}>Female</option>
+                <option value={Gender.OTHER}>Other</option>
               </FormSelect>
             </FormField>
           </div>
 
-          {/* BIRTH DATE */}
+          {/* DATE OF BIRTH */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="birthDate"
               label={
                 <span className="flex items-center gap-2">
                   <FaCakeCandles className={FormStyles.formIcon} />
-                  Född
+                  Date of birth
                 </span>
               }
               error={errors.birthDate?.[0]}
@@ -267,50 +265,50 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* GOAL TYPE */}
+          {/* FITNESS GOAL */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="goalType"
               label={
                 <span className="flex items-center gap-2">
                   <FaBullseye className={FormStyles.formIcon} />
-                  Träningsmål
+                  Fitness goal
                 </span>
               }
               error={errors.goalType?.[0]}
             >
               <FormSelect id="goalType" name="goalType" value={formData.goalType} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.goalType?.length}>
-                <option value={GoalType.MUSCLE_GAIN}>Muskelökning</option>
-                <option value={GoalType.WEIGHT_LOSS}>Viktnedgång</option>
-                <option value={GoalType.MAINTENANCE}>Behålla vikten</option>
+                <option value={GoalType.MUSCLE_GAIN}>Muscle gain</option>
+                <option value={GoalType.WEIGHT_LOSS}>Weight loss</option>
+                <option value={GoalType.MAINTENANCE}>Maintain weight</option>
               </FormSelect>
             </FormField>
           </div>
 
-          {/* GOAL WEIGHT */}
+          {/* TARGET WEIGHT */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="goalWeight"
               label={
                 <span className="flex items-center gap-2">
                   <FaWeightHanging className={FormStyles.formIcon} />
-                  Målvikt (kg)
+                  Target weight (kg)
                 </span>
               }
               error={errors.goalWeight?.[0]}
             >
-              <FormInput name="goalWeight" type="number" step="0.1" min="20" max="400" id="goalWeight" value={formData.goalWeight || ''} placeholder="Exempel: 75" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.goalWeight?.length} />
+              <FormInput name="goalWeight" type="number" step="0.1" min="20" max="400" id="goalWeight" value={formData.goalWeight || ''} placeholder="Example: 75" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.goalWeight?.length} />
             </FormField>
           </div>
 
-          {/* GOAL DATE */}
+          {/* TARGET DATE */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="goalDate"
               label={
                 <span className="flex items-center gap-2">
                   <FaFlagCheckered className={FormStyles.formIcon} />
-                  Måldatum
+                  Target date
                 </span>
               }
               error={errors.goalDate?.[0]}
@@ -324,7 +322,7 @@ export default function UpdateUserForm({ user }: Props) {
       {/* SUBMIT BUTTON */}
       <div className="grid-2 grid">
         <Button type="submit" variant="primary" disabled={isSaving}>
-          {isSaving ? 'Sparar...' : 'Spara ändringar'}
+          {isSaving ? 'Saving...' : 'Save changes'}
         </Button>
       </div>
     </form>

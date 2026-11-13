@@ -13,9 +13,14 @@ type FormFieldProps = {
 export default function FormField({ label, htmlFor, required = false, error, hint, footer, children }: FormFieldProps) {
   return (
     <div className="min-w-0">
-      <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-zinc-200">
+      <label htmlFor={htmlFor} className="mb-2 flex items-center gap-2 text-sm font-medium text-zinc-200">
         {label}
-        {required && <span className="ml-1 text-orange-400">*</span>}
+
+        {required && (
+          <span className="text-orange-400" aria-hidden="true">
+            *
+          </span>
+        )}
       </label>
 
       {children}

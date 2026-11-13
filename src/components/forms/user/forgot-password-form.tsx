@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { FaEnvelope } from 'react-icons/fa6';
+import { MailCheck, MailQuestion } from 'lucide-react';
 import Link from 'next/link';
 
 import styles from '@/components/forms/form.module.css';
 
 import Button from '@/components/button/button';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
 
@@ -54,23 +56,21 @@ export default function ForgotPasswordForm() {
 
   if (submitted) {
     return (
-      <div className={styles.form}>
-        <h1 className={styles.formTitle}>Check your email</h1>
+      <div className={`${styles.form} ${styles.authForm}`}>
+        <FormPageHeader backHref="/account/login" backLabel="Back to login" eyebrow="Password recovery" title="Check your" highlightedTitle="email" description="If an account exists for this email address, you will receive a password reset link shortly. Please check your inbox." icon={MailCheck} />
 
-        <p className={styles.formDescription}>Enter your email address and well send you a link to reset your password.</p>
+        <p className={styles.formDescription}>Dont forget to check your spam folder.</p>
+
+        <Link href="/account/login" className={styles.backLink}>
+          ← Back to login
+        </Link>
       </div>
     );
   }
 
   return (
     <form className={`${styles.form} ${styles.authForm}`} onSubmit={handleSubmit}>
-      <div className={styles.formWrapper}>
-        <h1 className={styles.formTitle}>
-          Forgot <span>Password?</span>
-        </h1>
-
-        <p className={styles.formDescription}>Enter your email address and well send you a link to reset your password.</p>
-      </div>
+      <FormPageHeader backHref="/account/login" backLabel="Back to login" eyebrow="Account recovery" title="Forgot" highlightedTitle="password?" description="Enter your email address and we'll send you a link to reset your password." icon={MailQuestion} />
 
       <div className={styles.formGroup}>
         <FormField
@@ -110,10 +110,6 @@ export default function ForgotPasswordForm() {
       <Button type="submit" variant="primary" disabled={isSubmitting}>
         {isSubmitting ? 'Sending...' : 'Send reset link'}
       </Button>
-
-      <Link href="/account/login" className={styles.backLink}>
-        ← Back to login
-      </Link>
     </form>
   );
 }

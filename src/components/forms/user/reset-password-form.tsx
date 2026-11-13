@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { FaLock } from 'react-icons/fa6';
-import Link from 'next/link';
 
 import styles from '@/components/forms/form.module.css';
 
@@ -14,6 +13,9 @@ import FormInput from '@/components/ui/form-input';
 
 import { resetPasswordAction } from '@/actions/user-actions';
 import { resetPasswordSchema, type ResetPasswordDto } from '@/schemas/auth-schemas';
+
+import FormPageHeader from '@/components/forms/shared/form-page-header';
+import { LockKeyhole } from 'lucide-react';
 
 interface Props {
   token: string;
@@ -81,13 +83,7 @@ export default function ResetPasswordForm({ token }: Props) {
 
   return (
     <form className={`${styles.form} ${styles.authForm}`} onSubmit={handleSubmit}>
-      <div className={styles.formWrapper}>
-        <h1 className={styles.formTitle}>
-          Reset <span>Password</span>
-        </h1>
-
-        <p className={styles.formDescription}>Enter your email address and well send you a link to reset your password.</p>
-      </div>
+      <FormPageHeader backHref="/account/login" backLabel="Back to login" eyebrow="Account security" title="Reset" highlightedTitle="password" description="Choose a new password for your account." icon={LockKeyhole} />
 
       <div className={styles.formGroup}>
         <FormField
@@ -124,10 +120,6 @@ export default function ResetPasswordForm({ token }: Props) {
       <Button type="submit" variant="primary" disabled={isSaving}>
         {isSaving ? 'Saving...' : 'Reset password'}
       </Button>
-
-      <Link href="/account/login" className={styles.backLink}>
-        ← Back to login
-      </Link>
     </form>
   );
 }

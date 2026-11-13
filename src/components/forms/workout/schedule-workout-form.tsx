@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { CalendarPlus } from 'lucide-react';
 
 import { createWorkoutScheduleAction } from '@/actions/workout-schedule-actions';
 
 import Button from '@/components/button/button';
 import FormStyles from '@/components/forms/form.module.css';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
 
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
@@ -74,36 +76,34 @@ export default function ScheduleWorkoutForm({ workouts }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
-      <div className={FormStyles.formWrapper}>
-        <h1 className={FormStyles.formTitle}>
-          Schedule <span>Workout</span>
-        </h1>
-      </div>
+    <div className={FormStyles.formContainer}>
+      <FormPageHeader backHref="/workout" backLabel="Back to workout" eyebrow="Workout planning" title="Schedule" highlightedTitle="workout" description="Choose a workout and a date to add it to your training schedule." icon={CalendarPlus} />
 
-      <div className={FormStyles.formGroup}>
-        <FormField htmlFor="workout" label="Workout" required error={errors.workoutId}>
-          <FormSelect id="workout" name="workoutId" value={selectedWorkoutId} onChange={(e) => setSelectedWorkoutId(e.target.value)} disabled={isSubmitting} aria-invalid={!!errors.workoutId} required>
-            <option value="">Select workout</option>
+      <form onSubmit={handleSubmit} className={FormStyles.form}>
+        <div className={FormStyles.formGroup}>
+          <FormField htmlFor="workout" label="Workout" required error={errors.workoutId}>
+            <FormSelect id="workout" name="workoutId" value={selectedWorkoutId} onChange={(e) => setSelectedWorkoutId(e.target.value)} disabled={isSubmitting} aria-invalid={!!errors.workoutId} required>
+              <option value="">Select workout</option>
 
-            {workouts.map((workout) => (
-              <option key={workout.id} value={workout.id}>
-                {workout.name}
-              </option>
-            ))}
-          </FormSelect>
-        </FormField>
-      </div>
+              {workouts.map((workout) => (
+                <option key={workout.id} value={workout.id}>
+                  {workout.name}
+                </option>
+              ))}
+            </FormSelect>
+          </FormField>
+        </div>
 
-      <div className={FormStyles.formGroup}>
-        <FormField htmlFor="date" label="Date" required error={errors.date}>
-          <FormInput id="date" name="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} disabled={isSubmitting} aria-invalid={!!errors.date} required />
-        </FormField>
-      </div>
+        <div className={FormStyles.formGroup}>
+          <FormField htmlFor="date" label="Date" required error={errors.date}>
+            <FormInput id="date" name="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} disabled={isSubmitting} aria-invalid={!!errors.date} required />
+          </FormField>
+        </div>
 
-      <Button type="submit" variant="primary" disabled={isSubmitting}>
-        {isSubmitting ? 'Scheduling...' : 'Schedule Workout'}
-      </Button>
-    </form>
+        <Button type="submit" variant="primary" disabled={isSubmitting}>
+          {isSubmitting ? 'Scheduling...' : 'Schedule workout'}
+        </Button>
+      </form>
+    </div>
   );
 }

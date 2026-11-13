@@ -4,12 +4,11 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 
-import FormStyles from '@/components/forms/form.module.css';
-
 import { toast } from 'sonner';
-
-import FormPageHeader from '@/components/forms/shared/form-page-header';
 import { Dumbbell } from 'lucide-react';
+
+import FormStyles from '@/components/forms/form.module.css';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
 
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
@@ -119,8 +118,7 @@ export default function AddWorkoutForm({ exericses }: Props) {
 
   return (
     <div className={FormStyles.formContainer}>
-      {/* Page header */}
-      <FormPageHeader backHref="/workout" backLabel="Back to workouts" showBackButton={false} eyebrow="Workout library" title="Add" highlightedTitle="Workout" description="Create a workout by adding exercises, sets, reps and weights." icon={Dumbbell} />
+      <FormPageHeader backHref="/workout" backLabel="Back to workouts" eyebrow="Workout library" title="Add" highlightedTitle="workout" description="Create a workout by adding exercises, sets, reps and weights." icon={Dumbbell} />
 
       <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
         <div className={FormStyles.formGroup}>
@@ -130,7 +128,7 @@ export default function AddWorkoutForm({ exericses }: Props) {
               id="name"
               name="name"
               type="text"
-              placeholder="Example. Push Day"
+              placeholder="e.g. Push Day"
               value={formData.name}
               onChange={(e) =>
                 setFormData((prev) => ({
@@ -150,7 +148,7 @@ export default function AddWorkoutForm({ exericses }: Props) {
               id="description"
               name="description"
               rows={4}
-              placeholder="Example. Focus on arms, chest..."
+              placeholder="e.g. Focus on arms and chest..."
               value={formData.description}
               onChange={(e) =>
                 setFormData((prev) => ({
@@ -193,16 +191,10 @@ export default function AddWorkoutForm({ exericses }: Props) {
           </button>
         </div>
 
-        <div className="flex gap-2">
-          <div className="flex flex-wrap gap-3">
-            <Button type="submit" variant="primary" size="md" loading={isSaving}>
-              Save Workout
-            </Button>
-
-            <Button href="/log-weight" variant="secondary" size="md">
-              Gå tillbaka
-            </Button>
-          </div>
+        <div className="flex flex-wrap gap-3">
+          <Button type="submit" variant="primary" size="md" loading={isSaving}>
+            Save workout
+          </Button>
         </div>
       </form>
     </div>

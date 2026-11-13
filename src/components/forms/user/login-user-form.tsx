@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FaEnvelope, FaLock, FaDumbbell } from 'react-icons/fa6';
+import { FaEnvelope, FaLock } from 'react-icons/fa6';
+import { Dumbbell } from 'lucide-react';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
 import { toast } from 'sonner';
 
 import type { LoginDto } from '@/schemas/auth-schemas';
@@ -63,15 +65,7 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className={`${styles.form} mx-auto`}>
-      <div className={styles.formWrapper}>
-        <div className={styles.logoWrapper}>
-          <h1 className={styles.formTitle}>
-            Gym<span>Tracker</span>
-          </h1>
-
-          <FaDumbbell className={styles.logoIcon} />
-        </div>
-      </div>
+      <FormPageHeader backHref="/" backLabel="Back to home" showBackButton={false} eyebrow="Welcome to GymTracker" title="Sign" highlightedTitle="in" description="Log in to manage your workouts and track your fitness progress." icon={Dumbbell} />
 
       <div className={styles.formGroup}>
         <FormField
