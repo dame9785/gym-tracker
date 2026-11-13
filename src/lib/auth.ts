@@ -53,6 +53,7 @@ async function getAuthenticatedUser() {
     },
     select: {
       tokenVersion: true,
+      role: true,
     },
   });
 
@@ -60,7 +61,10 @@ async function getAuthenticatedUser() {
     return null;
   }
 
-  return user;
+  return {
+    ...user,
+    role: dbUser.role,
+  };
 }
 
 // --------------------------------------------------
@@ -72,6 +76,20 @@ export async function requireAuth() {
 
   if (!user) {
     redirect('/account/login');
+  }
+
+  return user;
+}
+
+// --------------------------------------------------
+// Require admin
+// --------------------------------------------------
+
+export async function requireAdmin() {
+  const user = await requireAuth();
+
+  if (user.role !== 'ADMIN') {
+    redirect('/dashboard');
   }
 
   return user;

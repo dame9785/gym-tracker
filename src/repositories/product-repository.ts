@@ -9,6 +9,7 @@ import type { CreateProductDto, UpdateProductDto } from '@/schemas/product-schem
 // --------------------------------------------------
 
 type Product = Prisma.ProductGetPayload<Record<string, never>>;
+
 type CreateProductData = CreateProductDto & {
   slug: string;
   verifiedAt: Date | null;
