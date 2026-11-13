@@ -3,15 +3,17 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Activity, ArrowLeft, Check, Dumbbell, FileText, Image as ImageIcon, LoaderCircle, Plus } from 'lucide-react';
+import { Activity, ArrowLeft, Check, Dumbbell, FileText, Image as ImageIcon, LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 import Button from '@/components/button/button';
 import ImageUpload from '@/components/ui/image-upload';
+import MuscleGroupSelector from '@/components/forms/exercise/muscle-group-selector';
+
+//Forms Components
+import FormTextarea from '@/components/ui/form-textarea';
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
-import FormSelect from '@/components/ui/form-select';
-import FormTextarea from '@/components/ui/form-textarea';
 
 import { updateExerciseAction } from '@/actions/exercise-actions';
 import type { ExerciseViewModel } from '@/types/exercise-types';
@@ -21,8 +23,6 @@ import { ErrorsHelper } from '@/helpers/error-helper';
 type Props = {
   exericse: ExerciseViewModel;
 };
-
-const MUSCLE_GROUPS = ['Chest', 'Back', 'Shoulders', 'Biceps', 'Triceps', 'Forearms', 'Quadriceps', 'Hamstrings', 'Glutes', 'Calves', 'Core', 'Full body'];
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -79,6 +79,20 @@ export default function EditExercise({ exericse }: Props) {
 
     setErrors((prev) => ({
       ...prev,
+      secondaryMuscles: undefined,
+    }));
+  };
+
+  const handlePrimaryMuscleChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      primaryMuscle: value,
+      secondaryMuscles: (prev.secondaryMuscles ?? []).filter((muscle) => muscle !== value),
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      primaryMuscle: undefined,
       secondaryMuscles: undefined,
     }));
   };
@@ -183,10 +197,6 @@ export default function EditExercise({ exericse }: Props) {
     }
   };
 
-  const selectedCount = formData.secondaryMuscles?.length ?? 0;
-
-  const availableSecondaryMuscles = MUSCLE_GROUPS.filter((muscle) => muscle !== formData.primaryMuscle);
-
   return (
     <div className="mx-auto w-full max-w-4xl px-4 pt-8 pb-12 sm:px-6 lg:pt-10">
       {/* Page header */}
@@ -255,6 +265,7 @@ export default function EditExercise({ exericse }: Props) {
         </section>
 
         {/* Muscle groups */}
+        {/* Muscle groups */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
@@ -267,54 +278,15 @@ export default function EditExercise({ exericse }: Props) {
             </div>
           </div>
 
-          <div className="space-y-6">
-            <FormField htmlFor="primaryMuscle" label="Primary muscle group" required error={errors.primaryMuscle}>
-              <FormSelect id="primaryMuscle" name="primaryMuscle" value={formData.primaryMuscle ?? ''} onChange={handleChange} required disabled={isSaving} aria-invalid={!!errors.primaryMuscle}>
-                <option value="" disabled className="bg-zinc-900">
-                  Select the main muscle group
-                </option>
-
-                {MUSCLE_GROUPS.map((muscle) => (
-                  <option key={muscle} value={muscle} className="bg-zinc-900">
-                    {muscle}
-                  </option>
-                ))}
-              </FormSelect>
-            </FormField>
-
-            <div>
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                <label className="text-sm font-medium text-zinc-200">Secondary muscle groups</label>
-                <span className="rounded-full border border-zinc-700 bg-zinc-800 px-2.5 py-1 text-xs text-zinc-400">{selectedCount} selected</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {availableSecondaryMuscles.map((muscle) => {
-                  const selected = formData.secondaryMuscles?.includes(muscle) ?? false;
-
-                  return (
-                    <button
-                      key={muscle}
-                      type="button"
-                      disabled={isSaving}
-                      aria-pressed={selected}
-                      onClick={() => toggleSecondaryMuscle(muscle)}
-                      className={`flex min-h-11 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left text-sm transition ${
-                        selected ? 'border-orange-500/60 bg-orange-500/10 text-orange-300' : 'border-zinc-800 bg-zinc-950/50 text-zinc-400 hover:border-zinc-600 hover:bg-zinc-800/70 hover:text-zinc-200'
-                      } disabled:cursor-not-allowed disabled:opacity-50`}
-                    >
-                      <span>{muscle}</span>
-                      {selected ? <Check className="h-4 w-4 shrink-0 text-orange-400" /> : <Plus className="h-4 w-4 shrink-0 text-zinc-600" />}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <p className="mt-3 text-xs leading-5 text-zinc-500">Click a muscle to select or deselect it. The primary muscle cannot also be selected as secondary.</p>
-
-              {errors.secondaryMuscles && <p className="mt-1.5 text-xs text-red-400">{errors.secondaryMuscles}</p>}
-            </div>
-          </div>
+          <MuscleGroupSelector
+            primaryMuscle={formData.primaryMuscle ?? ''}
+            secondaryMuscles={formData.secondaryMuscles ?? []}
+            onPrimaryMuscleChange={handlePrimaryMuscleChange}
+            onToggleSecondaryMuscle={toggleSecondaryMuscle}
+            primaryError={errors.primaryMuscle}
+            secondaryError={errors.secondaryMuscles}
+            disabled={isSaving}
+          />
         </section>
 
         {/* Exercise details */}
