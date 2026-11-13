@@ -351,6 +351,7 @@ The following npm scripts are available in the project.
 | `npm run db:migrate:deploy` | Applies pending production migrations              |
 | `npm run db:migrate:status` | Checks migration status                            |
 | `npm run typecheck`         | Runs Typescript errors                             |
+| `npm run db:seed`           | Seeds the database with predefined food products   |
 
 ### Additional Development Commands
 

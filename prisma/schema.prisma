@@ -20,6 +20,8 @@ model User {
 
   tokenVersion Int @default(0)
 
+  role UserRole @default(USER)
+
   bodyWeight Decimal @db.Decimal(5, 2)
   goalWeight Decimal @db.Decimal(5, 2)
   height     Decimal @db.Decimal(5, 2)
@@ -264,11 +266,16 @@ model Product {
   barcode  String? @unique @db.VarChar(50)
   category String? @db.VarChar(100)
   imageUrl String? @db.Text
+  slug     String  @unique @db.VarChar(191)
 
   calories Decimal @db.Decimal(8, 2)
   protein  Decimal @db.Decimal(8, 2)
   carbs    Decimal @db.Decimal(8, 2)
   fat      Decimal @db.Decimal(8, 2)
+
+  dataQuality     ProductDataQuality @default(UNVERIFIED)
+  nutritionSource String?            @db.VarChar(255)
+  verifiedAt      DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -277,6 +284,7 @@ model Product {
 
   @@index([name])
   @@index([category])
+  @@index([dataQuality])
 }
 
 model CustomFood {
@@ -344,6 +352,11 @@ model MealItem {
 // Enums
 // ==========================================
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 enum Gender {
   MALE
   FEMALE
@@ -362,4 +375,10 @@ enum MealType {
   DINNER
   SNACK
   OTHER
+}
+
+enum ProductDataQuality {
+  VERIFIED
+  STANDARD
+  UNVERIFIED
 }
