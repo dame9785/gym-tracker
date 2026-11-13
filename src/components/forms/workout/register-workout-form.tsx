@@ -6,9 +6,9 @@ import type { FormEvent } from 'react';
 
 import FormStyles from '@/components/forms/form.module.css';
 
-import WorkoutExerciseCard from '@/components/forms/workout/workout-exercise-card';
-
 import { toast } from 'sonner';
+
+import WorkoutExerciseFields from '@/components/forms/workout/workout-exercise-fields';
 
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
@@ -167,7 +167,24 @@ export default function AddWorkoutForm({ exericses }: Props) {
           <h2 className={FormStyles.sectionTitle}>Exercises</h2>
 
           {formData.workoutExercises.map((exercise, index) => (
-            <WorkoutExerciseCard key={index} index={index} exercise={exercise} exercises={exericses} onUpdate={updateExercise} onRemove={removeExercise} />
+            <WorkoutExerciseFields
+              key={index}
+              index={index}
+              exercise={exercise}
+              exercises={exericses}
+              onUpdate={updateExercise}
+              onRemove={removeExercise}
+              labels={{
+                exercise: 'Exercise',
+                selectExercise: 'Select exercise',
+                sets: 'Sets',
+                reps: 'Reps',
+                weight: 'Weight (kg)',
+                seconds: 'Seconds',
+                note: 'Note',
+                remove: 'Remove',
+              }}
+            />
           ))}
 
           <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise} disabled={isSaving}>

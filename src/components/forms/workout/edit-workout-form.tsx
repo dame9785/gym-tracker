@@ -11,7 +11,7 @@ import type { WorkoutViewModel } from '@/types/workout-types';
 
 import { toast } from 'sonner';
 
-import EditWorkoutExericeCard from '@/components/forms/workout/edit-workout-exericse-card';
+import WorkoutExerciseFields from '@/components/forms/workout/workout-exercise-fields';
 
 import type { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
@@ -171,7 +171,24 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
           <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
           {formData.workoutExercises.map((workoutExercise, index) => (
-            <EditWorkoutExericeCard key={index} index={index} workoutExericse={workoutExercise} exercises={exericses} onUpdate={updateExercise} onRemove={removeExercise} />
+            <WorkoutExerciseFields
+              key={index}
+              index={index}
+              exercise={workoutExercise}
+              exercises={exericses}
+              onUpdate={updateExercise}
+              onRemove={removeExercise}
+              labels={{
+                exercise: 'Övning',
+                selectExercise: 'Välj övning',
+                sets: 'Set',
+                reps: 'Reps',
+                weight: 'Vikt (kg)',
+                seconds: 'Sekunder',
+                note: 'Anteckning',
+                remove: 'Ta bort övning',
+              }}
+            />
           ))}
 
           <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise} disabled={isSaving}>
