@@ -350,6 +350,7 @@ The following npm scripts are available in the project.
 | `npm run db:migrate:dev`    | Creates and applies development migrations         |
 | `npm run db:migrate:deploy` | Applies pending production migrations              |
 | `npm run db:migrate:status` | Checks migration status                            |
+| `npm run typecheck`         | Runs Typescript errors                             |
 
 ### Additional Development Commands
 

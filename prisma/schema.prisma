@@ -34,14 +34,15 @@ model User {
   goalType GoalType
   goal     Goal?
 
- 
   workout          Workout[]
   workoutSchedules WorkoutSchedule[]
   workoutSessions  WorkoutSession[]
   weightLogs       WeightLog[]
-  
-  exercises        Exercise[]
-  
+
+  exercises Exercise[]
+
+  meals       Meal[]
+  customFoods CustomFood[]
 }
 
 model PasswordResetToken {
@@ -256,6 +257,88 @@ model WorkoutSessionSet {
   @@index([workoutSessionExerciseId])
 }
 
+model Product {
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(191)
+  brand    String? @db.VarChar(100)
+  barcode  String? @unique @db.VarChar(50)
+  category String? @db.VarChar(100)
+  imageUrl String? @db.Text
+
+  calories Decimal @db.Decimal(8, 2)
+  protein  Decimal @db.Decimal(8, 2)
+  carbs    Decimal @db.Decimal(8, 2)
+  fat      Decimal @db.Decimal(8, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mealItems MealItem[]
+
+  @@index([name])
+  @@index([category])
+}
+
+model CustomFood {
+  id     Int     @id @default(autoincrement())
+  userId Int
+  name   String  @db.VarChar(191)
+  brand  String? @db.VarChar(100)
+
+  calories Decimal @db.Decimal(8, 2)
+  protein  Decimal @db.Decimal(8, 2)
+  carbs    Decimal @db.Decimal(8, 2)
+  fat      Decimal @db.Decimal(8, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mealItems MealItem[]
+
+  @@index([userId, name])
+}
+
+model Meal {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  name      String?  @db.VarChar(100)
+  type      MealType
+  date      DateTime @db.Date
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items MealItem[]
+
+  @@index([userId, date])
+}
+
+model MealItem {
+  id           Int  @id @default(autoincrement())
+  mealId       Int
+  productId    Int?
+  customFoodId Int?
+
+  quantity Decimal @db.Decimal(8, 2)
+
+  // Näringsvärden för den registrerade mängden
+  nameSnapshot     String  @db.VarChar(191)
+  caloriesSnapshot Decimal @db.Decimal(10, 2)
+  proteinSnapshot  Decimal @db.Decimal(10, 2)
+  carbsSnapshot    Decimal @db.Decimal(10, 2)
+  fatSnapshot      Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+
+  meal       Meal        @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  product    Product?    @relation(fields: [productId], references: [id], onDelete: Restrict)
+  customFood CustomFood? @relation(fields: [customFoodId], references: [id], onDelete: Restrict)
+
+  @@index([mealId])
+  @@index([productId])
+  @@index([customFoodId])
+}
 
 // ==========================================
 // Enums
@@ -273,4 +356,10 @@ enum WorkoutSessionStatus {
   NOTCOMPLETED
 }
 
-
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+  OTHER
+}
