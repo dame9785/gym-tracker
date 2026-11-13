@@ -15,15 +15,6 @@ export interface ExerciseViewModel {
   techniqueTips: string | null;
 }
 
-export interface RegisterWorkoutExerciseDto {
-  exerciseId: number;
-  sets: number;
-  reps: number;
-  weight: number | null;
-  note: string;
-  seconds: number;
-}
-
 export interface WorkoutExerciseViewModel {
   exerciseId: number;
   name: string;

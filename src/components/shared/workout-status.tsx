@@ -37,11 +37,3 @@ export const WORKOUT_STATUS_CONFIG: Record<WorkoutSessionStatus, WorkoutStatusCo
     icon: <X className="h-3.5 w-3.5 text-red-400" />,
   },
 };
-
-// --------------------------------------------------
-// Status helpers
-// --------------------------------------------------
-
-export function getWorkoutStatusLabel(status: WorkoutSessionStatus): string {
-  return WORKOUT_STATUS_CONFIG[status].label;
-}
