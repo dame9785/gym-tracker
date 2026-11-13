@@ -14,6 +14,7 @@
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" />
   <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
 </p>
 
@@ -21,22 +22,30 @@
 
 ## 📑 Table of Contents
 
-- [Features](#-features)
-- [Technology Stack](#️-technology-stack)
-- [Architecture](#-architecture)
-- [Prerequisites](#-prerequisites)
-- [Getting Started](#-getting-started)
-- [Environment Variables](#-environment-variables)
-- [Database and Prisma](#️-database-and-prisma)
-- [Available Scripts](#-available-scripts)
-- [Project Structure](#-project-structure)
-- [Validation and Code Quality](#-validation-and-code-quality)
-- [Deployment](#️-deployment)
-- [Troubleshooting](#-troubleshooting)
-- [Screenshots](#-screenshots)
-- [License](#-license)
+- [Overview](#overview)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Database and Prisma](#database-and-prisma)
+- [Available Scripts](#available-scripts)
+- [Project Structure](#project-structure)
+- [Code Quality](#code-quality)
+- [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
+- [Screenshots](#screenshots)
+- [License](#license)
 
 ---
+
+## Overview
+
+GymTracker is a full-stack workout tracking application designed to help users plan their training, record workout sessions and monitor their personal progress over time.
+
+The application provides tools for managing workouts, exercises, training schedules, workout history, body weight and personal goals.
+
+Built with Next.js, React and TypeScript, GymTracker uses Prisma ORM for database access and a layered architecture to separate application responsibilities.
 
 ## ✨ Features
 
@@ -45,7 +54,7 @@
 - User registration and login
 - JWT-based authentication
 - Protected application routes
-- Password change
+- Password changes
 - Forgot password and password reset
 - Token versioning for session invalidation
 
@@ -74,7 +83,7 @@
 - Record completed sets
 - Track actual repetitions, weights and duration
 - Review completed and unfinished sessions
-- Preserve exercise and workout information in historical sessions
+- Preserve workout and exercise information in historical sessions
 
 ### Dashboard and Progress
 
@@ -85,7 +94,7 @@
 - Personal goals
 - Progress statistics and charts
 
-### Infrastructure
+### Infrastructure and Integrations
 
 - MySQL-compatible database
 - Prisma ORM and database migrations
@@ -93,28 +102,50 @@
 - Service and repository architecture
 - Exercise image storage using Vercel Blob
 - Password reset emails using Resend
+- Vercel Analytics integration
 - Responsive user interface
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Technology         | Purpose                        |
-| ------------------ | ------------------------------ |
-| Next.js 16         | Full-stack React framework     |
-| React 19           | User interface                 |
-| TypeScript         | Static typing                  |
-| Tailwind CSS 4     | Styling                        |
-| Prisma ORM 6       | Database access and migrations |
-| MySQL / TiDB Cloud | Relational database            |
-| Zod 4              | Data validation                |
-| JSON Web Token     | Authentication                 |
-| bcryptjs           | Password hashing               |
-| Recharts           | Charts and statistics          |
-| Sonner             | Notifications                  |
-| Vercel Blob        | Image storage                  |
-| Resend             | Transactional emails           |
-| Vercel             | Application hosting            |
+### Core Technologies
+
+| Technology         | Version | Purpose                        |
+| ------------------ | ------- | ------------------------------ |
+| Next.js            | 16.2.10 | Full-stack React framework     |
+| React              | 19.2.4  | User interface                 |
+| TypeScript         | 5.x     | Static typing                  |
+| Tailwind CSS       | 4.x     | Styling                        |
+| Prisma ORM         | 6.19.3  | Database access and migrations |
+| MySQL / TiDB Cloud | -       | Relational database            |
+| Zod                | 4.x     | Data validation                |
+
+### Libraries and Integrations
+
+| Technology       | Purpose                          |
+| ---------------- | -------------------------------- |
+| JSON Web Token   | Authentication                   |
+| bcryptjs         | Password hashing                 |
+| date-fns         | Date manipulation and formatting |
+| Recharts         | Charts and statistics            |
+| Lucide React     | Icons                            |
+| React Icons      | Icon library                     |
+| Sonner           | Notifications                    |
+| Vercel Blob      | Image storage                    |
+| Vercel Analytics | Application analytics            |
+| Resend           | Transactional emails             |
+
+### Development Tools
+
+| Technology               | Purpose                                       |
+| ------------------------ | --------------------------------------------- |
+| ESLint                   | Code quality and linting                      |
+| Prettier                 | Code formatting                               |
+| Prettier Tailwind Plugin | Tailwind CSS class sorting                    |
+| Knip                     | Detect unused files, dependencies and exports |
+| tsx                      | TypeScript execution                          |
+| dotenv                   | Environment variable management               |
 
 ---
 
@@ -122,84 +153,65 @@
 
 GymTracker follows a layered architecture to separate application responsibilities and make the codebase easier to maintain.
 
-### App Router
+| Layer          | Responsibility                                                            |
+| -------------- | ------------------------------------------------------------------------- |
+| `app`          | Application routes, pages and layouts using the Next.js App Router        |
+| `actions`      | Handle application mutations, validate input and coordinate service calls |
+| `services`     | Contain business logic and coordinate application workflows               |
+| `repositories` | Handle database queries through Prisma                                    |
+| `schemas`      | Define validation rules using Zod                                         |
+| `mapping`      | Convert database models into application types and response objects       |
+| `types`        | Shared TypeScript types and interfaces                                    |
+| `lib`          | Shared infrastructure, authentication and Prisma client                   |
+| `utils`        | Reusable utility functions                                                |
+| `components`   | Reusable user interface components                                        |
 
-- Handles application routes and pages.
-- Uses Next.js Server Components and Client Components.
-- Organizes protected and public application routes.
+### Architecture Principles
 
-### Actions
-
-- Handle application mutations.
-- Validate incoming data.
-- Coordinate service calls.
-- Return standardized action results.
-
-### Services
-
-- Contain business logic.
-- Coordinate repositories and other services.
-- Handle application workflows.
-
-### Repositories
-
-- Handle database queries through Prisma.
-- Keep database access separate from business logic.
-
-### Schemas
-
-- Define validation rules using Zod.
-- Validate incoming data on the server.
-
-### Mapping
-
-- Converts database models into application types and response objects.
-
-### Types
-
-- Contains shared TypeScript types and interfaces.
-
-### Lib and Utils
-
-- Contains shared infrastructure and utilities.
-- Includes authentication, JWT configuration, Prisma client and helper functions.
-
----
-
-## 📋 Prerequisites
-
-Before setting up the project, install:
-
-- Node.js
-- npm
-- Git
-- MySQL or a compatible MySQL database
-- Access to the GitHub repository
-
-A code editor such as Visual Studio Code is recommended.
+- Separation of concerns
+- Reusable components
+- Centralized validation
+- Separation of business logic and database access
+- Strong typing with TypeScript
+- Server-side data handling
+- Maintainable and scalable code structure
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
+Follow these instructions to set up GymTracker locally.
+
+### Prerequisites
+
+Before getting started, make sure you have installed:
+
+- [Node.js](https://nodejs.org/)
+- npm
+- [Git](https://git-scm.com/)
+- MySQL or a compatible MySQL database
+- A code editor such as [Visual Studio Code](https://code.visualstudio.com/)
+
+You will also need credentials for external services you intend to use, such as Resend and Vercel Blob.
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/dame9785/gym-tracker.git
 cd gym-tracker
 ```
 
-### 2. Install dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configure environment variables
+### 3. Configure Environment Variables
 
 Create a `.env` file in the project root.
 
-See [Environment Variables](#-environment-variables) for the required configuration.
+See the [Environment Variables](#environment-variables) section for configuration details.
 
 ### 4. Generate Prisma Client
 
@@ -207,7 +219,7 @@ See [Environment Variables](#-environment-variables) for the required configurat
 npm run db:generate
 ```
 
-### 5. Run database migrations
+### 5. Run Database Migrations
 
 For local development:
 
@@ -215,21 +227,25 @@ For local development:
 npm run db:migrate:dev
 ```
 
-### 6. Start the development server
+### 6. Start the Development Server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open your browser and navigate to:
+
+[http://localhost:3000](http://localhost:3000)
 
 ---
 
 ## 🔐 Environment Variables
 
-The application uses environment variables for database access, authentication and external services.
+GymTracker uses environment variables for database access, authentication and external services.
 
 Create a `.env` file in the project root.
+
+### Environment Variable Reference
 
 | Variable                | Description                                              |
 | ----------------------- | -------------------------------------------------------- |
@@ -240,13 +256,13 @@ Create a `.env` file in the project root.
 | `RESEND_FROM_EMAIL`     | Sender email address used for outgoing emails            |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob storage access token                         |
 
-Example:
+### Example Configuration
 
 ```env
 DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/DATABASE"
 SHADOW_DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/SHADOW_DATABASE"
 
-JWT_SECRET="replace-with-a-secure-secret-of-at-least-32-characters"
+JWT_SECRET="replace-with-a-secure-random-secret"
 
 RESEND_API_KEY="re_your_api_key"
 RESEND_FROM_EMAIL="GymTracker <noreply@example.com>"
@@ -254,13 +270,14 @@ RESEND_FROM_EMAIL="GymTracker <noreply@example.com>"
 BLOB_READ_WRITE_TOKEN="your_vercel_blob_token"
 ```
 
-**Important:**
+### Important Security Notes
 
-- Replace the example values with your own credentials.
+- Replace all example values with your own credentials.
 - Use a separate shadow database for Prisma development migrations.
 - Never commit `.env` files or production credentials to Git.
-- Use secure secrets in production.
+- Use strong and unique secrets in production.
 - Configure production environment variables in your hosting provider.
+- Only configure external service variables if the corresponding functionality is enabled.
 
 ---
 
@@ -282,66 +299,48 @@ It defines the application's database models, relationships and enums.
 
 The main models include:
 
-- User
-- PasswordResetToken
-- Goal
-- WeightLog
-- Exercise
-- MuscleGroup
-- ExerciseMuscle
-- Workout
-- WorkoutExercise
-- WorkoutSchedule
-- WorkoutSession
-- WorkoutSessionExercise
-- WorkoutSessionSet
+- `User`
+- `PasswordResetToken`
+- `Goal`
+- `WeightLog`
+- `Exercise`
+- `MuscleGroup`
+- `ExerciseMuscle`
+- `Workout`
+- `WorkoutExercise`
+- `WorkoutSchedule`
+- `WorkoutSession`
+- `WorkoutSessionExercise`
+- `WorkoutSessionSet`
 
 ### Database Migrations
 
-Migrations are stored in:
+Migration files are stored in:
 
 ```text
 prisma/migrations/
 ```
 
-Each migration represents a database schema change.
+| Task                                    | Command                     |
+| --------------------------------------- | --------------------------- |
+| Create and apply development migrations | `npm run db:migrate:dev`    |
+| Apply production migrations             | `npm run db:migrate:deploy` |
+| Check migration status                  | `npm run db:migrate:status` |
+| Regenerate Prisma Client                | `npm run db:generate`       |
 
-Use the following commands depending on your environment.
-
-For local development:
-
-```bash
-npm run db:migrate:dev
-```
-
-For production deployment:
-
-```bash
-npm run db:migrate:deploy
-```
-
-To check migration status:
-
-```bash
-npm run db:migrate:status
-```
-
-To regenerate Prisma Client:
-
-```bash
-npm run db:generate
-```
-
-**Important:**
+### Migration Guidelines
 
 - Do not manually edit migrations that have already been applied.
 - Create a new migration when changing the database schema.
 - Review generated SQL before applying migrations to production.
 - Keep the Prisma schema and migration history synchronized.
+- Back up important data before making production database changes.
 
 ---
 
 ## 📜 Available Scripts
+
+The following npm scripts are available in the project.
 
 | Command                     | Description                                        |
 | --------------------------- | -------------------------------------------------- |
@@ -354,10 +353,32 @@ npm run db:generate
 | `npm run db:migrate:deploy` | Applies pending production migrations              |
 | `npm run db:migrate:status` | Checks migration status                            |
 
-TypeScript can be checked separately:
+### Additional Development Commands
+
+These commands use installed development tools directly.
+
+**TypeScript validation**
 
 ```bash
 npx tsc --noEmit
+```
+
+**Prettier formatting**
+
+```bash
+npx prettier --write .
+```
+
+**Check formatting**
+
+```bash
+npx prettier --check .
+```
+
+**Find unused code and dependencies**
+
+```bash
+npx knip
 ```
 
 ---
@@ -401,13 +422,15 @@ gym-tracker/
 └── README.md
 ```
 
+This is a high-level overview. Individual folders may contain additional files and nested directories.
+
 ---
 
-## ✅ Validation and Code Quality
+## ✅ Code Quality
 
-The project uses TypeScript and ESLint to help maintain code quality.
+The project uses TypeScript, ESLint and Prettier to help maintain code quality and consistency.
 
-Before committing changes, run:
+Before committing changes, run the following checks.
 
 ### TypeScript
 
@@ -421,35 +444,50 @@ npx tsc --noEmit
 npm run lint
 ```
 
-### Production build
+### Prettier
+
+```bash
+npx prettier --check .
+```
+
+### Knip
+
+```bash
+npx knip
+```
+
+### Production Build
 
 ```bash
 npm run build
 ```
 
-Resolve any reported errors before committing changes.
+Resolve relevant errors before committing or deploying changes.
 
 ---
 
 ## 🚀 Deployment
 
-GymTracker is designed to be deployed using Vercel.
+GymTracker is designed to be deployed using [Vercel](https://vercel.com/).
 
-### Production deployment checklist
+### Production Deployment Checklist
 
 1. Connect the GitHub repository to Vercel.
 2. Configure the required production environment variables.
 3. Configure the production MySQL-compatible database.
 4. Ensure the production database schema is up to date.
-5. Apply pending migrations using:
+5. Apply pending migrations:
 
-```bash
-npm run db:migrate:deploy
-```
+   ```bash
+   npm run db:migrate:deploy
+   ```
 
 6. Deploy the application.
+7. Verify the deployed application, database connection, authentication, email delivery and image uploads.
 
-The build command is configured as:
+### Build Command
+
+The configured build command is:
 
 ```bash
 prisma generate && next build
@@ -461,17 +499,17 @@ This ensures that Prisma Client is generated before the Next.js production build
 
 ## 🔧 Troubleshooting
 
-### Prisma Client is outdated
+### Prisma Client Is Outdated
 
-Run:
+Regenerate Prisma Client:
 
 ```bash
 npm run db:generate
 ```
 
-### Database connection errors
+### Database Connection Errors
 
-Check:
+Check the following:
 
 - `DATABASE_URL`
 - Database credentials
@@ -479,7 +517,7 @@ Check:
 - Network access to the database
 - Database availability
 
-### Migration errors
+### Migration Errors
 
 Check migration status:
 
@@ -489,15 +527,17 @@ npm run db:migrate:status
 
 Review the Prisma error message and migration history before attempting to resolve the problem.
 
-### JWT configuration errors
+Avoid resetting databases that contain data you need to keep.
 
-Ensure that `JWT_SECRET` is configured and contains a sufficiently long secure value.
+### JWT Configuration Errors
 
-### Vercel Blob upload errors
+Ensure that `JWT_SECRET` is configured correctly and contains a sufficiently long, secure value.
+
+### Vercel Blob Upload Errors
 
 Verify that `BLOB_READ_WRITE_TOKEN` is configured correctly in the relevant environment.
 
-### Email delivery errors
+### Email Delivery Errors
 
 Verify:
 
@@ -509,13 +549,15 @@ Verify:
 
 ## 📸 Screenshots
 
+Screenshots are stored in the `screenshots/` directory.
+
 ### Dashboard
 
 ![Dashboard](screenshots/Dashboard.png)
 
 ### Exercises
 
-![Exercises](screenshots/Exericses.png)
+![Exercises](screenshots/Exericесes.png)
 
 ### Weight Log
 
