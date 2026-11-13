@@ -6,10 +6,10 @@ import { requireAuth } from '@/lib/auth';
 import HistoryTopStats from '@/components/history/history-top-stats';
 import HistoryMiddleStats from '@/components/history/history-middle-stats';
 import WorkoutSessions from '@/components/history/workout-sessions';
-import HistoryPagination from '@/components/history/history-pagination';
 
 import ErrorMessage from '@/components/ui/error-message';
 import Header from '@/components/ui/header';
+import Pagination from '@/components/ui/pagination';
 
 type Props = {
   searchParams: Promise<{
@@ -82,7 +82,7 @@ export default async function HistoryPage({ searchParams }: Props) {
       {/* Pagination */}
       {pagination.totalPages > 1 && (
         <section className="mt-8">
-          <HistoryPagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
+          <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} basePath="/history" ariaLabel="Workout history pagination" />
         </section>
       )}
     </main>
