@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CalendarDays, ChevronRight, Dumbbell, Pencil, Search, Trash2, X, ListChecks } from 'lucide-react';
@@ -20,10 +20,26 @@ export default function WorkoutDetailCard({ workouts }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutViewModel | null>(null);
 
-  const filteredWorkouts = workouts.filter((workout) => {
-    const query = searchQuery.trim().toLowerCase();
+  useEffect(() => {
+    if (!selectedWorkout) return;
 
-    return workout.name.toLowerCase().includes(query) || (workout.description ?? '').toLowerCase().includes(query) || workout.workoutExercises.some((exercise) => exercise.name.toLowerCase().includes(query));
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedWorkout(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedWorkout]);
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  const filteredWorkouts = workouts.filter((workout) => {
+    return workout.name.toLowerCase().includes(normalizedQuery) || (workout.description ?? '').toLowerCase().includes(normalizedQuery) || workout.workoutExercises.some((exercise) => exercise.name.toLowerCase().includes(normalizedQuery));
   });
 
   const handleDelete = (id: number) => {
@@ -105,7 +121,7 @@ export default function WorkoutDetailCard({ workouts }: Props) {
 
         {/* Workout cards */}
         {filteredWorkouts.length > 0 ? (
-          <div className={`grid min-w-0 gap-3 sm:gap-4 ${workouts.length > 1 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+          <div className={`grid min-w-0 gap-3 sm:gap-4 ${filteredWorkouts.length > 1 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
             {filteredWorkouts.map((workout) => (
               <article key={workout.id} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-zinc-800/90 bg-zinc-900/60 transition-all duration-200 hover:border-blue-400/30 hover:bg-zinc-900 hover:shadow-xl hover:shadow-black/20">
                 <div className="flex flex-1 flex-col p-4 sm:p-5">
@@ -182,7 +198,7 @@ export default function WorkoutDetailCard({ workouts }: Props) {
 
                       <span className="text-zinc-500">Created</span>
 
-                      <time className="ml-auto text-zinc-400">{new Date(workout.createdAt).toLocaleDateString('sv-SE')}</time>
+                      <time className="ml-auto text-zinc-400">{new Date(workout.createdAt).toLocaleDateString('en-GB')}</time>
                     </div>
 
                     <div className="flex items-center gap-2 text-xs">
@@ -190,7 +206,7 @@ export default function WorkoutDetailCard({ workouts }: Props) {
 
                       <span className="text-zinc-500">Updated</span>
 
-                      <time className="ml-auto text-zinc-400">{new Date(workout.updatedAt).toLocaleDateString('sv-SE')}</time>
+                      <time className="ml-auto text-zinc-400">{new Date(workout.updatedAt).toLocaleDateString('en-GB')}</time>
                     </div>
                   </div>
                 </div>
