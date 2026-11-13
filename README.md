@@ -144,8 +144,6 @@ Built with Next.js, React and TypeScript, GymTracker uses Prisma ORM for databas
 | Prettier                 | Code formatting                               |
 | Prettier Tailwind Plugin | Tailwind CSS class sorting                    |
 | Knip                     | Detect unused files, dependencies and exports |
-| tsx                      | TypeScript execution                          |
-| dotenv                   | Environment variable management               |
 
 ---
 
