@@ -8,12 +8,13 @@ import { toast } from 'sonner';
 
 import Button from '@/components/button/button';
 import ImageUpload from '@/components/ui/image-upload';
-import MuscleGroupSelector from '@/components/forms/exercise/muscle-group-selector';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
 
 //Forms Components
 import FormTextarea from '@/components/ui/form-textarea';
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
+import MuscleGroupSelector from '@/components/forms/exercise/muscle-group-selector';
 
 import { updateExerciseAction } from '@/actions/exercise-actions';
 import type { ExerciseViewModel } from '@/types/exercise-types';
@@ -200,25 +201,7 @@ export default function EditExercise({ exericse }: Props) {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 pt-8 pb-12 sm:px-6 lg:pt-10">
       {/* Page header */}
-      <div className="mb-8 flex items-start gap-4">
-        <Link href="/exercises" aria-label="Back to exercises" className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-orange-500/50 hover:text-orange-400">
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-
-        <div>
-          <div className="mb-2 flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-orange-400 uppercase">
-            <Dumbbell className="h-4 w-4" />
-            Exercise library
-          </div>
-
-          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Edit <span className="text-orange-400">exercise</span>
-          </h1>
-
-          <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-400">Update the muscle groups, instructions and other details for this exercise.</p>
-        </div>
-      </div>
-
+      <FormPageHeader backHref="/exercises" backLabel="Back to exercises" eyebrow="Exercise library" title="Edit" highlightedTitle="exercise" description="Update the muscle groups, instructions and other details for this exercise." icon={Dumbbell} />
       {/* Current exercise */}
       <div className="mb-6 flex items-center gap-4 rounded-xl border border-orange-500/20 bg-orange-500/[0.06] p-4">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">

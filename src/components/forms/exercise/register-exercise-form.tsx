@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Activity, ArrowLeft, Check, Dumbbell, FileText, Image as ImageIcon, LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 import Button from '@/components/button/button';
 import ImageUpload from '@/components/ui/image-upload';
+import FormPageHeader from '@/components/forms/shared/form-page-header';
 
 import { registerExerciseAction } from '@/actions/exercise-actions';
 import { registerExerciseSchema, type RegisterExericseDto } from '@/schemas/exercise-schema';
@@ -18,6 +18,7 @@ import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
 import FormTextarea from '@/components/ui/form-textarea';
 import MuscleGroupSelector from '@/components/forms/exercise/muscle-group-selector';
+import Link from 'next/link';
 
 const sectionClass = 'min-w-0 w-full rounded-2xl border border-zinc-800/90 bg-zinc-900/60 p-4 sm:p-7';
 
@@ -140,24 +141,7 @@ export default function RegisterForm() {
   return (
     <div className="mx-auto w-full max-w-4xl min-w-0 px-3 pt-5 pb-8 sm:px-6 sm:pt-8 sm:pb-12 lg:pt-10">
       {/* Page header */}
-      <div className="mb-8 flex items-start gap-4">
-        <Link href="/exercises" aria-label="Back to exercises" className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-orange-500/50 hover:text-orange-400">
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-
-        <div>
-          <div className="mb-2 flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-orange-400 uppercase">
-            <Dumbbell className="h-4 w-4" />
-            Exercise library
-          </div>
-
-          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Add <span className="text-orange-400">exercise</span>
-          </h1>
-
-          <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-400">Create an exercise with muscle groups, instructions and technique tips so you can use it in your workouts.</p>
-        </div>
-      </div>
+      <FormPageHeader backHref="/exercises" backLabel="Back to exercises" eyebrow="Exercise library" title="Add" highlightedTitle="exercise" description="Create an exercise with muscle groups, instructions and technique tips so you can use it in your workouts." icon={Dumbbell} />
 
       {/* Progress / info strip */}
       <div className="mb-6 flex items-center gap-3 rounded-xl border border-orange-500/20 bg-orange-500/[0.06] px-4 py-3">
