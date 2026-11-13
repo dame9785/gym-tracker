@@ -1,5 +1,5 @@
 import WorkoutTable from '@/components/workout/workout-detail-card';
-import Pagination from '@/components/workout/pagination';
+import Pagination from '@/components/ui/pagination';
 import ErrorMessage from '@/components/ui/error-message';
 import Header from '@/components/ui/header';
 
@@ -31,7 +31,7 @@ export default async function Workouts({ searchParams }: Props) {
   }
 
   const { workouts, pagination } = workoutData;
-  const { totalPages, currentPage } = pagination;
+  const { totalPages } = pagination;
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
@@ -59,7 +59,7 @@ export default async function Workouts({ searchParams }: Props) {
 
       {totalPages > 1 && (
         <nav aria-label="Workout pagination" className="mt-10 flex justify-center border-t border-zinc-800/70 pt-6">
-          <Pagination currentPage={currentPage} totalPages={totalPages} />
+          <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} basePath="/workout" ariaLabel="Workout pagination" />
         </nav>
       )}
     </main>

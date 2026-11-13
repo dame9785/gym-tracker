@@ -1,6 +1,6 @@
 import Statistic from '@/components/log-weight/log-weight-statistics';
 import LogHistoryList from '@/components/log-weight/log-history-list';
-import Pagination from '@/components/log-weight/log-pagination';
+import Pagination from '@/components/ui/pagination';
 
 import ErrorMessage from '@/components/ui/error-message';
 import Header from '@/components/ui/header';
@@ -137,7 +137,7 @@ export default async function LogWeight({ searchParams }: Props) {
 
       {/* Pagination */}
       <div className="mt-4 min-w-0">
-        <Pagination currentPage={currentPage} totalPages={totalPage} />
+        <Pagination currentPage={currentPage} totalPages={totalPage} basePath="/log-weight" ariaLabel="Weight log pagination" />
       </div>
     </section>
   );
