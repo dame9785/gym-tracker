@@ -8,20 +8,22 @@ const weightSchema = z.coerce.number().finite('Weight must be a valid number.').
 
 const noteSchema = z.string().trim().min(1, 'Note is required.');
 
+const weightFields = {
+  weight: weightSchema,
+  note: noteSchema,
+};
+
 // --------------------------------------------------
 // Add weight schema
 // --------------------------------------------------
 
-export const addWeightSchema = z.object({
-  weight: weightSchema,
-  note: noteSchema,
-});
+export const addWeightSchema = z.object(weightFields);
 
 // --------------------------------------------------
 // Update weight schema
 // --------------------------------------------------
 
-export const updateWeightSchema = addWeightSchema;
+export const updateWeightSchema = z.object(weightFields);
 
 // --------------------------------------------------
 // DTOs

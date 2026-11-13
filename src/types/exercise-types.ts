@@ -1,7 +1,3 @@
-export interface Exercise {
-  exerciseId: number;
-}
-
 export interface ExerciseViewModel {
   id: number;
   name: string;

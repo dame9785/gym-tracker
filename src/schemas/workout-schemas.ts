@@ -18,7 +18,7 @@ const requiredInteger = requiredNumber.pipe(z.number().int());
 // Workout exercise schema
 // --------------------------------------------------
 
-export const updateWorkoutExerciseSchema = z.object({
+const updateWorkoutExerciseSchema = z.object({
   exerciseId: requiredInteger.pipe(z.number().positive('Invalid exercise ID.')),
 
   sets: requiredInteger.pipe(z.number().min(0, 'Number of sets cannot be negative.')),

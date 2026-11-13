@@ -1,10 +1,10 @@
-export interface AppActionError {
+interface AppActionError {
   success: false;
   message: string;
   errors?: Record<string, string[] | undefined>;
 }
 
-export type AppActionSuccess<T = undefined> = [T] extends [undefined]
+type AppActionSuccess<T = undefined> = [T] extends [undefined]
   ? {
       success: true;
       message?: string;

@@ -16,7 +16,7 @@ export type SuccessResponse<T = undefined> = [T] extends [undefined]
         data: T;
       };
 
-export interface ErrorResponse {
+interface ErrorResponse {
   success: false;
   message: string;
   errors?: Record<string, string[]>;

@@ -8,7 +8,7 @@ import { verifyToken } from '@/lib/jwt';
 // Token validation
 // --------------------------------------------------
 
-export function getUserFromToken(token: string) {
+function getUserFromToken(token: string) {
   if (!token) {
     return null;
   }
@@ -24,7 +24,7 @@ export function getUserFromToken(token: string) {
 // Cookie handling
 // --------------------------------------------------
 
-export async function getTokenFromCookieStore(): Promise<string | undefined> {
+async function getTokenFromCookieStore(): Promise<string | undefined> {
   const cookieStore = await cookies();
 
   return cookieStore.get('token')?.value;
@@ -34,7 +34,7 @@ export async function getTokenFromCookieStore(): Promise<string | undefined> {
 // Authenticated user
 // --------------------------------------------------
 
-export async function getAuthenticatedUser() {
+async function getAuthenticatedUser() {
   const token = await getTokenFromCookieStore();
 
   if (!token) {
