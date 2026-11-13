@@ -11,6 +11,7 @@ import WeightProgressChart from '@/components/log-weight/weight-progress-chart';
 import { WeightLogService } from '@/services/weight-log-service';
 import ProgressService from '@/services/progress-service';
 import { requireAuth } from '@/lib/auth';
+import EmptyState from '@/components/ui/empty-state';
 
 type Props = {
   searchParams: Promise<{
@@ -126,19 +127,19 @@ export default async function LogWeight({ searchParams }: Props) {
           {logList.length > 0 ? (
             logList.map((item) => <LogHistoryList key={item.id} logItem={item} />)
           ) : (
-            <div className="col-span-full rounded-xl border border-dashed border-zinc-800 px-4 py-10 text-center">
-              <p className="text-sm font-medium text-zinc-400">No weight entries yet</p>
-
-              <p className="mt-1 text-xs text-zinc-600">Your logged weights will appear here.</p>
+            <div className="col-span-full">
+              <EmptyState title="No weight entries yet" description="Your logged weights will appear here." />
             </div>
           )}
         </div>
       </section>
 
       {/* Pagination */}
-      <div className="mt-4 min-w-0">
-        <Pagination currentPage={currentPage} totalPages={totalPage} basePath="/log-weight" ariaLabel="Weight log pagination" />
-      </div>
+      {totalPage > 1 && (
+        <div className="mt-4 min-w-0">
+          <Pagination currentPage={currentPage} totalPages={totalPage} basePath="/log-weight" ariaLabel="Weight log pagination" />
+        </div>
+      )}
     </section>
   );
 }

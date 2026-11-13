@@ -9,7 +9,7 @@ type HeaderAction = {
 type Props = {
   title: string;
   subTitle: string;
-  description: string;
+  description?: string;
   actions?: HeaderAction[];
 };
 
@@ -22,7 +22,7 @@ export default function Header({ title, subTitle, description, actions = [] }: P
 
           <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{subTitle}</h1>
 
-          <p className="mt-3 text-sm leading-6 text-zinc-400 sm:text-base">{description}</p>
+          {description && <p className="mt-3 text-sm leading-6 text-zinc-400 sm:text-base">{description}</p>}
         </div>
 
         {actions.length > 0 && (

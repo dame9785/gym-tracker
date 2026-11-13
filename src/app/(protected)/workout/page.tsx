@@ -1,4 +1,4 @@
-import WorkoutTable from '@/components/workout/workout-detail-card';
+import WorkoutDetailCard from '@/components/workout/workout-detail-card';
 import Pagination from '@/components/ui/pagination';
 import ErrorMessage from '@/components/ui/error-message';
 import Header from '@/components/ui/header';
@@ -54,7 +54,7 @@ export default async function Workouts({ searchParams }: Props) {
       />
 
       <section aria-label="Workout library" className="space-y-5">
-        <WorkoutTable workouts={workouts} />
+        <WorkoutDetailCard workouts={workouts} />
       </section>
 
       {totalPages > 1 && (

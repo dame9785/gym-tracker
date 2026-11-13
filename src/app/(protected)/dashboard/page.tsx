@@ -25,7 +25,7 @@ export default async function DashboardPage() {
     <div className="w-full min-w-0 space-y-5 sm:space-y-8">
       {/* Header */}
       <section className="min-w-0">
-        <Header title="YOUR TRAINING" subTitle="Dashboard" description="Track your progress. Reach your goals. Keep track of your workouts, monitor your progress, and stay focused on your fitness goals." />
+        <Header title="Welcome back" subTitle="Dashboard" description="Track your workouts and monitor your progress." />
       </section>
 
       {/* Statistics */}
