@@ -27,7 +27,7 @@ export async function resetPasswordAction(dto: ResetPasswordDto): Promise<AppAct
 
   try {
     await passwordResetService.resetPassword(validation.data.token, validation.data.newPassword);
-
+    await clearAuthCookie();
     return {
       success: true,
       message: 'Your password has been reset successfully.',
@@ -85,9 +85,11 @@ export async function changePasswordAction(dto: ChangePasswordDto): Promise<AppA
   try {
     await authService.changePassword(dto, user.userId);
 
+    await clearAuthCookie();
+
     return {
       success: true,
-      message: 'Password changed successfully.',
+      message: 'Password changed successfully. Please log in again.',
     };
   } catch (error: unknown) {
     return {

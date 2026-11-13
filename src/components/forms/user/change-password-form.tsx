@@ -14,8 +14,10 @@ import FormInput from '@/components/ui/form-input';
 
 import { changePasswordAction } from '@/actions/user-actions';
 import { changePasswordSchema, type ChangePasswordDto } from '@/schemas/auth-schemas';
+import { useRouter } from 'next/navigation';
 
 export default function ChangePasswordForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState<ChangePasswordDto>({
     currentPassword: '',
     newPassword: '',
@@ -66,11 +68,7 @@ export default function ChangePasswordForm() {
 
       toast.success(response.message);
 
-      setFormData({
-        currentPassword: '',
-        newPassword: '',
-        confirmNewPassword: '',
-      });
+      router.replace('/account/login');
     } catch (error) {
       console.error('Failed to change password:', error);
       toast.error('Something went wrong. Please try again.');

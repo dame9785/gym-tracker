@@ -170,7 +170,7 @@ function Sidebar() {
           {/* Logout */}
           <div className="[&_button]:w-full">
             <Button type="button" variant="secondary" onClick={handleLogout}>
-              Logga ut
+              Log out
             </Button>
           </div>
         </div>
