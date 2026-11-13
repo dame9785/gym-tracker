@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 
 import type { WorkoutViewModel } from '@/types/workout-types';
 import { deleteWorkoutAction } from '@/actions/workout-actions';
+import EmptyState from '@/components/ui/empty-state';
 
 type Props = {
   workouts: WorkoutViewModel[];
@@ -204,25 +205,22 @@ export default function WorkoutDetailCard({ workouts }: Props) {
           </div>
         ) : (
           /* Empty state */
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/40 px-6 py-14 text-center sm:py-16">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-800">
-              <Search className="h-6 w-6 text-blue-400" />
-            </div>
-
-            <h3 className="mt-4 text-base font-semibold text-white">{searchQuery.trim() ? 'No workouts found' : 'No workouts yet'}</h3>
-
-            <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-500">{searchQuery.trim() ? 'Try another search term.' : 'Create your first workout to start building your workout library.'}</p>
-
-            {searchQuery.trim() ? (
-              <button type="button" onClick={() => setSearchQuery('')} className="mt-5 min-h-11 cursor-pointer rounded-xl bg-zinc-800 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700">
-                Clear search
-              </button>
-            ) : (
-              <Link href="/workout/register" className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-500">
-                Create workout
-              </Link>
-            )}
-          </div>
+          <EmptyState
+            icon={Search}
+            title={searchQuery.trim() ? 'No workouts found' : 'No workouts yet'}
+            description={searchQuery.trim() ? 'Try another search term.' : 'Create your first workout to start building your workout library.'}
+            action={
+              searchQuery.trim()
+                ? {
+                    label: 'Clear search',
+                    onClick: () => setSearchQuery(''),
+                  }
+                : {
+                    label: 'Create workout',
+                    href: '/workout/register',
+                  }
+            }
+          />
         )}
       </section>
 

@@ -1,5 +1,6 @@
 import type { ExerciseViewModel } from '@/types/exercise-types';
 import ExerciseCard from '@/components/exericses/exercise-card';
+import EmptyState from '@/components/ui/empty-state';
 
 type Props = {
   exercises: ExerciseViewModel[];
@@ -7,13 +8,7 @@ type Props = {
 
 export default function Exercises({ exercises }: Props) {
   if (exercises.length === 0) {
-    return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 px-6 py-16 text-center">
-        <h2 className="text-xl font-semibold text-white">No exercises yet</h2>
-
-        <p className="mt-2 text-sm text-zinc-400">Add your first exercise to get started.</p>
-      </div>
-    );
+    return <EmptyState title="No exercises yet" description="Add your first exercise to get started." />;
   }
 
   return (

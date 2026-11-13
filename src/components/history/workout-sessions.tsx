@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { CalendarDays, CheckCircle2, Clock3, Dumbbell, Layers3, ChevronDown, ChevronUp, Timer, Weight, Repeat2, XCircle } from 'lucide-react';
 
 import { WorkoutSessionWithExercisesViewModel } from '@/types/history-types';
+import EmptyState from '@/components/ui/empty-state';
 
 type Props = {
   workoutSessions: WorkoutSessionWithExercisesViewModel[];
@@ -36,11 +37,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
 
       {/* Empty state */}
       {workoutSessions.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-10 text-center">
-          <Dumbbell className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
-          <h3 className="text-lg font-semibold text-white">No workouts yet</h3>
-          <p className="mt-2 text-sm text-zinc-500">Your training sessions will appear here.</p>
-        </div>
+        <EmptyState icon={Dumbbell} title="No workouts yet" description="Your training sessions will appear here." />
       ) : (
         /* Responsive workout grid */
         <div className="grid w-full min-w-0 grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -60,10 +57,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
               minute: '2-digit',
             });
 
-            const durationInSeconds =
-              session.startedAt && session.finishedAt
-                ? Math.max(0, Math.floor((new Date(session.finishedAt).getTime() - new Date(session.startedAt).getTime()) / 1000))
-                : 0;
+            const durationInSeconds = session.startedAt && session.finishedAt ? Math.max(0, Math.floor((new Date(session.finishedAt).getTime() - new Date(session.startedAt).getTime()) / 1000)) : 0;
 
             const durationMinutes = Math.floor(durationInSeconds / 60);
 
@@ -71,18 +65,12 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
 
             const completedSets = session.exercises.reduce((total, exercise) => total + exercise.sets.filter((set) => set.completed).length, 0);
 
-            const actualSeconds = session.exercises.reduce(
-              (total, exercise) => total + exercise.sets.reduce((setTotal, set) => setTotal + (set.completed ? (set.actualSeconds ?? 0) : 0), 0),
-              0,
-            );
+            const actualSeconds = session.exercises.reduce((total, exercise) => total + exercise.sets.reduce((setTotal, set) => setTotal + (set.completed ? (set.actualSeconds ?? 0) : 0), 0), 0);
 
             const isExpanded = expandedSessions.includes(session.id);
 
             return (
-              <article
-                key={session.id}
-                className="group flex w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/70 transition-all duration-200 hover:border-orange-500/40 hover:bg-zinc-900"
-              >
+              <article key={session.id} className="group flex w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/70 transition-all duration-200 hover:border-orange-500/40 hover:bg-zinc-900">
                 {/* Session header */}
                 <div className="flex flex-1 flex-col p-4 sm:p-5">
                   <div className="flex flex-col gap-3">
@@ -93,9 +81,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <h3 className="break-words text-base font-bold leading-snug text-white transition-colors group-hover:text-orange-400 sm:text-lg">
-                          {session.workoutName}
-                        </h3>
+                        <h3 className="text-base leading-snug font-bold break-words text-white transition-colors group-hover:text-orange-400 sm:text-lg">{session.workoutName}</h3>
 
                         {/* Date and time */}
                         <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-zinc-400">
@@ -108,11 +94,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                     </div>
 
                     {/* Status badge */}
-                    <div
-                      className={`flex w-fit shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 ${
-                        isCompleted ? 'border-green-500/20 bg-green-500/10' : 'border-red-500/20 bg-red-500/10'
-                      }`}
-                    >
+                    <div className={`flex w-fit shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 ${isCompleted ? 'border-green-500/20 bg-green-500/10' : 'border-red-500/20 bg-red-500/10'}`}>
                       {isCompleted ? <CheckCircle2 className="h-3.5 w-3.5 text-green-400" /> : <XCircle className="h-3.5 w-3.5 text-red-400" />}
 
                       <span className={`text-[10px] font-semibold tracking-wide ${isCompleted ? 'text-green-400' : 'text-red-400'}`}>{session.status}</span>
@@ -120,7 +102,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                   </div>
 
                   {/* Description */}
-                  {session.workoutDescription && <p className="mt-4 line-clamp-2 break-words text-sm leading-relaxed text-zinc-400">{session.workoutDescription}</p>}
+                  {session.workoutDescription && <p className="mt-4 line-clamp-2 text-sm leading-relaxed break-words text-zinc-400">{session.workoutDescription}</p>}
 
                   {/* Session stats */}
                   <div className="mt-5 grid grid-cols-2 gap-3">
@@ -191,12 +173,10 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                       .map((exercise, exerciseIndex) => (
                         <div key={exercise.id} className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/70">
                           <div className="flex items-start gap-3 p-3">
-                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-500/10 text-xs font-bold text-orange-400">
-                              {String(exerciseIndex + 1).padStart(2, '0')}
-                            </div>
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-500/10 text-xs font-bold text-orange-400">{String(exerciseIndex + 1).padStart(2, '0')}</div>
 
                             <div className="min-w-0 flex-1">
-                              <h4 className="break-words text-sm font-semibold text-white">{exercise.name}</h4>
+                              <h4 className="text-sm font-semibold break-words text-white">{exercise.name}</h4>
 
                               {exercise.primaryMuscle && <p className="mt-1 text-xs text-zinc-500">{exercise.primaryMuscle}</p>}
                             </div>
@@ -209,10 +189,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                               .slice()
                               .sort((a, b) => a.setNumber - b.setNumber)
                               .map((set) => (
-                                <div
-                                  key={set.id}
-                                  className={`rounded-lg border p-3 ${set.completed ? 'border-green-500/20 bg-green-500/[0.04]' : 'border-red-500/20 bg-red-500/[0.03]'}`}
-                                >
+                                <div key={set.id} className={`rounded-lg border p-3 ${set.completed ? 'border-green-500/20 bg-green-500/[0.04]' : 'border-red-500/20 bg-red-500/[0.03]'}`}>
                                   <div className="mb-3 flex items-center justify-between gap-2">
                                     <span className="text-xs font-semibold text-zinc-300">Set {set.setNumber}</span>
 
@@ -233,7 +210,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                                     <div className="min-w-0 rounded-lg bg-zinc-800/60 p-2">
                                       <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
                                         <Repeat2 className="h-3.5 w-3.5 shrink-0" />
-                                        <span className="text-[10px] uppercase tracking-wide">Reps</span>
+                                        <span className="text-[10px] tracking-wide uppercase">Reps</span>
                                       </div>
                                       <p className="text-sm font-bold text-white">{set.actualReps ?? '—'}</p>
                                     </div>
@@ -241,17 +218,17 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                                     <div className="min-w-0 rounded-lg bg-zinc-800/60 p-2">
                                       <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
                                         <Weight className="h-3.5 w-3.5 shrink-0" />
-                                        <span className="text-[10px] uppercase tracking-wide">Weight</span>
+                                        <span className="text-[10px] tracking-wide uppercase">Weight</span>
                                       </div>
-                                      <p className="break-words text-sm font-bold text-white">{set.actualWeight != null ? `${set.actualWeight} kg` : '—'}</p>
+                                      <p className="text-sm font-bold break-words text-white">{set.actualWeight != null ? `${set.actualWeight} kg` : '—'}</p>
                                     </div>
 
                                     <div className="min-w-0 rounded-lg bg-zinc-800/60 p-2">
                                       <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
                                         <Timer className="h-3.5 w-3.5 shrink-0" />
-                                        <span className="text-[10px] uppercase tracking-wide">Seconds</span>
+                                        <span className="text-[10px] tracking-wide uppercase">Seconds</span>
                                       </div>
-                                      <p className="break-words text-sm font-bold text-white">{set.actualSeconds != null ? formatDuration(set.actualSeconds) : '—'}</p>
+                                      <p className="text-sm font-bold break-words text-white">{set.actualSeconds != null ? formatDuration(set.actualSeconds) : '—'}</p>
                                     </div>
                                   </div>
                                 </div>
