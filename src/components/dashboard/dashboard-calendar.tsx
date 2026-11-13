@@ -12,6 +12,8 @@ import Modal from '@/components/modal/modal';
 import SelectedWorkout from '@/components/dashboard/selected-workout';
 import { WORKOUT_STATUS_CONFIG } from '@/components/shared/workout-status';
 
+import Skeleton from '@/components/ui/skeleton';
+
 const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 function getCalendarDays(year: number, month: number) {
@@ -150,23 +152,30 @@ export default function WorkoutCalendar() {
                     <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs sm:h-7 sm:w-7 sm:text-sm ${isCurrentDay ? 'bg-orange-500 font-bold text-black' : 'text-white'}`}>{day.getDate()}</span>
 
                     <div className="mt-1 space-y-1 sm:mt-2">
-                      {dayWorkouts.map((workout) => {
-                        const status = workout.status ? WORKOUT_STATUS_CONFIG[workout.status] : null;
+                      {isLoading ? (
+                        <>
+                          {index % 3 === 0 && <Skeleton className="h-5 w-full" />}
+                          {index % 7 === 0 && <Skeleton className="h-5 w-4/5" />}
+                        </>
+                      ) : (
+                        dayWorkouts.map((workout) => {
+                          const status = workout.status ? WORKOUT_STATUS_CONFIG[workout.status] : null;
 
-                        return (
-                          <button
-                            key={workout.id}
-                            type="button"
-                            onClick={() => setSelectedWorkout(workout)}
-                            title={`${workout.workoutName} - Click to view workout`}
-                            className={`block w-full min-w-0 cursor-pointer truncate rounded border px-1 py-1 text-left text-xs transition hover:brightness-125 sm:px-2 ${status?.badgeClassName ?? 'border-blue-500/30 bg-blue-500/15 text-blue-300'}`}
-                          >
-                            <span className="hidden sm:inline">💪 </span>
-                            <span className="sm:hidden">💪</span>
-                            <span className="hidden sm:inline">{workout.workoutName}</span>
-                          </button>
-                        );
-                      })}
+                          return (
+                            <button
+                              key={workout.id}
+                              type="button"
+                              onClick={() => setSelectedWorkout(workout)}
+                              title={`${workout.workoutName} - Click to view workout`}
+                              className={`block w-full min-w-0 cursor-pointer truncate rounded border px-1 py-1 text-left text-xs transition hover:brightness-125 sm:px-2 ${status?.badgeClassName ?? 'border-blue-500/30 bg-blue-500/15 text-blue-300'}`}
+                            >
+                              <span className="hidden sm:inline">💪 </span>
+                              <span className="sm:hidden">💪</span>
+                              <span className="hidden sm:inline">{workout.workoutName}</span>
+                            </button>
+                          );
+                        })
+                      )}
                     </div>
                   </>
                 )}
@@ -174,9 +183,6 @@ export default function WorkoutCalendar() {
             );
           })}
         </div>
-
-        {/* Loading and error states */}
-        {isLoading && <p className="mt-4 text-sm text-gray-400">Loading workouts...</p>}
 
         {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
 
