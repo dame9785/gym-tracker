@@ -246,3 +246,65 @@ export async function deleteProductAction(id: number): Promise<AppActionResult> 
     };
   }
 }
+
+// --------------------------------------------------
+// Archive product (ADMIN)
+// --------------------------------------------------
+
+export async function archiveProductAction(id: number): Promise<AppActionResult<ProductViewModel>> {
+  await requireAdmin();
+
+  if (!isValidId(id)) {
+    return {
+      success: false,
+      message: 'Invalid product ID.',
+    };
+  }
+
+  try {
+    const product = await productService.archive(id);
+
+    return {
+      success: true,
+      message: 'Product archived successfully.',
+      data: mapProduct(product),
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
+    };
+  }
+}
+
+// --------------------------------------------------
+// Restore product (ADMIN)
+// --------------------------------------------------
+
+export async function restoreProductAction(id: number): Promise<AppActionResult<ProductViewModel>> {
+  await requireAdmin();
+
+  if (!isValidId(id)) {
+    return {
+      success: false,
+      message: 'Invalid product ID.',
+    };
+  }
+
+  try {
+    const product = await productService.restore(id);
+
+    return {
+      success: true,
+      message: 'Product restored successfully.',
+      data: mapProduct(product),
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getActionErrorMessage(error),
+      errors: getActionValidationErrors(error),
+    };
+  }
+}

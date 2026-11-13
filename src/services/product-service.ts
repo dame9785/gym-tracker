@@ -12,8 +12,29 @@ import type { CreateProductDto, UpdateProductDto } from '@/schemas/product-schem
 export class ProductService {
   constructor(private readonly productRepository = new ProductRepository()) {}
 
-  async getAll(search?: string, category?: string) {
-    return this.productRepository.getAll(search, category);
+  async getPaginated(search: string | undefined, category: string | undefined, quality: 'VERIFIED' | 'STANDARD' | 'UNVERIFIED' | undefined, archived: boolean, page: number, pageSize: number) {
+    const skip = (page - 1) * pageSize;
+
+    const [products, totalProducts] = await Promise.all([
+      this.productRepository.getAll(search, category, quality, archived, { skip, take: pageSize }),
+      this.productRepository.count({
+        search,
+        category,
+        quality,
+        archived,
+      }),
+    ]);
+
+    return {
+      products,
+      totalProducts,
+      totalPages: Math.ceil(totalProducts / pageSize),
+      currentPage: page,
+    };
+  }
+
+  async getAll(search?: string, category?: string, quality?: 'VERIFIED' | 'STANDARD' | 'UNVERIFIED', archived?: boolean) {
+    return this.productRepository.getAll(search, category, quality, archived);
   }
 
   async getById(id: number) {
@@ -125,6 +146,12 @@ export class ProductService {
       throw new Error('Product not found.');
     }
 
+    const isUsed = await this.productRepository.hasMealItems(id);
+
+    if (isUsed) {
+      throw new Error('This product cannot be deleted because it is used in meal records. Archive it instead.');
+    }
+
     return this.productRepository.delete(id);
   }
 
@@ -146,5 +173,33 @@ export class ProductService {
       counter++;
       slug = `${baseSlug}-${counter}`;
     }
+  }
+
+  async archive(id: number) {
+    const existing = await this.productRepository.getById(id);
+
+    if (!existing) {
+      throw new Error('Product not found.');
+    }
+
+    if (existing.archivedAt) {
+      throw new Error('Product is already archived.');
+    }
+
+    return this.productRepository.archive(id);
+  }
+
+  async restore(id: number) {
+    const existing = await this.productRepository.getById(id);
+
+    if (!existing) {
+      throw new Error('Product not found.');
+    }
+
+    if (!existing.archivedAt) {
+      throw new Error('Product is not archived.');
+    }
+
+    return this.productRepository.restore(id);
   }
 }

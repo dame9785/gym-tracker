@@ -20,26 +20,45 @@ type UpdateProductData = UpdateProductDto & {
   verifiedAt?: Date | null;
 };
 
+type ProductFilters = {
+  search?: string;
+  category?: string;
+  quality?: 'VERIFIED' | 'STANDARD' | 'UNVERIFIED';
+  archived?: boolean;
+};
+
 // --------------------------------------------------
 // Repository
 // --------------------------------------------------
 
 export class ProductRepository {
-  async getAll(search?: string, category?: string): Promise<Product[]> {
-    const normalizedSearch = search?.trim();
+  private buildWhere(filters: ProductFilters): Prisma.ProductWhereInput {
+    const normalizedSearch = filters.search?.trim();
 
-    const where: Prisma.ProductWhereInput = {
-      ...(category && { category }),
+    return {
+      archivedAt: filters.archived ? { not: null } : null,
+      ...(filters.category && { category: filters.category }),
+      ...(filters.quality && { dataQuality: filters.quality }),
       ...(normalizedSearch && {
         OR: [{ name: { contains: normalizedSearch } }, { brand: { contains: normalizedSearch } }, { barcode: { contains: normalizedSearch } }],
       }),
     };
+  }
 
+  async getAll(search?: string, category?: string, quality?: 'VERIFIED' | 'STANDARD' | 'UNVERIFIED', archived?: boolean, pagination?: { skip: number; take: number }): Promise<Product[]> {
     return prisma.product.findMany({
-      where,
-      orderBy: {
-        name: 'asc',
-      },
+      where: this.buildWhere({ search, category, quality, archived }),
+      orderBy: { name: 'asc' },
+      ...(pagination && {
+        skip: pagination.skip,
+        take: pagination.take,
+      }),
+    });
+  }
+
+  async count(filters: ProductFilters): Promise<number> {
+    return prisma.product.count({
+      where: this.buildWhere(filters),
     });
   }
 
@@ -130,5 +149,29 @@ export class ProductRepository {
     return prisma.product.delete({
       where: { id },
     });
+  }
+
+  async archive(id: number): Promise<Product> {
+    return prisma.product.update({
+      where: { id },
+      data: { archivedAt: new Date() },
+    });
+  }
+
+  async restore(id: number): Promise<Product> {
+    return prisma.product.update({
+      where: { id },
+      data: { archivedAt: null },
+    });
+  }
+
+  async hasMealItems(productId: number): Promise<boolean> {
+    const count = await prisma.mealItem.count({
+      where: {
+        productId,
+      },
+    });
+
+    return count > 0;
   }
 }

@@ -19,7 +19,7 @@ export default function Pagination({ currentPage, totalPages, basePath, ariaLabe
 
   const linkClass = 'flex h-10 min-w-10 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-sm font-medium text-zinc-400 transition hover:border-orange-500/40 hover:bg-orange-500/5 hover:text-orange-400';
 
-  const getPageUrl = (page: number) => `${basePath}?page=${page}`;
+  const getPageUrl = (page: number) => `${basePath}${basePath.includes('?') ? '&' : '?'}page=${page}`;
 
   return (
     <nav aria-label={ariaLabel} className="mt-8 flex flex-wrap items-center justify-center gap-2">

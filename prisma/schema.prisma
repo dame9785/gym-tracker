@@ -279,12 +279,14 @@ model Product {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  archivedAt      DateTime?
 
   mealItems MealItem[]
 
   @@index([name])
   @@index([category])
   @@index([dataQuality])
+  @@index([archivedAt])
 }
 
 model CustomFood {
