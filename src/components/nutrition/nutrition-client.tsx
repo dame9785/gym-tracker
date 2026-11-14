@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 
-import { Beef, CalendarDays, ChevronLeft, ChevronRight, Cookie, Droplets, Flame, PlusCircle, Sun, Sunrise, Sunset, Utensils, Wheat } from 'lucide-react';
+import { Beef, CalendarDays, Check, ChevronLeft, ChevronRight, Cookie, Droplets, Flame, Pencil, PlusCircle, Sun, Sunrise, Sunset, Trash2, Utensils, Wheat, X } from 'lucide-react';
 
-import { getMealsByDateAction } from '@/actions/meal-actions';
+import { getMealsByDateAction, updateMealItemQuantityAction, removeMealItemAction } from '@/actions/meal-actions';
 
 import type { MealViewModel } from '@/mapping/meal-mapping';
 
@@ -58,6 +58,10 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [activeMealType, setActiveMealType] = useState<MealViewModel['type'] | null>(null);
 
+  const [editingItemId, setEditingItemId] = useState<number | null>(null);
+  const [editingQuantity, setEditingQuantity] = useState('');
+  const [isSavingItem, setIsSavingItem] = useState(false);
+
   const today = getTodayDate();
 
   // --------------------------------------------------
@@ -109,6 +113,87 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
   }
 
   // --------------------------------------------------
+  // Edit meal item quantity
+  // --------------------------------------------------
+
+  function startEditing(itemId: number, quantity: number) {
+    setEditingItemId(itemId);
+    setEditingQuantity(String(quantity));
+    setError(null);
+  }
+
+  function cancelEditing() {
+    setEditingItemId(null);
+    setEditingQuantity('');
+  }
+
+  async function saveQuantity(itemId: number) {
+    const quantity = Number(editingQuantity);
+
+    if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 10000) {
+      setError('Enter a valid quantity between 0 and 10000 grams.');
+      return;
+    }
+
+    setIsSavingItem(true);
+    setError(null);
+
+    try {
+      const result = await updateMealItemQuantityAction({
+        mealItemId: itemId,
+        quantity,
+      });
+
+      if (!result.success) {
+        setError(result.message);
+        return;
+      }
+
+      setMeals((currentMeals) => currentMeals.map((meal) => (meal.id === result.data.id ? result.data : meal)));
+
+      cancelEditing();
+    } catch {
+      setError('Could not update food quantity.');
+    } finally {
+      setIsSavingItem(false);
+    }
+  }
+
+  // --------------------------------------------------
+  // Remove meal item
+  // --------------------------------------------------
+
+  async function deleteFood(itemId: number) {
+    const confirmed = window.confirm('Are you sure you want to remove this food?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    setIsSavingItem(true);
+    setError(null);
+
+    try {
+      const result = await removeMealItemAction(itemId);
+
+      if (!result.success) {
+        setError(result.message);
+        return;
+      }
+
+      setMeals((currentMeals) => currentMeals.map((meal) => (meal.id === result.data.id ? result.data : meal)));
+
+      if (editingItemId === itemId) {
+        cancelEditing();
+      }
+    } catch {
+      setError('Could not remove food.');
+    } finally {
+      setIsSavingItem(false);
+    }
+  }
+
+  // --------------------------------------------------
   // Change date
   // --------------------------------------------------
 
@@ -124,6 +209,7 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
     }
 
     setActiveMealType(null);
+    cancelEditing();
     void loadMeals(nextDate);
   }
 
@@ -196,7 +282,7 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => changeDate(-1)} disabled={isLoading} aria-label="Previous day" className="rounded-lg border border-zinc-700 p-2.5 text-zinc-300 transition hover:border-orange-500 hover:text-orange-400 disabled:opacity-50">
+          <button type="button" onClick={() => changeDate(-1)} disabled={isLoading || isSavingItem} aria-label="Previous day" className="rounded-lg border border-zinc-700 p-2.5 text-zinc-300 transition hover:border-orange-500 hover:text-orange-400 disabled:opacity-50">
             <ChevronLeft size={18} />
           </button>
 
@@ -207,14 +293,15 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
             onChange={(event) => {
               if (event.target.value) {
                 setActiveMealType(null);
+                cancelEditing();
                 void loadMeals(event.target.value);
               }
             }}
-            disabled={isLoading}
+            disabled={isLoading || isSavingItem}
             className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-white outline-none focus:border-orange-500"
           />
 
-          <button type="button" onClick={() => changeDate(1)} disabled={isLoading || selectedDate >= today} aria-label="Next day" className="rounded-lg border border-zinc-700 p-2.5 text-zinc-300 transition hover:border-orange-500 hover:text-orange-400 disabled:opacity-50">
+          <button type="button" onClick={() => changeDate(1)} disabled={isLoading || isSavingItem || selectedDate >= today} aria-label="Next day" className="rounded-lg border border-zinc-700 p-2.5 text-zinc-300 transition hover:border-orange-500 hover:text-orange-400 disabled:opacity-50">
             <ChevronRight size={18} />
           </button>
         </div>
@@ -337,16 +424,58 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
                   {meal.items.map((item) => {
                     const foodName = item.product?.name ?? item.customFood?.name ?? item.nameSnapshot;
 
+                    const isEditing = editingItemId === item.id;
+
                     return (
                       <div key={item.id} className="py-3">
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="min-w-0">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 flex-1">
                             <p className="truncate text-sm font-medium text-white">{foodName}</p>
 
-                            <p className="mt-0.5 text-xs text-zinc-500">{item.quantity} g</p>
+                            {isEditing ? (
+                              <div className="mt-2 flex items-center gap-2">
+                                <input
+                                  type="number"
+                                  min="0.1"
+                                  max="10000"
+                                  step="0.1"
+                                  value={editingQuantity}
+                                  onChange={(event) => setEditingQuantity(event.target.value)}
+                                  disabled={isSavingItem}
+                                  aria-label="Food quantity in grams"
+                                  className="w-24 rounded-lg border border-zinc-700 bg-zinc-950 px-2 py-1.5 text-sm text-white outline-none focus:border-orange-500"
+                                />
+
+                                <span className="text-xs text-zinc-500">g</span>
+
+                                <button type="button" onClick={() => void saveQuantity(item.id)} disabled={isSavingItem} aria-label="Save quantity" title="Save quantity" className="rounded-lg p-1.5 text-green-400 transition hover:bg-green-500/10 disabled:opacity-50">
+                                  <Check size={17} />
+                                </button>
+
+                                <button type="button" onClick={cancelEditing} disabled={isSavingItem} aria-label="Cancel editing" title="Cancel editing" className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-zinc-800 disabled:opacity-50">
+                                  <X size={17} />
+                                </button>
+                              </div>
+                            ) : (
+                              <p className="mt-0.5 text-xs text-zinc-500">{item.quantity} g</p>
+                            )}
                           </div>
 
-                          <p className="shrink-0 text-sm font-semibold text-white">{Math.round(item.caloriesSnapshot)} kcal</p>
+                          <div className="flex shrink-0 items-center gap-2">
+                            <p className="text-sm font-semibold text-white">{Math.round(item.caloriesSnapshot)} kcal</p>
+
+                            {!isEditing && (
+                              <>
+                                <button type="button" onClick={() => startEditing(item.id, item.quantity)} disabled={isSavingItem} aria-label={`Edit ${foodName}`} title="Edit quantity" className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-zinc-800 hover:text-orange-400 disabled:opacity-50">
+                                  <Pencil size={15} />
+                                </button>
+
+                                <button type="button" onClick={() => void deleteFood(item.id)} disabled={isSavingItem} aria-label={`Remove ${foodName}`} title="Remove food" className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50">
+                                  <Trash2 size={15} />
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </div>
 
                         {/* Macronutrients */}
