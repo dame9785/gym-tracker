@@ -340,18 +340,21 @@ prisma/migrations/
 
 The following npm scripts are available in the project.
 
-| Command                     | Description                                        |
-| --------------------------- | -------------------------------------------------- |
-| `npm run dev`               | Starts the development server                      |
-| `npm run build`             | Generates Prisma Client and builds the application |
-| `npm run start`             | Starts the production server                       |
-| `npm run lint`              | Runs ESLint                                        |
-| `npm run db:generate`       | Generates Prisma Client                            |
-| `npm run db:migrate:dev`    | Creates and applies development migrations         |
-| `npm run db:migrate:deploy` | Applies pending production migrations              |
-| `npm run db:migrate:status` | Checks migration status                            |
-| `npm run typecheck`         | Runs Typescript errors                             |
-| `npm run db:seed`           | Seeds the database with predefined food products   |
+| Command                      | Description                                              |
+| ---------------------------- | -------------------------------------------------------- |
+| `npm run dev`                | Starts the development server                            |
+| `npm run build`              | Generates Prisma Client and builds the application       |
+| `npm run start`              | Starts the production server                             |
+| `npm run lint`               | Runs ESLint                                              |
+| `npm run db:generate`        | Generates Prisma Client                                  |
+| `npm run db:migrate:dev`     | Creates and applies development migrations               |
+| `npm run db:migrate:deploy`  | Applies pending production migrations                    |
+| `npm run db:migrate:status`  | Checks migration status                                  |
+| `npm run typecheck`          | Runs Typescript errors                                   |
+| `npm run db:seed`            | Seeds the database with predefined food products         |
+| `npm run db:seed:local`      | Seeds the local database using .env                      |
+| `npm run db:seed:production` | Seeds the production database using.env.production.local |
+| `npm run db:seed:all`        | Seeds both local and production databases                |
 
 ### Additional Development Commands
 
