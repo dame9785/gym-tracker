@@ -20,6 +20,7 @@ const navigationItems = [
   { label: 'Weight', href: '/log-weight', icon: FaWeight },
   { label: 'Progress', href: '/progress', icon: BsBarChartLine },
   { label: 'Exercises', href: '/exercises', icon: FaPersonRunning },
+  { label: 'Nutrition', href: '/nutrition', icon: FaHistory },
   { label: 'History', href: '/history', icon: FaHistory },
   { label: 'Settings', href: '/account/setting', icon: IoIosSettings },
 ];
