@@ -321,7 +321,7 @@ model Meal {
   user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   items MealItem[]
 
-  @@index([userId, date])
+  @@unique([userId, date, type])
 }
 
 model MealItem {
