@@ -310,6 +310,20 @@ const products: ProductSeed[] = [
     dataQuality: 'STANDARD',
     nutritionSource: 'Generiskt standardvärde – behöver verifieras',
   },
+
+  {
+    slug: 'axa-havregryn',
+    name: 'Havregryn',
+    brand: 'AXA',
+    category: 'Kolhydrater',
+    calories: 367,
+    protein: 13,
+    carbs: 58,
+    fat: 6.8,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Mathem – AXA Havregryn 1,5 kg, näringsvärde per 100 g',
+  },
+
   {
     slug: 'ris-okokt',
     name: 'Ris, okokt',
@@ -401,6 +415,18 @@ const products: ProductSeed[] = [
     fat: 81,
     dataQuality: 'STANDARD',
     nutritionSource: 'Generiskt standardvärde – varierar mellan märken',
+  },
+  {
+    slug: 'arla-mild-kvarg-vanilj',
+    name: 'Mild Kvarg Vanilj Utan Tillsatt Socker 0,2%',
+    brand: 'Arla',
+    category: 'Mejeri',
+    calories: 56,
+    protein: 8.8,
+    carbs: 4,
+    fat: 0.2,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Arla Foods AB – Mathem product information (1000 g)',
   },
 ];
 

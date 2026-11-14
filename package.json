@@ -12,7 +12,10 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:status": "prisma migrate status",
-    "db:seed": "tsx prisma/seeds/products.ts"
+    "db:seed": "tsx prisma/seeds/products.ts",
+    "db:seed:local": "dotenv -e .env -- npm run db:seed",
+    "db:seed:production": "dotenv -e .env.production.local -- npm run db:seed",
+    "db:seed:all": "npm run db:seed:local && npm run db:seed:production"
   },
   "prisma": {
     "seed": "tsx prisma/seeds/products.ts"

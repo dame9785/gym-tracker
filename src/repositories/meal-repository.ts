@@ -11,6 +11,7 @@ const mealWithItemsInclude = {
     include: {
       product: true,
       customFood: true,
+    },
     orderBy: {
       createdAt: 'asc',
     },
