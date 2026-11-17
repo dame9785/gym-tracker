@@ -630,9 +630,14 @@ Screenshots are stored in the `screenshots/` directory.
 
 ![Login](screenshots/Login-page.png)
 
+### Register
+
+![Login](screenshots/Register-page.png)
+
 ### Dashboard
 
-![Dashboard](screenshots/Dashboard.png)
+![Dashboard](screenshots/Dashboard_1-page.png)
+![Dashboard](screenshots/Dashboard_2-page.png)
 
 ### Exercises
 
