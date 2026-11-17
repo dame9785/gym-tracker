@@ -4,18 +4,17 @@ import { useState } from 'react';
 
 import { Cookie, Sun, Sunrise, Sunset, Utensils } from 'lucide-react';
 
-import { getMealsByDateAction, updateMealItemQuantityAction, removeMealItemAction } from '@/actions/meal-actions';
-
-import { calculateAndSaveNutritionGoalsAction } from '@/actions/goal-actions';
-
 import type { MealViewModel } from '@/mapping/meal-mapping';
+import type { NutritionGoals } from '@/types/nutrition-types';
 
 import NutritionOverview from '@/components/nutrition/nutrition-overview';
 import MealSection from '@/components/nutrition/meal-section';
 import NutritionDateNavigation from '@/components/nutrition/nutrition-date-navigation';
 
 import { calculateMealNutrition } from '@/utils/meal-calculations';
-import type { NutritionGoals } from '@/types/nutrition-types';
+import { useNutrition } from '@/hooks/use-nutrition';
+
+import { getTodayDate } from '@/utils/date-utils';
 
 type Props = {
   initialMeals: MealViewModel[];
@@ -72,29 +71,18 @@ function formatDateInput(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-function getTodayDate(): string {
-  return formatDateInput(new Date());
-}
-
-// --------------------------------------------------
-// Component
-// --------------------------------------------------
-
 export default function NutritionClient({ initialMeals, initialDate, initialGoals }: Props) {
-  const [meals, setMeals] = useState(initialMeals);
+  const { meals, goals, isLoading, isCalculatingGoals, isSavingItem, error, setError, loadMeals, calculateNutritionGoals, saveQuantity, deleteFood } = useNutrition({
+    initialMeals,
+    initialGoals,
+  });
+
   const [selectedDate, setSelectedDate] = useState(initialDate);
-  const [goals, setGoals] = useState(initialGoals);
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [isCalculatingGoals, setIsCalculatingGoals] = useState(false);
-
-  const [error, setError] = useState<string | null>(null);
 
   const [activeMealType, setActiveMealType] = useState<MealViewModel['type'] | null>(null);
 
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [editingQuantity, setEditingQuantity] = useState('');
-  const [isSavingItem, setIsSavingItem] = useState(false);
 
   const today = getTodayDate();
 
@@ -103,55 +91,6 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
   // --------------------------------------------------
 
   const totals = calculateMealNutrition(meals.flatMap((meal) => meal.items));
-
-  // --------------------------------------------------
-  // Load meals by date
-  // --------------------------------------------------
-
-  async function loadMeals(date: string) {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await getMealsByDateAction(date);
-
-      if (!result.success) {
-        setError(result.message);
-        return;
-      }
-
-      setMeals(result.data);
-      setSelectedDate(date);
-    } catch {
-      setError('Could not load meals.');
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  // --------------------------------------------------
-  // Calculate nutrition goals
-  // --------------------------------------------------
-
-  async function calculateNutritionGoals() {
-    setIsCalculatingGoals(true);
-    setError(null);
-
-    try {
-      const result = await calculateAndSaveNutritionGoalsAction();
-
-      if (!result.success) {
-        setError(result.message);
-        return;
-      }
-
-      setGoals(result.data.goal);
-    } catch {
-      setError('Could not calculate nutrition goals.');
-    } finally {
-      setIsCalculatingGoals(false);
-    }
-  }
 
   // --------------------------------------------------
   // Edit meal item quantity
@@ -168,35 +107,13 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
     setEditingQuantity('');
   }
 
-  async function saveQuantity(itemId: number) {
+  async function handleSaveQuantity(itemId: number) {
     const quantity = Number(editingQuantity);
 
-    if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 10000) {
-      setError('Enter a valid quantity between 0 and 10000 grams.');
-      return;
-    }
+    const success = await saveQuantity(itemId, quantity);
 
-    setIsSavingItem(true);
-    setError(null);
-
-    try {
-      const result = await updateMealItemQuantityAction({
-        mealItemId: itemId,
-        quantity,
-      });
-
-      if (!result.success) {
-        setError(result.message);
-        return;
-      }
-
-      setMeals((currentMeals) => currentMeals.map((meal) => (meal.id === result.data.id ? result.data : meal)));
-
+    if (success) {
       cancelEditing();
-    } catch {
-      setError('Could not update food quantity.');
-    } finally {
-      setIsSavingItem(false);
     }
   }
 
@@ -204,39 +121,34 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
   // Remove meal item
   // --------------------------------------------------
 
-  async function deleteFood(itemId: number) {
+  async function handleDeleteFood(itemId: number) {
     const confirmed = window.confirm('Are you sure you want to remove this food?');
 
     if (!confirmed) {
       return;
     }
 
-    setIsSavingItem(true);
-    setError(null);
+    const success = await deleteFood(itemId);
 
-    try {
-      const result = await removeMealItemAction(itemId);
-
-      if (!result.success) {
-        setError(result.message);
-        return;
-      }
-
-      setMeals((currentMeals) => currentMeals.map((meal) => (meal.id === result.data.id ? result.data : meal)));
-
-      if (editingItemId === itemId) {
-        cancelEditing();
-      }
-    } catch {
-      setError('Could not remove food.');
-    } finally {
-      setIsSavingItem(false);
+    if (success && editingItemId === itemId) {
+      cancelEditing();
     }
   }
 
   // --------------------------------------------------
   // Change date
   // --------------------------------------------------
+
+  function handleChangeDate(date: string) {
+    setActiveMealType(null);
+    cancelEditing();
+
+    void loadMeals(date).then((result) => {
+      if (result) {
+        setSelectedDate(date);
+      }
+    });
+  }
 
   function changeDate(days: number) {
     const date = new Date(`${selectedDate}T12:00:00`);
@@ -249,10 +161,7 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
       return;
     }
 
-    setActiveMealType(null);
-    cancelEditing();
-
-    void loadMeals(nextDate);
+    handleChangeDate(nextDate);
   }
 
   // --------------------------------------------------
@@ -262,26 +171,19 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
   return (
     <div className="space-y-6">
       {/* Date navigation */}
-      <NutritionDateNavigation
-        selectedDate={selectedDate}
-        today={today}
-        isLoading={isLoading}
-        isSavingItem={isSavingItem}
-        onChangeDate={(date) => {
-          setActiveMealType(null);
-          cancelEditing();
-          void loadMeals(date);
-        }}
-        onNavigateDate={changeDate}
-      />
+
+      <NutritionDateNavigation selectedDate={selectedDate} today={today} isLoading={isLoading} isSavingItem={isSavingItem} onChangeDate={handleChangeDate} onNavigateDate={changeDate} />
 
       {/* Error message */}
+
       {error && <p className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
 
       {/* Daily nutrition overview */}
+
       <NutritionOverview totals={totals} goals={goals} isLoading={isLoading} />
 
       {/* Calculate nutrition goals */}
+
       {!goals && (
         <section className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-4">
           <h3 className="font-semibold text-white">Your nutrition goals are not set yet</h3>
@@ -318,12 +220,12 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
               isSavingItem={isSavingItem}
               onAddFood={() => setActiveMealType(section.type)}
               onCloseFoodSearch={() => setActiveMealType(null)}
-              onFoodAdded={() => loadMeals(selectedDate)}
+              onFoodAdded={() => loadMeals(selectedDate).then(() => {})}
               onStartEditing={startEditing}
               onCancelEditing={cancelEditing}
               onQuantityChange={setEditingQuantity}
-              onSaveQuantity={(itemId) => void saveQuantity(itemId)}
-              onDeleteFood={(itemId) => void deleteFood(itemId)}
+              onSaveQuantity={(itemId) => void handleSaveQuantity(itemId)}
+              onDeleteFood={(itemId) => void handleDeleteFood(itemId)}
             />
           );
         })}
