@@ -26,7 +26,7 @@ function getDateKey(value: string): string {
     return '';
   }
 
-  // Gruppera set efter lokal kalenderdag.
+  // Group sets by local calendar day.
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
@@ -37,14 +37,14 @@ function getDateKey(value: string): string {
 function formatDateLabel(dateKey: string): string {
   const date = new Date(`${dateKey}T12:00:00`);
 
-  return date.toLocaleDateString('sv-SE', {
+  return date.toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'short',
   });
 }
 
 function formatValue(value: number): string {
-  return value.toLocaleString('sv-SE', {
+  return value.toLocaleString('en-US', {
     maximumFractionDigits: 2,
   });
 }
@@ -90,23 +90,23 @@ export default function ExerciseChart({ history, metric }: Props) {
       });
   }, [history, metric]);
 
-  const metricLabel = metric === 'weight' ? 'Vikt' : metric === 'reps' ? 'Repetitioner' : 'Tid';
+  const metricLabel = metric === 'weight' ? 'Weight' : metric === 'reps' ? 'Reps' : 'Time';
 
-  const unit = metric === 'weight' ? 'kg' : metric === 'reps' ? 'reps' : 'sek';
+  const unit = metric === 'weight' ? 'kg' : metric === 'reps' ? 'reps' : 'sec';
 
   const maxValue = data.reduce((max, point) => Math.max(max, point.value), 0);
 
   if (data.length === 0) {
-    return <div className="flex h-64 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-center text-sm text-zinc-500">Ingen historik att visa ännu. Registrera ett träningsresultat för att se utvecklingen.</div>;
+    return <div className="flex h-64 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-center text-sm text-zinc-500">No training history available yet. Record a workout result to start tracking your progress.</div>;
   }
 
   return (
     <div className="mt-4 rounded-xl border border-zinc-800 bg-zinc-950/50 p-3 sm:p-5">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="text-sm font-medium text-white">{metricLabel} per träningsdag</p>
+          <p className="text-sm font-medium text-white">{metricLabel} per Training Day</p>
 
-          <p className="mt-1 text-xs text-zinc-500">Varje punkt visar det högsta registrerade värdet den dagen.</p>
+          <p className="mt-1 text-xs text-zinc-500">Each point shows the highest recorded value for that day.</p>
         </div>
 
         <div className="text-right">
@@ -114,7 +114,7 @@ export default function ExerciseChart({ history, metric }: Props) {
             {formatValue(maxValue)} {unit}
           </p>
 
-          <p className="text-xs text-zinc-500">Bästa dagsresultat</p>
+          <p className="text-xs text-zinc-500">Best Daily Result</p>
         </div>
       </div>
 
@@ -142,7 +142,7 @@ export default function ExerciseChart({ history, metric }: Props) {
                 return (
                   <div className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 shadow-xl">
                     <p className="text-xs text-zinc-400">
-                      {new Date(`${point.dateKey}T12:00:00`).toLocaleDateString('sv-SE', {
+                      {new Date(`${point.dateKey}T12:00:00`).toLocaleDateString('en-US', {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric',
@@ -154,7 +154,7 @@ export default function ExerciseChart({ history, metric }: Props) {
                     </p>
 
                     <p className="mt-1 text-xs text-zinc-500">
-                      {point.setCount} {point.setCount === 1 ? 'set registrerat' : 'set registrerade'}
+                      {point.setCount} {point.setCount === 1 ? 'set recorded' : 'sets recorded'}
                     </p>
                   </div>
                 );
@@ -189,7 +189,7 @@ export default function ExerciseChart({ history, metric }: Props) {
         </ResponsiveContainer>
       </div>
 
-      <p className="mt-3 text-xs text-zinc-500">{data.length === 1 ? 'Du har en registrerad träningsdag. När du registrerar fler pass visas utvecklingen mellan dagarna.' : `${data.length} träningsdagar visas från äldsta till senaste registrering.`}</p>
+      <p className="mt-3 text-xs text-zinc-500">{data.length === 1 ? 'You have one recorded training day. As you record more workouts, your progress over time will appear here.' : `${data.length} training days displayed from oldest to newest entry.`}</p>
     </div>
   );
 }

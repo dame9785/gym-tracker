@@ -39,7 +39,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
 
   const bestSeconds = history.reduce((best, entry) => ((entry.seconds ?? 0) > 0 ? Math.max(best, entry.seconds ?? 0) : best), 0);
 
-  const trainingDays = new Set(history.map((entry) => new Date(entry.loggedAt).toLocaleDateString('sv-SE'))).size;
+  const trainingDays = new Set(history.map((entry) => new Date(entry.loggedAt).toLocaleDateString('en-US'))).size;
 
   const bestWeightEntry = history.find((entry) => entry.weight > 0 && entry.weight === bestWeight);
 
@@ -96,8 +96,8 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
         </div>
 
         <div>
-          <h2 className="font-semibold text-white">Träningsprogression</h2>
-          <p className="text-sm text-zinc-500">Följ dina resultat och se hur de utvecklas över tid.</p>
+          <h2 className="font-semibold text-white">Training Progress</h2>
+          <p className="text-sm text-zinc-500">Track your performance and see how it improves over time.</p>
         </div>
       </header>
 
@@ -105,7 +105,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
         <>
           <div className="mt-6">
             <label htmlFor="progress-exercise" className="mb-2 block text-sm font-medium text-zinc-400">
-              Välj övning
+              Select Exercise
             </label>
 
             <select
@@ -131,23 +131,23 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                 <>
                   <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
                     <StatCard
-                      label={isPlank ? 'Senaste tid' : 'Senaste resultat'}
-                      value={isPlank ? `${current?.seconds ?? 0} sek` : `${current?.weight ?? 0} kg`}
-                      detail={isPlank ? 'Senast registrerade planktiden' : current ? `${current.reps} repetitioner` : 'Inga resultat'}
+                      label={isPlank ? 'Latest Time' : 'Latest Result'}
+                      value={isPlank ? `${current?.seconds ?? 0} sec` : `${current?.weight ?? 0} kg`}
+                      detail={isPlank ? 'Most recently recorded plank time' : current ? `${current.reps} reps` : 'No results'}
                       icon={<Weight className="h-4 w-4" />}
                     />
 
                     <StatCard
-                      label={isPlank ? 'Personligt tidsrekord' : 'Bästa vikt'}
-                      value={isPlank ? `${bestSeconds} sek` : `${bestWeight} kg`}
-                      detail={isPlank ? (bestSecondsEntry ? `Uppnått ${new Date(bestSecondsEntry.loggedAt).toLocaleDateString('sv-SE')}` : 'Inget rekord ännu') : bestWeightEntry ? `Uppnått ${new Date(bestWeightEntry.loggedAt).toLocaleDateString('sv-SE')}` : 'Ingen giltig vikt registrerad'}
+                      label={isPlank ? 'Personal Time Record' : 'Best Weight'}
+                      value={isPlank ? `${bestSeconds} sec` : `${bestWeight} kg`}
+                      detail={isPlank ? (bestSecondsEntry ? `Achieved ${new Date(bestSecondsEntry.loggedAt).toLocaleDateString('en-US')}` : 'No record yet') : bestWeightEntry ? `Achieved ${new Date(bestWeightEntry.loggedAt).toLocaleDateString('en-US')}` : 'No valid weight recorded'}
                       icon={<Trophy className="h-4 w-4" />}
                     />
 
                     <StatCard
-                      label={isPlank ? 'Träningsdagar' : 'Flest repetitioner'}
+                      label={isPlank ? 'Training Days' : 'Most Reps'}
                       value={isPlank ? String(trainingDays) : String(bestReps)}
-                      detail={isPlank ? 'Dagar med registrerad träning' : bestRepsEntry ? `Uppnått ${new Date(bestRepsEntry.loggedAt).toLocaleDateString('sv-SE')}` : 'Inga giltiga repetitioner registrerade'}
+                      detail={isPlank ? 'Days with recorded training' : bestRepsEntry ? `Achieved ${new Date(bestRepsEntry.loggedAt).toLocaleDateString('en-US')}` : 'No valid reps recorded'}
                       icon={<Repeat2 className="h-4 w-4" />}
                     />
                   </div>
@@ -157,32 +157,32 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                       <div className="flex items-center gap-2 text-zinc-400">
                         {weightChange !== null && weightChange > 0 ? <ArrowUpRight className="h-4 w-4 text-emerald-400" /> : weightChange !== null && weightChange < 0 ? <ArrowDownRight className="h-4 w-4 text-rose-400" /> : <TrendingUp className="h-4 w-4 text-zinc-400" />}
 
-                        <h3 className="text-sm font-medium">Viktutveckling sedan första registreringen</h3>
+                        <h3 className="text-sm font-medium">Weight Progress Since First Entry</h3>
                       </div>
 
                       <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                         <p className={`text-2xl font-bold ${weightChange !== null && weightChange > 0 ? 'text-emerald-400' : weightChange !== null && weightChange < 0 ? 'text-rose-400' : 'text-white'}`}>
                           {weightChange !== null && weightChange > 0 ? '+' : ''}
-                          {weightChange !== null ? weightChange.toLocaleString('sv-SE') : '—'} kg
+                          {weightChange !== null ? weightChange.toLocaleString('en-US') : '—'} kg
                         </p>
 
-                        <p className="text-sm text-zinc-400">{weightChangePercent !== null ? `(${weightChangePercent > 0 ? '+' : ''}${weightChangePercent.toLocaleString('sv-SE', { maximumFractionDigits: 1 })} %)` : '(Procent kan inte beräknas från 0 kg)'}</p>
+                        <p className="text-sm text-zinc-400">{weightChangePercent !== null ? `(${weightChangePercent > 0 ? '+' : ''}${weightChangePercent.toLocaleString('en-US', { maximumFractionDigits: 1 })}%)` : '(Percentage cannot be calculated from 0 kg)'}</p>
                       </div>
 
                       <p className="mt-2 text-xs text-zinc-500">
-                        Första: {first.weight} kg · Senaste: {current.weight} kg
+                        First: {first.weight} kg · Latest: {current.weight} kg
                       </p>
                     </div>
                   )}
 
                   {isPlank && first && current && (
                     <div className="mt-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
-                      <h3 className="text-sm font-medium text-zinc-400">Tidsutveckling sedan första registreringen</h3>
+                      <h3 className="text-sm font-medium text-zinc-400">Time Progress Since First Entry</h3>
 
                       <p className="mt-2 text-sm text-zinc-300">
-                        Första: {first.seconds ?? 0} sekunder
+                        First: {first.seconds ?? 0} seconds
                         {' · '}
-                        Senaste: {current.seconds ?? 0} sekunder
+                        Latest: {current.seconds ?? 0} seconds
                       </p>
                     </div>
                   )}
@@ -190,21 +190,21 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                   <div className="mt-8">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                       <div>
-                        <h3 className="text-lg font-semibold text-white">Utveckling över tid</h3>
-                        <p className="mt-1 text-sm text-zinc-500">{isPlank ? 'Följ hur länge du kan hålla plankan.' : 'Välj vilket resultat du vill följa i grafen.'}</p>
+                        <h3 className="text-lg font-semibold text-white">Progress Over Time</h3>
+                        <p className="mt-1 text-sm text-zinc-500">{isPlank ? 'Track how long you can hold a plank.' : 'Choose which metric you want to track in the chart.'}</p>
                       </div>
 
-                      <div className="inline-flex w-fit rounded-xl border border-zinc-800 bg-zinc-950 p-1" role="group" aria-label="Välj mätvärde för grafen">
+                      <div className="inline-flex w-fit rounded-xl border border-zinc-800 bg-zinc-950 p-1" role="group" aria-label="Select chart metric">
                         {isPlank ? (
-                          <span className="rounded-lg bg-purple-500/15 px-4 py-2 text-sm text-purple-300">Tid (sekunder)</span>
+                          <span className="rounded-lg bg-purple-500/15 px-4 py-2 text-sm text-purple-300">Time (seconds)</span>
                         ) : (
                           <>
                             <button type="button" onClick={() => setChartMetric('weight')} aria-pressed={activeChartMetric === 'weight'} className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'weight' ? 'bg-purple-500/15 text-purple-300' : 'text-zinc-400 hover:text-white'}`}>
-                              Vikt (kg)
+                              Weight (kg)
                             </button>
 
                             <button type="button" onClick={() => setChartMetric('reps')} aria-pressed={activeChartMetric === 'reps'} className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'reps' ? 'bg-purple-500/15 text-purple-300' : 'text-zinc-400 hover:text-white'}`}>
-                              Repetitioner
+                              Reps
                             </button>
                           </>
                         )}
@@ -216,18 +216,18 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
 
                   <div className="mt-8">
                     <div className="mb-5">
-                      <h3 className="text-lg font-semibold text-white">Träningshistorik</h3>
-                      <p className="mt-1 text-sm text-zinc-500">Dina resultat och set för varje träningsdag.</p>
+                      <h3 className="text-lg font-semibold text-white">Training History</h3>
+                      <p className="mt-1 text-sm text-zinc-500">Your results and sets for each training day.</p>
                     </div>
 
                     <div className="mb-5 grid grid-cols-2 gap-3">
                       <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-                        <p className="text-sm text-zinc-400">Träningsdagar</p>
+                        <p className="text-sm text-zinc-400">Training Days</p>
                         <p className="mt-2 text-2xl font-bold text-white">{trainingDays}</p>
                       </div>
 
                       <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-                        <p className="text-sm text-zinc-400">Totalt antal set</p>
+                        <p className="text-sm text-zinc-400">Total Sets</p>
                         <p className="mt-2 text-2xl font-bold text-orange-400">{history.length}</p>
                       </div>
                     </div>
@@ -235,7 +235,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                     <div className="space-y-4">
                       {Array.from(
                         history.reduce((groups, entry) => {
-                          const dateKey = new Date(entry.loggedAt).toLocaleDateString('sv-SE');
+                          const dateKey = new Date(entry.loggedAt).toLocaleDateString('en-CA');
 
                           const existing = groups.get(dateKey) ?? [];
                           existing.push(entry);
@@ -250,7 +250,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                             <div className="flex items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-900/70 px-4 py-4 sm:px-5">
                               <div>
                                 <h4 className="font-semibold text-white">
-                                  {new Date(`${dateKey}T12:00:00`).toLocaleDateString('sv-SE', {
+                                  {new Date(`${dateKey}T12:00:00`).toLocaleDateString('en-US', {
                                     weekday: 'short',
                                     day: 'numeric',
                                     month: 'long',
@@ -258,13 +258,13 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                                   })}
                                 </h4>
                                 <p className="mt-1 text-xs text-zinc-500">
-                                  {entries.length} {entries.length === 1 ? 'set registrerat' : 'set registrerade'}
+                                  {entries.length} {entries.length === 1 ? 'set recorded' : 'sets recorded'}
                                 </p>
                               </div>
 
                               <span className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-orange-500/20 bg-orange-500/10 px-3 py-2 text-sm font-semibold text-orange-300">
                                 <Repeat2 className="h-4 w-4" />
-                                {entries.length} set
+                                {entries.length} sets
                               </span>
                             </div>
 
@@ -280,17 +280,17 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/80 text-sm font-semibold text-zinc-300">{index + 1}</div>
 
                                       <div className="min-w-0">
-                                        <p className="font-semibold text-white">{isPlank ? `${entry.seconds ?? 0} sekunder` : `${entry.weight ?? 0} kg × ${entry.reps} reps`}</p>
+                                        <p className="font-semibold text-white">{isPlank ? `${entry.seconds ?? 0} seconds` : `${entry.weight ?? 0} kg × ${entry.reps} reps`}</p>
                                         <p className="mt-1 text-xs text-zinc-500">Set {index + 1}</p>
                                       </div>
                                     </div>
 
                                     <div className="flex shrink-0 flex-col items-end gap-2">
-                                      {isPlank && isSecondsRecord && <RecordBadge label="Tidsrekord" />}
+                                      {isPlank && isSecondsRecord && <RecordBadge label="Time Record" />}
 
-                                      {!isPlank && isWeightRecord && <RecordBadge label="Viktrekord" />}
+                                      {!isPlank && isWeightRecord && <RecordBadge label="Weight Record" />}
 
-                                      {!isPlank && isRepsRecord && <RecordBadge label="Repsrekord" variant="green" />}
+                                      {!isPlank && isRepsRecord && <RecordBadge label="Reps Record" variant="green" />}
                                     </div>
                                   </div>
                                 );
@@ -302,13 +302,13 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                   </div>
                 </>
               ) : (
-                <p className="mt-5 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-400">Det finns inga registrerade resultat för den här övningen ännu.</p>
+                <p className="mt-5 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-400">No results have been recorded for this exercise yet.</p>
               )}
             </>
           )}
         </>
       ) : (
-        <p className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-400">Ingen träningshistorik finns ännu. Slutför ett träningspass och registrera dina resultat för att börja följa utvecklingen.</p>
+        <p className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-400">No training history available yet. Complete a workout and record your results to start tracking your progress.</p>
       )}
     </section>
   );

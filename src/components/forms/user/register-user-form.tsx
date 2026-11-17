@@ -166,7 +166,7 @@ export default function RegisterForm() {
               }
               error={errors.email?.[0]}
             >
-              <FormInput name="email" type="email" id="email" autoComplete="email" value={formData.email} placeholder="E-post..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.email?.length} />
+              <FormInput name="email" type="email" id="email" autoComplete="email" value={formData.email} placeholder="Email..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.email?.length} />
             </FormField>
           </div>
 
@@ -177,12 +177,12 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaUser className={FormStyles.formIcon} />
-                  Användarnamn
+                  Username
                 </span>
               }
               error={errors.username?.[0]}
             >
-              <FormInput name="username" type="text" id="username" autoComplete="username" value={formData.username} placeholder="Användarnamn..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.username?.length} />
+              <FormInput name="username" type="text" id="username" autoComplete="username" value={formData.username} placeholder="Username..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.username?.length} />
             </FormField>
           </div>
 
@@ -193,12 +193,12 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaSignature className={FormStyles.formIcon} />
-                  Namn
+                  First name
                 </span>
               }
               error={errors.firstName?.[0]}
             >
-              <FormInput name="firstName" type="text" id="firstName" autoComplete="given-name" value={formData.firstName} placeholder="Namn..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.firstName?.length} />
+              <FormInput name="firstName" type="text" id="firstName" autoComplete="given-name" value={formData.firstName} placeholder="First name..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.firstName?.length} />
             </FormField>
           </div>
 
@@ -209,12 +209,12 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaSignature className={FormStyles.formIcon} />
-                  Efternamn
+                  Last name
                 </span>
               }
               error={errors.lastName?.[0]}
             >
-              <FormInput name="lastName" type="text" id="lastName" autoComplete="family-name" value={formData.lastName} placeholder="Efternamn..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.lastName?.length} />
+              <FormInput name="lastName" type="text" id="lastName" autoComplete="family-name" value={formData.lastName} placeholder="Last name..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.lastName?.length} />
             </FormField>
           </div>
 
@@ -225,10 +225,10 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaPhone className={FormStyles.formIcon} />
-                  Telefonnummer
+                  Phone number
                 </span>
               }
-              hint="Exempel: 076-123 45 67 eller +46 76 123 45 67"
+              hint="Example: 076-123 45 67 or +46 76 123 45 67"
               error={errors.phoneNumber?.[0]}
             >
               <FormInput name="phoneNumber" type="tel" id="phoneNumber" autoComplete="tel" inputMode="tel" value={formData.phoneNumber} placeholder="076-123 45 67" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.phoneNumber?.length} />
@@ -242,12 +242,12 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaWeightScale className={FormStyles.formIcon} />
-                  Kroppsvikt (kg)
+                  Body weight (kg)
                 </span>
               }
               error={errors.bodyWeight?.[0]}
             >
-              <FormInput name="bodyWeight" type="number" step="0.1" min="20" max="400" id="bodyWeight" value={formData.bodyWeight || ''} placeholder="Exempel: 70.5" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.bodyWeight?.length} />
+              <FormInput name="bodyWeight" type="number" step="0.1" min="20" max="400" id="bodyWeight" value={formData.bodyWeight || ''} placeholder="Example: 70.5" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.bodyWeight?.length} />
             </FormField>
           </div>
 
@@ -258,17 +258,17 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaLock className={FormStyles.formIcon} />
-                  Lösenord
+                  Password
                 </span>
               }
               error={formData.password.length === 0 ? errors.password?.[0] : undefined}
             >
-              <FormInput value={formData.password} name="password" type="password" id="password" autoComplete="new-password" placeholder="Lösenord..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.password?.length} />
+              <FormInput value={formData.password} name="password" type="password" id="password" autoComplete="new-password" placeholder="Password..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.password?.length} />
             </FormField>
 
             {formData.password.length > 0 && (
               <div>
-                <p className={FormStyles.passwordRequirementsTitle}>Lösenordet måste uppfylla följande krav:</p>
+                <p className={FormStyles.passwordRequirementsTitle}>Your password must meet the following requirements:</p>
 
                 <ul className={FormStyles.passwordRequirements}>
                   {passwordRequirements.map((requirement) => (
@@ -289,12 +289,12 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaLock className={FormStyles.formIcon} />
-                  Bekräfta lösenord
+                  Confirm password
                 </span>
               }
               error={errors.confirmPassword?.[0]}
             >
-              <FormInput value={formData.confirmPassword} name="confirmPassword" type="password" id="confirmPassword" autoComplete="new-password" placeholder="Bekräfta lösenord..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.confirmPassword?.length} />
+              <FormInput value={formData.confirmPassword} name="confirmPassword" type="password" id="confirmPassword" autoComplete="new-password" placeholder="Confirm password..." onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.confirmPassword?.length} />
             </FormField>
           </div>
         </div>
@@ -308,12 +308,12 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaRulerVertical className={FormStyles.formIcon} />
-                  Längd (cm)
+                  Height (cm)
                 </span>
               }
               error={errors.height?.[0]}
             >
-              <FormInput name="height" type="number" step="0.1" min="100" max="250" id="height" value={formData.height || ''} placeholder="Exempel: 175" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.height?.length} />
+              <FormInput name="height" type="number" step="0.1" min="100" max="250" id="height" value={formData.height || ''} placeholder="Example: 175" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.height?.length} />
             </FormField>
           </div>
 
@@ -324,16 +324,16 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaMars className={FormStyles.formIcon} />
-                  Kön
+                  Gender
                 </span>
               }
               error={errors.gender?.[0]}
             >
               <FormSelect id="gender" name="gender" value={formData.gender} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.gender?.length}>
-                <option value="">Välj kön</option>
-                <option value={Gender.MALE}>Man</option>
-                <option value={Gender.FEMALE}>Kvinna</option>
-                <option value={Gender.OTHER}>Annat</option>
+                <option value="">Select gender</option>
+                <option value={Gender.MALE}>Male</option>
+                <option value={Gender.FEMALE}>Female</option>
+                <option value={Gender.OTHER}>Other</option>
               </FormSelect>
             </FormField>
           </div>
@@ -346,15 +346,15 @@ export default function RegisterForm() {
                 label={
                   <span className="flex items-center gap-2">
                     <FaMars className={FormStyles.formIcon} />
-                    Metaboliskt kön
+                    Metabolic sex
                   </span>
                 }
                 error={errors.metabolicSex?.[0]}
               >
                 <FormSelect id="metabolicSex" name="metabolicSex" value={formData.metabolicSex ?? ''} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.metabolicSex?.length}>
-                  <option value="">Välj metaboliskt kön</option>
-                  <option value="MALE">Man</option>
-                  <option value="FEMALE">Kvinna</option>
+                  <option value="">Select metabolic sex</option>
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
                 </FormSelect>
               </FormField>
             </div>
@@ -367,7 +367,7 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaCakeCandles className={FormStyles.formIcon} />
-                  Född
+                  Date of birth
                 </span>
               }
               error={errors.birthDate?.[0]}
@@ -383,19 +383,19 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaPersonWalking className={FormStyles.formIcon} />
-                  Aktivitetsnivå
+                  Activity level
                 </span>
               }
-              hint="Välj det alternativ som bäst beskriver din vanliga aktivitetsnivå."
+              hint="Choose the option that best describes your usual activity level."
               error={errors.activityLevel?.[0]}
             >
               <FormSelect id="activityLevel" name="activityLevel" value={formData.activityLevel} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.activityLevel?.length}>
-                <option value="">Välj aktivitetsnivå</option>
-                <option value={ActivityLevel.SEDENTARY}>Stillasittande – lite eller ingen träning</option>
-                <option value={ActivityLevel.LIGHT}>Lätt – träning 1–3 dagar per vecka</option>
-                <option value={ActivityLevel.MODERATE}>Måttlig – träning 3–5 dagar per vecka</option>
-                <option value={ActivityLevel.ACTIVE}>Aktiv – träning 6–7 dagar per vecka</option>
-                <option value={ActivityLevel.VERY_ACTIVE}>Mycket aktiv – intensiv träning dagligen</option>
+                <option value="">Select activity level</option>
+                <option value={ActivityLevel.SEDENTARY}>Sedentary – little or no exercise</option>
+                <option value={ActivityLevel.LIGHT}>Light – exercise 1–3 days per week</option>
+                <option value={ActivityLevel.MODERATE}>Moderate – exercise 3–5 days per week</option>
+                <option value={ActivityLevel.ACTIVE}>Active – exercise 6–7 days per week</option>
+                <option value={ActivityLevel.VERY_ACTIVE}>Very active – intense exercise daily</option>
               </FormSelect>
             </FormField>
           </div>
@@ -407,16 +407,16 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaMars className={FormStyles.formIcon} />
-                  Träningsmål
+                  Fitness goal
                 </span>
               }
               error={errors.goalType?.[0]}
             >
               <FormSelect id="goalType" name="goalType" value={formData.goalType} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.goalType?.length}>
-                <option value="">Välj träningsmål</option>
-                <option value={GoalType.MUSCLE_GAIN}>Muskelökning</option>
-                <option value={GoalType.WEIGHT_LOSS}>Viktnedgång</option>
-                <option value={GoalType.MAINTENANCE}>Behålla vikten</option>
+                <option value="">Select fitness goal</option>
+                <option value={GoalType.MUSCLE_GAIN}>Build muscle</option>
+                <option value={GoalType.WEIGHT_LOSS}>Lose weight</option>
+                <option value={GoalType.MAINTENANCE}>Maintain weight</option>
               </FormSelect>
             </FormField>
           </div>
@@ -428,12 +428,12 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaWeightHanging className={FormStyles.formIcon} />
-                  Målvikt (kg)
+                  Target weight (kg)
                 </span>
               }
               error={errors.goalWeight?.[0]}
             >
-              <FormInput value={formData.goalWeight || ''} name="goalWeight" type="number" step="0.1" min="20" max="400" placeholder="Exempel: 75" id="goalWeight" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.goalWeight?.length} />
+              <FormInput value={formData.goalWeight || ''} name="goalWeight" type="number" step="0.1" min="20" max="400" placeholder="Example: 75" id="goalWeight" onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.goalWeight?.length} />
             </FormField>
           </div>
 
@@ -444,7 +444,7 @@ export default function RegisterForm() {
               label={
                 <span className="flex items-center gap-2">
                   <FaFlagCheckered className={FormStyles.formIcon} />
-                  Måldatum
+                  Target date
                 </span>
               }
               error={errors.goalDate?.[0]}
@@ -458,7 +458,7 @@ export default function RegisterForm() {
       {/* ACTION BUTTONS */}
       <div className="grid-2 grid">
         <Button type="submit" variant="primary" disabled={isSaving}>
-          {isSaving ? 'Skapar konto...' : 'Skapa konto'}
+          {isSaving ? 'Creating account...' : 'Create account'}
         </Button>
       </div>
     </form>

@@ -626,26 +626,50 @@ Verify that `APP_URL` points to the correct application URL for the current envi
 
 Screenshots are stored in the `screenshots/` directory.
 
-### Login
+### Account
 
-![Login](screenshots/Login-page.png)
+![Login](screenshots/User//Login_page.png)
+![Register](screenshots/User/Register_page.png)
+![Update](screenshots/User/Update_page.png)
 
 ### Dashboard
 
-![Dashboard](screenshots/Dashboard.png)
-
-### Exercises
-
-![Exercises](screenshots/Exericесes.png)
-
-### Weight Log
-
-![Weight Log](screenshots/WeightLog.png)
+![Dashboard](screenshots/Dashboard/Dashboard_page.png)
+![Dashboard](screenshots/Dashboard/Dashboard_calander_page.png)
+![Dashboard](screenshots/Dashboard/Dashboard_exericse_modal_page.png)
 
 ### Workout
 
-![Workout](screenshots/Workout-item.png)
+![Workout](screenshots/Workout/Workout_page.png)
+![Workout](screenshots/Workout/Workout_register_page.png)
+![Workout](screenshots/Workout/Workout_edit_page.png)
 
+### Weight
+
+![Weight](screenshots/Weight/Weight_page.png)
+![Weight](screenshots/Weight/Weight_progress_page.png)
+![Weight](screenshots/Weight/Weight_register_page.png)
+![Weight](screenshots/Weight/Weight_edit_page.png)
+
+### Progress
+
+![Progress](screenshots/Progress/Progress_page.png)
+![Progress](screenshots/Progress/Progress_2_page.png)
+
+### Exercises
+
+![Exercises](screenshots/Exercises/Exercises_page.png)
+![Exercises](screenshots/Exercises/Exercises_register_page.png)
+![Exercises](screenshots/Exercises/Exercises_edit_page.png)
+
+### Nutrition
+
+![Exercises](screenshots/Nutrition/Nutrition_page.png)
+
+### History
+
+![History](screenshots/History/History_1_page.png)
+![History](screenshots/History/History_2_page.png)
 ---
 
 ## 📄 License
