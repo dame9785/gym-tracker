@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  A full-stack workout tracking application built with Next.js, React, TypeScript, Prisma and MySQL.
+  A full-stack workout and nutrition tracking application built with Next.js, React, TypeScript, Prisma and MySQL.
 </p>
 
 <p align="center">
@@ -24,6 +24,13 @@
 
 - [Overview](#overview)
 - [Features](#features)
+- [Authentication and Account Management](#authentication-and-account-management)
+- [Workout Management](#workout-management)
+- [Exercise Management](#exercise-management)
+- [Workout Scheduling and Sessions](#workout-scheduling-and-sessions)
+- [Dashboard and Progress](#dashboard-and-progress)
+- [Nutrition and Meal Tracking](#nutrition-and-meal-tracking)
+- [Infrastructure and Integrations](#infrastructure-and-integrations)
 - [Technology Stack](#technology-stack)
 - [Architecture](#architecture)
 - [Getting Started](#getting-started)
@@ -41,9 +48,11 @@
 
 ## Overview
 
-GymTracker is a full-stack workout tracking application designed to help users plan their training, record workout sessions and monitor their personal progress over time.
+GymTracker is a full-stack workout and nutrition tracking application designed to help users plan their training, record workout sessions, monitor personal progress and manage their daily nutrition.
 
-The application provides tools for managing workouts, exercises, training schedules, workout history, body weight and personal goals.
+The application provides tools for managing workouts, exercises, training schedules, workout history, body weight, personal goals, nutrition targets and meals.
+
+GymTracker also calculates personalized nutritional targets based on the user's profile, activity level and goals.
 
 Built with Next.js, React and TypeScript, GymTracker uses Prisma ORM for database access and a layered architecture to separate application responsibilities.
 
@@ -57,6 +66,10 @@ Built with Next.js, React and TypeScript, GymTracker uses Prisma ORM for databas
 - Password changes
 - Forgot password and password reset
 - Token versioning for session invalidation
+- User profile management
+- Personal information and body measurements
+- Activity level configuration
+- Metabolic sex configuration for nutritional calculations
 
 ### Workout Management
 
@@ -84,6 +97,7 @@ Built with Next.js, React and TypeScript, GymTracker uses Prisma ORM for databas
 - Track actual repetitions, weights and duration
 - Review completed and unfinished sessions
 - Preserve workout and exercise information in historical sessions
+- Track scheduled workouts independently
 
 ### Dashboard and Progress
 
@@ -93,6 +107,24 @@ Built with Next.js, React and TypeScript, GymTracker uses Prisma ORM for databas
 - Weight logging
 - Personal goals
 - Progress statistics and charts
+- Weekly training summaries
+
+### Nutrition and Meal Tracking
+
+- Personalized daily nutrition targets
+- Calculate calorie requirements based on personal profile information
+- Support for different activity levels
+- Metabolic sex used in nutritional calculations
+- Goal-based calorie adjustments
+- Daily protein, fat and carbohydrate targets
+- Track daily calorie and macronutrient intake
+- Add, edit and delete logged meals
+- Food product catalog with predefined products
+- View nutritional information for food products
+- Daily meal history
+- Compare consumed nutrition with personalized daily targets
+
+Nutritional targets are calculated using the user's body measurements, age, activity level and metabolic sex. The calculation uses the Mifflin-St Jeor equation as its basis, with adjustments according to the user's selected goal.
 
 ### Infrastructure and Integrations
 
@@ -104,6 +136,7 @@ Built with Next.js, React and TypeScript, GymTracker uses Prisma ORM for databas
 - Password reset emails using Resend
 - Vercel Analytics integration
 - Responsive user interface
+- Database seeding for predefined food products
 
 ---
 
@@ -225,7 +258,15 @@ For local development:
 npm run db:migrate:dev
 ```
 
-### 6. Start the Development Server
+### 6. Seed the Database
+
+To populate the database with predefined food products:
+
+```bash
+npm run db:seed
+```
+
+### 7. Start the Development Server
 
 ```bash
 npm run dev
@@ -326,6 +367,19 @@ prisma/migrations/
 | Check migration status                  | `npm run db:migrate:status` |
 | Regenerate Prisma Client                | `npm run db:generate`       |
 
+### Database Seeding
+
+GymTracker includes database seed scripts for predefined food products.
+
+| Task                      | Command                      |
+| ------------------------- | ---------------------------- |
+| Seed current database     | `npm run db:seed`            |
+| Seed local database       | `npm run db:seed:local`      |
+| Seed production database  | `npm run db:seed:production` |
+| Seed local and production | `npm run db:seed:all`        |
+
+The product seeding process is designed to create missing products and update existing products when their seed data changes.
+
 ### Migration Guidelines
 
 - Do not manually edit migrations that have already been applied.
@@ -333,6 +387,7 @@ prisma/migrations/
 - Review generated SQL before applying migrations to production.
 - Keep the Prisma schema and migration history synchronized.
 - Back up important data before making production database changes.
+- Verify the target database before running production seed commands.
 
 ---
 
@@ -340,21 +395,21 @@ prisma/migrations/
 
 The following npm scripts are available in the project.
 
-| Command                      | Description                                              |
-| ---------------------------- | -------------------------------------------------------- |
-| `npm run dev`                | Starts the development server                            |
-| `npm run build`              | Generates Prisma Client and builds the application       |
-| `npm run start`              | Starts the production server                             |
-| `npm run lint`               | Runs ESLint                                              |
-| `npm run db:generate`        | Generates Prisma Client                                  |
-| `npm run db:migrate:dev`     | Creates and applies development migrations               |
-| `npm run db:migrate:deploy`  | Applies pending production migrations                    |
-| `npm run db:migrate:status`  | Checks migration status                                  |
-| `npm run typecheck`          | Runs Typescript errors                                   |
-| `npm run db:seed`            | Seeds the database with predefined food products         |
-| `npm run db:seed:local`      | Seeds the local database using .env                      |
-| `npm run db:seed:production` | Seeds the production database using.env.production.local |
-| `npm run db:seed:all`        | Seeds both local and production databases                |
+| Command                      | Description                                                 |
+| ---------------------------- | ----------------------------------------------------------- |
+| `npm run dev`                | Starts the development server                               |
+| `npm run build`              | Generates Prisma Client and builds the application          |
+| `npm run start`              | Starts the production server                                |
+| `npm run lint`               | Runs ESLint                                                 |
+| `npm run db:generate`        | Generates Prisma Client                                     |
+| `npm run db:migrate:dev`     | Creates and applies development migrations                  |
+| `npm run db:migrate:deploy`  | Applies pending production migrations                       |
+| `npm run db:migrate:status`  | Checks migration status                                     |
+| `npm run typecheck`          | Runs TypeScript checks                                      |
+| `npm run db:seed`            | Seeds the database with predefined food products            |
+| `npm run db:seed:local`      | Seeds the local database using `.env`                       |
+| `npm run db:seed:production` | Seeds the production database using `.env.production.local` |
+| `npm run db:seed:all`        | Seeds both local and production databases                   |
 
 ### Additional Development Commands
 
@@ -395,6 +450,7 @@ gym-tracker/
 │
 ├── prisma/
 │   ├── migrations/
+│   ├── seeds/
 │   └── schema.prisma
 │
 ├── public/
@@ -487,6 +543,7 @@ GymTracker is designed to be deployed using [Vercel](https://vercel.com/).
 
 6. Deploy the application.
 7. Verify the deployed application, database connection, authentication, email delivery and image uploads.
+8. Verify that nutrition features and food product data are available in production.
 
 ### Build Command
 
