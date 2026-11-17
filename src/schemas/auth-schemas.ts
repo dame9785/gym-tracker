@@ -111,6 +111,8 @@ const registerUserObjectSchema = z.object({
   metabolicSex: z.enum(['MALE', 'FEMALE']).nullable(),
 
   goalType: z.enum(['MUSCLE_GAIN', 'WEIGHT_LOSS', 'MAINTENANCE']),
+
+  activityLevel: z.enum(['SEDENTARY', 'LIGHT', 'MODERATE', 'ACTIVE', 'VERY_ACTIVE']),
 });
 
 // --------------------------------------------------
@@ -135,9 +137,6 @@ export const updateUserSchema = registerUserObjectSchema
   .omit({
     password: true,
     confirmPassword: true,
-  })
-  .extend({
-    activityLevel: z.enum(['SEDENTARY', 'LIGHT', 'MODERATE', 'ACTIVE', 'VERY_ACTIVE']),
   })
   .refine((data) => data.gender !== 'OTHER' || data.metabolicSex !== null, {
     message: 'Metabolic sex must be selected.',

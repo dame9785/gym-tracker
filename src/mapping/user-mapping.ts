@@ -75,6 +75,7 @@ export class UserMapper {
 
       passwordHash,
       goalType: dto.goalType,
+      activityLevel: dto.activityLevel,
     };
   }
 

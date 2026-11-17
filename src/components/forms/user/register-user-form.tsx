@@ -1,26 +1,24 @@
 'use client';
 
-import { FaEnvelope, FaWeightScale, FaPhone, FaRulerVertical, FaMars, FaCakeCandles, FaWeightHanging, FaFlagCheckered, FaUser, FaSignature, FaLock } from 'react-icons/fa6';
-
-import { useRouter } from 'next/navigation';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
+import { FaEnvelope, FaWeightScale, FaPhone, FaRulerVertical, FaMars, FaCakeCandles, FaWeightHanging, FaFlagCheckered, FaUser, FaSignature, FaLock, FaPersonWalking } from 'react-icons/fa6';
+
+import { ActivityLevel, Gender, GoalType } from '@prisma/client';
 
 import Button from '@/components/button/button';
-
 import FormStyles from '@/components/forms/form.module.css';
-
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
 import FormSelect from '@/components/ui/form-select';
 
 import { registerUserSchema, type RegisterUserDto } from '@/schemas/auth-schemas';
-
-import { Gender, GoalType } from '@prisma/client';
 import { registerUserAction } from '@/actions/user-actions';
 
 import FormPageHeader from '@/components/forms/shared/form-page-header';
 import { UserRoundPlus } from 'lucide-react';
-import { toast } from 'sonner';
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -43,6 +41,7 @@ export default function RegisterForm() {
     gender: Gender.MALE,
     metabolicSex: null,
     birthDate: '2000-01-01',
+    activityLevel: ActivityLevel.SEDENTARY,
     goalType: GoalType.MAINTENANCE,
     goalWeight: 0,
     goalDate: defaultGoalDate,
@@ -275,7 +274,6 @@ export default function RegisterForm() {
                   {passwordRequirements.map((requirement) => (
                     <li key={requirement.label} className={requirement.valid ? FormStyles.requirementValid : FormStyles.requirementInvalid}>
                       <span aria-hidden="true">{requirement.valid ? '✓' : '○'}</span>
-
                       {requirement.label}
                     </li>
                   ))}
@@ -375,6 +373,30 @@ export default function RegisterForm() {
               error={errors.birthDate?.[0]}
             >
               <FormInput name="birthDate" type="date" id="birthDate" value={formData.birthDate} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.birthDate?.length} />
+            </FormField>
+          </div>
+
+          {/* ACTIVITY LEVEL */}
+          <div className={FormStyles.formGroup}>
+            <FormField
+              htmlFor="activityLevel"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaPersonWalking className={FormStyles.formIcon} />
+                  Aktivitetsnivå
+                </span>
+              }
+              hint="Välj det alternativ som bäst beskriver din vanliga aktivitetsnivå."
+              error={errors.activityLevel?.[0]}
+            >
+              <FormSelect id="activityLevel" name="activityLevel" value={formData.activityLevel} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.activityLevel?.length}>
+                <option value="">Välj aktivitetsnivå</option>
+                <option value={ActivityLevel.SEDENTARY}>Stillasittande – lite eller ingen träning</option>
+                <option value={ActivityLevel.LIGHT}>Lätt – träning 1–3 dagar per vecka</option>
+                <option value={ActivityLevel.MODERATE}>Måttlig – träning 3–5 dagar per vecka</option>
+                <option value={ActivityLevel.ACTIVE}>Aktiv – träning 6–7 dagar per vecka</option>
+                <option value={ActivityLevel.VERY_ACTIVE}>Mycket aktiv – intensiv träning dagligen</option>
+              </FormSelect>
             </FormField>
           </div>
 
