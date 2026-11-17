@@ -630,11 +630,11 @@ Screenshots are stored in the `screenshots/` directory.
 
 ![Login](screenshots/User//Login_page.png)
 ![Register](screenshots/User/Register_page.png)
-![Update](screenshots/User/Register_page.png)
+![Update](screenshots/User/Update_page.png)
 
 ### Dashboard
 
-![Dashboard](screenshots/Dashboard/Dashboard_1-page.png)
+![Dashboard](screenshots/Dashboard/Dashboard_1_page.png)
 ![Dashboard](screenshots/Dashboard/Dashboard_calander_page.png)
 ![Dashboard](screenshots/Dashboard/Dashboard_exericse_modal_page.png)
 
@@ -646,8 +646,9 @@ Screenshots are stored in the `screenshots/` directory.
 
 ### Exercises
 
-![Exercises](screenshots/Exericses_1_page.png)
-![Exercises](screenshots/Exericses_1_page.png)
+![Exercises](screenshots/Exercises/Exercises_page.png)
+![Exercises](screenshots/Exercises/Exercises_register_page.png)
+![Exercises](screenshots/Exercises/Exercises_page.png)
 
 ### Weight
 
