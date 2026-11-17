@@ -9,10 +9,18 @@ import { calculateAndSaveNutritionGoalsAction } from '@/actions/goal-actions';
 import type { MealViewModel } from '@/mapping/meal-mapping';
 import type { NutritionGoals } from '@/types/nutrition-types';
 
+// --------------------------------------------------
+// Types
+// --------------------------------------------------
+
 type Props = {
   initialMeals: MealViewModel[];
   initialGoals: NutritionGoals;
 };
+
+// --------------------------------------------------
+// Hook
+// --------------------------------------------------
 
 export function useNutrition({ initialMeals, initialGoals }: Props) {
   const [meals, setMeals] = useState(initialMeals);
@@ -24,22 +32,29 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
 
   const [error, setError] = useState<string | null>(null);
 
+  // --------------------------------------------------
   // Meal item editing state
+  // --------------------------------------------------
+
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [editingQuantity, setEditingQuantity] = useState('');
 
-  function startEditing(itemId: number, quantity: number) {
+  function startEditing(itemId: number, quantity: number): void {
     setEditingItemId(itemId);
     setEditingQuantity(String(quantity));
     setError(null);
   }
 
-  function cancelEditing() {
+  function cancelEditing(): void {
     setEditingItemId(null);
     setEditingQuantity('');
   }
 
-  async function loadMeals(date: string) {
+  // --------------------------------------------------
+  // Load meals
+  // --------------------------------------------------
+
+  async function loadMeals(date: string): Promise<MealViewModel[] | null> {
     setIsLoading(true);
     setError(null);
 
@@ -52,6 +67,7 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
       }
 
       setMeals(result.data);
+
       return result.data;
     } catch {
       setError('Could not load meals.');
@@ -61,7 +77,11 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
     }
   }
 
-  async function calculateNutritionGoals() {
+  // --------------------------------------------------
+  // Calculate nutrition goals
+  // --------------------------------------------------
+
+  async function calculateNutritionGoals(): Promise<void> {
     setIsCalculatingGoals(true);
     setError(null);
 
@@ -81,7 +101,11 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
     }
   }
 
-  async function saveQuantity(itemId: number, quantity: number) {
+  // --------------------------------------------------
+  // Save meal item quantity
+  // --------------------------------------------------
+
+  async function saveQuantity(itemId: number, quantity: number): Promise<boolean> {
     if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 10000) {
       setError('Enter a valid quantity between 0 and 10000 grams.');
       return false;
@@ -104,6 +128,7 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
       setMeals((currentMeals) => currentMeals.map((meal) => (meal.id === result.data.id ? result.data : meal)));
 
       cancelEditing();
+
       return true;
     } catch {
       setError('Could not update food quantity.');
@@ -113,7 +138,11 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
     }
   }
 
-  async function deleteFood(itemId: number) {
+  // --------------------------------------------------
+  // Delete meal item
+  // --------------------------------------------------
+
+  async function deleteFood(itemId: number): Promise<boolean> {
     setIsSavingItem(true);
     setError(null);
 
@@ -140,19 +169,27 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
     }
   }
 
+  // --------------------------------------------------
+  // Return
+  // --------------------------------------------------
+
   return {
     meals,
     goals,
+
     isLoading,
     isCalculatingGoals,
     isSavingItem,
+
     error,
-    setError,
+
     editingItemId,
     editingQuantity,
     setEditingQuantity,
+
     startEditing,
     cancelEditing,
+
     loadMeals,
     calculateNutritionGoals,
     saveQuantity,

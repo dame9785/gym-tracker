@@ -49,10 +49,6 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
     return result !== null;
   }
 
-  async function handleFoodAdded(): Promise<void> {
-    await loadMeals(selectedDate);
-  }
-
   // --------------------------------------------------
   // Date navigation
   // --------------------------------------------------
@@ -65,6 +61,14 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
   });
 
   // --------------------------------------------------
+  // Food added
+  // --------------------------------------------------
+
+  async function handleFoodAdded(): Promise<void> {
+    await loadMeals(selectedDate);
+  }
+
+  // --------------------------------------------------
   // Calculate daily nutrition
   // --------------------------------------------------
 
@@ -74,7 +78,7 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
   // Edit meal item quantity
   // --------------------------------------------------
 
-  async function handleSaveQuantity(itemId: number) {
+  async function handleSaveQuantity(itemId: number): Promise<void> {
     await saveQuantity(itemId, Number(editingQuantity));
   }
 
@@ -82,7 +86,7 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
   // Remove meal item
   // --------------------------------------------------
 
-  async function handleDeleteFood(itemId: number) {
+  async function handleDeleteFood(itemId: number): Promise<void> {
     const confirmed = window.confirm('Are you sure you want to remove this food?');
 
     if (!confirmed) {
