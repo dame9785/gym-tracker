@@ -626,7 +626,7 @@ Verify that `APP_URL` points to the correct application URL for the current envi
 
 Screenshots are stored in the `screenshots/` directory.
 
-### Dashboard
+### Login
 
 ![Login](screenshots/Login-page.png)
 
