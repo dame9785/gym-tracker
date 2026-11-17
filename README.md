@@ -634,7 +634,7 @@ Screenshots are stored in the `screenshots/` directory.
 
 ### Dashboard
 
-![Dashboard](screenshots/Dashboard/Dashboard_1_page.png)
+![Dashboard](screenshots/Dashboard/Dashboard_page.png)
 ![Dashboard](screenshots/Dashboard/Dashboard_calander_page.png)
 ![Dashboard](screenshots/Dashboard/Dashboard_exericse_modal_page.png)
 
