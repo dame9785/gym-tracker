@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 export type FoodViewModel = {
   id: number;
@@ -18,3 +18,9 @@ export type CustomFoodViewModel = Omit<CustomFood, 'calories' | 'protein' | 'car
   carbs: number;
   fat: number;
 };
+
+type ProductActionResult = Awaited<ReturnType<typeof import('@/actions/product-actions').getProductsAction>>;
+
+export type ProductViewModel = Extract<ProductActionResult, { success: true }>['data'][number];
+
+export type SelectedFood = { source: 'PRODUCT'; food: ProductViewModel } | { source: 'CUSTOM'; food: CustomFoodViewModel };

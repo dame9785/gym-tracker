@@ -4,19 +4,12 @@ import { useEffect, useState } from 'react';
 
 import { getProductsAction } from '@/actions/product-actions';
 import { getCustomFoodsAction } from '@/actions/custom-food-actions';
+
 import { addProductToMealAction, addCustomFoodToMealAction } from '@/actions/meal-actions';
 
+import type { ProductViewModel, CustomFoodViewModel, SelectedFood } from '@/types/foods-type';
+
 import type { MealViewModel } from '@/mapping/meal-mapping';
-
-// --------------------------------------------------
-// Types
-// --------------------------------------------------
-
-type ProductViewModel = Extract<Awaited<ReturnType<typeof getProductsAction>>, { success: true }>['data'][number];
-
-type CustomFoodViewModel = Extract<Awaited<ReturnType<typeof getCustomFoodsAction>>, { success: true }>['data'][number];
-
-type SelectedFood = { source: 'PRODUCT'; food: ProductViewModel } | { source: 'CUSTOM'; food: CustomFoodViewModel };
 
 type Props = {
   date: string;
@@ -24,10 +17,6 @@ type Props = {
   onClose: () => void;
   onAdded: () => Promise<void>;
 };
-
-// --------------------------------------------------
-// Component
-// --------------------------------------------------
 
 export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) {
   const [search, setSearch] = useState('');
@@ -195,7 +184,7 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
               </button>
             ))}
 
-            {products.length === 0 && customFoods.length === 0 && <p className="py-4 text-center text-sm text-zinc-500">No foods found.</p>}
+            {!error && products.length === 0 && customFoods.length === 0 && <p className="py-4 text-center text-sm text-zinc-500">No foods found.</p>}
           </>
         )}
       </div>
@@ -212,13 +201,30 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
 
           <div className="grid grid-cols-4 gap-2">
             {[
-              { label: 'Calories', value: selectedFood.food.calories, unit: 'kcal' },
-              { label: 'Protein', value: selectedFood.food.protein, unit: 'g' },
-              { label: 'Carbs', value: selectedFood.food.carbs, unit: 'g' },
-              { label: 'Fat', value: selectedFood.food.fat, unit: 'g' },
+              {
+                label: 'Calories',
+                value: selectedFood.food.calories,
+                unit: 'kcal',
+              },
+              {
+                label: 'Protein',
+                value: selectedFood.food.protein,
+                unit: 'g',
+              },
+              {
+                label: 'Carbs',
+                value: selectedFood.food.carbs,
+                unit: 'g',
+              },
+              {
+                label: 'Fat',
+                value: selectedFood.food.fat,
+                unit: 'g',
+              },
             ].map((item) => (
               <div key={item.label} className="rounded-lg bg-zinc-950 p-2">
                 <p className="text-xs text-zinc-500">{item.label}</p>
+
                 <p className="mt-1 text-sm font-semibold text-white">
                   {Math.round(item.value * 10) / 10}
                   <span className="ml-1 text-xs font-normal text-zinc-500">{item.unit}</span>
