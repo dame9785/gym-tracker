@@ -40,9 +40,10 @@ export default function RegisterForm() {
     phoneNumber: '',
     bodyWeight: 0,
     height: 0,
-    gender: 'MALE',
+    gender: Gender.MALE,
+    metabolicSex: null,
     birthDate: '2000-01-01',
-    goalType: 'MAINTENANCE',
+    goalType: GoalType.MAINTENANCE,
     goalWeight: 0,
     goalDate: defaultGoalDate,
     password: '',
@@ -93,7 +94,7 @@ export default function RegisterForm() {
 
     cleanValidationError(name);
 
-    let parsedValue: string | number = value;
+    let parsedValue: string | number | null = value;
 
     switch (name) {
       case 'bodyWeight':
@@ -101,11 +102,16 @@ export default function RegisterForm() {
       case 'goalWeight':
         parsedValue = value === '' ? 0 : Number(value);
         break;
+
+      case 'metabolicSex':
+        parsedValue = value === '' ? null : value;
+        break;
     }
 
     setFormData((prev) => ({
       ...prev,
       [name]: parsedValue,
+      ...(name === 'gender' && value !== Gender.OTHER ? { metabolicSex: null } : {}),
     }));
   };
 
@@ -128,6 +134,7 @@ export default function RegisterForm() {
 
       if (!response.success) {
         setErrors(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined)));
+
         toast.error(response.message);
         return;
       }
@@ -332,6 +339,28 @@ export default function RegisterForm() {
               </FormSelect>
             </FormField>
           </div>
+
+          {/* METABOLIC SEX */}
+          {formData.gender === Gender.OTHER && (
+            <div className={FormStyles.formGroup}>
+              <FormField
+                htmlFor="metabolicSex"
+                label={
+                  <span className="flex items-center gap-2">
+                    <FaMars className={FormStyles.formIcon} />
+                    Metaboliskt kön
+                  </span>
+                }
+                error={errors.metabolicSex?.[0]}
+              >
+                <FormSelect id="metabolicSex" name="metabolicSex" value={formData.metabolicSex ?? ''} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.metabolicSex?.length}>
+                  <option value="">Välj metaboliskt kön</option>
+                  <option value="MALE">Man</option>
+                  <option value="FEMALE">Kvinna</option>
+                </FormSelect>
+              </FormField>
+            </div>
+          )}
 
           {/* BIRTH DATE */}
           <div className={FormStyles.formGroup}>

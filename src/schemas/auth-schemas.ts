@@ -108,6 +108,8 @@ const registerUserObjectSchema = z.object({
 
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
 
+  metabolicSex: z.enum(['MALE', 'FEMALE']).nullable(),
+
   goalType: z.enum(['MUSCLE_GAIN', 'WEIGHT_LOSS', 'MAINTENANCE']),
 });
 
@@ -115,14 +117,15 @@ const registerUserObjectSchema = z.object({
 // Register user schema
 // --------------------------------------------------
 
-export const registerUserSchema = registerUserObjectSchema.refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords do not match.',
-  path: ['confirmPassword'],
-});
-
-// --------------------------------------------------
-// Update user schema
-// --------------------------------------------------
+export const registerUserSchema = registerUserObjectSchema
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match.',
+    path: ['confirmPassword'],
+  })
+  .refine((data) => data.gender !== 'OTHER' || data.metabolicSex !== null, {
+    message: 'Metabolic sex must be selected.',
+    path: ['metabolicSex'],
+  });
 
 // --------------------------------------------------
 // Update user schema
@@ -135,8 +138,6 @@ export const updateUserSchema = registerUserObjectSchema
   })
   .extend({
     activityLevel: z.enum(['SEDENTARY', 'LIGHT', 'MODERATE', 'ACTIVE', 'VERY_ACTIVE']),
-
-    metabolicSex: z.enum(['MALE', 'FEMALE']).nullable(),
   })
   .refine((data) => data.gender !== 'OTHER' || data.metabolicSex !== null, {
     message: 'Metabolic sex must be selected.',

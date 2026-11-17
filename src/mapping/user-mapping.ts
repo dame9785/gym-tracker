@@ -69,6 +69,7 @@ export class UserMapper {
       goalWeight: new Prisma.Decimal(dto.goalWeight),
 
       gender: dto.gender,
+      metabolicSex: dto.metabolicSex,
       birthDate: new Date(dto.birthDate),
       goalDate: new Date(dto.goalDate),
 
