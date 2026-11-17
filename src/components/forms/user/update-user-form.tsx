@@ -4,9 +4,9 @@ import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { FaEnvelope, FaWeightScale, FaPhone, FaRulerVertical, FaMars, FaCakeCandles, FaWeightHanging, FaFlagCheckered, FaUser, FaSignature, FaBullseye } from 'react-icons/fa6';
+import { FaEnvelope, FaWeightScale, FaPhone, FaRulerVertical, FaMars, FaCakeCandles, FaWeightHanging, FaFlagCheckered, FaUser, FaSignature, FaBullseye, FaPersonWalking } from 'react-icons/fa6';
 
-import { Gender, GoalType } from '@prisma/client';
+import { ActivityLevel, Gender, GoalType, MetabolicSex } from '@prisma/client';
 
 import Button from '@/components/button/button';
 import FormStyles from '@/components/forms/form.module.css';
@@ -27,6 +27,10 @@ interface Props {
   user: UserSettingsViewModel;
 }
 
+type UpdateUserFormData = Omit<UpdateUserDto, 'activityLevel'> & {
+  activityLevel: ActivityLevel | '';
+};
+
 export default function UpdateUserForm({ user }: Props) {
   const router = useRouter();
 
@@ -39,7 +43,7 @@ export default function UpdateUserForm({ user }: Props) {
     return date.split('T')[0];
   };
 
-  const [formData, setFormData] = useState<UpdateUserDto>({
+  const [formData, setFormData] = useState<UpdateUserFormData>({
     email: user.email ?? '',
     username: user.username ?? '',
     firstName: user.firstName ?? '',
@@ -52,18 +56,18 @@ export default function UpdateUserForm({ user }: Props) {
     goalType: user.goalType,
     goalWeight: user.goalWeight,
     goalDate: formatDateForInput(user.goalDate),
+    activityLevel: user.activityLevel ?? '',
+    metabolicSex: user.metabolicSex ?? null,
   });
 
-  // Handle input changes
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: ['bodyWeight', 'height', 'goalWeight'].includes(name) ? (value === '' ? 0 : Number(value)) : value,
+      [name]: ['bodyWeight', 'height', 'goalWeight'].includes(name) ? (value === '' ? 0 : Number(value)) : name === 'metabolicSex' ? (value === '' ? null : value) : value,
     }));
 
-    // Remove validation error for changed field
     setErrors((prev) => {
       const updatedErrors = { ...prev };
       delete updatedErrors[name];
@@ -72,7 +76,6 @@ export default function UpdateUserForm({ user }: Props) {
     });
   };
 
-  // Submit form
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -113,7 +116,6 @@ export default function UpdateUserForm({ user }: Props) {
       <div className={FormStyles.formGrid}>
         {/* LEFT COLUMN */}
         <div className={FormStyles['form-left']}>
-          {/* EMAIL */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="email"
@@ -129,7 +131,6 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* USERNAME */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="username"
@@ -145,7 +146,6 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* FIRST NAME */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="firstName"
@@ -161,7 +161,6 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* LAST NAME */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="lastName"
@@ -177,7 +176,6 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* PHONE */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="phoneNumber"
@@ -194,7 +192,6 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* BODY WEIGHT */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="bodyWeight"
@@ -213,7 +210,6 @@ export default function UpdateUserForm({ user }: Props) {
 
         {/* RIGHT COLUMN */}
         <div className={FormStyles['form-right']}>
-          {/* HEIGHT */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="height"
@@ -229,7 +225,6 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* GENDER */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="gender"
@@ -249,7 +244,18 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* DATE OF BIRTH */}
+          {formData.gender === Gender.OTHER && (
+            <div className={FormStyles.formGroup}>
+              <FormField htmlFor="metabolicSex" label="Metabolic sex" hint="Used for calculating your basal metabolic rate." error={errors.metabolicSex?.[0]}>
+                <FormSelect id="metabolicSex" name="metabolicSex" value={formData.metabolicSex ?? ''} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.metabolicSex?.length}>
+                  <option value="">Select metabolic sex</option>
+                  <option value={MetabolicSex.MALE}>Male</option>
+                  <option value={MetabolicSex.FEMALE}>Female</option>
+                </FormSelect>
+              </FormField>
+            </div>
+          )}
+
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="birthDate"
@@ -265,7 +271,29 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* FITNESS GOAL */}
+          <div className={FormStyles.formGroup}>
+            <FormField
+              htmlFor="activityLevel"
+              label={
+                <span className="flex items-center gap-2">
+                  <FaPersonWalking className={FormStyles.formIcon} />
+                  Activity level
+                </span>
+              }
+              hint="Choose the option that best describes your usual activity."
+              error={errors.activityLevel?.[0]}
+            >
+              <FormSelect id="activityLevel" name="activityLevel" value={formData.activityLevel} onChange={handleChange} disabled={isSaving} aria-invalid={!!errors.activityLevel?.length}>
+                <option value="">Select activity level</option>
+                <option value={ActivityLevel.SEDENTARY}>Sedentary – little or no exercise</option>
+                <option value={ActivityLevel.LIGHT}>Light – exercise 1–3 days per week</option>
+                <option value={ActivityLevel.MODERATE}>Moderate – exercise 3–5 days per week</option>
+                <option value={ActivityLevel.ACTIVE}>Active – exercise 6–7 days per week</option>
+                <option value={ActivityLevel.VERY_ACTIVE}>Very active – intense daily exercise</option>
+              </FormSelect>
+            </FormField>
+          </div>
+
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="goalType"
@@ -285,7 +313,6 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* TARGET WEIGHT */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="goalWeight"
@@ -301,7 +328,6 @@ export default function UpdateUserForm({ user }: Props) {
             </FormField>
           </div>
 
-          {/* TARGET DATE */}
           <div className={FormStyles.formGroup}>
             <FormField
               htmlFor="goalDate"
@@ -319,7 +345,6 @@ export default function UpdateUserForm({ user }: Props) {
         </div>
       </div>
 
-      {/* SUBMIT BUTTON */}
       <div className="grid-2 grid">
         <Button type="submit" variant="primary" disabled={isSaving}>
           {isSaving ? 'Saving...' : 'Save changes'}

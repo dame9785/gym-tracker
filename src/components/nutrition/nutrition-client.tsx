@@ -6,6 +6,8 @@ import { Beef, CalendarDays, Check, ChevronLeft, ChevronRight, Cookie, Droplets,
 
 import { getMealsByDateAction, updateMealItemQuantityAction, removeMealItemAction } from '@/actions/meal-actions';
 
+import { calculateAndSaveNutritionGoalsAction } from '@/actions/goal-actions';
+
 import type { MealViewModel } from '@/mapping/meal-mapping';
 
 import FoodSearch from '@/components/nutrition/food-search';
@@ -14,9 +16,17 @@ import FoodSearch from '@/components/nutrition/food-search';
 // Types
 // --------------------------------------------------
 
+type NutritionGoals = {
+  calories: number | null;
+  protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+} | null;
+
 type Props = {
   initialMeals: MealViewModel[];
   initialDate: string;
+  initialGoals: NutritionGoals;
 };
 
 // --------------------------------------------------
@@ -51,11 +61,16 @@ function getTodayDate(): string {
 // Component
 // --------------------------------------------------
 
-export default function NutritionClient({ initialMeals, initialDate }: Props) {
+export default function NutritionClient({ initialMeals, initialDate, initialGoals }: Props) {
   const [meals, setMeals] = useState(initialMeals);
   const [selectedDate, setSelectedDate] = useState(initialDate);
+  const [goals, setGoals] = useState(initialGoals);
+
   const [isLoading, setIsLoading] = useState(false);
+  const [isCalculatingGoals, setIsCalculatingGoals] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
+
   const [activeMealType, setActiveMealType] = useState<MealViewModel['type'] | null>(null);
 
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
@@ -109,6 +124,30 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
       setError('Could not load meals.');
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  // --------------------------------------------------
+  // Calculate nutrition goals
+  // --------------------------------------------------
+
+  async function calculateNutritionGoals() {
+    setIsCalculatingGoals(true);
+    setError(null);
+
+    try {
+      const result = await calculateAndSaveNutritionGoalsAction();
+
+      if (!result.success) {
+        setError(result.message);
+        return;
+      }
+
+      setGoals(result.data.goal);
+    } catch {
+      setError('Could not calculate nutrition goals.');
+    } finally {
+      setIsCalculatingGoals(false);
     }
   }
 
@@ -210,6 +249,7 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
 
     setActiveMealType(null);
     cancelEditing();
+
     void loadMeals(nextDate);
   }
 
@@ -232,33 +272,41 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
     {
       label: 'Calories',
       value: totals.calories,
+      target: goals?.calories ?? null,
       unit: 'kcal',
       icon: Flame,
       color: 'text-orange-400',
+      progressColor: 'bg-orange-400',
       background: 'bg-orange-500/10',
     },
     {
       label: 'Protein',
       value: totals.protein,
+      target: goals?.protein ?? null,
       unit: 'g',
       icon: Beef,
       color: 'text-blue-400',
+      progressColor: 'bg-blue-400',
       background: 'bg-blue-500/10',
     },
     {
       label: 'Carbs',
       value: totals.carbs,
+      target: goals?.carbs ?? null,
       unit: 'g',
       icon: Wheat,
       color: 'text-green-400',
+      progressColor: 'bg-green-400',
       background: 'bg-green-500/10',
     },
     {
       label: 'Fat',
       value: totals.fat,
+      target: goals?.fat ?? null,
       unit: 'g',
       icon: Droplets,
       color: 'text-purple-400',
+      progressColor: 'bg-purple-400',
       background: 'bg-purple-500/10',
     },
   ];
@@ -327,6 +375,8 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
           {nutritionItems.map((item) => {
             const Icon = item.icon;
 
+            const progress = item.target !== null && item.target > 0 ? Math.min((item.value / item.target) * 100, 100) : null;
+
             return (
               <div key={item.label} className="rounded-lg border border-zinc-800 bg-zinc-950/70 px-3 py-3">
                 <div className="flex items-center gap-2">
@@ -342,11 +392,44 @@ export default function NutritionClient({ initialMeals, initialDate }: Props) {
 
                   <span className="ml-1 text-xs font-normal text-zinc-500">{item.unit}</span>
                 </p>
+
+                {item.target !== null && (
+                  <>
+                    <p className="mt-1 text-xs text-zinc-500">
+                      Goal: {item.target} {item.unit}
+                    </p>
+
+                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+                      <div
+                        className={`h-full rounded-full transition-all ${item.progressColor}`}
+                        style={{
+                          width: `${progress ?? 0}%`,
+                        }}
+                      />
+                    </div>
+
+                    <p className="mt-1 text-right text-xs text-zinc-500">{Math.round(progress ?? 0)}%</p>
+                  </>
+                )}
               </div>
             );
           })}
         </div>
       </section>
+
+      {/* Calculate nutrition goals */}
+
+      {!goals && (
+        <section className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-4">
+          <h3 className="font-semibold text-white">Your nutrition goals are not set yet</h3>
+
+          <p className="mt-1 text-sm text-zinc-400">Calculate your personal daily calorie and macronutrient targets based on your profile and activity level.</p>
+
+          <button type="button" onClick={() => void calculateNutritionGoals()} disabled={isCalculatingGoals} className="mt-4 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:opacity-50">
+            {isCalculatingGoals ? 'Calculating...' : 'Calculate nutrition goals'}
+          </button>
+        </section>
+      )}
 
       {/* Meal sections */}
 

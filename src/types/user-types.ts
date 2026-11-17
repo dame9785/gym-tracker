@@ -1,4 +1,4 @@
-import type { Gender, GoalType } from '@prisma/client';
+import type { Gender, GoalType, ActivityLevel, MetabolicSex } from '@prisma/client';
 
 export interface UserViewModel {
   id: number;
@@ -16,6 +16,8 @@ export interface UserViewModel {
   goalDate: string;
   gender: Gender;
   goalType: GoalType;
+  activityLevel: ActivityLevel | null;
+  metabolicSex: MetabolicSex | null;
 }
 
 export type UserSettingsViewModel = UserViewModel;

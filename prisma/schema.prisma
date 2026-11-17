@@ -45,6 +45,9 @@ model User {
 
   meals       Meal[]
   customFoods CustomFood[]
+
+  activityLevel ActivityLevel?
+  metabolicSex  MetabolicSex?
 }
 
 model PasswordResetToken {
@@ -277,9 +280,9 @@ model Product {
   nutritionSource String?            @db.VarChar(255)
   verifiedAt      DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  archivedAt      DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  archivedAt DateTime?
 
   mealItems MealItem[]
 
@@ -383,4 +386,17 @@ enum ProductDataQuality {
   VERIFIED
   STANDARD
   UNVERIFIED
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHT
+  MODERATE
+  ACTIVE
+  VERY_ACTIVE
+}
+
+enum MetabolicSex {
+  MALE
+  FEMALE
 }

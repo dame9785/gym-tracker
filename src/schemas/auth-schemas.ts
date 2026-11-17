@@ -124,10 +124,24 @@ export const registerUserSchema = registerUserObjectSchema.refine((data) => data
 // Update user schema
 // --------------------------------------------------
 
-export const updateUserSchema = registerUserObjectSchema.omit({
-  password: true,
-  confirmPassword: true,
-});
+// --------------------------------------------------
+// Update user schema
+// --------------------------------------------------
+
+export const updateUserSchema = registerUserObjectSchema
+  .omit({
+    password: true,
+    confirmPassword: true,
+  })
+  .extend({
+    activityLevel: z.enum(['SEDENTARY', 'LIGHT', 'MODERATE', 'ACTIVE', 'VERY_ACTIVE']),
+
+    metabolicSex: z.enum(['MALE', 'FEMALE']).nullable(),
+  })
+  .refine((data) => data.gender !== 'OTHER' || data.metabolicSex !== null, {
+    message: 'Metabolic sex must be selected.',
+    path: ['metabolicSex'],
+  });
 
 // --------------------------------------------------
 // Login schema

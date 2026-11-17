@@ -106,4 +106,26 @@ export class UserRepository {
 
     return user !== null;
   }
+
+  // --------------------------------------------------
+  // Find nutrition profile by user ID
+  // --------------------------------------------------
+
+  async findNutritionProfileById(id: number) {
+    return prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        bodyWeight: true,
+        height: true,
+        birthDate: true,
+        gender: true,
+        metabolicSex: true,
+        activityLevel: true,
+        goalType: true,
+      },
+    });
+  }
 }

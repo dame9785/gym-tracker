@@ -5,6 +5,10 @@ import type { UserViewModel, UserSettingsViewModel } from '@/types/user-types';
 import type { UpdateUserDto, RegisterUserDto } from '@/schemas/auth-schemas';
 
 export class UserMapper {
+  // --------------------------------------------------
+  // Map user to view model
+  // --------------------------------------------------
+
   private static mapUserToViewModel(user: User): UserViewModel {
     return {
       id: user.id,
@@ -13,25 +17,44 @@ export class UserMapper {
       firstName: user.firstName,
       lastName: user.lastName,
       phoneNumber: user.phoneNumber,
+
       bodyWeight: user.bodyWeight.toNumber(),
       height: user.height.toNumber(),
       goalWeight: user.goalWeight.toNumber(),
+
       birthDate: user.birthDate.toISOString(),
       goalDate: user.goalDate.toISOString(),
+
       createdAt: user.createdAt.toISOString(),
       updatedAt: user.updatedAt.toISOString(),
+
       goalType: user.goalType,
       gender: user.gender,
+
+      activityLevel: user.activityLevel,
+      metabolicSex: user.metabolicSex,
     };
   }
+
+  // --------------------------------------------------
+  // User settings view model
+  // --------------------------------------------------
 
   static userModelToUserSettingsViewModel(user: User): UserSettingsViewModel {
     return this.mapUserToViewModel(user);
   }
 
+  // --------------------------------------------------
+  // User view model
+  // --------------------------------------------------
+
   static userDbToViewModel(user: User): UserViewModel {
     return this.mapUserToViewModel(user);
   }
+
+  // --------------------------------------------------
+  // Create user DTO to database model
+  // --------------------------------------------------
 
   static createUserDtoToDbModel(dto: RegisterUserDto, passwordHash: string): Prisma.UserCreateInput {
     return {
@@ -40,16 +63,23 @@ export class UserMapper {
       firstName: dto.firstName,
       lastName: dto.lastName,
       phoneNumber: dto.phoneNumber,
+
       bodyWeight: new Prisma.Decimal(dto.bodyWeight),
       height: new Prisma.Decimal(dto.height),
       goalWeight: new Prisma.Decimal(dto.goalWeight),
+
       gender: dto.gender,
       birthDate: new Date(dto.birthDate),
       goalDate: new Date(dto.goalDate),
+
       passwordHash,
       goalType: dto.goalType,
     };
   }
+
+  // --------------------------------------------------
+  // Update user DTO to database model
+  // --------------------------------------------------
 
   static userDtoToDbModel(dto: UpdateUserDto): Prisma.UserUpdateInput {
     return {
@@ -58,11 +88,19 @@ export class UserMapper {
       firstName: dto.firstName,
       lastName: dto.lastName,
       phoneNumber: dto.phoneNumber,
+
       bodyWeight: new Prisma.Decimal(dto.bodyWeight),
       height: new Prisma.Decimal(dto.height),
       birthDate: new Date(dto.birthDate),
+
       goalWeight: new Prisma.Decimal(dto.goalWeight),
       goalDate: new Date(dto.goalDate),
+
+      gender: dto.gender,
+      goalType: dto.goalType,
+
+      activityLevel: dto.activityLevel,
+      metabolicSex: dto.metabolicSex,
     };
   }
 }
