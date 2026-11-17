@@ -24,13 +24,13 @@
 
 - [Overview](#overview)
 - [Features](#features)
-- [Authentication and Account Management](#authentication-and-account-management)
-- [Workout Management](#workout-management)
-- [Exercise Management](#exercise-management)
-- [Workout Scheduling and Sessions](#workout-scheduling-and-sessions)
-- [Dashboard and Progress](#dashboard-and-progress)
-- [Nutrition and Meal Tracking](#nutrition-and-meal-tracking)
-- [Infrastructure and Integrations](#infrastructure-and-integrations)
+  - [Authentication and Account Management](#authentication-and-account-management)
+  - [Workout Management](#workout-management)
+  - [Exercise Management](#exercise-management)
+  - [Workout Scheduling and Sessions](#workout-scheduling-and-sessions)
+  - [Dashboard and Progress](#dashboard-and-progress)
+  - [Nutrition and Meal Tracking](#nutrition-and-meal-tracking)
+  - [Infrastructure and Integrations](#infrastructure-and-integrations)
 - [Technology Stack](#technology-stack)
 - [Architecture](#architecture)
 - [Getting Started](#getting-started)
@@ -120,6 +120,7 @@ Built with Next.js, React and TypeScript, GymTracker uses Prisma ORM for databas
 - Track daily calorie and macronutrient intake
 - Add, edit and delete logged meals
 - Food product catalog with predefined products
+- Custom food entries
 - View nutritional information for food products
 - Daily meal history
 - Compare consumed nutrition with personalized daily targets
@@ -286,14 +287,15 @@ Create a `.env` file in the project root.
 
 ### Environment Variable Reference
 
-| Variable                | Description                                              |
-| ----------------------- | -------------------------------------------------------- |
-| `DATABASE_URL`          | MySQL database connection string                         |
-| `SHADOW_DATABASE_URL`   | Shadow database connection string used by Prisma Migrate |
-| `JWT_SECRET`            | Secret used to sign and verify JWT tokens                |
-| `RESEND_API_KEY`        | API key for Resend email delivery                        |
-| `RESEND_FROM_EMAIL`     | Sender email address used for outgoing emails            |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob storage access token                         |
+| Variable                | Description                                                      |
+| ----------------------- | ---------------------------------------------------------------- |
+| `DATABASE_URL`          | MySQL database connection string                                 |
+| `SHADOW_DATABASE_URL`   | Shadow database connection string used by Prisma Migrate         |
+| `JWT_SECRET`            | Secret used to sign and verify JWT tokens                        |
+| `APP_URL`               | Public application URL used when generating password reset links |
+| `RESEND_API_KEY`        | API key for Resend email delivery                                |
+| `RESEND_FROM_EMAIL`     | Sender email address used for outgoing emails                    |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob storage access token                                 |
 
 ### Example Configuration
 
@@ -302,6 +304,8 @@ DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/DATABASE"
 SHADOW_DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/SHADOW_DATABASE"
 
 JWT_SECRET="replace-with-a-secure-random-secret"
+
+APP_URL="http://localhost:3000"
 
 RESEND_API_KEY="re_your_api_key"
 RESEND_FROM_EMAIL="GymTracker <noreply@example.com>"
@@ -315,6 +319,8 @@ BLOB_READ_WRITE_TOKEN="your_vercel_blob_token"
 - Use a separate shadow database for Prisma development migrations.
 - Never commit `.env` files or production credentials to Git.
 - Use strong and unique secrets in production.
+- Ensure `JWT_SECRET` is at least 32 characters and securely generated.
+- Set `APP_URL` to the correct public application URL in production.
 - Configure production environment variables in your hosting provider.
 - Only configure external service variables if the corresponding functionality is enabled.
 
@@ -351,6 +357,10 @@ The main models include:
 - `WorkoutSession`
 - `WorkoutSessionExercise`
 - `WorkoutSessionSet`
+- `Product`
+- `CustomFood`
+- `Meal`
+- `MealItem`
 
 ### Database Migrations
 
@@ -463,6 +473,7 @@ gym-tracker/
 │   ├── assets/
 │   ├── components/
 │   ├── helpers/
+|   |── hooks/
 │   ├── lib/
 │   ├── mapping/
 │   ├── repositories/
@@ -605,11 +616,19 @@ Verify:
 - `RESEND_FROM_EMAIL`
 - Sender domain configuration in Resend
 
+### Password Reset Link Errors
+
+Verify that `APP_URL` points to the correct application URL for the current environment.
+
 ---
 
 ## 📸 Screenshots
 
 Screenshots are stored in the `screenshots/` directory.
+
+### Dashboard
+
+![Login](screenshots/Login-page.png)
 
 ### Dashboard
 
