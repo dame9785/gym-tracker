@@ -9,18 +9,10 @@ import { calculateAndSaveNutritionGoalsAction } from '@/actions/goal-actions';
 import type { MealViewModel } from '@/mapping/meal-mapping';
 import type { NutritionGoals } from '@/types/nutrition-types';
 
-// --------------------------------------------------
-// Types
-// --------------------------------------------------
-
 type Props = {
   initialMeals: MealViewModel[];
   initialGoals: NutritionGoals;
 };
-
-// --------------------------------------------------
-// Hook
-// --------------------------------------------------
 
 export function useNutrition({ initialMeals, initialGoals }: Props) {
   const [meals, setMeals] = useState(initialMeals);
@@ -32,9 +24,20 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
 
   const [error, setError] = useState<string | null>(null);
 
-  // --------------------------------------------------
-  // Load meals
-  // --------------------------------------------------
+  // Meal item editing state
+  const [editingItemId, setEditingItemId] = useState<number | null>(null);
+  const [editingQuantity, setEditingQuantity] = useState('');
+
+  function startEditing(itemId: number, quantity: number) {
+    setEditingItemId(itemId);
+    setEditingQuantity(String(quantity));
+    setError(null);
+  }
+
+  function cancelEditing() {
+    setEditingItemId(null);
+    setEditingQuantity('');
+  }
 
   async function loadMeals(date: string) {
     setIsLoading(true);
@@ -49,7 +52,6 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
       }
 
       setMeals(result.data);
-
       return result.data;
     } catch {
       setError('Could not load meals.');
@@ -58,10 +60,6 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
       setIsLoading(false);
     }
   }
-
-  // --------------------------------------------------
-  // Calculate nutrition goals
-  // --------------------------------------------------
 
   async function calculateNutritionGoals() {
     setIsCalculatingGoals(true);
@@ -82,10 +80,6 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
       setIsCalculatingGoals(false);
     }
   }
-
-  // --------------------------------------------------
-  // Update meal item quantity
-  // --------------------------------------------------
 
   async function saveQuantity(itemId: number, quantity: number) {
     if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 10000) {
@@ -109,6 +103,7 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
 
       setMeals((currentMeals) => currentMeals.map((meal) => (meal.id === result.data.id ? result.data : meal)));
 
+      cancelEditing();
       return true;
     } catch {
       setError('Could not update food quantity.');
@@ -117,10 +112,6 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
       setIsSavingItem(false);
     }
   }
-
-  // --------------------------------------------------
-  // Remove meal item
-  // --------------------------------------------------
 
   async function deleteFood(itemId: number) {
     setIsSavingItem(true);
@@ -135,6 +126,10 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
       }
 
       setMeals((currentMeals) => currentMeals.map((meal) => (meal.id === result.data.id ? result.data : meal)));
+
+      if (editingItemId === itemId) {
+        cancelEditing();
+      }
 
       return true;
     } catch {
@@ -153,6 +148,11 @@ export function useNutrition({ initialMeals, initialGoals }: Props) {
     isSavingItem,
     error,
     setError,
+    editingItemId,
+    editingQuantity,
+    setEditingQuantity,
+    startEditing,
+    cancelEditing,
     loadMeals,
     calculateNutritionGoals,
     saveQuantity,
