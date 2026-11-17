@@ -644,12 +644,6 @@ Screenshots are stored in the `screenshots/` directory.
 ![Workout](screenshots/Workout/Workout_register_page.png)
 ![Workout](screenshots/Workout/Workout_edit_page.png)
 
-### Exercises
-
-![Exercises](screenshots/Exercises/Exercises_page.png)
-![Exercises](screenshots/Exercises/Exercises_register_page.png)
-![Exercises](screenshots/Exercises/Exercises_page.png)
-
 ### Weight
 
 ![Weight](screenshots/Weight/Weight_page.png)
