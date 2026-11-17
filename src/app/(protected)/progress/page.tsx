@@ -32,9 +32,9 @@ export default async function ProgressPage() {
 
       <section>
         <div className="mb-5 border-b border-zinc-800 pb-4">
-          <h2 className="text-lg font-semibold text-white">Träning och personliga rekord</h2>
+          <h2 className="text-lg font-semibold text-white">Training and Personal Records</h2>
 
-          <p className="mt-1 text-sm leading-6 text-zinc-400">Följ utvecklingen för dina övningar, jämför resultat och se dina rekord över tid.</p>
+          <p className="mt-1 text-sm leading-6 text-zinc-400">Track your exercise progress, compare results, and monitor your personal records over time.</p>
         </div>
 
         <ExerciseProgress exerciseProgress={exerciseProgress} metric="weight" />

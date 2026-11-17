@@ -15,8 +15,8 @@ export default function GoalProgress({ weightData }: Props) {
           </div>
 
           <div>
-            <h2 className="font-semibold text-white">Målprogression</h2>
-            <p className="text-sm text-zinc-400">Ingen viktdata tillgänglig ännu.</p>
+            <h2 className="font-semibold text-white">Goal Progress</h2>
+            <p className="text-sm text-zinc-400">No weight data available yet.</p>
           </div>
         </div>
       </section>
@@ -32,8 +32,8 @@ export default function GoalProgress({ weightData }: Props) {
   if (!valuesAreValid) {
     return (
       <section className="mb-10 rounded-2xl border border-zinc-800 bg-zinc-900/70 p-6">
-        <h2 className="font-semibold text-white">Målprogression</h2>
-        <p className="mt-2 text-sm text-zinc-400">Kontrollera viktuppgifterna för att visa din målprogression.</p>
+        <h2 className="font-semibold text-white">Goal Progress</h2>
+        <p className="mt-2 text-sm text-zinc-400">Check your weight data to view your progress toward your goal.</p>
       </section>
     );
   }
@@ -54,7 +54,7 @@ export default function GoalProgress({ weightData }: Props) {
   const percentage = totalChange === 0 ? 100 : isGoalReached ? 100 : Math.min(100, Math.max(0, (currentChange / totalChange) * 100));
 
   const formatWeight = (value: number) =>
-    value.toLocaleString('sv-SE', {
+    value.toLocaleString('en-US', {
       minimumFractionDigits: 1,
       maximumFractionDigits: 1,
     });
@@ -69,9 +69,9 @@ export default function GoalProgress({ weightData }: Props) {
           </div>
 
           <div>
-            <p className="text-xs font-bold tracking-[0.18em] text-orange-400 uppercase">Ditt mål</p>
-            <h2 className="mt-1 text-xl font-bold text-white sm:text-2xl">Målprogression</h2>
-            <p className="mt-1 text-sm text-zinc-400">Din utveckling från startvikt till målvikt</p>
+            <p className="text-xs font-bold tracking-[0.18em] text-orange-400 uppercase">YOUR GOAL</p>
+            <h2 className="mt-1 text-xl font-bold text-white sm:text-2xl">Goal Progress</h2>
+            <p className="mt-1 text-sm text-zinc-400">Your progress from starting weight to target weight</p>
           </div>
         </div>
       </div>
@@ -79,11 +79,11 @@ export default function GoalProgress({ weightData }: Props) {
       {/* Main goal progress */}
       <div className="mt-7">
         <div className="mb-2 flex items-center justify-between gap-3">
-          <p className="text-sm font-medium text-zinc-300">{isGoalReached ? 'Målet är uppnått!' : 'Framsteg mot målet'}</p>
+          <p className="text-sm font-medium text-zinc-300">{isGoalReached ? 'Goal achieved!' : 'Progress toward your goal'}</p>
           <p className="text-sm font-semibold text-orange-400">{percentage.toFixed(0)}%</p>
         </div>
 
-        <div className="h-3 overflow-hidden rounded-full bg-zinc-800" role="progressbar" aria-label="Måluppfyllelse" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(percentage)}>
+        <div className="h-3 overflow-hidden rounded-full bg-zinc-800" role="progressbar" aria-label="Goal completion" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(percentage)}>
           <div className="h-full rounded-full bg-linear-to-r from-orange-500 to-blue-500 transition-all duration-700" style={{ width: `${percentage}%` }} />
         </div>
       </div>
@@ -94,22 +94,22 @@ export default function GoalProgress({ weightData }: Props) {
           {isGoalReached ? (
             <span className="flex items-center gap-2 text-emerald-400">
               <CheckCircle2 className="h-4 w-4" />
-              Du har nått eller passerat ditt viktmål.
+              You have reached or exceeded your weight goal.
             </span>
           ) : (
             <>
               <p>
-                Kvar till målet: <span className="font-semibold text-white">{formatWeight(remaining)} kg</span>
+                Remaining to goal: <span className="font-semibold text-white">{formatWeight(remaining)} kg</span>
               </p>
 
-              {isBelowStart && <p className="text-amber-400">Du ligger {formatWeight(distanceFromStart)} kg under din startvikt.</p>}
+              {isBelowStart && <p className="text-amber-400">You are {formatWeight(distanceFromStart)} kg below your starting weight.</p>}
 
-              {isAboveStart && <p className="text-amber-400">Du ligger {formatWeight(distanceFromStart)} kg över din startvikt.</p>}
+              {isAboveStart && <p className="text-amber-400">You are {formatWeight(distanceFromStart)} kg above your starting weight.</p>}
             </>
           )}
         </div>
 
-        <p className="text-xs text-zinc-500">{totalChange > 0 ? 'Mål: öka i vikt' : totalChange < 0 ? 'Mål: minska i vikt' : 'Startvikten är samma som målet'}</p>
+        <p className="text-xs text-zinc-500">{totalChange > 0 ? 'Goal: Gain weight' : totalChange < 0 ? 'Goal: Lose weight' : 'Starting weight equals target weight'}</p>
       </div>
     </section>
   );
