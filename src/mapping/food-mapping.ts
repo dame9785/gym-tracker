@@ -1,4 +1,4 @@
-import { FoodViewModel } from '@/types/foods-type';
+import { CustomFood, CustomFoodViewModel, FoodViewModel } from '@/types/foods-type';
 import { Prisma } from '@prisma/client';
 
 export class FoodMappper {
@@ -10,5 +10,14 @@ export class FoodMappper {
       carbs: Number(food.carbs),
       fat: Number(food.fat),
     } as FoodViewModel;
+  }
+  static mapCustomFood(customFood: CustomFood): CustomFoodViewModel {
+    return {
+      ...customFood,
+      calories: Number(customFood.calories),
+      protein: Number(customFood.protein),
+      carbs: Number(customFood.carbs),
+      fat: Number(customFood.fat),
+    };
   }
 }

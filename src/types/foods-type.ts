@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+
 export type FoodViewModel = {
   id: number;
   name: string;
@@ -6,4 +8,13 @@ export type FoodViewModel = {
   carbs: number;
   fat: number;
   [key: string]: unknown;
+};
+
+export type CustomFood = Prisma.CustomFoodGetPayload<Record<string, never>>;
+
+export type CustomFoodViewModel = Omit<CustomFood, 'calories' | 'protein' | 'carbs' | 'fat'> & {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
 };

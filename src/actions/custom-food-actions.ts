@@ -1,49 +1,19 @@
 'use server';
 
-import type { Prisma } from '@prisma/client';
-
 import { requireAuth } from '@/lib/auth';
 import { CustomFoodService } from '@/services/custom-food-service';
 
 import { createCustomFoodSchema, updateCustomFoodSchema } from '@/schemas/custom-food-schema';
 
 import type { AppActionResult } from '@/types/action-types';
+import type { CustomFoodViewModel } from '@/types/foods-type';
+
+import { FoodMappper } from '@/mapping/food-mapping';
 
 import { isValidId } from '@/utils/validation';
 import { getActionErrorMessage, getActionValidationErrors } from '@/utils/action-error';
 
-// --------------------------------------------------
-// Types
-// --------------------------------------------------
-
-type CustomFood = Prisma.CustomFoodGetPayload<Record<string, never>>;
-
-type CustomFoodViewModel = Omit<CustomFood, 'calories' | 'protein' | 'carbs' | 'fat'> & {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-};
-
-// --------------------------------------------------
-// Service
-// --------------------------------------------------
-
 const customFoodService = new CustomFoodService();
-
-// --------------------------------------------------
-// Mapper
-// --------------------------------------------------
-
-function mapCustomFood(customFood: CustomFood): CustomFoodViewModel {
-  return {
-    ...customFood,
-    calories: Number(customFood.calories),
-    protein: Number(customFood.protein),
-    carbs: Number(customFood.carbs),
-    fat: Number(customFood.fat),
-  };
-}
 
 // --------------------------------------------------
 // Get custom foods
@@ -57,7 +27,7 @@ export async function getCustomFoodsAction(search?: string): Promise<AppActionRe
 
     return {
       success: true,
-      data: customFoods.map(mapCustomFood),
+      data: customFoods.map(FoodMappper.mapCustomFood),
     };
   } catch (error: unknown) {
     return {
@@ -87,7 +57,7 @@ export async function getCustomFoodByIdAction(id: number): Promise<AppActionResu
 
     return {
       success: true,
-      data: mapCustomFood(customFood),
+      data: FoodMappper.mapCustomFood(customFood),
     };
   } catch (error: unknown) {
     return {
@@ -121,7 +91,7 @@ export async function createCustomFoodAction(input: unknown): Promise<AppActionR
     return {
       success: true,
       message: 'Custom food created successfully.',
-      data: mapCustomFood(customFood),
+      data: FoodMappper.mapCustomFood(customFood),
     };
   } catch (error: unknown) {
     return {
@@ -162,7 +132,7 @@ export async function updateCustomFoodAction(id: number, input: unknown): Promis
     return {
       success: true,
       message: 'Custom food updated successfully.',
-      data: mapCustomFood(customFood),
+      data: FoodMappper.mapCustomFood(customFood),
     };
   } catch (error: unknown) {
     return {
