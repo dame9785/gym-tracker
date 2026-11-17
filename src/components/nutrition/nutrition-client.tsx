@@ -330,8 +330,14 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
         </div>
 
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => changeDate(-1)} disabled={isLoading || isSavingItem} aria-label="Previous day" className="rounded-lg border border-zinc-700 p-2.5 text-zinc-300 transition hover:border-orange-500 hover:text-orange-400 disabled:opacity-50">
-            <ChevronLeft size={18} />
+          <button
+            type="button"
+            onClick={() => changeDate(-1)}
+            disabled={isLoading || isSavingItem}
+            aria-label="Previous day"
+            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-zinc-700 text-zinc-300 transition hover:border-orange-500 hover:text-orange-400 disabled:opacity-50"
+          >
+            <ChevronLeft size={20} />
           </button>
 
           <input
@@ -346,11 +352,17 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
               }
             }}
             disabled={isLoading || isSavingItem}
-            className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-white outline-none focus:border-orange-500"
+            className="h-11 rounded-lg border border-zinc-700 bg-zinc-900 px-3 text-sm text-white outline-none focus:border-orange-500"
           />
 
-          <button type="button" onClick={() => changeDate(1)} disabled={isLoading || isSavingItem || selectedDate >= today} aria-label="Next day" className="rounded-lg border border-zinc-700 p-2.5 text-zinc-300 transition hover:border-orange-500 hover:text-orange-400 disabled:opacity-50">
-            <ChevronRight size={18} />
+          <button
+            type="button"
+            onClick={() => changeDate(1)}
+            disabled={isLoading || isSavingItem || selectedDate >= today}
+            aria-label="Next day"
+            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-zinc-700 text-zinc-300 transition hover:border-orange-500 hover:text-orange-400 disabled:opacity-50"
+          >
+            <ChevronRight size={20} />
           </button>
         </div>
       </section>

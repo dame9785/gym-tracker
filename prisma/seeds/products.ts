@@ -116,8 +116,21 @@ const products: ProductSeed[] = [
   },
 
   // ================================================
-  // FETT OCH TILLBEHÖR
+  // MEJERI
   // ================================================
+
+  {
+    slug: 'arla-mild-kvarg-vanilj',
+    name: 'Mild Kvarg Vanilj Utan Tillsatt Socker',
+    brand: 'Arla',
+    category: 'Mejeri',
+    calories: 56,
+    protein: 8.8,
+    carbs: 4,
+    fat: 0.2,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Mathem – Arla Mild Kvarg Vanilj Utan Tillsatt Socker 0,2%, 1000 g. Näringsvärde per 100 g.',
+  },
 ];
 
 // --------------------------------------------------
