@@ -1,7 +1,5 @@
 'use server';
 
-import type { Prisma } from '@prisma/client';
-
 import { requireAuth, requireAdmin } from '@/lib/auth';
 import { uploadImage, cleanupUploadedImage } from '@/utils/image-upload';
 import { ProductService } from '@/services/product-service';
@@ -9,58 +7,15 @@ import { ProductService } from '@/services/product-service';
 import { createProductSchema, updateProductSchema } from '@/schemas/product-schema';
 
 import type { AppActionResult } from '@/types/action-types';
+import type { ProductViewModel } from '@/types/product-types';
 
 import { isValidId } from '@/utils/validation';
 import { getActionErrorMessage, getActionValidationErrors } from '@/utils/action-error';
 
-// --------------------------------------------------
-// Types
-// --------------------------------------------------
-
-type Product = Prisma.ProductGetPayload<Record<string, never>>;
-
-type ProductViewModel = Omit<Product, 'calories' | 'protein' | 'carbs' | 'fat'> & {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-};
-
-// --------------------------------------------------
-// Service
-// --------------------------------------------------
+import { mapProduct } from '@/mapping/product-mapping';
+import { getImageFile } from '@/utils/product-image';
 
 const productService = new ProductService();
-
-// --------------------------------------------------
-// Mapper
-// --------------------------------------------------
-
-function mapProduct(product: Product): ProductViewModel {
-  return {
-    ...product,
-    calories: Number(product.calories),
-    protein: Number(product.protein),
-    carbs: Number(product.carbs),
-    fat: Number(product.fat),
-  };
-}
-
-// --------------------------------------------------
-// Image helper
-// --------------------------------------------------
-
-function getImageFile(image: File | null | undefined): File | null {
-  if (!image) {
-    return null;
-  }
-
-  if (!(image instanceof File)) {
-    throw new Error('Invalid image file.');
-  }
-
-  return image.size > 0 ? image : null;
-}
 
 // --------------------------------------------------
 // Get products
@@ -181,7 +136,6 @@ export async function createProductAction(input: unknown, image?: File | null): 
 
     const imageFile = getImageFile(image);
 
-    // Upload image to Vercel Blob.
     if (imageFile) {
       uploadedImageUrl = await uploadImage(imageFile, 'products');
     }
@@ -197,7 +151,6 @@ export async function createProductAction(input: unknown, image?: File | null): 
       data: mapProduct(product),
     };
   } catch (error: unknown) {
-    // Clean up uploaded image if product creation fails.
     await cleanupUploadedImage(uploadedImageUrl);
 
     return {
@@ -253,12 +206,10 @@ export async function updateProductAction(id: number, input: unknown, image?: Fi
 
     const imageFile = getImageFile(image);
 
-    // Upload replacement image.
     if (imageFile) {
       uploadedImageUrl = await uploadImage(imageFile, 'products');
     }
 
-    // Prepare update data.
     const updateData = {
       ...validation.data,
       ...(uploadedImageUrl ? { imageUrl: uploadedImageUrl } : removeImage ? { imageUrl: '' } : {}),
@@ -266,7 +217,6 @@ export async function updateProductAction(id: number, input: unknown, image?: Fi
 
     const product = await productService.update(id, updateData);
 
-    // Remove old image only after successful database update.
     if (existingProduct.imageUrl && (uploadedImageUrl || removeImage) && existingProduct.imageUrl !== product.imageUrl) {
       await cleanupUploadedImage(existingProduct.imageUrl);
     }
@@ -277,7 +227,6 @@ export async function updateProductAction(id: number, input: unknown, image?: Fi
       data: mapProduct(product),
     };
   } catch (error: unknown) {
-    // Remove newly uploaded image if the update fails.
     await cleanupUploadedImage(uploadedImageUrl);
 
     return {
