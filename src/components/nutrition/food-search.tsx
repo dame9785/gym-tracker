@@ -7,9 +7,15 @@ import { getCustomFoodsAction } from '@/actions/custom-food-actions';
 
 import { addProductToMealAction, addCustomFoodToMealAction } from '@/actions/meal-actions';
 
+import ProductImage from '@/components/nutrition/product-image';
+
 import type { ProductViewModel, CustomFoodViewModel, SelectedFood } from '@/types/foods-type';
 
 import type { MealViewModel } from '@/mapping/meal-mapping';
+
+// --------------------------------------------------
+// Types
+// --------------------------------------------------
 
 type Props = {
   date: string;
@@ -17,6 +23,10 @@ type Props = {
   onClose: () => void;
   onAdded: () => Promise<void>;
 };
+
+// --------------------------------------------------
+// Component
+// --------------------------------------------------
 
 export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) {
   const [search, setSearch] = useState('');
@@ -174,38 +184,56 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
           <p className="py-8 text-center text-sm text-zinc-400">Searching foods...</p>
         ) : (
           <>
+            {/* Products */}
+
             {products.map((food) => (
               <button
                 key={`product-${food.id}`}
                 type="button"
                 onClick={() => setSelectedFood({ source: 'PRODUCT', food })}
-                className={`w-full rounded-xl border p-4 text-left transition ${selectedFood?.source === 'PRODUCT' && selectedFood.food.id === food.id ? 'border-orange-500 bg-orange-500/10' : 'border-zinc-800 bg-zinc-900 hover:border-zinc-600 hover:bg-zinc-800'}`}
+                className={`w-full rounded-xl border p-3 text-left transition ${selectedFood?.source === 'PRODUCT' && selectedFood.food.id === food.id ? 'border-orange-500 bg-orange-500/10' : 'border-zinc-800 bg-zinc-900 hover:border-zinc-600 hover:bg-zinc-800'}`}
               >
-                <div className="flex items-center justify-between gap-4">
-                  <div className="min-w-0">
+                <div className="flex items-center gap-3">
+                  <ProductImage imageUrl={food.imageUrl} name={food.name} />
+
+                  <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-white">{food.name}</p>
+
+                    {food.brand && <p className="mt-0.5 truncate text-xs text-zinc-400">{food.brand}</p>}
+
                     <p className="mt-1 text-xs text-zinc-500">Product catalog</p>
                   </div>
 
-                  <p className="shrink-0 text-sm font-medium text-zinc-300">{Math.round(food.calories)} kcal / 100 g</p>
+                  <p className="shrink-0 text-right text-sm font-medium text-zinc-300">
+                    {Math.round(food.calories)} kcal
+                    <span className="block text-xs font-normal text-zinc-500">/ 100 g</span>
+                  </p>
                 </div>
               </button>
             ))}
+
+            {/* Custom foods */}
 
             {customFoods.map((food) => (
               <button
                 key={`custom-${food.id}`}
                 type="button"
                 onClick={() => setSelectedFood({ source: 'CUSTOM', food })}
-                className={`w-full rounded-xl border p-4 text-left transition ${selectedFood?.source === 'CUSTOM' && selectedFood.food.id === food.id ? 'border-orange-500 bg-orange-500/10' : 'border-zinc-800 bg-zinc-900 hover:border-zinc-600 hover:bg-zinc-800'}`}
+                className={`w-full rounded-xl border p-3 text-left transition ${selectedFood?.source === 'CUSTOM' && selectedFood.food.id === food.id ? 'border-orange-500 bg-orange-500/10' : 'border-zinc-800 bg-zinc-900 hover:border-zinc-600 hover:bg-zinc-800'}`}
               >
-                <div className="flex items-center justify-between gap-4">
-                  <div className="min-w-0">
+                <div className="flex items-center gap-3">
+                  <ProductImage imageUrl={null} name={food.name} />
+
+                  <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-white">{food.name}</p>
+
                     <p className="mt-1 text-xs text-zinc-500">My foods</p>
                   </div>
 
-                  <p className="shrink-0 text-sm font-medium text-zinc-300">{Math.round(food.calories)} kcal / 100 g</p>
+                  <p className="shrink-0 text-right text-sm font-medium text-zinc-300">
+                    {Math.round(food.calories)} kcal
+                    <span className="block text-xs font-normal text-zinc-500">/ 100 g</span>
+                  </p>
                 </div>
               </button>
             ))}
@@ -219,18 +247,40 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
 
       {selectedFood && (
         <div className="shrink-0 space-y-4 border-t border-zinc-800 bg-zinc-950 pt-4">
-          <div>
-            <p className="font-semibold text-white">{selectedFood.food.name}</p>
+          <div className="flex items-center gap-3">
+            {selectedFood.source === 'PRODUCT' && <ProductImage imageUrl={selectedFood.food.imageUrl} name={selectedFood.food.name} size="large" />}
 
-            <p className="mt-1 text-xs text-zinc-500">Nutrition per 100 g</p>
+            <div className="min-w-0">
+              <p className="truncate font-semibold text-white">{selectedFood.food.name}</p>
+
+              <p className="mt-1 text-xs text-zinc-500">Nutrition per 100 g</p>
+            </div>
           </div>
+
+          {/* Nutrition */}
 
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {[
-              { label: 'Calories', value: selectedFood.food.calories, unit: 'kcal' },
-              { label: 'Protein', value: selectedFood.food.protein, unit: 'g' },
-              { label: 'Carbs', value: selectedFood.food.carbs, unit: 'g' },
-              { label: 'Fat', value: selectedFood.food.fat, unit: 'g' },
+              {
+                label: 'Calories',
+                value: selectedFood.food.calories,
+                unit: 'kcal',
+              },
+              {
+                label: 'Protein',
+                value: selectedFood.food.protein,
+                unit: 'g',
+              },
+              {
+                label: 'Carbs',
+                value: selectedFood.food.carbs,
+                unit: 'g',
+              },
+              {
+                label: 'Fat',
+                value: selectedFood.food.fat,
+                unit: 'g',
+              },
             ].map((item) => (
               <div key={item.label} className="rounded-lg bg-zinc-900 p-3">
                 <p className="text-xs text-zinc-500">{item.label}</p>
@@ -242,6 +292,8 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
               </div>
             ))}
           </div>
+
+          {/* Quantity */}
 
           <div>
             <label htmlFor="food-quantity" className="mb-2 block text-sm text-zinc-400">
@@ -260,6 +312,8 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
               className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-white outline-none focus:border-orange-500"
             />
           </div>
+
+          {/* Add button */}
 
           <div className="flex justify-end">
             <button type="button" onClick={() => void handleAddFood()} disabled={isSaving} className="rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50">

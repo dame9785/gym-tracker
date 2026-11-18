@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import { Beef, Check, Droplets, Pencil, PlusCircle, Trash2, Wheat, X } from 'lucide-react';
 
 import type { MealViewModel } from '@/mapping/meal-mapping';
 
 import { calculateMealNutrition } from '@/utils/meal-calculations';
 
-import FoodSearch from '@/components/nutrition/food-search';
+import FoodModal from '@/components/modal/food-modal';
 
 // --------------------------------------------------
 // Types
@@ -50,31 +48,6 @@ export default function MealSection({ section, meal, date, isActive, editingItem
   const itemCount = meal?.items.length ?? 0;
 
   // --------------------------------------------------
-  // Modal behavior
-  // --------------------------------------------------
-
-  useEffect(() => {
-    if (!isActive) return;
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        onCloseFoodSearch();
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow;
-
-    document.body.style.overflow = 'hidden';
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isActive, onCloseFoodSearch]);
-
-  // --------------------------------------------------
   // Render
   // --------------------------------------------------
 
@@ -101,22 +74,8 @@ export default function MealSection({ section, meal, date, isActive, editingItem
         </button>
       </div>
 
-      {/* Add food modal */}
-
-      {isActive && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) {
-              onCloseFoodSearch();
-            }
-          }}
-        >
-          <div role="dialog" aria-modal="true" aria-label={`Add food to ${section.label}`} className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-950 p-4 shadow-2xl sm:p-6">
-            <FoodSearch date={date} mealType={section.type} onClose={onCloseFoodSearch} onAdded={onFoodAdded} />
-          </div>
-        </div>
-      )}
+      {/* Food modal */}
+      {isActive && <FoodModal mealType={section.type} mealLabel={section.label} date={date} onClose={onCloseFoodSearch} onAdded={onFoodAdded} />}
 
       {/* Registered foods */}
 
