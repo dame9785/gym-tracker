@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { ProductService } from '@/services/product-service';
-import ProductForm from '@/components/products/product-form';
+import ProductForm from '@/components/forms/products/product-form';
 
 const productService = new ProductService();
 

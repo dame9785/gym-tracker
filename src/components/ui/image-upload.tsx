@@ -17,7 +17,7 @@ const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-export default function ImageUpload({ file, onFileChange, currentImageUrl, currentImageAlt = 'Exercise image', disabled = false }: ImageUploadProps) {
+export default function ImageUpload({ file, onFileChange, currentImageUrl, currentImageAlt = 'Image', disabled = false }: ImageUploadProps) {
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);

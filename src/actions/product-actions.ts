@@ -3,6 +3,7 @@
 import type { Prisma } from '@prisma/client';
 
 import { requireAuth, requireAdmin } from '@/lib/auth';
+import { uploadImage, cleanupUploadedImage } from '@/utils/image-upload';
 import { ProductService } from '@/services/product-service';
 
 import { createProductSchema, updateProductSchema } from '@/schemas/product-schema';
@@ -43,6 +44,22 @@ function mapProduct(product: Product): ProductViewModel {
     carbs: Number(product.carbs),
     fat: Number(product.fat),
   };
+}
+
+// --------------------------------------------------
+// Image helper
+// --------------------------------------------------
+
+function getImageFile(image: File | null | undefined): File | null {
+  if (!image) {
+    return null;
+  }
+
+  if (!(image instanceof File)) {
+    throw new Error('Invalid image file.');
+  }
+
+  return image.size > 0 ? image : null;
 }
 
 // --------------------------------------------------
@@ -146,8 +163,10 @@ export async function getProductBySlugAction(slug: string): Promise<AppActionRes
 // Create product (ADMIN)
 // --------------------------------------------------
 
-export async function createProductAction(input: unknown): Promise<AppActionResult<ProductViewModel>> {
+export async function createProductAction(input: unknown, image?: File | null): Promise<AppActionResult<ProductViewModel>> {
   await requireAdmin();
+
+  let uploadedImageUrl: string | undefined;
 
   try {
     const validation = createProductSchema.safeParse(input);
@@ -160,7 +179,17 @@ export async function createProductAction(input: unknown): Promise<AppActionResu
       };
     }
 
-    const product = await productService.create(validation.data);
+    const imageFile = getImageFile(image);
+
+    // Upload image to Vercel Blob.
+    if (imageFile) {
+      uploadedImageUrl = await uploadImage(imageFile, 'products');
+    }
+
+    const product = await productService.create({
+      ...validation.data,
+      ...(uploadedImageUrl ? { imageUrl: uploadedImageUrl } : {}),
+    });
 
     return {
       success: true,
@@ -168,6 +197,9 @@ export async function createProductAction(input: unknown): Promise<AppActionResu
       data: mapProduct(product),
     };
   } catch (error: unknown) {
+    // Clean up uploaded image if product creation fails.
+    await cleanupUploadedImage(uploadedImageUrl);
+
     return {
       success: false,
       message: getActionErrorMessage(error),
@@ -180,7 +212,7 @@ export async function createProductAction(input: unknown): Promise<AppActionResu
 // Update product (ADMIN)
 // --------------------------------------------------
 
-export async function updateProductAction(id: number, input: unknown): Promise<AppActionResult<ProductViewModel>> {
+export async function updateProductAction(id: number, input: unknown, image?: File | null, removeImage = false): Promise<AppActionResult<ProductViewModel>> {
   await requireAdmin();
 
   if (!isValidId(id)) {
@@ -189,6 +221,15 @@ export async function updateProductAction(id: number, input: unknown): Promise<A
       message: 'Invalid product ID.',
     };
   }
+
+  if (typeof removeImage !== 'boolean') {
+    return {
+      success: false,
+      message: 'Invalid image removal value.',
+    };
+  }
+
+  let uploadedImageUrl: string | undefined;
 
   try {
     const validation = updateProductSchema.safeParse(input);
@@ -201,7 +242,34 @@ export async function updateProductAction(id: number, input: unknown): Promise<A
       };
     }
 
-    const product = await productService.update(id, validation.data);
+    const existingProduct = await productService.getById(id);
+
+    if (!existingProduct) {
+      return {
+        success: false,
+        message: 'Product not found.',
+      };
+    }
+
+    const imageFile = getImageFile(image);
+
+    // Upload replacement image.
+    if (imageFile) {
+      uploadedImageUrl = await uploadImage(imageFile, 'products');
+    }
+
+    // Prepare update data.
+    const updateData = {
+      ...validation.data,
+      ...(uploadedImageUrl ? { imageUrl: uploadedImageUrl } : removeImage ? { imageUrl: '' } : {}),
+    };
+
+    const product = await productService.update(id, updateData);
+
+    // Remove old image only after successful database update.
+    if (existingProduct.imageUrl && (uploadedImageUrl || removeImage) && existingProduct.imageUrl !== product.imageUrl) {
+      await cleanupUploadedImage(existingProduct.imageUrl);
+    }
 
     return {
       success: true,
@@ -209,6 +277,9 @@ export async function updateProductAction(id: number, input: unknown): Promise<A
       data: mapProduct(product),
     };
   } catch (error: unknown) {
+    // Remove newly uploaded image if the update fails.
+    await cleanupUploadedImage(uploadedImageUrl);
+
     return {
       success: false,
       message: getActionErrorMessage(error),
