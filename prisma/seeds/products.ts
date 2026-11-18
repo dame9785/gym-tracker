@@ -115,6 +115,18 @@ const products: ProductSeed[] = [
     nutritionSource: 'Eldorado – officiell produktinformation, 1 kg. Näringsvärde per 100 g.',
   },
 
+  {
+    slug: 'pizzasallad',
+    name: 'Pizzasallad',
+    category: 'Grönsaker',
+    calories: 88,
+    protein: 0.9,
+    carbs: 4.1,
+    fat: 7.2,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Livsmedelsverket – Vitkålssallad pizzasallad. Generiskt näringsvärde per 100 g.',
+  },
+
   // ================================================
   // MEJERI
   // ================================================
@@ -130,6 +142,32 @@ const products: ProductSeed[] = [
     fat: 0.2,
     dataQuality: 'STANDARD',
     nutritionSource: 'Mathem – Arla Mild Kvarg Vanilj Utan Tillsatt Socker 0,2%, 1000 g. Näringsvärde per 100 g.',
+  },
+
+  {
+    slug: 'garant-bearnaisesas-klassisk',
+    name: 'Bearnaisesås Klassisk',
+    brand: 'Garant',
+    category: 'Såser',
+    calories: 600,
+    protein: 0.5,
+    carbs: 0.5,
+    fat: 67,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Willys – Garant Bearnaisesås Klassisk 220 ml. Näringsvärde deklarerat per 100 ml, inte per 100 g.',
+  },
+
+  {
+    slug: 'felix-appelmos',
+    name: 'Äpplemos',
+    brand: 'Felix',
+    category: 'Sylt och mos',
+    calories: 120,
+    protein: 0,
+    carbs: 28,
+    fat: 0,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Orkla Foods Sverige / Dabas – Felix Äpplemos 750 g, artikelnummer 454005536, EAN 7310240055368. Näringsvärde per 100 g.',
   },
 ];
 

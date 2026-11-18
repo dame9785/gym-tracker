@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { Beef, Check, Droplets, Pencil, PlusCircle, Trash2, Wheat, X } from 'lucide-react';
 
 import type { MealViewModel } from '@/mapping/meal-mapping';
@@ -7,6 +9,10 @@ import type { MealViewModel } from '@/mapping/meal-mapping';
 import { calculateMealNutrition } from '@/utils/meal-calculations';
 
 import FoodSearch from '@/components/nutrition/food-search';
+
+// --------------------------------------------------
+// Types
+// --------------------------------------------------
 
 type MealSectionConfig = {
   type: MealViewModel['type'];
@@ -33,14 +39,49 @@ type Props = {
   onDeleteFood: (itemId: number) => void;
 };
 
+// --------------------------------------------------
+// Component
+// --------------------------------------------------
+
 export default function MealSection({ section, meal, date, isActive, editingItemId, editingQuantity, isSavingItem, onAddFood, onCloseFoodSearch, onFoodAdded, onStartEditing, onCancelEditing, onQuantityChange, onSaveQuantity, onDeleteFood }: Props) {
   const MealIcon = section.icon;
 
   const mealTotals = calculateMealNutrition(meal?.items ?? []);
   const itemCount = meal?.items.length ?? 0;
 
+  // --------------------------------------------------
+  // Modal behavior
+  // --------------------------------------------------
+
+  useEffect(() => {
+    if (!isActive) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        onCloseFoodSearch();
+      }
+    }
+
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isActive, onCloseFoodSearch]);
+
+  // --------------------------------------------------
+  // Render
+  // --------------------------------------------------
+
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+      {/* Meal header */}
+
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
           <div className="rounded-lg bg-zinc-800/80 p-2">
@@ -60,11 +101,24 @@ export default function MealSection({ section, meal, date, isActive, editingItem
         </button>
       </div>
 
+      {/* Add food modal */}
+
       {isActive && (
-        <div className="mt-3">
-          <FoodSearch date={date} mealType={section.type} onClose={onCloseFoodSearch} onAdded={onFoodAdded} />
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              onCloseFoodSearch();
+            }
+          }}
+        >
+          <div role="dialog" aria-modal="true" aria-label={`Add food to ${section.label}`} className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-950 p-4 shadow-2xl sm:p-6">
+            <FoodSearch date={date} mealType={section.type} onClose={onCloseFoodSearch} onAdded={onFoodAdded} />
+          </div>
         </div>
       )}
+
+      {/* Registered foods */}
 
       {meal?.items.length ? (
         <div className="mt-3 divide-y divide-zinc-800">
@@ -125,6 +179,8 @@ export default function MealSection({ section, meal, date, isActive, editingItem
                   </div>
                 </div>
 
+                {/* Macronutrients */}
+
                 <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
                   <span className="flex items-center gap-1.5 text-zinc-400">
                     <Beef size={13} className="text-blue-400" />
@@ -147,6 +203,8 @@ export default function MealSection({ section, meal, date, isActive, editingItem
               </div>
             );
           })}
+
+          {/* Meal total */}
 
           <div className="flex flex-wrap items-center justify-between gap-2 pt-3">
             <span className="text-xs font-semibold text-zinc-400">Meal total</span>
