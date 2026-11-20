@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 import type { WorkoutViewModel } from '@/types/workout-types';
 import { deleteWorkoutAction } from '@/actions/workout-actions';
 import EmptyState from '@/components/ui/empty-state';
-import Button from '../button/button';
 
 type Props = {
   workouts: WorkoutViewModel[];
@@ -141,15 +140,14 @@ export default function WorkoutDetailCard({ workouts }: Props) {
                     </div>
 
                     {/* Actions */}
-
                     <div className="flex shrink-0 items-center gap-1">
-                      <Button href={`/workout/edit/${workout.id}`} variant="secondary" size="sm" aria-label={`Edit ${workout.name}`} title="Edit workout" className="flex h-10 w-10 items-center justify-center !p-0">
+                      <Link href={`/workout/edit/${workout.id}`} aria-label={`Edit ${workout.name}`} title="Edit workout" className="flex h-10 w-10 items-center justify-center rounded-xl text-zinc-400 transition-colors hover:bg-blue-500/10 hover:text-blue-400">
                         <Pencil className="h-4 w-4" />
-                      </Button>
+                      </Link>
 
-                      <Button type="button" variant="danger" size="sm" onClick={() => handleDelete(workout.id)} aria-label={`Delete ${workout.name}`} title="Delete workout" className="flex h-10 w-10 items-center justify-center !p-0">
+                      <button type="button" onClick={() => handleDelete(workout.id)} aria-label={`Delete ${workout.name}`} title="Delete workout" className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl text-zinc-500 transition-colors hover:bg-red-500/10 hover:text-red-400">
                         <Trash2 className="h-4 w-4" />
-                      </Button>
+                      </button>
                     </div>
                   </div>
 
