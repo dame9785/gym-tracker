@@ -50,15 +50,15 @@ export default function WorkoutSession({ workoutSession }: WorkoutSessionProps) 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
       <header className="mb-8">
-        <p className="text-sm font-medium tracking-wider text-blue-400 uppercase">Workout in progress</p>
+        <p className="text-info text-sm font-medium tracking-wider uppercase">Workout in progress</p>
 
         <div className="mt-1 flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Workout #{workoutSession.id}</h1>
+          <h1 className="text-text text-3xl font-bold tracking-tight sm:text-4xl">Workout #{workoutSession.id}</h1>
 
-          <span className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400">In progress</span>
+          <span className="border-primary/20 bg-primary/10 text-primary rounded-full border px-3 py-1.5 text-xs font-medium">In progress</span>
         </div>
 
-        <p className="mt-2 text-sm text-zinc-500">Record your actual reps, weights, and seconds for each set.</p>
+        <p className="text-text-muted mt-2 text-sm">Record your actual reps, weights, and seconds for each set.</p>
       </header>
 
       <div className="space-y-5">
@@ -67,10 +67,10 @@ export default function WorkoutSession({ workoutSession }: WorkoutSessionProps) 
         ))}
       </div>
 
-      <div className="mt-8 flex justify-end gap-2 border-t border-white/10 pt-6">
+      <div className="border-border mt-8 flex justify-end gap-2 border-t pt-6">
         {workoutSession.status !== 'NOTCOMPLETED' && <NotPerformedButton workoutSessionId={workoutSession.id} />}
 
-        <button type="button" onClick={handleFinishWorkout} disabled={isFinishing} className="rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/10 transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-50">
+        <button type="button" onClick={handleFinishWorkout} disabled={isFinishing} className="bg-primary text-primary-foreground shadow-primary/10 hover:bg-primary-hover rounded-xl px-6 py-3 text-sm font-semibold shadow-lg transition disabled:cursor-not-allowed disabled:opacity-50">
           {isFinishing ? 'Finishing...' : 'Finish Workout'}
         </button>
       </div>

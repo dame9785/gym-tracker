@@ -108,7 +108,7 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
 
       {/* Error message */}
 
-      {error && <p className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
+      {error && <p className="border-danger/30 bg-danger/10 text-danger rounded-lg border p-3 text-sm">{error}</p>}
 
       {/* Daily nutrition overview */}
 
@@ -122,9 +122,9 @@ export default function NutritionClient({ initialMeals, initialDate, initialGoal
 
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-white">Meals</h2>
+          <h2 className="text-text text-lg font-semibold">Meals</h2>
 
-          <p className="mt-1 text-sm text-zinc-400">Your registered food throughout the day.</p>
+          <p className="text-text-secondary mt-1 text-sm">Your registered food throughout the day.</p>
         </div>
 
         {MEAL_SECTIONS.map((section) => {

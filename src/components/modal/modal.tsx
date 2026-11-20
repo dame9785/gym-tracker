@@ -40,12 +40,12 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
         onClick={(event) => event.stopPropagation()}
-        className="flex max-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] min-h-0 w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 shadow-2xl lg:max-h-[85dvh]"
+        className="border-border from-surface via-surface to-background flex max-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] min-h-0 w-full max-w-5xl flex-col overflow-hidden rounded-2xl border bg-gradient-to-br shadow-2xl lg:max-h-[85dvh]"
       >
         {/* Modal header */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-zinc-800 px-4 py-3 sm:px-5 sm:py-4">
+        <div className="border-border flex shrink-0 items-center justify-between gap-3 border-b px-4 py-3 sm:px-5 sm:py-4">
           {title && (
-            <h2 id="modal-title" className="min-w-0 text-base font-semibold tracking-tight text-zinc-100 sm:text-xl">
+            <h2 id="modal-title" className="text-text min-w-0 text-base font-semibold tracking-tight sm:text-xl">
               {title}
             </h2>
           )}

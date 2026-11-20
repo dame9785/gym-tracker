@@ -30,9 +30,9 @@ export default function NutritionOverview({ totals, goals, isLoading }: Props) {
       target: goals?.calories ?? null,
       unit: 'kcal',
       icon: Flame,
-      color: 'text-orange-400',
-      progressColor: 'bg-orange-500',
-      background: 'bg-orange-500/10',
+      color: 'text-primary',
+      progressColor: 'bg-primary',
+      background: 'bg-primary/10',
     },
     {
       label: 'Protein',
@@ -40,9 +40,9 @@ export default function NutritionOverview({ totals, goals, isLoading }: Props) {
       target: goals?.protein ?? null,
       unit: 'g',
       icon: Beef,
-      color: 'text-red-400',
-      progressColor: 'bg-red-500',
-      background: 'bg-red-500/10',
+      color: 'text-danger',
+      progressColor: 'bg-danger',
+      background: 'bg-danger/10',
     },
     {
       label: 'Carbs',
@@ -50,9 +50,9 @@ export default function NutritionOverview({ totals, goals, isLoading }: Props) {
       target: goals?.carbs ?? null,
       unit: 'g',
       icon: Wheat,
-      color: 'text-yellow-400',
-      progressColor: 'bg-yellow-500',
-      background: 'bg-yellow-500/10',
+      color: 'text-warning',
+      progressColor: 'bg-warning',
+      background: 'bg-warning/10',
     },
     {
       label: 'Fat',
@@ -60,18 +60,18 @@ export default function NutritionOverview({ totals, goals, isLoading }: Props) {
       target: goals?.fat ?? null,
       unit: 'g',
       icon: Droplets,
-      color: 'text-blue-400',
-      progressColor: 'bg-blue-500',
-      background: 'bg-blue-500/10',
+      color: 'text-info',
+      progressColor: 'bg-info',
+      background: 'bg-info/10',
     },
   ];
 
   return (
     <section>
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-white">Daily overview</h2>
+        <h2 className="text-text text-sm font-semibold">Daily overview</h2>
 
-        {isLoading && <span className="text-xs text-zinc-500">Updating...</span>}
+        {isLoading && <span className="text-text-muted text-xs">Updating...</span>}
       </div>
 
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
