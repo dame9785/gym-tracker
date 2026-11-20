@@ -289,6 +289,23 @@ img {
 }
 
 /* =========================================
+   DATE INPUTS
+========================================= */
+
+input[type='date'] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+input[type='date']::-webkit-date-and-time-value {
+  min-width: 0;
+  text-align: left;
+}
+
+/* =========================================
    NUMBER INPUTS
 ========================================= */
 
