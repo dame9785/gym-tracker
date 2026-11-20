@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { ReactNode, ButtonHTMLAttributes } from 'react';
+import type { ReactNode, ButtonHTMLAttributes, MouseEventHandler } from 'react';
 
 import styles from './button.module.css';
 
@@ -15,7 +15,7 @@ type Props = {
   href?: string;
   className?: string;
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
 };
 
 export default function Button({ children, variant = 'primary', size = 'md', loading = false, disabled = false, href, className = '', type = 'button', onClick }: Props) {

@@ -1,6 +1,9 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
+import { X } from 'lucide-react';
+
+import Button from '@/components/button/button';
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,35 +13,46 @@ interface ModalProps {
 }
 
 export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div onClick={onClose} className="fixed inset-x-0 top-14 bottom-0 z-[60] flex items-center justify-center bg-black/70 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm lg:inset-0 lg:z-[60] lg:p-6">
+    <div onClick={onClose} className="fixed inset-x-0 top-14 bottom-0 z-[60] flex items-center justify-center bg-black/70 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm lg:inset-0 lg:p-6">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
-        onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] min-h-0 w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900 shadow-2xl lg:max-h-[85dvh]"
+        onClick={(event) => event.stopPropagation()}
+        className="flex max-h-[calc(100dvh-5rem-env(safe-area-inset-bottom))] min-h-0 w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-950 shadow-2xl lg:max-h-[85dvh]"
       >
         {/* Modal header */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-zinc-800 px-4 py-3 sm:p-5">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-zinc-800 px-4 py-3 sm:px-5 sm:py-4">
           {title && (
-            <h2 id="modal-title" className="min-w-0 text-lg font-bold sm:text-2xl">
+            <h2 id="modal-title" className="min-w-0 text-base font-semibold tracking-tight text-zinc-100 sm:text-xl">
               {title}
             </h2>
           )}
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close modal"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-3xl leading-none text-zinc-400 transition hover:bg-zinc-800 hover:text-white focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none"
-          >
-            ×
-          </button>
+          <Button variant="ghost" size="sm" onClick={onClose} className="flex h-9 w-9 shrink-0 items-center justify-center !p-0" aria-label="Close modal">
+            <X size={18} />
+          </Button>
         </div>
 
         {/* Scrollable content */}

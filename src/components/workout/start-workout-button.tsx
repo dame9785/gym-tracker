@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { createWorkoutSessionAction } from '@/actions/workout-session-actions';
+import Button from '@/components/button/button';
 
 interface StartWorkoutButtonProps {
   workoutId: number;
@@ -45,13 +46,8 @@ export default function StartWorkoutButton({ workoutId, workoutScheduleId, activ
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleStartWorkout}
-      disabled={isStarting}
-      className="inline-flex h-11 min-w-[132px] items-center justify-center rounded-xl border border-zinc-700 bg-orange-700 px-5 text-sm font-semibold text-zinc-300 transition-all duration-200 hover:border-zinc-600 hover:bg-zinc-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
-    >
+    <Button variant="primary" size="md" onClick={handleStartWorkout} loading={isStarting} disabled={isStarting}>
       {isStarting ? 'Starting...' : 'Start Workout'}
-    </button>
+    </Button>
   );
 }

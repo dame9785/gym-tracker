@@ -124,13 +124,13 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
       <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
         {/* Workout name */}
         <div className={FormStyles.formGroup}>
-          <FormField htmlFor="name" label="Workout namn" required error={errors.name?.[0]}>
+          <FormField htmlFor="name" label="Workout name" required error={errors.name?.[0]}>
             <FormInput
               required
               id="name"
               name="name"
               type="text"
-              placeholder="T.ex. Push Day"
+              placeholder="e.g. Push Day"
               value={formData.name}
               onChange={(e) =>
                 setFormData((prev) => ({
@@ -146,12 +146,12 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
 
         {/* Description */}
         <div className={FormStyles.formGroup}>
-          <FormField htmlFor="description" label="Beskrivning" error={errors.description?.[0]}>
+          <FormField htmlFor="description" label="Description" error={errors.description?.[0]}>
             <FormTextarea
               id="description"
               name="description"
               rows={4}
-              placeholder="Fokusera på axlar, bröst..."
+              placeholder="Focus on shoulders, chest..."
               value={formData.description}
               onChange={(e) =>
                 setFormData((prev) => ({
@@ -167,7 +167,7 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
 
         {/* Exercises */}
         <div className={FormStyles.exerciseSection}>
-          <h2 className={FormStyles.sectionTitle}>Övningar</h2>
+          <h2 className={FormStyles.sectionTitle}>Exercises</h2>
 
           {formData.workoutExercises.map((workoutExercise, index) => (
             <WorkoutExerciseFields
@@ -178,26 +178,27 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
               onUpdate={updateExercise}
               onRemove={removeExercise}
               labels={{
-                exercise: 'Övning',
-                selectExercise: 'Välj övning',
-                sets: 'Set',
+                exercise: 'Exercise',
+                selectExercise: 'Select exercise',
+                sets: 'Sets',
                 reps: 'Reps',
-                weight: 'Vikt (kg)',
-                seconds: 'Sekunder',
-                note: 'Anteckning',
-                remove: 'Ta bort övning',
+                weight: 'Weight (kg)',
+                seconds: 'Seconds',
+                note: 'Note',
+                remove: 'Remove exercise',
               }}
             />
           ))}
 
-          <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise} disabled={isSaving}>
-            + Lägg till övning
-          </button>
+          {/* Add exercise */}
+          <Button type="button" variant="secondary" size="md" onClick={addExercise} disabled={isSaving}>
+            + Add exercise
+          </Button>
         </div>
 
         {/* Submit */}
-        <Button type="submit" variant="primary" disabled={isSaving}>
-          {isSaving ? 'Updating workout...' : 'Update workout'}
+        <Button type="submit" variant="primary" size="md" loading={isSaving}>
+          Update workout
         </Button>
       </form>
     </div>

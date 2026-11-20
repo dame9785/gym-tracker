@@ -31,6 +31,7 @@ type Props = {
 export default function WorkoutExerciseFields({ index, exercise, exercises, onUpdate, onRemove, labels }: Props) {
   return (
     <div className={FormStyles.exerciseCard}>
+      {/* Exercise selection */}
       <div className={FormStyles.formGroup}>
         <FormField htmlFor={`exercise-${index}`} label={labels.exercise} required>
           <FormSelect id={`exercise-${index}`} value={exercise.exerciseId} onChange={(e) => onUpdate(index, 'exerciseId', Number(e.target.value))}>
@@ -47,6 +48,7 @@ export default function WorkoutExerciseFields({ index, exercise, exercises, onUp
         </FormField>
       </div>
 
+      {/* Exercise settings */}
       <div className={FormStyles.exerciseGrid}>
         <div className={FormStyles.formGroup}>
           <FormField htmlFor={`sets-${index}`} label={labels.sets}>
@@ -73,15 +75,19 @@ export default function WorkoutExerciseFields({ index, exercise, exercises, onUp
         </div>
       </div>
 
+      {/* Note */}
       <div className={FormStyles.formGroup}>
         <FormField htmlFor={`note-${index}`} label={labels.note}>
           <FormTextarea id={`note-${index}`} rows={3} value={exercise.note} onChange={(e) => onUpdate(index, 'note', e.target.value)} />
         </FormField>
       </div>
 
-      <Button type="button" variant="danger" onClick={() => onRemove(index)}>
-        {labels.remove}
-      </Button>
+      {/* Remove exercise */}
+      <div className="flex justify-end">
+        <Button type="button" variant="danger" size="sm" onClick={() => onRemove(index)}>
+          {labels.remove}
+        </Button>
+      </div>
     </div>
   );
 }

@@ -1,12 +1,13 @@
 'use client';
 
 import { CalendarDays, Pencil, Trash2, Scale } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import type { LogItemViewModel } from '@/types/log-weight-types';
 import { deleteLogWeight } from '@/actions/log-weight-actions';
+import Button from '@/components/button/button';
+import Card from '@/components/ui/card';
 
 type PageProps = {
   logItem: LogItemViewModel;
@@ -48,12 +49,12 @@ export default function LogHistory({ logItem }: PageProps) {
   };
 
   return (
-    <article className="group min-w-0 rounded-xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-zinc-950 p-4 transition-all duration-200 hover:border-orange-500/30 hover:shadow-lg hover:shadow-orange-500/5 sm:p-5">
+    <Card variant="interactive" padding="sm" className="min-w-0">
       {/* Main content */}
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         {/* Date */}
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400 transition-colors group-hover:bg-orange-500/15">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-orange-500/10 bg-orange-500/[0.08] text-orange-400 transition-colors group-hover:bg-orange-500/[0.12]">
             <CalendarDays className="h-5 w-5" />
           </div>
 
@@ -65,11 +66,11 @@ export default function LogHistory({ logItem }: PageProps) {
 
         {/* Weight */}
         <div className="flex shrink-0 items-center gap-2">
-          <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400 sm:flex">
+          <div className="hidden h-9 w-9 items-center justify-center rounded-xl border border-blue-500/10 bg-blue-500/[0.08] text-blue-400 sm:flex">
             <Scale className="h-4 w-4" />
           </div>
 
-          <span className="text-lg font-bold text-white tabular-nums sm:text-xl">{logItem.weight.toString()} kg</span>
+          <span className="text-lg font-semibold text-zinc-100 tabular-nums sm:text-xl">{logItem.weight.toString()} kg</span>
         </div>
       </div>
 
@@ -79,23 +80,19 @@ export default function LogHistory({ logItem }: PageProps) {
           {logItem.note || 'Ingen anteckning'}
         </p>
 
+        {/* Actions */}
         <div className="flex shrink-0 items-center gap-2">
           {/* Edit */}
-          <Link href={`/log-weight/edit/${logItem.id}`} aria-label="Redigera vikt" className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800/70 text-zinc-400 transition-all duration-200 hover:border-blue-500/40 hover:bg-blue-500/10 hover:text-blue-400">
+          <Button href={`/log-weight/edit/${logItem.id}`} variant="secondary" size="sm" aria-label="Redigera vikt" className="flex h-9 w-9 items-center justify-center !p-0">
             <Pencil className="h-4 w-4" />
-          </Link>
+          </Button>
 
           {/* Delete */}
-          <button
-            type="button"
-            onClick={() => handleDelete(logItem.id)}
-            aria-label="Ta bort vikt"
-            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800/70 text-zinc-400 transition-all duration-200 hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400"
-          >
+          <Button type="button" variant="danger" size="sm" onClick={() => handleDelete(logItem.id)} aria-label="Ta bort vikt" className="flex h-9 w-9 items-center justify-center !p-0">
             <Trash2 className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       </div>
-    </article>
+    </Card>
   );
 }

@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-
 import { toast } from 'sonner';
 
 import FormStyles from '@/components/forms/form.module.css';
@@ -186,9 +185,10 @@ export default function AddWorkoutForm({ exericses }: Props) {
             />
           ))}
 
-          <button type="button" className={FormStyles.addExerciseButton} onClick={addExercise} disabled={isSaving}>
+          {/* Add exercise */}
+          <Button type="button" variant="secondary" size="md" onClick={addExercise} disabled={isSaving}>
             + Add more exercises
-          </button>
+          </Button>
         </div>
 
         {/* Submit */}

@@ -1,13 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Dumbbell, Eye, Pencil, Trash2, Activity } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { deleteExerciseAction } from '@/actions/exercise-actions';
+import Button from '@/components/button/button';
+import Card from '@/components/ui/card';
 import type { ExerciseViewModel } from '@/types/exercise-types';
+import Link from 'next/link';
 
 type Props = {
   exercise: ExerciseViewModel;
@@ -45,9 +47,9 @@ export default function ExerciseCard({ exercise }: Props) {
   };
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900 to-zinc-950 transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-950/10">
+    <Card variant="interactive" padding="none" className="flex h-full flex-col">
       {/* Image */}
-      <div className="relative h-52 shrink-0 overflow-hidden bg-zinc-900">
+      <div className="group relative h-52 shrink-0 overflow-hidden bg-zinc-900">
         <Image src={exercise.imagePath || '/placeholder.png'} alt={exercise.name} fill sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, (max-width: 1535px) 33vw, 25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
@@ -89,42 +91,35 @@ export default function ExerciseCard({ exercise }: Props) {
         {/* Equipment and actions */}
         <div className="mt-auto pt-5">
           <div className="flex items-center justify-between gap-3">
+            {/* Equipment */}
             <span className="inline-flex min-w-0 items-center gap-2 rounded-full border border-zinc-700 bg-zinc-800/70 px-3 py-2 text-xs font-medium text-zinc-200">
               <Dumbbell className="h-4 w-4 shrink-0 text-orange-400" />
               <span className="truncate">{exercise.equipment || 'Bodyweight'}</span>
             </span>
 
+            {/* Actions */}
             <div className="flex shrink-0 items-center gap-2">
-              {/* Edit exercise */}
-              <Link
-                href={`/exercises/edit/${exercise.id}`}
-                aria-label={`Edit ${exercise.name}`}
-                title="Edit exercise"
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/70 text-zinc-300 transition hover:border-orange-500/50 hover:bg-orange-500/10 hover:text-orange-400"
-              >
+              <Button href={`/exercises/edit/${exercise.id}`} variant="secondary" size="sm" aria-label={`Edit ${exercise.name}`} className="flex h-10 w-10 items-center justify-center !p-0">
                 <Pencil className="h-4 w-4" />
-              </Link>
+              </Button>
 
-              {/* Delete exercise */}
-              <button
-                type="button"
-                onClick={() => handleDelete(exercise.id)}
-                aria-label={`Delete ${exercise.name}`}
-                title="Delete exercise"
-                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/70 text-zinc-300 transition hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400"
-              >
+              <Button type="button" variant="danger" size="sm" onClick={() => handleDelete(exercise.id)} aria-label={`Delete ${exercise.name}`} className="flex h-10 w-10 items-center justify-center !p-0">
                 <Trash2 className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           </div>
 
-          {/* Details button */}
-          <Link href={`/exercises/${exercise.slug}`} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-sm font-semibold text-zinc-200 transition hover:border-orange-500/50 hover:bg-orange-500/10 hover:text-orange-300">
-            <Eye className="h-4 w-4" />
-            View details
+          {/* Details */}
+          <Link href={`/exercises/${exercise.slug}`} className="group/details mt-4 flex items-center justify-between border-t border-zinc-800/80 pt-3 text-sm text-zinc-400 transition-colors hover:text-orange-400">
+            <span className="flex items-center gap-2">
+              <Eye className="h-4 w-4" />
+              View exercise details
+            </span>
+
+            <span className="transition-transform duration-200 group-hover/details:translate-x-1">→</span>
           </Link>
         </div>
       </div>
-    </article>
+    </Card>
   );
 }
