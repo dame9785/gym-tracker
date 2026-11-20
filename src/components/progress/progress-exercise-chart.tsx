@@ -97,16 +97,16 @@ export default function ExerciseChart({ history, metric }: Props) {
   const maxValue = data.reduce((max, point) => Math.max(max, point.value), 0);
 
   if (data.length === 0) {
-    return <div className="flex h-64 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 text-center text-sm text-zinc-500">No training history available yet. Record a workout result to start tracking your progress.</div>;
+    return <div className="border-border bg-background/50 text-text-muted flex h-64 items-center justify-center rounded-xl border px-4 text-center text-sm">No training history available yet. Record a workout result to start tracking your progress.</div>;
   }
 
   return (
-    <div className="mt-4 rounded-xl border border-zinc-800 bg-zinc-950/50 p-3 sm:p-5">
+    <div className="border-border bg-background/50 mt-4 rounded-xl border p-3 sm:p-5">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="text-sm font-medium text-white">{metricLabel} per Training Day</p>
+          <p className="text-text text-sm font-medium">{metricLabel} per Training Day</p>
 
-          <p className="mt-1 text-xs text-zinc-500">Each point shows the highest recorded value for that day.</p>
+          <p className="text-text-muted mt-1 text-xs">Each point shows the highest recorded value for that day.</p>
         </div>
 
         <div className="text-right">
@@ -114,18 +114,18 @@ export default function ExerciseChart({ history, metric }: Props) {
             {formatValue(maxValue)} {unit}
           </p>
 
-          <p className="text-xs text-zinc-500">Best Daily Result</p>
+          <p className="text-text-muted text-xs">Best Daily Result</p>
         </div>
       </div>
 
       <div className="h-64 w-full sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 12, right: 12, left: -12, bottom: 4 }}>
-            <CartesianGrid stroke="#27272a" strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid stroke="#30343a" strokeDasharray="3 3" vertical={false} />
 
-            <XAxis dataKey="dateLabel" tick={{ fill: '#a1a1aa', fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#3f3f46' }} minTickGap={18} />
+            <XAxis dataKey="dateLabel" tick={{ fill: '#9ca3af', fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#454b55' }} minTickGap={18} />
 
-            <YAxis domain={[0, (dataMax: number) => Math.max(dataMax, 1) * 1.15]} allowDecimals={metric === 'weight'} tick={{ fill: '#a1a1aa', fontSize: 12 }} tickLine={false} axisLine={false} width={48} tickFormatter={(value: number) => formatValue(value)} />
+            <YAxis domain={[0, (dataMax: number) => Math.max(dataMax, 1) * 1.15]} allowDecimals={metric === 'weight'} tick={{ fill: '#9ca3af', fontSize: 12 }} tickLine={false} axisLine={false} width={48} tickFormatter={(value: number) => formatValue(value)} />
 
             <Tooltip
               content={({ active, payload }) => {
@@ -140,8 +140,8 @@ export default function ExerciseChart({ history, metric }: Props) {
                 }
 
                 return (
-                  <div className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 shadow-xl">
-                    <p className="text-xs text-zinc-400">
+                  <div className="border-border-hover bg-surface rounded-lg border px-3 py-2 shadow-xl">
+                    <p className="text-text-muted text-xs">
                       {new Date(`${point.dateKey}T12:00:00`).toLocaleDateString('en-US', {
                         day: 'numeric',
                         month: 'long',
@@ -149,18 +149,18 @@ export default function ExerciseChart({ history, metric }: Props) {
                       })}
                     </p>
 
-                    <p className="mt-1 text-sm font-semibold text-white">
+                    <p className="text-text mt-1 text-sm font-semibold">
                       {formatValue(point.value)} {unit}
                     </p>
 
-                    <p className="mt-1 text-xs text-zinc-500">
+                    <p className="text-text-muted mt-1 text-xs">
                       {point.setCount} {point.setCount === 1 ? 'set recorded' : 'sets recorded'}
                     </p>
                   </div>
                 );
               }}
               cursor={{
-                stroke: '#71717a',
+                stroke: '#9ca3af',
                 strokeDasharray: '4 4',
               }}
             />
@@ -179,7 +179,7 @@ export default function ExerciseChart({ history, metric }: Props) {
               activeDot={{
                 r: 6,
                 fill: '#c4b5fd',
-                stroke: '#18181b',
+                stroke: '#171c23',
                 strokeWidth: 2,
               }}
               connectNulls
@@ -189,7 +189,7 @@ export default function ExerciseChart({ history, metric }: Props) {
         </ResponsiveContainer>
       </div>
 
-      <p className="mt-3 text-xs text-zinc-500">{data.length === 1 ? 'You have one recorded training day. As you record more workouts, your progress over time will appear here.' : `${data.length} training days displayed from oldest to newest entry.`}</p>
+      <p className="text-text-muted mt-3 text-xs">{data.length === 1 ? 'You have one recorded training day. As you record more workouts, your progress over time will appear here.' : `${data.length} training days displayed from oldest to newest entry.`}</p>
     </div>
   );
 }

@@ -51,50 +51,50 @@ export default function WeightProgressChart({ history, startWeight, goalWeight }
   const yMax = Math.ceil(maxWeight + padding);
 
   return (
-    <section aria-labelledby="weight-chart-title" className="mb-10 w-full min-w-0 rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 via-zinc-950 to-zinc-900 p-4 sm:p-8">
+    <section aria-labelledby="weight-chart-title" className="border-border from-surface via-background to-surface mb-10 w-full min-w-0 rounded-2xl border bg-linear-to-br p-4 sm:p-8">
       <header className="mb-6">
-        <h2 id="weight-chart-title" className="text-xl font-bold text-white">
+        <h2 id="weight-chart-title" className="text-text text-xl font-bold">
           Viktutveckling
         </h2>
 
-        <p className="mt-1 text-sm text-zinc-400">Följ din vikt över tid och jämför med din startvikt och målvikt.</p>
+        <p className="text-text-muted mt-1 text-sm">Följ din vikt över tid och jämför med din startvikt och målvikt.</p>
       </header>
 
       {data.length === 0 ? (
-        <p role="status" className="text-sm text-zinc-400">
+        <p role="status" className="text-text-muted text-sm">
           Ingen vikthistorik registrerad ännu.
         </p>
       ) : (
         <>
           {/* Statistik */}
           <dl className="mb-10 grid grid-cols-1 gap-3 xl:grid-cols-3">
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-4">
-              <dt className="text-xs text-zinc-200">Aktuell vikt</dt>
+            <div className="border-border bg-surface/70 rounded-xl border p-4">
+              <dt className="text-text-secondary text-xs">Aktuell vikt</dt>
 
-              <dd className="mt-2 text-xl font-bold text-orange-400">{latestEntry ? `${formatWeight(latestEntry.weight)} kg` : '—'}</dd>
+              <dd className="text-primary mt-2 text-xl font-bold">{latestEntry ? `${formatWeight(latestEntry.weight)} kg` : '—'}</dd>
 
-              <dd className="mt-1 text-xs text-zinc-500">{latestEntry ? formatDate(latestEntry.loggedAt) : 'Ingen registrering'}</dd>
+              <dd className="text-text-muted mt-1 text-xs">{latestEntry ? formatDate(latestEntry.loggedAt) : 'Ingen registrering'}</dd>
             </div>
 
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-4">
-              <dt className="text-xs text-zinc-200">Högsta vikt</dt>
+            <div className="border-border bg-surface/70 rounded-xl border p-4">
+              <dt className="text-text-secondary text-xs">Högsta vikt</dt>
 
               <dd className="mt-2 text-xl font-bold text-red-400">{highestEntry ? `${formatWeight(highestEntry.weight)} kg` : '—'}</dd>
 
-              <dd className="mt-1 text-xs text-zinc-500">{highestEntry ? formatDate(highestEntry.loggedAt) : 'Ingen registrering'}</dd>
+              <dd className="text-text-muted mt-1 text-xs">{highestEntry ? formatDate(highestEntry.loggedAt) : 'Ingen registrering'}</dd>
             </div>
 
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-4">
-              <dt className="text-xs text-zinc-200">Lägsta vikt</dt>
+            <div className="border-border bg-surface/70 rounded-xl border p-4">
+              <dt className="text-text-secondary text-xs">Lägsta vikt</dt>
 
               <dd className="mt-2 text-xl font-bold text-emerald-400">{lowestEntry ? `${formatWeight(lowestEntry.weight)} kg` : '—'}</dd>
 
-              <dd className="mt-1 text-xs text-zinc-500">{lowestEntry ? formatDate(lowestEntry.loggedAt) : 'Ingen registrering'}</dd>
+              <dd className="text-text-muted mt-1 text-xs">{lowestEntry ? formatDate(lowestEntry.loggedAt) : 'Ingen registrering'}</dd>
             </div>
           </dl>
 
           {/* Förklaring */}
-          <ul aria-label="Diagramförklaring" className="mb-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-zinc-400">
+          <ul aria-label="Diagramförklaring" className="text-text-secondary mb-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs">
             <li className="flex items-center gap-2">
               <span aria-hidden="true" className="h-0.5 w-5 rounded bg-violet-400" />
               Registrerad vikt
@@ -128,13 +128,13 @@ export default function WeightProgressChart({ history, startWeight, goalWeight }
 
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#18181b',
-                      border: '1px solid #3f3f46',
+                      backgroundColor: '#171c23',
+                      border: '1px solid #30343a',
                       borderRadius: '12px',
-                      color: '#fff',
+                      color: '#f5f5f5',
                     }}
                     labelStyle={{
-                      color: '#a1a1aa',
+                      color: '#9ca3af',
                       marginBottom: 4,
                     }}
                     formatter={(value) => [`${formatWeight(Number(value))} kg`, 'Vikt']}

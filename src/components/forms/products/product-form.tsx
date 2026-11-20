@@ -50,7 +50,7 @@ type FormValues = {
   nutritionSource: string;
 };
 
-const sectionClass = 'min-w-0 w-full rounded-2xl border border-zinc-800/90 bg-zinc-900/60 p-4 sm:p-7';
+const sectionClass = 'min-w-0 w-full rounded-2xl border border-border bg-surface p-4 sm:p-7';
 
 export default function ProductForm({ product }: ProductFormProps) {
   const router = useRouter();
@@ -145,13 +145,13 @@ export default function ProductForm({ product }: ProductFormProps) {
         {/* Product information */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <Package className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Product information</h2>
-              <p className="mt-1 text-xs text-zinc-500">Basic information about the product.</p>
+              <h2 className="text-text font-semibold">Product information</h2>
+              <p className="text-text-muted mt-1 text-xs">Basic information about the product.</p>
             </div>
           </div>
 
@@ -179,13 +179,13 @@ export default function ProductForm({ product }: ProductFormProps) {
         {/* Nutritional values */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <Activity className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Nutritional values</h2>
-              <p className="mt-1 text-xs text-zinc-500">Nutritional information per 100 grams.</p>
+              <h2 className="text-text font-semibold">Nutritional values</h2>
+              <p className="text-text-muted mt-1 text-xs">Nutritional information per 100 grams.</p>
             </div>
           </div>
 
@@ -211,13 +211,13 @@ export default function ProductForm({ product }: ProductFormProps) {
         {/* Data quality */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <FileText className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Data quality</h2>
-              <p className="mt-1 text-xs text-zinc-500">Specify how the nutritional information was verified.</p>
+              <h2 className="text-text font-semibold">Data quality</h2>
+              <p className="text-text-muted mt-1 text-xs">Specify how the nutritional information was verified.</p>
             </div>
           </div>
 
@@ -241,13 +241,13 @@ export default function ProductForm({ product }: ProductFormProps) {
         {/* Product image */}
         <section className={sectionClass}>
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <ImageIcon className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Product image</h2>
-              <p className="mt-1 text-xs text-zinc-500">Upload or replace the product image.</p>
+              <h2 className="text-text font-semibold">Product image</h2>
+              <p className="text-text-muted mt-1 text-xs">Upload or replace the product image.</p>
             </div>
           </div>
 
@@ -262,7 +262,7 @@ export default function ProductForm({ product }: ProductFormProps) {
             disabled={isSaving}
           />
 
-          <p className="mt-3 text-xs leading-5 text-zinc-500">Optional. JPG, PNG or WebP, maximum 5 MB.</p>
+          <p className="text-text-muted mt-3 text-xs leading-5">Optional. JPG, PNG or WebP, maximum 5 MB.</p>
 
           {product?.imageUrl && !removeImage && (
             <button
@@ -279,15 +279,15 @@ export default function ProductForm({ product }: ProductFormProps) {
           )}
 
           {removeImage && (
-            <button type="button" onClick={() => setRemoveImage(false)} disabled={isSaving} className="mt-3 text-sm text-zinc-400 transition hover:text-white">
+            <button type="button" onClick={() => setRemoveImage(false)} disabled={isSaving} className="text-text-muted hover:text-text mt-3 text-sm transition">
               Keep current image
             </button>
           )}
         </section>
 
         {/* Form actions */}
-        <div className="sticky bottom-3 z-10 flex flex-col-reverse gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/95 p-3 shadow-xl backdrop-blur-xl sm:flex-row sm:justify-end">
-          <Link href="/admin/products" aria-disabled={isSaving} className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-zinc-700 px-5 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800">
+        <div className="border-border bg-background/95 sticky bottom-3 z-10 flex flex-col-reverse gap-3 rounded-2xl border p-3 shadow-xl backdrop-blur-xl sm:flex-row sm:justify-end">
+          <Link href="/admin/products" aria-disabled={isSaving} className="border-border-hover text-text-secondary hover:border-border-hover hover:bg-surface-hover flex min-h-12 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-medium transition">
             <ArrowLeft className="h-4 w-4" />
             Cancel
           </Link>

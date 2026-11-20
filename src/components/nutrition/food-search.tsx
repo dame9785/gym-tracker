@@ -143,21 +143,19 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
   return (
     <div className="flex max-h-[85vh] min-h-0 flex-col overflow-hidden">
       {/* Header */}
-
-      <div className="flex shrink-0 items-center justify-between border-b border-zinc-800 pb-4">
+      <div className="border-border flex shrink-0 items-center justify-between border-b pb-4">
         <div>
-          <h2 className="text-lg font-semibold text-white">Add food</h2>
-          <p className="mt-1 text-sm text-zinc-500">Add food to {mealTitle[mealType]}</p>
+          <h2 className="text-text text-lg font-semibold">Add food</h2>
+          <p className="text-text-muted mt-1 text-sm">Add food to {mealTitle[mealType]}</p>
         </div>
 
-        <button type="button" onClick={onClose} disabled={isSaving} aria-label="Close" className="rounded-lg p-2 text-zinc-400 transition hover:bg-zinc-800 hover:text-white disabled:opacity-50">
+        <button type="button" onClick={onClose} disabled={isSaving} aria-label="Close" className="text-text-muted hover:bg-surface-hover hover:text-text rounded-lg p-2 transition disabled:opacity-50">
           <span className="text-lg">✕</span>
         </button>
       </div>
 
       {/* Search */}
-
-      <div className="shrink-0 border-b border-zinc-800 py-4">
+      <div className="border-border shrink-0 border-b py-4">
         <input
           type="search"
           value={search}
@@ -167,98 +165,93 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
           }}
           placeholder="Search foods..."
           autoFocus
-          className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-white transition outline-none placeholder:text-zinc-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30"
+          className="border-border-hover bg-surface text-text placeholder:text-text-muted focus:border-primary focus:ring-primary/30 w-full rounded-xl border px-4 py-3 text-sm transition outline-none focus:ring-1"
         />
 
         <div className="mt-3 flex items-center justify-between">
-          <p className="text-xs font-medium text-zinc-500">Product catalog & My foods</p>
+          <p className="text-text-muted text-xs font-medium">Product catalog & My foods</p>
 
-          <p className="text-xs text-zinc-500">{products.length + customFoods.length} foods</p>
+          <p className="text-text-muted text-xs">{products.length + customFoods.length} foods</p>
         </div>
       </div>
 
       {/* Food list */}
-
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto py-4 pr-1">
         {isLoading ? (
-          <p className="py-8 text-center text-sm text-zinc-400">Searching foods...</p>
+          <p className="text-text-secondary py-8 text-center text-sm">Searching foods...</p>
         ) : (
           <>
             {/* Products */}
-
             {products.map((food) => (
               <button
                 key={`product-${food.id}`}
                 type="button"
                 onClick={() => setSelectedFood({ source: 'PRODUCT', food })}
-                className={`w-full rounded-xl border p-3 text-left transition ${selectedFood?.source === 'PRODUCT' && selectedFood.food.id === food.id ? 'border-orange-500 bg-orange-500/10' : 'border-zinc-800 bg-zinc-900 hover:border-zinc-600 hover:bg-zinc-800'}`}
+                className={`w-full rounded-xl border p-3 text-left transition ${selectedFood?.source === 'PRODUCT' && selectedFood.food.id === food.id ? 'border-primary bg-primary/10' : 'border-border bg-surface hover:border-border-hover hover:bg-surface-hover'}`}
               >
                 <div className="flex items-center gap-3">
                   <ProductImage imageUrl={food.imageUrl} name={food.name} />
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-white">{food.name}</p>
+                    <p className="text-text truncate text-sm font-medium">{food.name}</p>
 
-                    {food.brand && <p className="mt-0.5 truncate text-xs text-zinc-400">{food.brand}</p>}
+                    {food.brand && <p className="text-text-secondary mt-0.5 truncate text-xs">{food.brand}</p>}
 
-                    <p className="mt-1 text-xs text-zinc-500">Product catalog</p>
+                    <p className="text-text-muted mt-1 text-xs">Product catalog</p>
                   </div>
 
-                  <p className="shrink-0 text-right text-sm font-medium text-zinc-300">
+                  <p className="text-text-secondary shrink-0 text-right text-sm font-medium">
                     {Math.round(food.calories)} kcal
-                    <span className="block text-xs font-normal text-zinc-500">/ 100 g</span>
+                    <span className="text-text-muted block text-xs font-normal">/ 100 g</span>
                   </p>
                 </div>
               </button>
             ))}
 
             {/* Custom foods */}
-
             {customFoods.map((food) => (
               <button
                 key={`custom-${food.id}`}
                 type="button"
                 onClick={() => setSelectedFood({ source: 'CUSTOM', food })}
-                className={`w-full rounded-xl border p-3 text-left transition ${selectedFood?.source === 'CUSTOM' && selectedFood.food.id === food.id ? 'border-orange-500 bg-orange-500/10' : 'border-zinc-800 bg-zinc-900 hover:border-zinc-600 hover:bg-zinc-800'}`}
+                className={`w-full rounded-xl border p-3 text-left transition ${selectedFood?.source === 'CUSTOM' && selectedFood.food.id === food.id ? 'border-primary bg-primary/10' : 'border-border bg-surface hover:border-border-hover hover:bg-surface-hover'}`}
               >
                 <div className="flex items-center gap-3">
                   <ProductImage imageUrl={null} name={food.name} />
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-white">{food.name}</p>
+                    <p className="text-text truncate text-sm font-medium">{food.name}</p>
 
-                    <p className="mt-1 text-xs text-zinc-500">My foods</p>
+                    <p className="text-text-muted mt-1 text-xs">My foods</p>
                   </div>
 
-                  <p className="shrink-0 text-right text-sm font-medium text-zinc-300">
+                  <p className="text-text-secondary shrink-0 text-right text-sm font-medium">
                     {Math.round(food.calories)} kcal
-                    <span className="block text-xs font-normal text-zinc-500">/ 100 g</span>
+                    <span className="text-text-muted block text-xs font-normal">/ 100 g</span>
                   </p>
                 </div>
               </button>
             ))}
 
-            {!error && products.length === 0 && customFoods.length === 0 && <p className="py-10 text-center text-sm text-zinc-500">No foods found.</p>}
+            {!error && products.length === 0 && customFoods.length === 0 && <p className="text-text-muted py-10 text-center text-sm">No foods found.</p>}
           </>
         )}
       </div>
 
       {/* Selected food */}
-
       {selectedFood && (
-        <div className="shrink-0 space-y-4 border-t border-zinc-800 bg-zinc-950 pt-4">
+        <div className="border-border bg-background shrink-0 space-y-4 border-t pt-4">
           <div className="flex items-center gap-3">
             {selectedFood.source === 'PRODUCT' && <ProductImage imageUrl={selectedFood.food.imageUrl} name={selectedFood.food.name} size="large" />}
 
             <div className="min-w-0">
-              <p className="truncate font-semibold text-white">{selectedFood.food.name}</p>
+              <p className="text-text truncate font-semibold">{selectedFood.food.name}</p>
 
-              <p className="mt-1 text-xs text-zinc-500">Nutrition per 100 g</p>
+              <p className="text-text-muted mt-1 text-xs">Nutrition per 100 g</p>
             </div>
           </div>
 
           {/* Nutrition */}
-
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {[
               {
@@ -282,21 +275,20 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
                 unit: 'g',
               },
             ].map((item) => (
-              <div key={item.label} className="rounded-lg bg-zinc-900 p-3">
-                <p className="text-xs text-zinc-500">{item.label}</p>
+              <div key={item.label} className="bg-surface rounded-lg p-3">
+                <p className="text-text-muted text-xs">{item.label}</p>
 
-                <p className="mt-1 font-semibold text-white">
+                <p className="text-text mt-1 font-semibold">
                   {Math.round(item.value * 10) / 10}
-                  <span className="ml-1 text-xs font-normal text-zinc-500">{item.unit}</span>
+                  <span className="text-text-muted ml-1 text-xs font-normal">{item.unit}</span>
                 </p>
               </div>
             ))}
           </div>
 
           {/* Quantity */}
-
           <div>
-            <label htmlFor="food-quantity" className="mb-2 block text-sm text-zinc-400">
+            <label htmlFor="food-quantity" className="text-text-secondary mb-2 block text-sm">
               Quantity (grams)
             </label>
 
@@ -309,14 +301,13 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
               value={quantity}
               disabled={isSaving}
               onChange={(event) => setQuantity(event.target.value)}
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-white outline-none focus:border-orange-500"
+              className="border-border-hover bg-surface text-text focus:border-primary w-full rounded-lg border px-3 py-2.5 text-sm outline-none"
             />
           </div>
 
           {/* Add button */}
-
           <div className="flex justify-end">
-            <button type="button" onClick={() => void handleAddFood()} disabled={isSaving} className="rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="button" onClick={() => void handleAddFood()} disabled={isSaving} className="bg-primary text-text hover:bg-primary-hover rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50">
               {isSaving ? 'Adding...' : 'Add to meal'}
             </button>
           </div>
@@ -324,7 +315,6 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
       )}
 
       {/* Error */}
-
       {error && <p className="mt-3 shrink-0 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
     </div>
   );

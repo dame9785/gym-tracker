@@ -17,7 +17,7 @@ export default function Pagination({ currentPage, totalPages, basePath, ariaLabe
     .filter((page) => page >= 1 && page <= totalPages)
     .sort((a, b) => a - b);
 
-  const linkClass = 'flex h-10 min-w-10 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-sm font-medium text-zinc-400 transition hover:border-orange-500/40 hover:bg-orange-500/5 hover:text-orange-400';
+  const linkClass = 'flex h-10 min-w-10 items-center justify-center rounded-xl border border-border bg-surface px-3 text-sm font-medium text-text-muted transition hover:border-primary/40 hover:bg-primary/5 hover:text-primary';
 
   const getPageUrl = (page: number) => `${basePath}${basePath.includes('?') ? '&' : '?'}page=${page}`;
 
@@ -33,13 +33,13 @@ export default function Pagination({ currentPage, totalPages, basePath, ariaLabe
       {pages.map((page, index) => (
         <div key={page} className="flex items-center gap-2">
           {index > 0 && pages[index - 1] !== page - 1 && (
-            <span aria-hidden="true" className="px-1 text-zinc-600">
+            <span aria-hidden="true" className="text-text-muted px-1">
               ...
             </span>
           )}
 
           {page === currentPage ? (
-            <span aria-current="page" className="flex h-10 min-w-10 items-center justify-center rounded-xl border border-orange-500/30 bg-orange-500 px-3 text-sm font-bold text-white shadow-lg shadow-orange-500/10">
+            <span aria-current="page" className="border-primary/30 bg-primary text-primary-foreground shadow-primary/10 flex h-10 min-w-10 items-center justify-center rounded-xl border px-3 text-sm font-bold shadow-lg">
               {page}
             </span>
           ) : (

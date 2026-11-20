@@ -7,21 +7,32 @@ type ProductFiltersProps = {
 };
 
 export default function ProductFilters({ search = '', category = '', quality = '', archived = false, categories }: ProductFiltersProps) {
+  const inputClasses = 'h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-text outline-none transition-colors placeholder:text-text-muted focus:border-primary';
+
+  const labelClasses = 'mb-2 block text-xs font-medium text-text-muted';
+
+  const buttonClasses = 'flex h-10 items-center justify-center rounded-lg px-4 text-sm font-semibold transition-colors';
+
   return (
-    <form action="/admin/products" method="GET" className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-[#111827]/70 p-4 sm:flex-row sm:flex-wrap sm:items-end">
+    <form action="/admin/products" method="GET" className="border-border bg-surface flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:flex-wrap sm:items-end">
+      {/* Search */}
       <div className="min-w-0 flex-1">
-        <label htmlFor="search" className="mb-2 block text-xs font-medium text-gray-400">
+        <label htmlFor="search" className={labelClasses}>
           Search products
         </label>
-        <input id="search" name="search" type="search" defaultValue={search} placeholder="Name, brand or barcode..." className="h-10 w-full rounded-lg border border-white/10 bg-[#0b1220] px-3 text-sm text-white outline-none placeholder:text-gray-600 focus:border-orange-400" />
+
+        <input id="search" name="search" type="search" defaultValue={search} placeholder="Name, brand or barcode..." className={inputClasses} />
       </div>
 
+      {/* Category */}
       <div className="w-full sm:w-40">
-        <label htmlFor="category" className="mb-2 block text-xs font-medium text-gray-400">
+        <label htmlFor="category" className={labelClasses}>
           Category
         </label>
-        <select id="category" name="category" defaultValue={category} className="h-10 w-full rounded-lg border border-white/10 bg-[#0b1220] px-3 text-sm text-white outline-none focus:border-orange-400">
+
+        <select id="category" name="category" defaultValue={category} className={inputClasses}>
           <option value="">All categories</option>
+
           {categories.map((item) => (
             <option key={item} value={item}>
               {item}
@@ -30,11 +41,13 @@ export default function ProductFilters({ search = '', category = '', quality = '
         </select>
       </div>
 
+      {/* Data quality */}
       <div className="w-full sm:w-40">
-        <label htmlFor="quality" className="mb-2 block text-xs font-medium text-gray-400">
+        <label htmlFor="quality" className={labelClasses}>
           Data quality
         </label>
-        <select id="quality" name="quality" defaultValue={quality} className="h-10 w-full rounded-lg border border-white/10 bg-[#0b1220] px-3 text-sm text-white outline-none focus:border-orange-400">
+
+        <select id="quality" name="quality" defaultValue={quality} className={inputClasses}>
           <option value="">All quality levels</option>
           <option value="VERIFIED">Verified</option>
           <option value="STANDARD">Standard</option>
@@ -42,22 +55,25 @@ export default function ProductFilters({ search = '', category = '', quality = '
         </select>
       </div>
 
+      {/* Product status */}
       <div className="w-full sm:w-36">
-        <label htmlFor="archived" className="mb-2 block text-xs font-medium text-gray-400">
+        <label htmlFor="archived" className={labelClasses}>
           Product status
         </label>
-        <select id="archived" name="archived" defaultValue={archived ? 'true' : 'false'} className="h-10 w-full rounded-lg border border-white/10 bg-[#0b1220] px-3 text-sm text-white outline-none focus:border-orange-400">
+
+        <select id="archived" name="archived" defaultValue={archived ? 'true' : 'false'} className={inputClasses}>
           <option value="false">Active</option>
           <option value="true">Archived</option>
         </select>
       </div>
 
+      {/* Actions */}
       <div className="flex gap-2">
-        <button type="submit" className="h-10 rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-orange-600">
+        <button type="submit" className={`${buttonClasses} bg-primary text-primary-foreground hover:bg-primary-hover`}>
           Apply filters
         </button>
 
-        <a href="/admin/products" className="flex h-10 items-center rounded-lg border border-white/10 px-4 text-sm text-gray-300 transition-colors hover:bg-white/5">
+        <a href="/admin/products" className={`${buttonClasses} border-border text-text-secondary hover:bg-surface-hover border`}>
           Reset
         </a>
       </div>

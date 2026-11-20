@@ -8,22 +8,22 @@ interface WorkoutSessionExerciseCardProps {
 
 export default function WorkoutSessionExerciseCard({ exercise }: WorkoutSessionExerciseCardProps) {
   return (
-    <section className="min-w-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
-      <div className="border-b border-zinc-800 p-4 sm:p-5">
+    <section className="border-border bg-surface min-w-0 overflow-hidden rounded-2xl border">
+      <div className="border-border border-b p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-lg font-bold text-white sm:text-xl">{exercise.name}</h2>
+          <h2 className="text-text text-lg font-bold sm:text-xl">{exercise.name}</h2>
 
-          <span className="text-sm text-zinc-500">{exercise.sets.length} set</span>
+          <span className="text-text-muted text-sm">{exercise.sets.length} set</span>
         </div>
 
         {exercise.primaryMuscle && (
-          <p className="mt-1 text-sm text-zinc-400">
+          <p className="text-text-secondary mt-1 text-sm">
             {exercise.primaryMuscle}
             {exercise.secondaryMuscles.length > 0 && ` · ${exercise.secondaryMuscles.join(', ')}`}
           </p>
         )}
 
-        {exercise.note && <p className="mt-3 text-sm text-zinc-400">{exercise.note}</p>}
+        {exercise.note && <p className="text-text-secondary mt-3 text-sm">{exercise.note}</p>}
       </div>
 
       <div>

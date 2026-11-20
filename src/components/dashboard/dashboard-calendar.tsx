@@ -109,21 +109,21 @@ export default function WorkoutCalendar() {
 
   return (
     <>
-      <section className="w-full min-w-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950/50 p-3 sm:p-5 lg:p-6">
+      <section className="border-border bg-surface w-full min-w-0 overflow-hidden rounded-2xl border p-3 sm:p-5 lg:p-6">
         {/* Calendar header */}
         <div className="mb-4 flex items-center justify-between gap-2 sm:mb-6">
-          <button type="button" onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() - 1, 1))} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white transition hover:bg-zinc-800 hover:text-orange-400 sm:h-14 sm:w-14" aria-label="Previous month">
+          <button type="button" onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() - 1, 1))} className="text-text hover:bg-surface-hover hover:text-primary flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition sm:h-14 sm:w-14" aria-label="Previous month">
             <ChevronLeft size={25} strokeWidth={2.5} />
           </button>
 
-          <h2 className="truncate text-base font-semibold text-white capitalize sm:text-xl">
+          <h2 className="text-text truncate text-base font-semibold capitalize sm:text-xl">
             {currentDate.toLocaleDateString('en-US', {
               month: 'long',
               year: 'numeric',
             })}
           </h2>
 
-          <button type="button" onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() + 1, 1))} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white transition hover:bg-zinc-800 hover:text-orange-400 sm:h-14 sm:w-14" aria-label="Next month">
+          <button type="button" onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() + 1, 1))} className="text-text hover:bg-surface-hover hover:text-primary flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition sm:h-14 sm:w-14" aria-label="Next month">
             <ChevronRight size={25} strokeWidth={2.5} />
           </button>
         </div>
@@ -131,7 +131,7 @@ export default function WorkoutCalendar() {
         {/* Weekdays */}
         <div className="grid grid-cols-7">
           {weekDays.map((day) => (
-            <div key={day} className="border-b border-white/10 px-0.5 py-2 text-center text-xs font-semibold text-gray-400 sm:p-3 sm:text-sm">
+            <div key={day} className="border-border text-text-muted border-b px-0.5 py-2 text-center text-xs font-semibold sm:p-3 sm:text-sm">
               {day}
             </div>
           ))}
@@ -142,14 +142,13 @@ export default function WorkoutCalendar() {
           {calendarDays.map((day, index) => {
             const dateKey = day ? getDateKey(day) : null;
             const dayWorkouts = dateKey ? (workoutsByDate[dateKey] ?? []) : [];
-
             const isCurrentDay = dateKey === todayKey;
 
             return (
-              <div key={dateKey ?? `empty-${index}`} className={`min-h-[76px] min-w-0 border-r border-b border-white/10 p-1 sm:min-h-24 sm:p-2 ${isCurrentDay ? 'ring-1 ring-orange-500 ring-inset sm:ring-2' : ''}`}>
+              <div key={dateKey ?? `empty-${index}`} className={`border-border min-h-[76px] min-w-0 border-r border-b p-1 sm:min-h-24 sm:p-2 ${isCurrentDay ? 'ring-primary ring-1 ring-inset sm:ring-2' : ''}`}>
                 {day && (
                   <>
-                    <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs sm:h-7 sm:w-7 sm:text-sm ${isCurrentDay ? 'bg-orange-500 font-bold text-black' : 'text-white'}`}>{day.getDate()}</span>
+                    <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs sm:h-7 sm:w-7 sm:text-sm ${isCurrentDay ? 'bg-primary text-primary-foreground font-bold' : 'text-text'}`}>{day.getDate()}</span>
 
                     <div className="mt-1 space-y-1 sm:mt-2">
                       {isLoading ? (
@@ -167,7 +166,7 @@ export default function WorkoutCalendar() {
                               type="button"
                               onClick={() => setSelectedWorkout(workout)}
                               title={`${workout.workoutName} - Click to view workout`}
-                              className={`block w-full min-w-0 cursor-pointer truncate rounded border px-1 py-1 text-left text-xs transition hover:brightness-125 sm:px-2 ${status?.badgeClassName ?? 'border-blue-500/30 bg-blue-500/15 text-blue-300'}`}
+                              className={`block w-full min-w-0 cursor-pointer truncate rounded border px-1 py-1 text-left text-xs transition hover:brightness-125 sm:px-2 ${status?.badgeClassName ?? 'border-primary/30 bg-primary/10 text-primary'}`}
                             >
                               <span className="hidden sm:inline">💪 </span>
                               <span className="sm:hidden">💪</span>
@@ -184,9 +183,9 @@ export default function WorkoutCalendar() {
           })}
         </div>
 
-        {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
+        {error && <p className="text-error mt-4 text-sm">{error}</p>}
 
-        {!isLoading && !error && <p className="mt-4 text-sm text-gray-400">Workouts this month: {workouts.length}</p>}
+        {!isLoading && !error && <p className="text-text-muted mt-4 text-sm">Workouts this month: {workouts.length}</p>}
       </section>
 
       {/* Workout overview modal */}

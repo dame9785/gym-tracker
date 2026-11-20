@@ -46,12 +46,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <div>
           <p className="text-sm font-medium text-orange-400">ADMINISTRATION</p>
 
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Product catalogue</h1>
+          <h1 className="text-text mt-2 text-3xl font-bold tracking-tight">Product catalogue</h1>
 
-          <p className="mt-2 text-sm text-gray-400">Manage products and nutritional information in GymTracker.</p>
+          <p className="text-text-muted mt-2 text-sm">Manage products and nutritional information in GymTracker.</p>
         </div>
 
-        <Link href="/admin/products/new" className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-orange-500 px-5 text-sm font-semibold text-white transition-colors hover:bg-orange-600">
+        <Link href="/admin/products/new" className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-lg px-5 text-sm font-semibold transition-colors">
           <span className="text-xl leading-none">+</span>
           Add product
         </Link>
@@ -63,7 +63,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       {result.totalProducts > 0 && (
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-gray-400">
+          <p className="text-text-muted text-sm">
             Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, result.totalProducts)} of {result.totalProducts} products
           </p>
 

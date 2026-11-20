@@ -15,9 +15,15 @@ type SettingsTab = 'user-settings' | 'change-password';
 export default function UserSettingsTabs({ user }: Props) {
   const [activeTab, setActiveTab] = useState<SettingsTab>('user-settings');
 
+  const tabClasses = 'px-5 py-3 font-semibold transition-colors border-b-2';
+
+  const activeTabClasses = 'border-primary text-primary';
+
+  const inactiveTabClasses = 'border-transparent text-text-muted hover:text-text';
+
   return (
     <div className="mx-auto w-full max-w-5xl">
-      <div role="tablist" aria-label="User settings" className="mb-8 flex justify-center gap-3 border-b border-gray-700">
+      <div role="tablist" aria-label="User settings" className="border-border mb-8 flex justify-center gap-3 border-b">
         <button
           id="user-settings-tab"
           type="button"
@@ -26,7 +32,7 @@ export default function UserSettingsTabs({ user }: Props) {
           aria-controls="user-settings-panel"
           tabIndex={activeTab === 'user-settings' ? 0 : -1}
           onClick={() => setActiveTab('user-settings')}
-          className={`px-5 py-3 font-semibold transition-colors ${activeTab === 'user-settings' ? 'border-b-2 border-orange-500 text-orange-500' : 'text-gray-400 hover:text-white'}`}
+          className={`${tabClasses} ${activeTab === 'user-settings' ? activeTabClasses : inactiveTabClasses}`}
         >
           User Settings
         </button>
@@ -39,7 +45,7 @@ export default function UserSettingsTabs({ user }: Props) {
           aria-controls="change-password-panel"
           tabIndex={activeTab === 'change-password' ? 0 : -1}
           onClick={() => setActiveTab('change-password')}
-          className={`px-5 py-3 font-semibold transition-colors ${activeTab === 'change-password' ? 'border-b-2 border-orange-500 text-orange-500' : 'text-gray-400 hover:text-white'}`}
+          className={`${tabClasses} ${activeTab === 'change-password' ? activeTabClasses : inactiveTabClasses}`}
         >
           Change Password
         </button>

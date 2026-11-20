@@ -100,7 +100,7 @@ export default function WorkoutDetailCard({ workouts }: Props) {
             Search workouts
           </label>
 
-          <div className="flex min-w-0 items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/70 px-4 transition-colors focus-within:border-blue-400/50 focus-within:ring-2 focus-within:ring-blue-400/10">
+          <div className="bg-surface/70 flex min-w-0 items-center gap-3 rounded-xl border border-zinc-800 px-4 transition-colors focus-within:border-blue-400/50 focus-within:ring-2 focus-within:ring-blue-400/10">
             <Search className="h-5 w-5 shrink-0 text-zinc-500" />
 
             <input id="workout-search" type="search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search workouts or exercises..." className="h-12 w-full min-w-0 bg-transparent text-base text-white outline-none placeholder:text-zinc-500" />
@@ -123,7 +123,7 @@ export default function WorkoutDetailCard({ workouts }: Props) {
         {filteredWorkouts.length > 0 ? (
           <div className={`grid min-w-0 gap-3 sm:gap-4 ${filteredWorkouts.length > 1 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
             {filteredWorkouts.map((workout) => (
-              <article key={workout.id} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-zinc-800/90 bg-zinc-900/60 transition-all duration-200 hover:border-blue-400/30 hover:bg-zinc-900 hover:shadow-xl hover:shadow-black/20">
+              <article key={workout.id} className="group bg-surface/60 hover:bg-surface flex min-w-0 flex-col overflow-hidden rounded-2xl border border-zinc-800/90 transition-all duration-200 hover:border-blue-400/30 hover:shadow-xl hover:shadow-black/20">
                 <div className="flex flex-1 flex-col p-4 sm:p-5">
                   {/* Card header */}
                   <div className="flex min-w-0 items-start justify-between gap-3">
@@ -264,7 +264,7 @@ export default function WorkoutDetailCard({ workouts }: Props) {
             {/* Exercise list */}
             <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4 sm:p-6">
               {selectedWorkout.workoutExercises.map((exercise, index) => (
-                <div key={exercise.exerciseId} className="flex min-w-0 items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
+                <div key={exercise.exerciseId} className="bg-surface flex min-w-0 items-center gap-3 rounded-xl border border-zinc-800 p-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-sm font-semibold text-blue-400">{String(index + 1).padStart(2, '0')}</span>
 
                   <span className="min-w-0 text-sm font-medium break-words text-zinc-200 sm:text-base">{exercise.name}</span>

@@ -7,20 +7,19 @@ import { toast } from 'sonner';
 
 import Button from '@/components/button/button';
 import ImageUpload from '@/components/ui/image-upload';
-import FormPageHeader from '@/components/forms/shared/form-page-header';
 
 import { registerExerciseAction } from '@/actions/exercise-actions';
 import { registerExerciseSchema, type RegisterExericseDto } from '@/schemas/exercise-schema';
 import { ErrorsHelper } from '@/helpers/error-helper';
 
-//Forms Components
+// Forms Components
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
 import FormTextarea from '@/components/ui/form-textarea';
 import MuscleGroupSelector from '@/components/forms/exercise/muscle-group-selector';
 import Link from 'next/link';
 
-const sectionClass = 'min-w-0 w-full rounded-2xl border border-zinc-800/90 bg-zinc-900/60 p-4 sm:p-7';
+const sectionClass = 'min-w-0 w-full rounded-2xl border border-border bg-surface p-4 sm:p-7';
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -141,13 +140,13 @@ export default function RegisterForm() {
   return (
     <div className="mx-auto w-full max-w-4xl min-w-0 px-3 pt-5 pb-8 sm:px-6 sm:pt-8 sm:pb-12 lg:pt-10">
       {/* Progress / info strip */}
-      <div className="mb-6 flex items-center gap-3 rounded-xl border border-orange-500/20 bg-orange-500/[0.06] px-4 py-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-500/10 text-orange-400">
+      <div className="border-primary/20 bg-primary/[0.06] mb-6 flex items-center gap-3 rounded-xl border px-4 py-3">
+        <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
           <Activity className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-sm font-medium text-zinc-100">Build your exercise</p>
-          <p className="mt-0.5 text-xs text-zinc-400">Fields marked as required must be completed.</p>
+          <p className="text-text text-sm font-medium">Build your exercise</p>
+          <p className="text-text-muted mt-0.5 text-xs">Fields marked as required must be completed.</p>
         </div>
       </div>
 
@@ -155,12 +154,12 @@ export default function RegisterForm() {
         {/* Basic information */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <Dumbbell className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="font-semibold text-white">Basic information</h2>
-              <p className="mt-1 text-xs text-zinc-500">Name and equipment</p>
+              <h2 className="text-text font-semibold">Basic information</h2>
+              <p className="text-text-muted mt-1 text-xs">Name and equipment</p>
             </div>
           </div>
 
@@ -173,7 +172,7 @@ export default function RegisterForm() {
               htmlFor="equipment"
               label={
                 <>
-                  Equipment <span className="font-normal text-zinc-500">(optional)</span>
+                  Equipment <span className="text-text-muted font-normal">(optional)</span>
                 </>
               }
               error={errors.equipment}
@@ -186,13 +185,12 @@ export default function RegisterForm() {
         {/* Muscle groups */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <Activity className="h-5 w-5" />
             </div>
-
             <div>
-              <h2 className="font-semibold text-white">Muscle groups</h2>
-              <p className="mt-1 text-xs text-zinc-500">Select the main muscle and any assisting muscles.</p>
+              <h2 className="text-text font-semibold">Muscle groups</h2>
+              <p className="text-text-muted mt-1 text-xs">Select the main muscle and any assisting muscles.</p>
             </div>
           </div>
 
@@ -210,12 +208,12 @@ export default function RegisterForm() {
         {/* Exercise details */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <FileText className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="font-semibold text-white">Exercise details</h2>
-              <p className="mt-1 text-xs text-zinc-500">Explain the exercise and how to perform it.</p>
+              <h2 className="text-text font-semibold">Exercise details</h2>
+              <p className="text-text-muted mt-1 text-xs">Explain the exercise and how to perform it.</p>
             </div>
           </div>
 
@@ -244,7 +242,7 @@ export default function RegisterForm() {
               htmlFor="techniqueTips"
               label={
                 <>
-                  Technique tips <span className="font-normal text-zinc-500">(optional)</span>
+                  Technique tips <span className="text-text-muted font-normal">(optional)</span>
                 </>
               }
               error={errors.techniqueTips}
@@ -270,25 +268,24 @@ export default function RegisterForm() {
         {/* Image upload */}
         <section className={sectionClass}>
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <ImageIcon className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="font-semibold text-white">Exercise image</h2>
-              <p className="mt-1 text-xs text-zinc-500">Add a visual reference for your exercise.</p>
+              <h2 className="text-text font-semibold">Exercise image</h2>
+              <p className="text-text-muted mt-1 text-xs">Add a visual reference for your exercise.</p>
             </div>
           </div>
 
           <ImageUpload file={selectImage} onFileChange={setSelectedImage} disabled={isSaving} />
 
-          <p className="mt-3 text-xs leading-5 text-zinc-500">Optional. JPG, PNG or WebP, maximum 5 MB.</p>
+          <p className="text-text-muted mt-3 text-xs leading-5">Optional. JPG, PNG or WebP, maximum 5 MB.</p>
         </section>
 
         {/* Form actions */}
-
-        <div className="flex flex-col-reverse gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/95 p-3 shadow-xl sm:sticky sm:bottom-3 sm:z-10 sm:flex-row sm:justify-end sm:backdrop-blur-xl">
+        <div className="border-border bg-background/95 flex flex-col-reverse gap-3 rounded-2xl border p-3 shadow-xl sm:sticky sm:bottom-3 sm:z-10 sm:flex-row sm:justify-end sm:backdrop-blur-xl">
           <Link href="/exercises" className="w-full sm:w-auto">
-            <span className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-zinc-700 px-5 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800">
+            <span className="border-border-hover text-text-secondary hover:border-border-hover hover:bg-surface-hover flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border px-5 text-sm font-medium transition">
               <ArrowLeft className="h-4 w-4" />
               Cancel
             </span>

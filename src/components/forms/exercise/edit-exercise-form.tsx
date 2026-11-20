@@ -8,9 +8,8 @@ import { toast } from 'sonner';
 
 import Button from '@/components/button/button';
 import ImageUpload from '@/components/ui/image-upload';
-import FormPageHeader from '@/components/forms/shared/form-page-header';
 
-//Forms Components
+// Forms Components
 import FormTextarea from '@/components/ui/form-textarea';
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
@@ -28,7 +27,7 @@ type Props = {
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-const sectionClass = 'rounded-2xl border border-zinc-800/90 bg-zinc-900/60 p-5 sm:p-7';
+const sectionClass = 'rounded-2xl border border-border/90 bg-surface/60 p-5 sm:p-7';
 
 export default function EditExercise({ exericse }: Props) {
   const router = useRouter();
@@ -201,14 +200,14 @@ export default function EditExercise({ exericse }: Props) {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 pt-8 pb-12 sm:px-6 lg:pt-10">
       {/* Current exercise */}
-      <div className="mb-6 flex items-center gap-4 rounded-xl border border-orange-500/20 bg-orange-500/[0.06] p-4">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+      <div className="border-primary/20 bg-primary/[0.06] mb-6 flex items-center gap-4 rounded-xl border p-4">
+        <div className="bg-primary/10 text-primary flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
           <Activity className="h-5 w-5" />
         </div>
 
         <div className="min-w-0">
-          <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase">Editing exercise</p>
-          <p className="mt-1 truncate font-semibold text-white">{exericse.name}</p>
+          <p className="text-text-muted text-xs font-medium tracking-wider uppercase">Editing exercise</p>
+          <p className="text-text mt-1 truncate font-semibold">{exericse.name}</p>
         </div>
       </div>
 
@@ -216,13 +215,13 @@ export default function EditExercise({ exericse }: Props) {
         {/* Basic information */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <Dumbbell className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Basic information</h2>
-              <p className="mt-1 text-xs text-zinc-500">Name and equipment</p>
+              <h2 className="text-text font-semibold">Basic information</h2>
+              <p className="text-text-muted mt-1 text-xs">Name and equipment</p>
             </div>
           </div>
 
@@ -235,7 +234,7 @@ export default function EditExercise({ exericse }: Props) {
               htmlFor="equipment"
               label={
                 <>
-                  Equipment <span className="font-normal text-zinc-500">(optional)</span>
+                  Equipment <span className="text-text-muted font-normal">(optional)</span>
                 </>
               }
               error={errors.equipment}
@@ -246,16 +245,15 @@ export default function EditExercise({ exericse }: Props) {
         </section>
 
         {/* Muscle groups */}
-        {/* Muscle groups */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <Activity className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Muscle groups</h2>
-              <p className="mt-1 text-xs text-zinc-500">Choose the primary muscle and any assisting muscles.</p>
+              <h2 className="text-text font-semibold">Muscle groups</h2>
+              <p className="text-text-muted mt-1 text-xs">Choose the primary muscle and any assisting muscles.</p>
             </div>
           </div>
 
@@ -273,13 +271,13 @@ export default function EditExercise({ exericse }: Props) {
         {/* Exercise details */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <FileText className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Exercise details</h2>
-              <p className="mt-1 text-xs text-zinc-500">Description, instructions and technique tips</p>
+              <h2 className="text-text font-semibold">Exercise details</h2>
+              <p className="text-text-muted mt-1 text-xs">Description, instructions and technique tips</p>
             </div>
           </div>
 
@@ -308,7 +306,7 @@ export default function EditExercise({ exericse }: Props) {
               htmlFor="techniqueTips"
               label={
                 <>
-                  Technique tips <span className="font-normal text-zinc-500">(optional)</span>
+                  Technique tips <span className="text-text-muted font-normal">(optional)</span>
                 </>
               }
               error={errors.techniqueTips}
@@ -334,24 +332,24 @@ export default function EditExercise({ exericse }: Props) {
         {/* Image */}
         <section className={sectionClass}>
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <ImageIcon className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Exercise image</h2>
-              <p className="mt-1 text-xs text-zinc-500">Replace the existing image or keep it as it is.</p>
+              <h2 className="text-text font-semibold">Exercise image</h2>
+              <p className="text-text-muted mt-1 text-xs">Replace the existing image or keep it as it is.</p>
             </div>
           </div>
 
           <ImageUpload file={selectedImage} onFileChange={handleImageChange} currentImageUrl={exericse.imagePath} currentImageAlt={`Current image of ${exericse.name}`} disabled={isSaving} />
 
-          <p className="mt-3 text-xs leading-5 text-zinc-500">Optional. JPG, PNG or WebP, maximum 5 MB. Leave the current image unchanged if you do not choose another one.</p>
+          <p className="text-text-muted mt-3 text-xs leading-5">Optional. JPG, PNG or WebP, maximum 5 MB. Leave the current image unchanged if you do not choose another one.</p>
         </section>
 
         {/* Form actions */}
-        <div className="sticky bottom-3 z-10 flex flex-col-reverse gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/95 p-3 shadow-2xl shadow-black/20 backdrop-blur-xl sm:flex-row sm:justify-end">
-          <Link href="/exercises" className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-zinc-700 px-5 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800">
+        <div className="border-border bg-background/95 sticky bottom-3 z-10 flex flex-col-reverse gap-3 rounded-2xl border p-3 shadow-2xl shadow-black/20 backdrop-blur-xl sm:flex-row sm:justify-end">
+          <Link href="/exercises" className="border-border-hover text-text-secondary hover:border-border-hover hover:bg-surface-hover flex min-h-11 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-medium transition">
             <ArrowLeft className="h-4 w-4" />
             Cancel
           </Link>

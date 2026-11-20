@@ -14,7 +14,7 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
 
   const status = workout?.status ? WORKOUT_STATUS_CONFIG[workout.status] : null;
 
-  const cardClassName = `group flex h-full min-h-[220px] min-w-0 flex-col rounded-2xl border ${status?.borderClassName ?? 'border-zinc-800'} ${workout?.status === 'COMPLETED' ? 'bg-emerald-950/30' : 'bg-zinc-950/80'} p-4 transition-all duration-200 sm:min-h-[280px] ${
+  const cardClassName = `group flex h-full min-h-[220px] min-w-0 flex-col rounded-2xl border ${status?.borderClassName ?? 'border-border'} ${workout?.status === 'COMPLETED' ? 'bg-emerald-950/30' : 'bg-background/80'} p-4 transition-all duration-200 sm:min-h-[280px] ${
     hasWorkout && onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-emerald-400/60' : ''
   }`;
 
@@ -22,9 +22,9 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
     <>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
-          <CalendarDays className="h-4 w-4 shrink-0 text-zinc-600" />
+          <CalendarDays className="text-text-muted h-4 w-4 shrink-0" />
 
-          <span className="truncate text-sm font-medium text-zinc-300 sm:text-base">{day}</span>
+          <span className="text-text-secondary truncate text-sm font-medium sm:text-base">{day}</span>
         </div>
 
         {status && (
@@ -41,16 +41,16 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
             <Dumbbell className="h-5 w-5 text-blue-400" />
           </div>
 
-          <h3 className="mt-4 line-clamp-2 min-h-12 text-base font-semibold break-words text-white sm:text-lg">{workout.workoutName}</h3>
+          <h3 className="text-text mt-4 line-clamp-2 min-h-12 text-base font-semibold break-words sm:text-lg">{workout.workoutName}</h3>
 
           <div className="mt-auto space-y-3 pt-4">
-            <div className="flex min-w-0 items-center gap-2 text-sm text-zinc-500 sm:text-base">
+            <div className="text-text-muted flex min-w-0 items-center gap-2 text-sm sm:text-base">
               <ListChecks className="h-4 w-4 shrink-0" />
 
               <span className="truncate">{workout.exerciseCount} exercises</span>
             </div>
 
-            <div className="flex min-w-0 items-center gap-2 text-sm text-zinc-500 sm:text-base">
+            <div className="text-text-muted flex min-w-0 items-center gap-2 text-sm sm:text-base">
               <Clock3 className="h-4 w-4 shrink-0" />
 
               <span className="truncate">{workout.estimatedMinutes} min</span>
@@ -59,13 +59,13 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
         </div>
       ) : (
         <div className="mt-6 flex flex-1 flex-col">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-zinc-900">
+          <div className="bg-surface flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
             <span className="text-xl">😴</span>
           </div>
 
-          <h3 className="mt-4 text-base font-semibold text-zinc-400 sm:text-lg">Rest Day</h3>
+          <h3 className="text-text-muted mt-4 text-base font-semibold sm:text-lg">Rest Day</h3>
 
-          <p className="mt-2 text-sm text-zinc-600 sm:text-base">No workout planned</p>
+          <p className="text-text-muted mt-2 text-sm sm:text-base">No workout planned</p>
         </div>
       )}
     </>
