@@ -1,7 +1,7 @@
 import WorkoutDetailCard from '@/components/workout/workout-detail-card';
 import Pagination from '@/components/ui/pagination';
 import ErrorMessage from '@/components/ui/error-message';
-import Header from '@/components/ui/header';
+import Header from '@/components/layout/page-header';
 import PageContainer from '@/components/layout/page-container';
 
 import { WorkoutService } from '@/services/workout-service';

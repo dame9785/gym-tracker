@@ -1,7 +1,7 @@
 import Exercises from '@/components/exericses/exercises';
 
 import ErrorMessage from '@/components/ui/error-message';
-import Header from '@/components/ui/header';
+import Header from '@/components/layout/page-header';
 import PageContainer from '@/components/layout/page-container';
 
 import { ExerciseService } from '@/services/exercise-service';

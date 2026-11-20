@@ -5,7 +5,7 @@ import { GoalService } from '@/services/goal-service';
 
 import { MealMapping } from '@/mapping/meal-mapping';
 
-import Header from '@/components/ui/header';
+import Header from '@/components/layout/page-header';
 import PageContainer from '@/components/layout/page-container';
 import NutritionClient from '@/components/nutrition/nutrition-client';
 

@@ -8,7 +8,7 @@ import HistoryMiddleStats from '@/components/history/history-middle-stats';
 import WorkoutSessions from '@/components/history/workout-sessions';
 
 import ErrorMessage from '@/components/ui/error-message';
-import Header from '@/components/ui/header';
+import Header from '@/components/layout/page-header';
 import Pagination from '@/components/ui/pagination';
 import PageContainer from '@/components/layout/page-container';
 

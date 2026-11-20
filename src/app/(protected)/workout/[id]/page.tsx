@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 
 import WorkoutDetails from '@/components/workout/workout-details';
 import ErrorMessage from '@/components/ui/error-message';
-import Header from '@/components/ui/header';
+import Header from '@/components/layout/page-header';
 import PageContainer from '@/components/layout/page-container';
 
 import { WorkoutService } from '@/services/workout-service';

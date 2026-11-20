@@ -4,7 +4,7 @@ import DashboardCalendar from '@/components/dashboard/dashboard-calendar';
 
 import { requireAuth } from '@/lib/auth';
 import { DashboardService } from '@/services/dashboard-service';
-import Header from '@/components/ui/header';
+import Header from '@/components/layout/page-header';
 import ErrorMessage from '@/components/ui/error-message';
 import PageContainer from '@/components/layout/page-container';
 

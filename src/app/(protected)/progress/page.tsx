@@ -1,7 +1,7 @@
 import ExerciseProgress from '@/components/progress/progress-exercise';
 
 import ErrorMessage from '@/components/ui/error-message';
-import Header from '@/components/ui/header';
+import Header from '@/components/layout/page-header';
 import PageContainer from '@/components/layout/page-container';
 
 import { requireAuth } from '@/lib/auth';

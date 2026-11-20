@@ -1,6 +1,6 @@
 import LogWeightForm from '@/components/forms/log-weight/log-weight-form';
 
-import Header from '@/components/ui/header';
+import Header from '@/components/layout/page-header';
 import PageContainer from '@/components/layout/page-container';
 
 export default function Create() {

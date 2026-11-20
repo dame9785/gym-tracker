@@ -4,7 +4,7 @@ import WeightProgressChart from '@/components/log-weight/weight-progress-chart';
 
 import Pagination from '@/components/ui/pagination';
 import ErrorMessage from '@/components/ui/error-message';
-import Header from '@/components/ui/header';
+import Header from '@/components/layout/page-header';
 import EmptyState from '@/components/ui/empty-state';
 
 import GoalProgress from '@/components/progress/progress-goal';

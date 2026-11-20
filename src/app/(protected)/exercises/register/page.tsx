@@ -1,6 +1,6 @@
 import RegisterForm from '@/components/forms/exercise/register-exercise-form';
 
-import Header from '@/components/ui/header';
+import Header from '@/components/layout/page-header';
 import PageContainer from '@/components/layout/page-container';
 
 export default function RegisterExercise() {
