@@ -151,18 +151,20 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
 
       {/* Search */}
       <div className="border-border shrink-0 border-b py-4">
-        <FormInput
-          id="food-search"
-          name="search"
-          type="search"
-          value={search}
-          onChange={(event) => {
-            setSearch(event.target.value);
-            setSelectedFood(null);
-          }}
-          placeholder="Search foods..."
-          autoFocus
-        />
+        <FormField htmlFor="food-search" label="Search foods">
+          <FormInput
+            id="food-search"
+            name="search"
+            type="search"
+            value={search}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setSelectedFood(null);
+            }}
+            placeholder="Search foods..."
+            autoFocus
+          />
+        </FormField>
 
         <div className="mt-3 flex items-center justify-between">
           <p className="text-text-muted text-xs font-medium">Product catalog & My foods</p>
