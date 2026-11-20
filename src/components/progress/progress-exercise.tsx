@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 import { ArrowDownRight, ArrowUpRight, Dumbbell, Repeat2, TrendingUp, Weight, Trophy } from 'lucide-react';
 
 import Button from '@/components/button/button';
+import FormField from '@/components/ui/form-field';
+import FormSelect from '@/components/ui/form-select';
 import type { ExerciseProgress as ExerciseProgressType } from '@/types/progress-type';
 
 import ExerciseChart from './progress-exercise-chart';
@@ -105,26 +107,23 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
 
       {exerciseProgress.length > 0 ? (
         <>
-          <div className="mt-6">
-            <label htmlFor="progress-exercise" className="text-text-secondary mb-2 block text-sm font-medium">
-              Select Exercise
-            </label>
-
-            <select
-              id="progress-exercise"
-              value={selectedExerciseId ?? ''}
-              onChange={(event) => {
-                setSelectedExerciseId(Number(event.target.value));
-                setChartMetric(metric === 'seconds' ? 'seconds' : 'weight');
-              }}
-              className="border-border bg-surface text-text focus:border-primary w-full rounded-xl border px-4 py-3 text-sm transition outline-none sm:max-w-md"
-            >
-              {exerciseProgress.map((exercise) => (
-                <option key={exercise.exerciseId} value={exercise.exerciseId}>
-                  {exercise.exerciseName}
-                </option>
-              ))}
-            </select>
+          <div className="mt-6 sm:max-w-md">
+            <FormField htmlFor="progress-exercise" label="Select Exercise">
+              <FormSelect
+                id="progress-exercise"
+                value={selectedExerciseId ?? ''}
+                onChange={(event) => {
+                  setSelectedExerciseId(Number(event.target.value));
+                  setChartMetric(metric === 'seconds' ? 'seconds' : 'weight');
+                }}
+              >
+                {exerciseProgress.map((exercise) => (
+                  <option key={exercise.exerciseId} value={exercise.exerciseId}>
+                    {exercise.exerciseName}
+                  </option>
+                ))}
+              </FormSelect>
+            </FormField>
           </div>
 
           {selectedExercise && (
