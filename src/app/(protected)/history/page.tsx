@@ -62,11 +62,12 @@ export default async function HistoryPage({ searchParams }: Props) {
     <PageContainer>
       <Header title="WORKOUT HISTORY" subTitle="History" description="Review your completed workouts, track your training activity, and look back on your fitness journey." />
 
-      {/* Overall workout statistics */}
-      <HistoryTopStats data={historyData} />
+      {/* History statistics */}
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <HistoryTopStats data={historyData} />
 
-      {/* Training time and completed sets */}
-      <HistoryMiddleStats totalTrainingTime={historyData.totalTrainingTime} totalCompletedSets={historyData.totalCompletedSets} />
+        <HistoryMiddleStats totalTrainingTime={historyData.totalTrainingTime} totalCompletedSets={historyData.totalCompletedSets} />
+      </div>
 
       {/* Workout sessions */}
       <WorkoutSessions workoutSessions={historyData.workoutSessions} />

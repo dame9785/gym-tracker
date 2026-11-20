@@ -1,6 +1,7 @@
-import { HistoryViewModel } from '@/types/history-types';
 import { FaCheckCircle, FaClock, FaDumbbell, FaTrophy } from 'react-icons/fa';
-import StatsCard from '../ui/stats-card';
+
+import type { HistoryViewModel } from '@/types/history-types';
+import StatsCard from '@/components/ui/stats-card';
 
 type Props = {
   data: HistoryViewModel;
@@ -39,10 +40,10 @@ export default function HistoryTopStats({ data }: Props) {
   ];
 
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-2">
+    <>
       {stats.map((stat) => (
         <StatsCard key={stat.title} icon={stat.icon} title={stat.title} value={stat.value} subtitle={stat.subtitle} />
       ))}
-    </div>
+    </>
   );
 }

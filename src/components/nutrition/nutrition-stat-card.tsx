@@ -1,5 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 
+import Card from '@/components/ui/card';
+
 type Props = {
   label: string;
   value: number;
@@ -15,33 +17,42 @@ export default function NutritionStatCard({ label, value, target, unit, icon: Ic
   const progress = target !== null && target > 0 ? Math.min((value / target) * 100, 100) : null;
 
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-950/70 px-3 py-3">
-      <div className="flex items-center gap-2">
-        <div className={`rounded-md p-1.5 ${background}`}>
-          <Icon size={16} className={color} />
+    <Card variant="interactive" accent padding="sm" className="flex h-full flex-col">
+      {/* Header */}
+      <div className="flex items-center gap-2.5">
+        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${background}`}>
+          <Icon size={17} className={color} />
         </div>
 
-        <p className="text-xs text-zinc-400">{label}</p>
+        <p className="text-sm font-medium tracking-tight text-zinc-300">{label}</p>
       </div>
 
-      <p className="mt-2 text-xl font-bold text-white">
-        {Math.round(value)}
-        <span className="ml-1 text-xs font-normal text-zinc-500">{unit}</span>
-      </p>
+      {/* Value */}
+      <div className="mt-4 flex items-baseline gap-1.5">
+        <span className="text-2xl font-semibold tracking-tight text-zinc-100">{Math.round(value)}</span>
 
+        <span className="text-xs font-medium text-zinc-500">{unit}</span>
+      </div>
+
+      {/* Goal and progress */}
       {target !== null && (
-        <>
-          <p className="mt-1 text-xs text-zinc-500">
-            Goal: {target} {unit}
-          </p>
+        <div className="mt-auto pt-3">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs text-zinc-500">
+              Goal{' '}
+              <span className="text-zinc-400">
+                {target} {unit}
+              </span>
+            </p>
 
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-800">
-            <div className={`h-full rounded-full transition-all ${progressColor}`} style={{ width: `${progress ?? 0}%` }} />
+            <span className="text-xs font-medium text-zinc-400">{Math.round(progress ?? 0)}%</span>
           </div>
 
-          <p className="mt-1 text-right text-xs text-zinc-500">{Math.round(progress ?? 0)}%</p>
-        </>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+            <div className={`h-full rounded-full transition-all duration-500 ${progressColor}`} style={{ width: `${progress ?? 0}%` }} />
+          </div>
+        </div>
       )}
-    </div>
+    </Card>
   );
 }
