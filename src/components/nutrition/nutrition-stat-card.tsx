@@ -24,31 +24,31 @@ export default function NutritionStatCard({ label, value, target, unit, icon: Ic
           <Icon size={17} className={color} />
         </div>
 
-        <p className="text-sm font-medium tracking-tight text-zinc-300">{label}</p>
+        <p className="text-text-secondary text-sm font-medium tracking-tight">{label}</p>
       </div>
 
       {/* Value */}
       <div className="mt-4 flex items-baseline gap-1.5">
-        <span className="text-2xl font-semibold tracking-tight text-zinc-100">{Math.round(value)}</span>
+        <span className="text-text text-2xl font-semibold tracking-tight">{Math.round(value)}</span>
 
-        <span className="text-xs font-medium text-zinc-500">{unit}</span>
+        <span className="text-text-muted text-xs font-medium">{unit}</span>
       </div>
 
       {/* Goal and progress */}
       {target !== null && (
         <div className="mt-auto pt-3">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs text-zinc-500">
+            <p className="text-text-muted text-xs">
               Goal{' '}
-              <span className="text-zinc-400">
+              <span className="text-text-secondary">
                 {target} {unit}
               </span>
             </p>
 
-            <span className="text-xs font-medium text-zinc-400">{Math.round(progress ?? 0)}%</span>
+            <span className="text-text-secondary text-xs font-medium">{Math.round(progress ?? 0)}%</span>
           </div>
 
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+          <div className="bg-surface-secondary mt-2 h-1.5 overflow-hidden rounded-full">
             <div className={`h-full rounded-full transition-all duration-500 ${progressColor}`} style={{ width: `${progress ?? 0}%` }} />
           </div>
         </div>

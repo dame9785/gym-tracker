@@ -52,15 +52,15 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
   };
 
   return (
-    <div className={`border-t px-4 py-4 transition first:border-t-0 ${isSaved ? 'bg-green-500/[0.02]' : 'bg-transparent'}`}>
+    <div className={`border-border border-t px-4 py-4 transition first:border-t-0 ${isSaved ? 'bg-success/5' : 'bg-transparent'}`}>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
         <div className="flex min-w-[170px] items-center gap-3 lg:pb-2">
-          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${isSaved ? 'bg-green-500/10 text-green-400' : 'bg-blue-500/10 text-blue-400'}`}>{set.setNumber}</div>
+          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${isSaved ? 'bg-success/10 text-success' : 'bg-info/10 text-info'}`}>{set.setNumber}</div>
 
           <div>
-            <p className="text-sm font-semibold text-white">Set {set.setNumber}</p>
+            <p className="text-text text-sm font-semibold">Set {set.setNumber}</p>
 
-            <p className="text-xs text-zinc-500">
+            <p className="text-text-muted text-xs">
               Target: {set.targetReps} reps
               {set.targetWeight !== null && ` • ${set.targetWeight} kg`}
               {set.targetSeconds !== null && ` • ${set.targetSeconds} sec`}
@@ -70,7 +70,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
 
         <div className="grid flex-1 grid-cols-3 gap-3">
           <div>
-            <label htmlFor={`reps-${set.id}`} className="mb-1.5 block text-xs font-medium text-zinc-500">
+            <label htmlFor={`reps-${set.id}`} className="text-text-muted mb-1.5 block text-xs font-medium">
               Reps
             </label>
 
@@ -84,12 +84,12 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
                 setActualReps(Number(event.target.value));
                 setIsSaved(false);
               }}
-              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white transition outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+              className="border-border bg-background text-text focus:border-info focus:ring-info/10 h-10 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-2"
             />
           </div>
 
           <div>
-            <label htmlFor={`weight-${set.id}`} className="mb-1.5 block text-xs font-medium text-zinc-500">
+            <label htmlFor={`weight-${set.id}`} className="text-text-muted mb-1.5 block text-xs font-medium">
               Weight (kg)
             </label>
 
@@ -103,12 +103,12 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
                 setActualWeight(Number(event.target.value));
                 setIsSaved(false);
               }}
-              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white transition outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+              className="border-border bg-background text-text focus:border-info focus:ring-info/10 h-10 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-2"
             />
           </div>
 
           <div>
-            <label htmlFor={`seconds-${set.id}`} className="mb-1.5 block text-xs font-medium text-zinc-500">
+            <label htmlFor={`seconds-${set.id}`} className="text-text-muted mb-1.5 block text-xs font-medium">
               Seconds (sec)
             </label>
 
@@ -122,7 +122,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
                 setActualSeconds(Number(event.target.value));
                 setIsSaved(false);
               }}
-              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white transition outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+              className="border-border bg-background text-text focus:border-info focus:ring-info/10 h-10 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-2"
             />
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className={`h-10 w-full cursor-pointer rounded-lg px-5 text-sm font-semibold transition lg:w-auto ${isSaved ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-blue-600 text-white hover:bg-blue-500'} disabled:cursor-not-allowed disabled:opacity-50`}
+            className={`h-10 w-full cursor-pointer rounded-lg px-5 text-sm font-semibold transition lg:w-auto ${isSaved ? 'bg-success/10 text-success hover:bg-success/20' : 'bg-info text-text hover:bg-info/80'} disabled:cursor-not-allowed disabled:opacity-50`}
           >
             {isSaving ? 'Saving...' : isSaved ? '✓ Saved' : 'Save'}
           </button>
