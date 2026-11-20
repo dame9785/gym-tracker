@@ -25,6 +25,51 @@ type ProductSeed = {
 
 const products: ProductSeed[] = [
   // ================================================
+  // DRYCK, LÄSK
+  // ================================================
+  {
+    slug: 'coca-cola-creamy-vanilla',
+    name: 'Creamy Vanilla',
+    brand: 'Coca-Cola',
+    category: 'Dryck',
+    calories: 45,
+    protein: 0,
+    carbs: 11.2,
+    fat: 0,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Coca-Cola / ICA – Creamy Vanilla 330 ml, EAN 5000112701913. Näringsvärde per 100 ml.',
+  },
+
+  // ================================================
+  // GODIS, SNACKS
+  // ================================================
+  {
+    slug: 'maoam-bloxx',
+    name: 'Bloxx',
+    brand: 'MAOAM',
+    category: 'Godis',
+    calories: 404,
+    protein: 1.3,
+    carbs: 84,
+    fat: 6.9,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'HARIBO officiell produktinformation – MAOAM Bloxx 110 g, EAN 4001686505021. Näringsvärde per 100 g.',
+  },
+
+  {
+    slug: 'marabou-tuc-salty-crackers',
+    name: 'TUC Salty Crackers',
+    brand: 'Marabou',
+    category: 'Choklad',
+    calories: 525,
+    protein: 6.4,
+    carbs: 59.5,
+    fat: 28,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Marabou / Dabas – TUC Salty Crackers 87 g, EAN 7622210294128. Näringsvärde per 100 g.',
+  },
+
+  // ================================================
   // ÄGG, KÖTT OCH FISK
   // ================================================
 
@@ -81,6 +126,18 @@ const products: ProductSeed[] = [
     dataQuality: 'STANDARD',
     nutritionSource: 'Coop – Quorn Filéer 624 g, EAN 5019503018912. Näringsvärde per 100 g.',
   },
+  {
+    slug: 'anamma-vegokorv',
+    name: 'Vegokorv',
+    brand: 'Anamma',
+    category: 'Vegetariskt',
+    calories: 182,
+    protein: 11,
+    carbs: 5.3,
+    fat: 12,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Anamma / Dabas – Vegokorv, näringsvärde per 100 g.',
+  },
 
   // ================================================
   // KOLHYDRATER
@@ -125,6 +182,18 @@ const products: ProductSeed[] = [
     fat: 7.2,
     dataQuality: 'STANDARD',
     nutritionSource: 'Livsmedelsverket – Vitkålssallad pizzasallad. Generiskt näringsvärde per 100 g.',
+  },
+  {
+    slug: 'garant-blomkalsris',
+    name: 'Blomkålsris',
+    brand: 'Garant',
+    category: 'Grönsaker',
+    calories: 25,
+    protein: 2,
+    carbs: 3,
+    fat: 0.3,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Garant – Blomkålsris, 500 g. Uppskattade generiska näringsvärden för blomkål per 100 g, ej verifierade mot produktens näringsdeklaration.',
   },
 
   // ================================================
