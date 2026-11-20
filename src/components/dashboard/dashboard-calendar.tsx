@@ -3,15 +3,12 @@
 import { useEffect, useState } from 'react';
 
 import { getWorkoutSchedulesByMonthAction } from '@/actions/workout-schedule-actions';
-
 import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import Modal from '@/components/modal/modal';
 import SelectedWorkout from '@/components/dashboard/selected-workout';
-import { WORKOUT_STATUS_CONFIG } from '@/components/shared/workout-status';
-
 import Button from '@/components/button/button';
 import Skeleton from '@/components/ui/skeleton';
 
@@ -159,7 +156,12 @@ export default function WorkoutCalendar() {
                         </>
                       ) : (
                         dayWorkouts.map((workout) => {
-                          const status = workout.status ? WORKOUT_STATUS_CONFIG[workout.status] : null;
+                          const statusStyles =
+                            workout.status === 'COMPLETED'
+                              ? '!border-success/50 !bg-success/10 !text-success hover:!bg-success/20'
+                              : workout.status === 'NOTCOMPLETED'
+                                ? '!border-danger/50 !bg-danger/10 !text-danger hover:!bg-danger/20'
+                                : '!border-primary/50 !bg-primary/10 !text-primary hover:!bg-primary/20';
 
                           return (
                             <Button
@@ -168,7 +170,7 @@ export default function WorkoutCalendar() {
                               size="sm"
                               onClick={() => setSelectedWorkout(workout)}
                               ariaLabel={`View workout: ${workout.workoutName}`}
-                              className={`!flex !w-full !min-w-0 !justify-start !truncate !rounded !border !px-1 !py-1 !text-left !text-xs !font-normal !tracking-normal transition hover:brightness-125 sm:!px-2 ${status?.badgeClassName ?? 'border-primary/30 bg-primary/10 text-primary'}`}
+                              className={`!flex !w-full !min-w-0 !justify-start !truncate !rounded-lg !border !px-1 !py-1 !text-left !text-xs !font-medium !tracking-normal !transition sm:!px-2 ${statusStyles}`}
                             >
                               <span className="hidden sm:inline">💪 </span>
                               <span className="sm:hidden">💪</span>
