@@ -147,22 +147,16 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                     <Button
                       type="button"
                       variant="secondary"
-                      size="md"
+                      size="sm"
                       onClick={() => toggleSession(session.id)}
                       ariaExpanded={isExpanded}
-                      className="!border-border-hover !bg-surface-secondary/50 !text-text-secondary hover:!border-primary/40 hover:!bg-primary/5 hover:!text-primary flex w-full items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-semibold transition"
+                      className="!border-border !bg-surface-secondary/30 !text-text-secondary hover:!border-primary/40 hover:!bg-primary/5 hover:!text-primary flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all"
                     >
-                      {isExpanded ? (
-                        <>
-                          Hide set results
-                          <ChevronUp className="h-4 w-4" />
-                        </>
-                      ) : (
-                        <>
-                          Show exercises and sets
-                          <ChevronDown className="h-4 w-4" />
-                        </>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <span>{isExpanded ? 'Hide exercises and sets' : 'Show exercises and sets'}</span>
+
+                        {isExpanded ? <ChevronUp className="h-4 w-4 shrink-0" /> : <ChevronDown className="h-4 w-4 shrink-0" />}
+                      </div>
                     </Button>
                   </div>
                 </div>
