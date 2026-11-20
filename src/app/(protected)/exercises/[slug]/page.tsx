@@ -29,7 +29,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
 
   try {
     // Older exercises may not have a slug yet. Their cards link to the ID instead.
-    exercise = /^\\d+$/.test(identifier) ? await exerciseService.getById(Number(identifier), user.userId) : await exerciseService.getBySlug(identifier, user.userId);
+    exercise = /^\d+$/.test(identifier) ? await exerciseService.getById(Number(identifier), user.userId) : await exerciseService.getBySlug(identifier, user.userId);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : '';
 
