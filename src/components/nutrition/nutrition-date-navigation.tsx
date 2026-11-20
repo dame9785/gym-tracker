@@ -3,6 +3,7 @@
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import Button from '@/components/button/button';
+import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
 
 type Props = {
@@ -35,7 +36,7 @@ export default function NutritionDateNavigation({ selectedDate, today, isLoading
         <h2 className="text-text mt-1 text-xl font-semibold">{formattedDate}</h2>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-end gap-2">
         <Button
           type="button"
           variant="ghost"
@@ -48,19 +49,23 @@ export default function NutritionDateNavigation({ selectedDate, today, isLoading
           <ChevronLeft size={20} />
         </Button>
 
-        <FormInput
-          id="nutrition-date"
-          name="date"
-          type="date"
-          value={selectedDate}
-          max={today}
-          onChange={(event) => {
-            if (event.target.value) {
-              onChangeDate(event.target.value);
-            }
-          }}
-          disabled={isDisabled}
-        />
+        <div className="min-w-0">
+          <FormField htmlFor="nutrition-date" label="Date">
+            <FormInput
+              id="nutrition-date"
+              name="date"
+              type="date"
+              value={selectedDate}
+              max={today}
+              onChange={(event) => {
+                if (event.target.value) {
+                  onChangeDate(event.target.value);
+                }
+              }}
+              disabled={isDisabled}
+            />
+          </FormField>
+        </div>
 
         <Button
           type="button"
