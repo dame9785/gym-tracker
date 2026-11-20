@@ -1,3 +1,5 @@
+import Button from '@/components/button/button';
+
 type ProductFiltersProps = {
   search?: string;
   category?: string;
@@ -69,9 +71,9 @@ export default function ProductFilters({ search = '', category = '', quality = '
 
       {/* Actions */}
       <div className="flex gap-2">
-        <button type="submit" className={`${buttonClasses} bg-primary text-primary-foreground hover:bg-primary-hover`}>
+        <Button type="submit" variant="primary" size="md" className={`${buttonClasses}`}>
           Apply filters
-        </button>
+        </Button>
 
         <a href="/admin/products" className={`${buttonClasses} border-border text-text-secondary hover:bg-surface-hover border`}>
           Reset

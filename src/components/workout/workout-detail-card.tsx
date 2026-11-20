@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import type { WorkoutViewModel } from '@/types/workout-types';
 import { deleteWorkoutAction } from '@/actions/workout-actions';
 import EmptyState from '@/components/ui/empty-state';
+import Button from '@/components/button/button';
 
 type Props = {
   workouts: WorkoutViewModel[];
@@ -106,9 +107,9 @@ export default function WorkoutDetailCard({ workouts }: Props) {
             <input id="workout-search" type="search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search workouts or exercises..." className="text-text placeholder:text-text-muted h-12 w-full min-w-0 bg-transparent text-base outline-none" />
 
             {searchQuery && (
-              <button type="button" onClick={() => setSearchQuery('')} aria-label="Clear search" className="text-text-muted hover:bg-surface-hover hover:text-text flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors">
+              <Button type="button" variant="ghost" size="sm" onClick={() => setSearchQuery('')} ariaLabel="Clear search" className="!h-9 !w-9 !shrink-0 !rounded-lg !p-0">
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             )}
           </div>
 
@@ -145,9 +146,9 @@ export default function WorkoutDetailCard({ workouts }: Props) {
                         <Pencil className="h-4 w-4" />
                       </Link>
 
-                      <button type="button" onClick={() => handleDelete(workout.id)} aria-label={`Delete ${workout.name}`} title="Delete workout" className="text-text-muted hover:bg-danger/10 hover:text-danger flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl transition-colors">
+                      <Button type="button" variant="danger" size="sm" onClick={() => handleDelete(workout.id)} ariaLabel={`Delete ${workout.name}`} className="!h-10 !w-10 !rounded-xl !p-0">
                         <Trash2 className="h-4 w-4" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -175,15 +176,17 @@ export default function WorkoutDetailCard({ workouts }: Props) {
                         ))}
 
                         {workout.workoutExercises.length > 3 && (
-                          <button
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="sm"
                             onClick={() => setSelectedWorkout(workout)}
-                            aria-label={`Show all exercises for ${workout.name}`}
-                            className="border-border-hover bg-surface/70 text-text-secondary hover:border-info/30 hover:text-info inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors"
+                            ariaLabel={`Show all exercises for ${workout.name}`}
+                            className="!border-border-hover !bg-surface/70 !text-text-secondary hover:!border-info/30 hover:!text-info !h-auto !gap-1 !rounded-lg !border !px-2.5 !py-1.5 !text-xs !font-medium"
                           >
                             +{workout.workoutExercises.length - 3} more
                             <ChevronRight className="h-3.5 w-3.5" />
-                          </button>
+                          </Button>
                         )}
                       </div>
                     ) : (
@@ -256,9 +259,9 @@ export default function WorkoutDetailCard({ workouts }: Props) {
                 </p>
               </div>
 
-              <button type="button" onClick={() => setSelectedWorkout(null)} aria-label="Close dialog" className="text-text-secondary hover:bg-surface-hover hover:text-text flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors">
+              <Button type="button" variant="ghost" size="sm" onClick={() => setSelectedWorkout(null)} ariaLabel="Close dialog" className="!h-10 !w-10 !shrink-0 !rounded-xl !p-0">
                 <X className="h-5 w-5" />
-              </button>
+              </Button>
             </div>
 
             {/* Exercise list */}
@@ -274,9 +277,9 @@ export default function WorkoutDetailCard({ workouts }: Props) {
 
             {/* Dialog footer */}
             <div className="border-border shrink-0 border-t p-4 sm:px-6">
-              <button type="button" onClick={() => setSelectedWorkout(null)} className="bg-surface-secondary text-text hover:bg-surface-hover min-h-11 w-full cursor-pointer rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
+              <Button type="button" variant="secondary" size="md" onClick={() => setSelectedWorkout(null)} className="!min-h-11 !w-full !rounded-xl !px-4 !py-2.5">
                 Close
-              </button>
+              </Button>
             </div>
           </div>
         </div>

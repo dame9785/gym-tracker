@@ -2,6 +2,7 @@ import { CalendarDays, Clock3, Dumbbell, ListChecks } from 'lucide-react';
 
 import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 import { WORKOUT_STATUS_CONFIG } from '@/components/shared/workout-status';
+import Button from '@/components/button/button';
 
 interface WorkoutDayCardProps {
   day: string;
@@ -73,9 +74,9 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
 
   if (hasWorkout && onClick) {
     return (
-      <button type="button" onClick={onClick} className={`${cardClassName} w-full text-left`}>
+      <Button type="button" variant="ghost" size="md" onClick={onClick} className={`!h-auto !w-full !min-w-0 !flex-col !items-stretch !justify-start !rounded-2xl !border !p-4 !text-left !font-normal !tracking-normal ${cardClassName}`}>
         {content}
-      </button>
+      </Button>
     );
   }
 

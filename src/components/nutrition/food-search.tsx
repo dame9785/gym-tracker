@@ -8,14 +8,11 @@ import { getCustomFoodsAction } from '@/actions/custom-food-actions';
 import { addProductToMealAction, addCustomFoodToMealAction } from '@/actions/meal-actions';
 
 import ProductImage from '@/components/nutrition/product-image';
+import Button from '@/components/button/button';
 
 import type { ProductViewModel, CustomFoodViewModel, SelectedFood } from '@/types/foods-type';
 
 import type { MealViewModel } from '@/mapping/meal-mapping';
-
-// --------------------------------------------------
-// Types
-// --------------------------------------------------
 
 type Props = {
   date: string;
@@ -23,10 +20,6 @@ type Props = {
   onClose: () => void;
   onAdded: () => Promise<void>;
 };
-
-// --------------------------------------------------
-// Component
-// --------------------------------------------------
 
 export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) {
   const [search, setSearch] = useState('');
@@ -149,9 +142,9 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
           <p className="text-text-muted mt-1 text-sm">Add food to {mealTitle[mealType]}</p>
         </div>
 
-        <button type="button" onClick={onClose} disabled={isSaving} aria-label="Close" className="text-text-muted hover:bg-surface-hover hover:text-text rounded-lg p-2 transition disabled:opacity-50">
+        <Button type="button" variant="ghost" size="sm" onClick={onClose} disabled={isSaving} ariaLabel="Close" className="!text-text-muted hover:!bg-surface-hover hover:!text-text rounded-lg p-2">
           <span className="text-lg">✕</span>
-        </button>
+        </Button>
       </div>
 
       {/* Search */}
@@ -182,56 +175,70 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
         ) : (
           <>
             {/* Products */}
-            {products.map((food) => (
-              <button
-                key={`product-${food.id}`}
-                type="button"
-                onClick={() => setSelectedFood({ source: 'PRODUCT', food })}
-                className={`w-full rounded-xl border p-3 text-left transition ${selectedFood?.source === 'PRODUCT' && selectedFood.food.id === food.id ? 'border-primary bg-primary/10' : 'border-border bg-surface hover:border-border-hover hover:bg-surface-hover'}`}
-              >
-                <div className="flex items-center gap-3">
-                  <ProductImage imageUrl={food.imageUrl} name={food.name} />
+            {products.map((food) => {
+              const isSelected = selectedFood?.source === 'PRODUCT' && selectedFood.food.id === food.id;
 
-                  <div className="min-w-0 flex-1">
-                    <p className="text-text truncate text-sm font-medium">{food.name}</p>
+              return (
+                <Button
+                  key={`product-${food.id}`}
+                  type="button"
+                  variant="secondary"
+                  size="md"
+                  ariaPressed={isSelected}
+                  onClick={() => setSelectedFood({ source: 'PRODUCT', food })}
+                  className={`!h-auto !w-full !justify-start !rounded-xl !border !p-3 !text-left !transition ${isSelected ? '!border-primary !bg-primary/10' : '!border-border !bg-surface hover:!border-border-hover hover:!bg-surface-hover'}`}
+                >
+                  <div className="flex w-full items-center gap-3">
+                    <ProductImage imageUrl={food.imageUrl} name={food.name} />
 
-                    {food.brand && <p className="text-text-secondary mt-0.5 truncate text-xs">{food.brand}</p>}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-text truncate text-sm font-medium">{food.name}</p>
 
-                    <p className="text-text-muted mt-1 text-xs">Product catalog</p>
+                      {food.brand && <p className="text-text-secondary mt-0.5 truncate text-xs">{food.brand}</p>}
+
+                      <p className="text-text-muted mt-1 text-xs">Product catalog</p>
+                    </div>
+
+                    <p className="text-text-secondary shrink-0 text-right text-sm font-medium">
+                      {Math.round(food.calories)} kcal
+                      <span className="text-text-muted block text-xs font-normal">/ 100 g</span>
+                    </p>
                   </div>
-
-                  <p className="text-text-secondary shrink-0 text-right text-sm font-medium">
-                    {Math.round(food.calories)} kcal
-                    <span className="text-text-muted block text-xs font-normal">/ 100 g</span>
-                  </p>
-                </div>
-              </button>
-            ))}
+                </Button>
+              );
+            })}
 
             {/* Custom foods */}
-            {customFoods.map((food) => (
-              <button
-                key={`custom-${food.id}`}
-                type="button"
-                onClick={() => setSelectedFood({ source: 'CUSTOM', food })}
-                className={`w-full rounded-xl border p-3 text-left transition ${selectedFood?.source === 'CUSTOM' && selectedFood.food.id === food.id ? 'border-primary bg-primary/10' : 'border-border bg-surface hover:border-border-hover hover:bg-surface-hover'}`}
-              >
-                <div className="flex items-center gap-3">
-                  <ProductImage imageUrl={null} name={food.name} />
+            {customFoods.map((food) => {
+              const isSelected = selectedFood?.source === 'CUSTOM' && selectedFood.food.id === food.id;
 
-                  <div className="min-w-0 flex-1">
-                    <p className="text-text truncate text-sm font-medium">{food.name}</p>
+              return (
+                <Button
+                  key={`custom-${food.id}`}
+                  type="button"
+                  variant="secondary"
+                  size="md"
+                  ariaPressed={isSelected}
+                  onClick={() => setSelectedFood({ source: 'CUSTOM', food })}
+                  className={`!h-auto !w-full !justify-start !rounded-xl !border !p-3 !text-left !transition ${isSelected ? '!border-primary !bg-primary/10' : '!border-border !bg-surface hover:!border-border-hover hover:!bg-surface-hover'}`}
+                >
+                  <div className="flex w-full items-center gap-3">
+                    <ProductImage imageUrl={null} name={food.name} />
 
-                    <p className="text-text-muted mt-1 text-xs">My foods</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-text truncate text-sm font-medium">{food.name}</p>
+
+                      <p className="text-text-muted mt-1 text-xs">My foods</p>
+                    </div>
+
+                    <p className="text-text-secondary shrink-0 text-right text-sm font-medium">
+                      {Math.round(food.calories)} kcal
+                      <span className="text-text-muted block text-xs font-normal">/ 100 g</span>
+                    </p>
                   </div>
-
-                  <p className="text-text-secondary shrink-0 text-right text-sm font-medium">
-                    {Math.round(food.calories)} kcal
-                    <span className="text-text-muted block text-xs font-normal">/ 100 g</span>
-                  </p>
-                </div>
-              </button>
-            ))}
+                </Button>
+              );
+            })}
 
             {!error && products.length === 0 && customFoods.length === 0 && <p className="text-text-muted py-10 text-center text-sm">No foods found.</p>}
           </>
@@ -307,9 +314,9 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
 
           {/* Add button */}
           <div className="flex justify-end">
-            <button type="button" onClick={() => void handleAddFood()} disabled={isSaving} className="bg-primary text-primary-foreground hover:bg-primary-hover rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50">
+            <Button type="button" variant="primary" size="md" onClick={() => void handleAddFood()} disabled={isSaving} loading={isSaving} className="px-5 py-2.5">
               {isSaving ? 'Adding...' : 'Add to meal'}
-            </button>
+            </Button>
           </div>
         </div>
       )}

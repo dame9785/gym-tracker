@@ -2,6 +2,8 @@
 
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 
+import Button from '@/components/button/button';
+
 type Props = {
   selectedDate: string;
   today: string;
@@ -33,15 +35,17 @@ export default function NutritionDateNavigation({ selectedDate, today, isLoading
       </div>
 
       <div className="flex items-center gap-2">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => onNavigateDate(-1)}
           disabled={isDisabled}
-          aria-label="Previous day"
-          className="border-border text-text-secondary hover:border-primary hover:text-primary flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-lg border transition disabled:opacity-50"
+          ariaLabel="Previous day"
+          className="!border-border !text-text-secondary hover:!border-primary hover:!text-primary flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border transition"
         >
           <ChevronLeft size={20} />
-        </button>
+        </Button>
 
         <input
           type="date"
@@ -56,15 +60,17 @@ export default function NutritionDateNavigation({ selectedDate, today, isLoading
           className="border-border bg-surface text-text focus:border-primary h-11 rounded-lg border px-3 text-sm outline-none"
         />
 
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => onNavigateDate(1)}
           disabled={isDisabled || selectedDate >= today}
-          aria-label="Next day"
-          className="border-border text-text-secondary hover:border-primary hover:text-primary flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-lg border transition disabled:opacity-50"
+          ariaLabel="Next day"
+          className="!border-border !text-text-secondary hover:!border-primary hover:!text-primary flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border transition"
         >
           <ChevronRight size={20} />
-        </button>
+        </Button>
       </div>
     </section>
   );

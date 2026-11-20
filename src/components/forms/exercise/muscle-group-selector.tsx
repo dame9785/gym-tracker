@@ -1,5 +1,6 @@
 import { Check, Plus } from 'lucide-react';
 
+import Button from '@/components/button/button';
 import FormField from '@/components/ui/form-field';
 import FormSelect from '@/components/ui/form-select';
 
@@ -46,20 +47,23 @@ export default function MuscleGroupSelector({ primaryMuscle, secondaryMuscles, o
             const selected = secondaryMuscles.includes(muscle);
 
             return (
-              <button
+              <Button
                 key={muscle}
                 type="button"
+                variant="ghost"
+                size="md"
                 disabled={disabled}
-                aria-pressed={selected}
+                ariaPressed={selected}
+                ariaLabel={`${muscle}${selected ? ', selected' : ''}`}
                 onClick={() => onToggleSecondaryMuscle(muscle)}
-                className={`flex min-h-11 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left text-sm transition ${
-                  selected ? 'border-primary/60 bg-primary/10 text-primary' : 'border-border bg-background/50 text-text-muted hover:border-border-hover hover:bg-surface-hover hover:text-text-secondary'
-                } disabled:cursor-not-allowed disabled:opacity-50`}
+                className={`!flex !min-h-11 !w-full !justify-between !rounded-xl !border !px-3 !py-2.5 !text-left !text-sm !font-normal !tracking-normal transition ${
+                  selected ? '!border-primary/60 !bg-primary/10 !text-primary' : '!border-border !bg-background/50 !text-text-muted hover:!border-border-hover hover:!bg-surface-hover hover:!text-text-secondary'
+                }`}
               >
                 <span>{muscle}</span>
 
                 {selected ? <Check className="text-primary h-4 w-4 shrink-0" /> : <Plus className="text-text-muted h-4 w-4 shrink-0" />}
-              </button>
+              </Button>
             );
           })}
         </div>

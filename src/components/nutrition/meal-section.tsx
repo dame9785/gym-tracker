@@ -7,6 +7,7 @@ import type { MealViewModel } from '@/mapping/meal-mapping';
 import { calculateMealNutrition } from '@/utils/meal-calculations';
 
 import FoodModal from '@/components/modal/food-modal';
+import Button from '@/components/button/button';
 
 // --------------------------------------------------
 // Types
@@ -67,10 +68,10 @@ export default function MealSection({ section, meal, date, isActive, editingItem
           </span>
         </div>
 
-        <button type="button" onClick={onAddFood} className="border-primary/40 text-primary hover:bg-primary/10 flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition">
+        <Button type="button" variant="secondary" size="sm" onClick={onAddFood} className="!border-primary/40 !text-primary hover:!bg-primary/10 flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition">
           <PlusCircle size={15} />
           Add food
-        </button>
+        </Button>
       </div>
 
       {/* Food modal */}
@@ -106,13 +107,13 @@ export default function MealSection({ section, meal, date, isActive, editingItem
 
                         <span className="text-text-muted text-xs">g</span>
 
-                        <button type="button" onClick={() => onSaveQuantity(item.id)} disabled={isSavingItem} aria-label="Save quantity" title="Save quantity" className="text-success hover:bg-success/10 rounded-lg p-1.5 transition disabled:opacity-50">
+                        <Button type="button" variant="ghost" size="sm" onClick={() => onSaveQuantity(item.id)} disabled={isSavingItem} ariaLabel="Save quantity" className="!text-success hover:!bg-success/10 rounded-lg p-1.5 transition">
                           <Check size={17} />
-                        </button>
+                        </Button>
 
-                        <button type="button" onClick={onCancelEditing} disabled={isSavingItem} aria-label="Cancel editing" title="Cancel editing" className="text-text-muted hover:bg-surface-hover rounded-lg p-1.5 transition disabled:opacity-50">
+                        <Button type="button" variant="ghost" size="sm" onClick={onCancelEditing} disabled={isSavingItem} ariaLabel="Cancel editing" className="!text-text-muted hover:!bg-surface-hover rounded-lg p-1.5 transition">
                           <X size={17} />
-                        </button>
+                        </Button>
                       </div>
                     ) : (
                       <p className="text-text-muted mt-0.5 text-xs">{item.quantity} g</p>
@@ -124,13 +125,13 @@ export default function MealSection({ section, meal, date, isActive, editingItem
 
                     {!isEditing && (
                       <>
-                        <button type="button" onClick={() => onStartEditing(item.id, item.quantity)} disabled={isSavingItem} aria-label={`Edit ${foodName}`} title="Edit quantity" className="text-text-muted hover:bg-surface-hover hover:text-primary rounded-lg p-1.5 transition disabled:opacity-50">
+                        <Button type="button" variant="ghost" size="sm" onClick={() => onStartEditing(item.id, item.quantity)} disabled={isSavingItem} ariaLabel={`Edit ${foodName}`} className="!text-text-muted hover:!bg-surface-hover hover:!text-primary rounded-lg p-1.5 transition">
                           <Pencil size={15} />
-                        </button>
+                        </Button>
 
-                        <button type="button" onClick={() => onDeleteFood(item.id)} disabled={isSavingItem} aria-label={`Remove ${foodName}`} title="Remove food" className="text-text-muted hover:bg-danger/10 hover:text-danger rounded-lg p-1.5 transition disabled:opacity-50">
+                        <Button type="button" variant="ghost" size="sm" onClick={() => onDeleteFood(item.id)} disabled={isSavingItem} ariaLabel={`Remove ${foodName}`} className="!text-text-muted hover:!bg-danger/10 hover:!text-danger rounded-lg p-1.5 transition">
                           <Trash2 size={15} />
-                        </button>
+                        </Button>
                       </>
                     )}
                   </div>

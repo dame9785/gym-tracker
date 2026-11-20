@@ -8,6 +8,7 @@ import type { WorkoutSessionViewModel } from '@/types/workout-types';
 
 import WorkoutSessionExerciseCard from '@/components/workout/workout-session-exercise-card';
 import NotPerformedButton from '@/components/dashboard/not-perfomed-button';
+import Button from '@/components/button/button';
 
 import { finishWorkoutSessionAction } from '@/actions/workout-session-actions';
 
@@ -70,9 +71,9 @@ export default function WorkoutSession({ workoutSession }: WorkoutSessionProps) 
       <div className="border-border mt-8 flex justify-end gap-2 border-t pt-6">
         {workoutSession.status !== 'NOTCOMPLETED' && <NotPerformedButton workoutSessionId={workoutSession.id} />}
 
-        <button type="button" onClick={handleFinishWorkout} disabled={isFinishing} className="bg-primary text-primary-foreground shadow-primary/10 hover:bg-primary-hover rounded-xl px-6 py-3 text-sm font-semibold shadow-lg transition disabled:cursor-not-allowed disabled:opacity-50">
+        <Button type="button" variant="primary" size="lg" onClick={handleFinishWorkout} disabled={isFinishing} className="!shadow-primary/10 !rounded-xl !px-6 !py-3 !text-sm !font-semibold !shadow-lg">
           {isFinishing ? 'Finishing...' : 'Finish Workout'}
-        </button>
+        </Button>
       </div>
     </main>
   );

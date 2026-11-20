@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { FaCloudUploadAlt, FaImage, FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
 
+import Button from '@/components/button/button';
+
 type ImageUploadProps = {
   file: File | null;
   onFileChange: (file: File | null) => void;
@@ -91,9 +93,9 @@ export default function ImageUpload({ file, onFileChange, currentImageUrl, curre
             </div>
 
             {file && (
-              <button type="button" onClick={handleRemoveImage} disabled={disabled} aria-label="Remove selected image" className="text-text-muted hover:bg-danger/10 hover:text-danger flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition disabled:opacity-50">
+              <Button type="button" variant="ghost" size="sm" onClick={handleRemoveImage} disabled={disabled} ariaLabel="Remove selected image" className="text-text-muted hover:!bg-danger/10 hover:!text-danger !h-8 !w-8 !rounded-lg !p-0">
                 <FaTimes />
-              </button>
+              </Button>
             )}
           </div>
 
@@ -101,9 +103,9 @@ export default function ImageUpload({ file, onFileChange, currentImageUrl, curre
 
           {file && <p className="text-text-secondary mt-3 truncate text-sm">{file.name}</p>}
 
-          <button type="button" onClick={() => inputRef.current?.click()} disabled={disabled} className="border-border text-text-secondary hover:border-primary hover:text-primary mt-3 w-full rounded-lg border px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50">
+          <Button type="button" variant="secondary" size="md" onClick={() => inputRef.current?.click()} disabled={disabled} className="!border-border !mt-3 !w-full !rounded-lg !border !px-4 !py-2 !text-sm !font-medium">
             {file || currentImageUrl ? 'Change image' : 'Choose image'}
-          </button>
+          </Button>
         </div>
       ) : (
         <label htmlFor={inputId} className={`group border-border bg-surface/60 flex min-h-48 flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-center transition ${disabled ? 'cursor-not-allowed opacity-50' : 'hover:border-primary hover:bg-primary/5 cursor-pointer'}`}>

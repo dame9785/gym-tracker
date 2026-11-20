@@ -265,23 +265,25 @@ export default function ProductForm({ product }: ProductFormProps) {
           <p className="text-text-muted mt-3 text-xs leading-5">Optional. JPG, PNG or WebP, maximum 5 MB.</p>
 
           {product?.imageUrl && !removeImage && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setSelectedImage(null);
                 setRemoveImage(true);
               }}
               disabled={isSaving}
-              className="text-danger hover:text-danger/80 mt-3 text-sm transition disabled:opacity-50"
+              className="!text-danger hover:!text-danger/80 !mt-3"
             >
               Remove current image
-            </button>
+            </Button>
           )}
 
           {removeImage && (
-            <button type="button" onClick={() => setRemoveImage(false)} disabled={isSaving} className="text-text-muted hover:text-text mt-3 text-sm transition">
+            <Button type="button" variant="ghost" size="sm" onClick={() => setRemoveImage(false)} disabled={isSaving} className="!text-text-muted hover:!text-text !mt-3">
               Keep current image
-            </button>
+            </Button>
           )}
         </section>
 

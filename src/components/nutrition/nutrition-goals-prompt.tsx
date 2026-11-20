@@ -3,6 +3,8 @@ type Props = {
   onCalculate: () => void;
 };
 
+import Button from '@/components/button/button';
+
 export default function NutritionGoalsPrompt({ isCalculating, onCalculate }: Props) {
   return (
     <section className="border-primary/30 bg-primary/5 rounded-xl border p-4">
@@ -10,9 +12,9 @@ export default function NutritionGoalsPrompt({ isCalculating, onCalculate }: Pro
 
       <p className="text-text-secondary mt-1 text-sm">Calculate your personal daily calorie and macronutrient targets based on your profile and activity level.</p>
 
-      <button type="button" onClick={onCalculate} disabled={isCalculating} className="bg-primary text-primary-foreground hover:bg-primary-hover mt-4 rounded-lg px-4 py-2 text-sm font-semibold transition disabled:opacity-50">
+      <Button type="button" variant="primary" size="md" onClick={onCalculate} disabled={isCalculating} loading={isCalculating} className="mt-4">
         {isCalculating ? 'Calculating...' : 'Calculate nutrition goals'}
-      </button>
+      </Button>
     </section>
   );
 }

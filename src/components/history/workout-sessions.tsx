@@ -5,6 +5,7 @@ import { CalendarDays, CheckCircle2, Clock3, Dumbbell, Layers3, ChevronDown, Che
 
 import { WorkoutSessionWithExercisesViewModel } from '@/types/history-types';
 import EmptyState from '@/components/ui/empty-state';
+import Button from '@/components/button/button';
 
 type Props = {
   workoutSessions: WorkoutSessionWithExercisesViewModel[];
@@ -143,11 +144,13 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
 
                   {/* Expand button */}
                   <div className="mt-auto pt-5">
-                    <button
+                    <Button
                       type="button"
+                      variant="secondary"
+                      size="md"
                       onClick={() => toggleSession(session.id)}
-                      aria-expanded={isExpanded}
-                      className="border-border-hover bg-surface-secondary/50 text-text-secondary hover:border-primary/40 hover:bg-primary/5 hover:text-primary flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border px-3 py-3 text-sm font-semibold transition"
+                      ariaExpanded={isExpanded}
+                      className="!border-border-hover !bg-surface-secondary/50 !text-text-secondary hover:!border-primary/40 hover:!bg-primary/5 hover:!text-primary flex w-full items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-semibold transition"
                     >
                       {isExpanded ? (
                         <>
@@ -160,7 +163,7 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                           <ChevronDown className="h-4 w-4" />
                         </>
                       )}
-                    </button>
+                    </Button>
                   </div>
                 </div>
 

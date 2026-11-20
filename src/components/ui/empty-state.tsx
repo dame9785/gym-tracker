@@ -1,6 +1,8 @@
 import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 
+import Button from '@/components/button/button';
+
 type Action =
   | {
       label: string;
@@ -39,9 +41,9 @@ export default function EmptyState({ icon: Icon, title, description, action }: P
             {action.label}
           </Link>
         ) : (
-          <button type="button" onClick={'onClick' in action ? action.onClick : undefined} className="bg-surface-secondary text-text hover:bg-surface-hover mt-5 min-h-11 cursor-pointer rounded-xl px-5 py-2.5 text-sm font-medium transition-colors">
+          <Button type="button" variant="secondary" size="md" onClick={'onClick' in action ? action.onClick : undefined} className="!mt-5 !min-h-11 !rounded-xl !px-5 !py-2.5 !text-sm !font-medium">
             {action.label}
-          </button>
+          </Button>
         ))}
     </div>
   );

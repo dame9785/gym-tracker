@@ -77,16 +77,9 @@ function Sidebar() {
     <>
       {/* Mobile header */}
       <header className="border-border bg-background fixed inset-x-0 top-0 z-[80] flex h-14 items-center gap-3 border-b px-4 lg:hidden">
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          aria-label={isOpen ? 'Hide sidebar' : 'Show sidebar'}
-          aria-expanded={isOpen}
-          aria-controls="gymtracker-sidebar"
-          className="text-text-secondary hover:bg-surface-hover hover:text-primary flex h-10 w-10 items-center justify-center rounded-lg transition-colors"
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={toggleSidebar} ariaLabel={isOpen ? 'Hide sidebar' : 'Show sidebar'} ariaExpanded={isOpen} ariaControls="gymtracker-sidebar" className="text-text-secondary hover:bg-surface-hover hover:text-primary !h-10 !w-10 !rounded-lg">
           {isOpen ? <FiX className="h-5 w-5" /> : <FiMenu className="h-5 w-5" />}
-        </button>
+        </Button>
 
         <Link href="/dashboard" className="flex items-center gap-2">
           <FaDumbbell className="text-primary" />

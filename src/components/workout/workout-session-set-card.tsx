@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import { updateWorkoutSessionSetAction } from '@/actions/workout-session-actions';
 import type { WorkoutSessionSetViewModel } from '@/types/exercise-types';
+import Button from '@/components/button/button';
 
 interface WorkoutSessionSetCardProps {
   set: WorkoutSessionSetViewModel;
@@ -128,14 +129,9 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
         </div>
 
         <div className="lg:pb-0">
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={isSaving}
-            className={`h-10 w-full cursor-pointer rounded-lg px-5 text-sm font-semibold transition lg:w-auto ${isSaved ? 'bg-success/10 text-success hover:bg-success/20' : 'bg-info text-text hover:bg-info/80'} disabled:cursor-not-allowed disabled:opacity-50`}
-          >
+          <Button type="button" variant={isSaved ? 'secondary' : 'primary'} size="md" onClick={handleSave} disabled={isSaving} className={`!h-10 !w-full !rounded-lg !px-5 !text-sm !font-semibold lg:!w-auto ${isSaved ? '!bg-success/10 !text-success hover:!bg-success/20' : ''}`}>
             {isSaving ? 'Saving...' : isSaved ? '✓ Saved' : 'Save'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

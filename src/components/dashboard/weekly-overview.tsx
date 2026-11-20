@@ -7,6 +7,7 @@ import { getISOWeek } from 'date-fns';
 import type { WeeklyWorkoutViewModel } from '@/types/workout-types';
 
 import { WORKOUT_STATUS_CONFIG } from '@/components/shared/workout-status';
+import Button from '@/components/button/button';
 import SelectedWorkout from './selected-workout';
 import Modal from '@/components/modal/modal';
 import WorkoutDayCard from './workout-day-card';
@@ -95,14 +96,16 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
             const isToday = todayIndex === index;
 
             return (
-              <button
+              <Button
                 key={day.name}
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setManualSelectedDayIndex(index)}
-                aria-label={`${day.name}${isToday ? ', today' : ''}`}
-                aria-pressed={isSelected}
-                className={`flex min-w-0 flex-col items-center justify-center gap-2 rounded-xl border px-1 py-3 transition-all duration-200 ${
-                  isSelected ? 'border-primary bg-primary/15 text-primary shadow-lg shadow-black/20' : 'border-border bg-background/80 text-text-secondary hover:border-border-hover'
+                ariaLabel={`${day.name}${isToday ? ', today' : ''}`}
+                ariaPressed={isSelected}
+                className={`!flex !min-w-0 !flex-col !items-center !justify-center !gap-2 !rounded-xl !border !px-1 !py-3 transition-all duration-200 ${
+                  isSelected ? '!border-primary !bg-primary/15 !text-primary !shadow-lg !shadow-black/20' : '!border-border !bg-background/80 !text-text-secondary hover:!border-border-hover'
                 }`}
               >
                 <span className="text-xs font-semibold sm:text-sm">{day.short}</span>
@@ -110,7 +113,7 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
                 <span className="flex h-5 w-5 items-center justify-center">{getDayIndicator(workout)}</span>
 
                 {isToday ? <span className="text-primary text-xs font-bold">IDAG</span> : <span className="h-3" />}
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -144,13 +147,13 @@ export default function WeeklyOverview({ workouts }: WeeklyOverviewProps) {
 
         {/* Previous / next day */}
         <div className="mt-3 flex items-center justify-between">
-          <button type="button" onClick={() => setManualSelectedDayIndex((current) => ((current ?? todayIndex ?? 0) + 6) % 7)} className="text-text-secondary hover:bg-surface-hover hover:text-text rounded-lg px-3 py-2 text-sm font-medium transition">
+          <Button type="button" variant="ghost" size="sm" onClick={() => setManualSelectedDayIndex((current) => ((current ?? todayIndex ?? 0) + 6) % 7)} className="!text-text-secondary hover:!bg-surface-hover hover:!text-text !px-3 !py-2 !text-sm !font-medium">
             ← Föregående
-          </button>
+          </Button>
 
-          <button type="button" onClick={() => setManualSelectedDayIndex((current) => ((current ?? todayIndex ?? 0) + 1) % 7)} className="text-text-secondary hover:bg-surface-hover hover:text-text rounded-lg px-3 py-2 text-sm font-medium transition">
+          <Button type="button" variant="ghost" size="sm" onClick={() => setManualSelectedDayIndex((current) => ((current ?? todayIndex ?? 0) + 1) % 7)} className="!text-text-secondary hover:!bg-surface-hover hover:!text-text !px-3 !py-2 !text-sm !font-medium">
             Nästa →
-          </button>
+          </Button>
         </div>
       </div>
 

@@ -12,6 +12,7 @@ import Modal from '@/components/modal/modal';
 import SelectedWorkout from '@/components/dashboard/selected-workout';
 import { WORKOUT_STATUS_CONFIG } from '@/components/shared/workout-status';
 
+import Button from '@/components/button/button';
 import Skeleton from '@/components/ui/skeleton';
 
 const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -112,9 +113,9 @@ export default function WorkoutCalendar() {
       <section className="border-border bg-surface w-full min-w-0 overflow-hidden rounded-2xl border p-3 sm:p-5 lg:p-6">
         {/* Calendar header */}
         <div className="mb-4 flex items-center justify-between gap-2 sm:mb-6">
-          <button type="button" onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() - 1, 1))} className="text-text hover:bg-surface-hover hover:text-primary flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition sm:h-14 sm:w-14" aria-label="Previous month">
+          <Button variant="ghost" size="sm" ariaLabel="Previous month" onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() - 1, 1))} className="h-12 w-12 shrink-0 !p-0 sm:h-14 sm:w-14">
             <ChevronLeft size={25} strokeWidth={2.5} />
-          </button>
+          </Button>
 
           <h2 className="text-text truncate text-base font-semibold capitalize sm:text-xl">
             {currentDate.toLocaleDateString('en-US', {
@@ -123,9 +124,9 @@ export default function WorkoutCalendar() {
             })}
           </h2>
 
-          <button type="button" onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() + 1, 1))} className="text-text hover:bg-surface-hover hover:text-primary flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition sm:h-14 sm:w-14" aria-label="Next month">
+          <Button variant="ghost" size="sm" ariaLabel="Next month" onClick={() => setCurrentDate(new Date(currentYear, currentDate.getMonth() + 1, 1))} className="h-12 w-12 shrink-0 !p-0 sm:h-14 sm:w-14">
             <ChevronRight size={25} strokeWidth={2.5} />
-          </button>
+          </Button>
         </div>
 
         {/* Weekdays */}
@@ -161,17 +162,18 @@ export default function WorkoutCalendar() {
                           const status = workout.status ? WORKOUT_STATUS_CONFIG[workout.status] : null;
 
                           return (
-                            <button
+                            <Button
                               key={workout.id}
-                              type="button"
+                              variant="ghost"
+                              size="sm"
                               onClick={() => setSelectedWorkout(workout)}
-                              title={`${workout.workoutName} - Click to view workout`}
-                              className={`block w-full min-w-0 cursor-pointer truncate rounded border px-1 py-1 text-left text-xs transition hover:brightness-125 sm:px-2 ${status?.badgeClassName ?? 'border-primary/30 bg-primary/10 text-primary'}`}
+                              ariaLabel={`View workout: ${workout.workoutName}`}
+                              className={`!flex !w-full !min-w-0 !justify-start !truncate !rounded !border !px-1 !py-1 !text-left !text-xs !font-normal !tracking-normal transition hover:brightness-125 sm:!px-2 ${status?.badgeClassName ?? 'border-primary/30 bg-primary/10 text-primary'}`}
                             >
                               <span className="hidden sm:inline">💪 </span>
                               <span className="sm:hidden">💪</span>
                               <span className="hidden sm:inline">{workout.workoutName}</span>
-                            </button>
+                            </Button>
                           );
                         })
                       )}

@@ -3,7 +3,9 @@
 import { useMemo, useState } from 'react';
 import { ArrowDownRight, ArrowUpRight, Dumbbell, Repeat2, TrendingUp, Weight, Trophy } from 'lucide-react';
 
+import Button from '@/components/button/button';
 import type { ExerciseProgress as ExerciseProgressType } from '@/types/progress-type';
+
 import ExerciseChart from './progress-exercise-chart';
 
 type ChartMetric = 'weight' | 'reps' | 'seconds';
@@ -199,13 +201,27 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                           <span className="bg-info/15 text-info rounded-lg px-4 py-2 text-sm">Time (seconds)</span>
                         ) : (
                           <>
-                            <button type="button" onClick={() => setChartMetric('weight')} aria-pressed={activeChartMetric === 'weight'} className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'weight' ? 'bg-info/15 text-info' : 'text-text-secondary hover:text-text'}`}>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setChartMetric('weight')}
+                              ariaPressed={activeChartMetric === 'weight'}
+                              className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'weight' ? 'bg-info/15 text-info' : 'text-text-secondary hover:text-text'}`}
+                            >
                               Weight (kg)
-                            </button>
+                            </Button>
 
-                            <button type="button" onClick={() => setChartMetric('reps')} aria-pressed={activeChartMetric === 'reps'} className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'reps' ? 'bg-info/15 text-info' : 'text-text-secondary hover:text-text'}`}>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setChartMetric('reps')}
+                              ariaPressed={activeChartMetric === 'reps'}
+                              className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'reps' ? 'bg-info/15 text-info' : 'text-text-secondary hover:text-text'}`}
+                            >
                               Reps
-                            </button>
+                            </Button>
                           </>
                         )}
                       </div>

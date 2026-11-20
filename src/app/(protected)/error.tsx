@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
+import Button from '@/components/button/button';
+
 type ErrorPageProps = {
   error: Error & { digest?: string };
   reset: () => void;
@@ -24,10 +26,10 @@ export default function ProtectedError({ error, reset }: ErrorPageProps) {
 
         <p className="text-text-muted mt-3 text-sm leading-6">An unexpected error occurred. Please try again.</p>
 
-        <button type="button" onClick={() => reset()} className="bg-primary text-primary-foreground hover:bg-primary-hover mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition">
+        <Button type="button" variant="primary" size="md" onClick={reset} className="mt-6">
           <RefreshCw className="h-4 w-4" />
           Try again
-        </button>
+        </Button>
       </div>
     </main>
   );
