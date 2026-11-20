@@ -17,13 +17,19 @@ type PageProps = {
 export default async function ExerciseDetailsPage({ params }: PageProps) {
   const user = await requireAuth();
   const { slug } = await params;
+  const identifier = slug.trim();
+
+  if (!identifier || identifier === 'null' || identifier === 'undefined') {
+    notFound();
+  }
 
   const exerciseService = new ExerciseService();
 
   let exercise: ExerciseViewModel;
 
   try {
-    exercise = await exerciseService.getBySlug(slug, user.userId);
+    // Older exercises may not have a slug yet. Their cards link to the ID instead.
+    exercise = /^\\d+$/.test(identifier) ? await exerciseService.getById(Number(identifier), user.userId) : await exerciseService.getBySlug(identifier, user.userId);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : '';
 
@@ -199,7 +205,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
                 Back to exercises
               </Link>
 
-              <Link href={`/exercises/edit/${exercise.slug ?? exercise.id}`} className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition">
+              <Link href={`/exercises/edit/${exercise.id}`} className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition">
                 <Pencil className="h-4 w-4" />
                 Edit exercise
               </Link>
