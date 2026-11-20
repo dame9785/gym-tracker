@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { updateWorkoutSessionSetAction } from '@/actions/workout-session-actions';
 import type { WorkoutSessionSetViewModel } from '@/types/exercise-types';
 import Button from '@/components/button/button';
+import FormField from '@/components/ui/form-field';
+import FormInput from '@/components/ui/form-input';
 
 interface WorkoutSessionSetCardProps {
   set: WorkoutSessionSetViewModel;
@@ -70,13 +72,10 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
         </div>
 
         <div className="grid flex-1 grid-cols-3 gap-3">
-          <div>
-            <label htmlFor={`reps-${set.id}`} className="text-text-muted mb-1.5 block text-xs font-medium">
-              Reps
-            </label>
-
-            <input
+          <FormField htmlFor={`reps-${set.id}`} label="Reps">
+            <FormInput
               id={`reps-${set.id}`}
+              name={`reps-${set.id}`}
               type="number"
               min="0"
               step="1"
@@ -85,17 +84,13 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
                 setActualReps(Number(event.target.value));
                 setIsSaved(false);
               }}
-              className="border-border bg-background text-text focus:border-info focus:ring-info/10 h-10 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-2"
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label htmlFor={`weight-${set.id}`} className="text-text-muted mb-1.5 block text-xs font-medium">
-              Weight (kg)
-            </label>
-
-            <input
+          <FormField htmlFor={`weight-${set.id}`} label="Weight (kg)">
+            <FormInput
               id={`weight-${set.id}`}
+              name={`weight-${set.id}`}
               type="number"
               min="0"
               step="0.5"
@@ -104,17 +99,13 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
                 setActualWeight(Number(event.target.value));
                 setIsSaved(false);
               }}
-              className="border-border bg-background text-text focus:border-info focus:ring-info/10 h-10 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-2"
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label htmlFor={`seconds-${set.id}`} className="text-text-muted mb-1.5 block text-xs font-medium">
-              Seconds (sec)
-            </label>
-
-            <input
+          <FormField htmlFor={`seconds-${set.id}`} label="Seconds (sec)">
+            <FormInput
               id={`seconds-${set.id}`}
+              name={`seconds-${set.id}`}
               type="number"
               min="0"
               step="0.1"
@@ -123,9 +114,8 @@ export default function WorkoutSessionSetCard({ set }: WorkoutSessionSetCardProp
                 setActualSeconds(Number(event.target.value));
                 setIsSaved(false);
               }}
-              className="border-border bg-background text-text focus:border-info focus:ring-info/10 h-10 w-full rounded-lg border px-3 text-sm transition outline-none focus:ring-2"
             />
-          </div>
+          </FormField>
         </div>
 
         <div className="lg:pb-0">

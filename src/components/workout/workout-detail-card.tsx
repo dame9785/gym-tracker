@@ -10,6 +10,8 @@ import type { WorkoutViewModel } from '@/types/workout-types';
 import { deleteWorkoutAction } from '@/actions/workout-actions';
 import EmptyState from '@/components/ui/empty-state';
 import Button from '@/components/button/button';
+import FormField from '@/components/ui/form-field';
+import FormInput from '@/components/ui/form-input';
 
 type Props = {
   workouts: WorkoutViewModel[];
@@ -97,14 +99,14 @@ export default function WorkoutDetailCard({ workouts }: Props) {
 
         {/* Search */}
         <div className="mb-6">
-          <label htmlFor="workout-search" className="sr-only">
-            Search workouts
-          </label>
-
           <div className="border-border bg-surface/70 focus-within:border-info/50 focus-within:ring-info/10 flex min-w-0 items-center gap-3 rounded-xl border px-4 transition-colors focus-within:ring-2">
             <Search className="text-text-muted h-5 w-5 shrink-0" />
 
-            <input id="workout-search" type="search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search workouts or exercises..." className="text-text placeholder:text-text-muted h-12 w-full min-w-0 bg-transparent text-base outline-none" />
+            <div className="min-w-0 flex-1">
+              <FormField htmlFor="workout-search" label="Search workouts">
+                <FormInput id="workout-search" name="workout-search" type="search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search workouts or exercises..." />
+              </FormField>
+            </div>
 
             {searchQuery && (
               <Button type="button" variant="ghost" size="sm" onClick={() => setSearchQuery('')} ariaLabel="Clear search" className="!h-9 !w-9 !shrink-0 !rounded-lg !p-0">

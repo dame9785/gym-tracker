@@ -9,6 +9,8 @@ import { addProductToMealAction, addCustomFoodToMealAction } from '@/actions/mea
 
 import ProductImage from '@/components/nutrition/product-image';
 import Button from '@/components/button/button';
+import FormField from '@/components/ui/form-field';
+import FormInput from '@/components/ui/form-input';
 
 import type { ProductViewModel, CustomFoodViewModel, SelectedFood } from '@/types/foods-type';
 
@@ -149,7 +151,9 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
 
       {/* Search */}
       <div className="border-border shrink-0 border-b py-4">
-        <input
+        <FormInput
+          id="food-search"
+          name="search"
           type="search"
           value={search}
           onChange={(event) => {
@@ -158,7 +162,6 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
           }}
           placeholder="Search foods..."
           autoFocus
-          className="border-border-hover bg-surface text-text placeholder:text-text-muted focus:border-primary focus:ring-primary/30 w-full rounded-xl border px-4 py-3 text-sm transition outline-none focus:ring-1"
         />
 
         <div className="mt-3 flex items-center justify-between">
@@ -294,23 +297,9 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
           </div>
 
           {/* Quantity */}
-          <div>
-            <label htmlFor="food-quantity" className="text-text-secondary mb-2 block text-sm">
-              Quantity (grams)
-            </label>
-
-            <input
-              id="food-quantity"
-              type="number"
-              min="0.1"
-              max="10000"
-              step="0.1"
-              value={quantity}
-              disabled={isSaving}
-              onChange={(event) => setQuantity(event.target.value)}
-              className="border-border-hover bg-surface text-text focus:border-primary w-full rounded-lg border px-3 py-2.5 text-sm outline-none"
-            />
-          </div>
+          <FormField htmlFor="food-quantity" label="Quantity (grams)">
+            <FormInput id="food-quantity" name="quantity" type="number" min="0.1" max="10000" step="0.1" value={quantity} disabled={isSaving} onChange={(event) => setQuantity(event.target.value)} />
+          </FormField>
 
           {/* Add button */}
           <div className="flex justify-end">

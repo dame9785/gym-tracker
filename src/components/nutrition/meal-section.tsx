@@ -8,6 +8,8 @@ import { calculateMealNutrition } from '@/utils/meal-calculations';
 
 import FoodModal from '@/components/modal/food-modal';
 import Button from '@/components/button/button';
+import FormField from '@/components/ui/form-field';
+import FormInput from '@/components/ui/form-input';
 
 // --------------------------------------------------
 // Types
@@ -71,7 +73,7 @@ export default function MealSection({ section, meal, date, isActive, editingItem
         <Button type="button" variant="secondary" size="sm" onClick={onAddFood} className="!border-primary/40 !text-primary hover:!bg-primary/10 flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition">
           <div className="flex items-center gap-2">
             <PlusCircle size={15} />
-            <span> Add food</span>
+            <span>Add food</span>
           </div>
         </Button>
       </div>
@@ -95,17 +97,9 @@ export default function MealSection({ section, meal, date, isActive, editingItem
 
                     {isEditing ? (
                       <div className="mt-2 flex items-center gap-2">
-                        <input
-                          type="number"
-                          min="0.1"
-                          max="10000"
-                          step="0.1"
-                          value={editingQuantity}
-                          onChange={(event) => onQuantityChange(event.target.value)}
-                          disabled={isSavingItem}
-                          aria-label="Food quantity in grams"
-                          className="border-border-hover bg-background text-text focus:border-primary w-24 rounded-lg border px-2 py-1.5 text-sm outline-none"
-                        />
+                        <FormField htmlFor={`quantity-${item.id}`} label="Quantity">
+                          <FormInput id={`quantity-${item.id}`} name={`quantity-${item.id}`} type="number" min="0.1" max="10000" step="0.1" value={editingQuantity} onChange={(event) => onQuantityChange(event.target.value)} disabled={isSavingItem} aria-label="Food quantity in grams" />
+                        </FormField>
 
                         <span className="text-text-muted text-xs">g</span>
 

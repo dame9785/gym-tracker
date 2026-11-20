@@ -3,6 +3,7 @@
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import Button from '@/components/button/button';
+import FormInput from '@/components/ui/form-input';
 
 type Props = {
   selectedDate: string;
@@ -47,7 +48,9 @@ export default function NutritionDateNavigation({ selectedDate, today, isLoading
           <ChevronLeft size={20} />
         </Button>
 
-        <input
+        <FormInput
+          id="nutrition-date"
+          name="date"
           type="date"
           value={selectedDate}
           max={today}
@@ -57,7 +60,6 @@ export default function NutritionDateNavigation({ selectedDate, today, isLoading
             }
           }}
           disabled={isDisabled}
-          className="border-border bg-surface text-text focus:border-primary h-11 rounded-lg border px-3 text-sm outline-none"
         />
 
         <Button
