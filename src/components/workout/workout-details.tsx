@@ -91,30 +91,6 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
 
   return (
     <section className="mx-auto w-full min-w-0 space-y-8 pb-10">
-      {/* Header */}
-      <header className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-500/15 via-zinc-900 to-zinc-950 p-6 shadow-2xl sm:p-8">
-        <div className="pointer-events-none absolute -top-20 -right-16 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
-
-        <div className="relative">
-          <div className="mb-5 flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-blue-400" />
-            <p className="text-xs font-bold tracking-[0.2em] text-blue-400 uppercase">Workout overview</p>
-          </div>
-
-          <h1 className="max-w-3xl text-3xl font-extrabold tracking-tight break-words text-white sm:text-4xl lg:text-5xl">{workout.name}</h1>
-
-          {workout.description ? <p className="mt-4 max-w-2xl text-sm leading-7 whitespace-pre-line text-zinc-400 sm:text-base">{workout.description}</p> : <p className="mt-4 text-sm text-zinc-500">Inga detaljer har lagts till för det här träningspasset ännu.</p>}
-
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <span className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-sm font-semibold text-blue-300">
-              ⚡ {totalExercises} {totalExercises === 1 ? 'övning' : 'övningar'}
-            </span>
-
-            <span className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-zinc-300">↻ {totalSets} set totalt</span>
-          </div>
-        </div>
-      </header>
-
       {/* Statistics */}
       <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
         <div className="col-span-1">
@@ -317,6 +293,7 @@ function MetricPill({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 rounded-xl border border-white/[0.06] bg-white/[0.04] px-3 py-3 sm:px-4">
       <p className="text-xs text-zinc-500">{label}</p>
+
       <p className="mt-1 text-sm font-semibold break-words text-white">{value}</p>
     </div>
   );
