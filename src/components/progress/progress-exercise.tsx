@@ -155,13 +155,13 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                   {!isPlank && first && current && (
                     <div className="border-border bg-surface/50 mt-4 rounded-xl border p-4">
                       <div className="text-text-secondary flex items-center gap-2">
-                        {weightChange !== null && weightChange > 0 ? <ArrowUpRight className="h-4 w-4 text-emerald-400" /> : weightChange !== null && weightChange < 0 ? <ArrowDownRight className="h-4 w-4 text-rose-400" /> : <TrendingUp className="text-text-muted h-4 w-4" />}
+                        {weightChange !== null && weightChange > 0 ? <ArrowUpRight className="text-success h-4 w-4" /> : weightChange !== null && weightChange < 0 ? <ArrowDownRight className="text-danger h-4 w-4" /> : <TrendingUp className="text-text-muted h-4 w-4" />}
 
                         <h3 className="text-sm font-medium">Weight Progress Since First Entry</h3>
                       </div>
 
                       <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                        <p className={`text-2xl font-bold ${weightChange !== null && weightChange > 0 ? 'text-emerald-400' : weightChange !== null && weightChange < 0 ? 'text-rose-400' : 'text-text'}`}>
+                        <p className={`text-2xl font-bold ${weightChange !== null && weightChange > 0 ? 'text-success' : weightChange !== null && weightChange < 0 ? 'text-danger' : 'text-text'}`}>
                           {weightChange !== null && weightChange > 0 ? '+' : ''}
                           {weightChange !== null ? weightChange.toLocaleString('en-US') : '—'} kg
                         </p>
@@ -196,19 +196,14 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
 
                       <div className="border-border bg-background inline-flex w-fit rounded-xl border p-1" role="group" aria-label="Select chart metric">
                         {isPlank ? (
-                          <span className="rounded-lg bg-purple-500/15 px-4 py-2 text-sm text-purple-300">Time (seconds)</span>
+                          <span className="bg-info/15 text-info rounded-lg px-4 py-2 text-sm">Time (seconds)</span>
                         ) : (
                           <>
-                            <button
-                              type="button"
-                              onClick={() => setChartMetric('weight')}
-                              aria-pressed={activeChartMetric === 'weight'}
-                              className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'weight' ? 'bg-purple-500/15 text-purple-300' : 'text-text-secondary hover:text-text'}`}
-                            >
+                            <button type="button" onClick={() => setChartMetric('weight')} aria-pressed={activeChartMetric === 'weight'} className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'weight' ? 'bg-info/15 text-info' : 'text-text-secondary hover:text-text'}`}>
                               Weight (kg)
                             </button>
 
-                            <button type="button" onClick={() => setChartMetric('reps')} aria-pressed={activeChartMetric === 'reps'} className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'reps' ? 'bg-purple-500/15 text-purple-300' : 'text-text-secondary hover:text-text'}`}>
+                            <button type="button" onClick={() => setChartMetric('reps')} aria-pressed={activeChartMetric === 'reps'} className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'reps' ? 'bg-info/15 text-info' : 'text-text-secondary hover:text-text'}`}>
                               Reps
                             </button>
                           </>
@@ -251,7 +246,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                       )
                         .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
                         .map(([dateKey, entries]) => (
-                          <div key={dateKey} className="border-border bg-surface/40 hover:border-border-hover overflow-hidden rounded-2xl border transition-colors">
+                          <div key={dateKey} className="border-border hover:border-border-hover overflow-hidden rounded-2xl border transition-colors">
                             <div className="border-border bg-surface/70 flex items-center justify-between gap-3 border-b px-4 py-4 sm:px-5">
                               <div>
                                 <h4 className="text-text font-semibold">
@@ -262,6 +257,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                                     year: 'numeric',
                                   })}
                                 </h4>
+
                                 <p className="text-text-muted mt-1 text-xs">
                                   {entries.length} {entries.length === 1 ? 'set recorded' : 'sets recorded'}
                                 </p>
@@ -286,6 +282,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
 
                                       <div className="min-w-0">
                                         <p className="text-text font-semibold">{isPlank ? `${entry.seconds ?? 0} seconds` : `${entry.weight ?? 0} kg × ${entry.reps} reps`}</p>
+
                                         <p className="text-text-muted mt-1 text-xs">Set {index + 1}</p>
                                       </div>
                                     </div>
@@ -320,7 +317,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
 }
 
 function RecordBadge({ label, variant = 'purple' }: { label: string; variant?: 'purple' | 'green' }) {
-  const colors = variant === 'green' ? 'bg-emerald-500/10 text-emerald-300' : 'bg-purple-500/10 text-purple-300';
+  const colors = variant === 'green' ? 'bg-success/10 text-success' : 'bg-info/10 text-info';
 
   return (
     <span className={`rounded-md px-2 py-1 text-xs font-medium ${colors}`}>

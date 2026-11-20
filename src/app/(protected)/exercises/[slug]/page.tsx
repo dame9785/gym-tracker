@@ -72,7 +72,7 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
             <div className="from-background absolute inset-0 bg-gradient-to-t via-black/20 to-black/10" />
 
             <div className="absolute right-0 bottom-0 left-0 p-5 sm:p-8">
-              <span className="mb-3 inline-flex items-center rounded-full border border-blue-400/40 bg-blue-950/90 px-3 py-1.5 text-xs font-semibold text-blue-200 backdrop-blur-sm">{exercise.primaryMuscle}</span>
+              <span className="border-info/40 bg-info/15 text-info mb-3 inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-semibold backdrop-blur-sm">{exercise.primaryMuscle}</span>
 
               <h1 className="text-text text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">{exercise.name}</h1>
             </div>
@@ -89,24 +89,24 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 {/* Primary muscle */}
-                <div className="rounded-xl border border-blue-500/20 bg-blue-500/[0.05] p-5">
-                  <p className="mb-4 text-xs font-bold tracking-wider text-blue-300 uppercase">Primary muscle</p>
+                <div className="border-info/20 bg-info/5 rounded-xl border p-5">
+                  <p className="text-info mb-4 text-xs font-bold tracking-wider uppercase">Primary muscle</p>
 
-                  <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-blue-400/50 bg-blue-950/90 px-4 py-2 text-sm font-semibold text-blue-100 shadow-lg shadow-black/20 backdrop-blur-md">
-                    <Activity className="h-4 w-4 text-blue-300" />
+                  <span className="border-info/50 bg-info/15 text-text mt-5 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold shadow-lg shadow-black/20 backdrop-blur-md">
+                    <Activity className="text-info h-4 w-4" />
                     {exercise.primaryMuscle}
                   </span>
                 </div>
 
                 {/* Secondary muscles */}
-                <div className="rounded-xl border border-violet-500/20 bg-violet-500/[0.05] p-5">
-                  <p className="mb-4 text-xs font-bold tracking-wider text-violet-300 uppercase">Secondary muscles</p>
+                <div className="border-info/20 bg-info/5 rounded-xl border p-5">
+                  <p className="text-info mb-4 text-xs font-bold tracking-wider uppercase">Secondary muscles</p>
 
                   {exercise.secondaryMuscles.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {exercise.secondaryMuscles.map((muscle) => (
-                        <span key={muscle} className="mt-5 inline-flex items-center gap-2 rounded-full border border-violet-400/40 bg-violet-500/15 px-4 py-2 text-sm font-semibold text-violet-200 shadow-sm shadow-violet-950/20 transition-colors hover:border-violet-400/70 hover:bg-violet-500/25">
-                          <Activity className="h-4 w-4 text-violet-300" />
+                        <span key={muscle} className="border-info/40 bg-info/15 text-text hover:border-info/70 hover:bg-info/25 mt-5 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold shadow-sm shadow-black/20 transition-colors">
+                          <Activity className="text-info h-4 w-4" />
                           {muscle}
                         </span>
                       ))}
@@ -160,12 +160,12 @@ export default async function ExerciseDetailsPage({ params }: PageProps) {
             {exercise.techniqueTips && (
               <section className="mt-8">
                 <div className="mb-4 flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5 text-amber-400" />
+                  <Lightbulb className="text-warning h-5 w-5" />
 
                   <h2 className="text-text text-lg font-semibold">Technique tips</h2>
                 </div>
 
-                <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.05] p-5">
+                <div className="border-warning/20 bg-warning/5 rounded-xl border p-5">
                   <p className="text-text-secondary text-sm leading-7 whitespace-pre-line">{exercise.techniqueTips}</p>
                 </div>
               </section>

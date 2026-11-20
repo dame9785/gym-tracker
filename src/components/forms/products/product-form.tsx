@@ -234,7 +234,7 @@ export default function ProductForm({ product }: ProductFormProps) {
               <FormInput id="nutritionSource" name="nutritionSource" type="text" placeholder="e.g. Manufacturer website or packaging" value={formData.nutritionSource} onChange={handleChange} maxLength={255} disabled={isSaving} aria-invalid={!!errors.nutritionSource} />
             </FormField>
 
-            {formData.dataQuality === 'VERIFIED' && <p className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-sm text-emerald-400">A nutrition source is required when a product is marked as verified.</p>}
+            {formData.dataQuality === 'VERIFIED' && <p className="border-success/20 bg-success/5 text-success rounded-lg border p-3 text-sm">A nutrition source is required when a product is marked as verified.</p>}
           </div>
         </section>
 
@@ -272,7 +272,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                 setRemoveImage(true);
               }}
               disabled={isSaving}
-              className="mt-3 text-sm text-red-400 transition hover:text-red-300 disabled:opacity-50"
+              className="text-danger hover:text-danger/80 mt-3 text-sm transition disabled:opacity-50"
             >
               Remove current image
             </button>
@@ -287,7 +287,7 @@ export default function ProductForm({ product }: ProductFormProps) {
 
         {/* Form actions */}
         <div className="border-border bg-background/95 sticky bottom-3 z-10 flex flex-col-reverse gap-3 rounded-2xl border p-3 shadow-xl backdrop-blur-xl sm:flex-row sm:justify-end">
-          <Link href="/admin/products" aria-disabled={isSaving} className="border-border-hover text-text-secondary hover:border-border-hover hover:bg-surface-hover flex min-h-12 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-medium transition">
+          <Link href="/admin/products" aria-disabled={isSaving} className="border-border-hover text-text-secondary hover:bg-surface-hover hover:text-text flex min-h-12 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-medium transition">
             <ArrowLeft className="h-4 w-4" />
             Cancel
           </Link>

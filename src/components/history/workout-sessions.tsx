@@ -94,10 +94,10 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                     </div>
 
                     {/* Status badge */}
-                    <div className={`flex w-fit shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 ${isCompleted ? 'border-green-500/20 bg-green-500/10' : 'border-red-500/20 bg-red-500/10'}`}>
-                      {isCompleted ? <CheckCircle2 className="h-3.5 w-3.5 text-green-400" /> : <XCircle className="h-3.5 w-3.5 text-red-400" />}
+                    <div className={`flex w-fit shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 ${isCompleted ? 'border-success/20 bg-success/10' : 'border-danger/20 bg-danger/10'}`}>
+                      {isCompleted ? <CheckCircle2 className="text-success h-3.5 w-3.5" /> : <XCircle className="text-danger h-3.5 w-3.5" />}
 
-                      <span className={`text-[10px] font-semibold tracking-wide ${isCompleted ? 'text-green-400' : 'text-red-400'}`}>{session.status}</span>
+                      <span className={`text-[10px] font-semibold tracking-wide ${isCompleted ? 'text-success' : 'text-danger'}`}>{session.status}</span>
                     </div>
                   </div>
 
@@ -189,17 +189,17 @@ export default function WorkoutSessions({ workoutSessions }: Props) {
                               .slice()
                               .sort((a, b) => a.setNumber - b.setNumber)
                               .map((set) => (
-                                <div key={set.id} className={`rounded-lg border p-3 ${set.completed ? 'border-green-500/20 bg-green-500/[0.04]' : 'border-red-500/20 bg-red-500/[0.03]'}`}>
+                                <div key={set.id} className={`rounded-lg border p-3 ${set.completed ? 'border-success/20 bg-success/[0.04]' : 'border-danger/20 bg-danger/[0.03]'}`}>
                                   <div className="mb-3 flex items-center justify-between gap-2">
                                     <span className="text-text-secondary text-xs font-semibold">Set {set.setNumber}</span>
 
                                     {set.completed ? (
-                                      <span className="inline-flex items-center gap-1 text-xs font-medium text-green-400">
+                                      <span className="text-success inline-flex items-center gap-1 text-xs font-medium">
                                         <CheckCircle2 className="h-3.5 w-3.5" />
                                         Completed
                                       </span>
                                     ) : (
-                                      <span className="inline-flex items-center gap-1 text-xs font-medium text-red-400">
+                                      <span className="text-danger inline-flex items-center gap-1 text-xs font-medium">
                                         <XCircle className="h-3.5 w-3.5" />
                                         Not completed
                                       </span>

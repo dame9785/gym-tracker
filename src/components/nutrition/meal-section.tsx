@@ -106,7 +106,7 @@ export default function MealSection({ section, meal, date, isActive, editingItem
 
                         <span className="text-text-muted text-xs">g</span>
 
-                        <button type="button" onClick={() => onSaveQuantity(item.id)} disabled={isSavingItem} aria-label="Save quantity" title="Save quantity" className="rounded-lg p-1.5 text-green-400 transition hover:bg-green-500/10 disabled:opacity-50">
+                        <button type="button" onClick={() => onSaveQuantity(item.id)} disabled={isSavingItem} aria-label="Save quantity" title="Save quantity" className="text-success hover:bg-success/10 rounded-lg p-1.5 transition disabled:opacity-50">
                           <Check size={17} />
                         </button>
 
@@ -128,7 +128,7 @@ export default function MealSection({ section, meal, date, isActive, editingItem
                           <Pencil size={15} />
                         </button>
 
-                        <button type="button" onClick={() => onDeleteFood(item.id)} disabled={isSavingItem} aria-label={`Remove ${foodName}`} title="Remove food" className="text-text-muted rounded-lg p-1.5 transition hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50">
+                        <button type="button" onClick={() => onDeleteFood(item.id)} disabled={isSavingItem} aria-label={`Remove ${foodName}`} title="Remove food" className="text-text-muted hover:bg-danger/10 hover:text-danger rounded-lg p-1.5 transition disabled:opacity-50">
                           <Trash2 size={15} />
                         </button>
                       </>
@@ -139,19 +139,19 @@ export default function MealSection({ section, meal, date, isActive, editingItem
                 {/* Macronutrients */}
                 <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
                   <span className="text-text-muted flex items-center gap-1.5">
-                    <Beef size={13} className="text-blue-400" />
+                    <Beef size={13} className="text-info" />
                     Protein:
                     <span className="text-text-secondary font-medium">{item.proteinSnapshot.toFixed(1)} g</span>
                   </span>
 
                   <span className="text-text-muted flex items-center gap-1.5">
-                    <Wheat size={13} className="text-green-400" />
+                    <Wheat size={13} className="text-success" />
                     Carbs:
                     <span className="text-text-secondary font-medium">{item.carbsSnapshot.toFixed(1)} g</span>
                   </span>
 
                   <span className="text-text-muted flex items-center gap-1.5">
-                    <Droplets size={13} className="text-purple-400" />
+                    <Droplets size={13} className="text-info" />
                     Fat:
                     <span className="text-text-secondary font-medium">{item.fatSnapshot.toFixed(1)} g</span>
                   </span>

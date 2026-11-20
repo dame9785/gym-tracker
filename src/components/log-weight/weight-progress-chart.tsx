@@ -79,7 +79,7 @@ export default function WeightProgressChart({ history, startWeight, goalWeight }
             <div className="border-border bg-surface/70 rounded-xl border p-4">
               <dt className="text-text-secondary text-xs">Högsta vikt</dt>
 
-              <dd className="mt-2 text-xl font-bold text-red-400">{highestEntry ? `${formatWeight(highestEntry.weight)} kg` : '—'}</dd>
+              <dd className="text-danger mt-2 text-xl font-bold">{highestEntry ? `${formatWeight(highestEntry.weight)} kg` : '—'}</dd>
 
               <dd className="text-text-muted mt-1 text-xs">{highestEntry ? formatDate(highestEntry.loggedAt) : 'Ingen registrering'}</dd>
             </div>
@@ -87,7 +87,7 @@ export default function WeightProgressChart({ history, startWeight, goalWeight }
             <div className="border-border bg-surface/70 rounded-xl border p-4">
               <dt className="text-text-secondary text-xs">Lägsta vikt</dt>
 
-              <dd className="mt-2 text-xl font-bold text-emerald-400">{lowestEntry ? `${formatWeight(lowestEntry.weight)} kg` : '—'}</dd>
+              <dd className="text-success mt-2 text-xl font-bold">{lowestEntry ? `${formatWeight(lowestEntry.weight)} kg` : '—'}</dd>
 
               <dd className="text-text-muted mt-1 text-xs">{lowestEntry ? formatDate(lowestEntry.loggedAt) : 'Ingen registrering'}</dd>
             </div>
@@ -96,20 +96,20 @@ export default function WeightProgressChart({ history, startWeight, goalWeight }
           {/* Förklaring */}
           <ul aria-label="Diagramförklaring" className="text-text-secondary mb-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs">
             <li className="flex items-center gap-2">
-              <span aria-hidden="true" className="h-0.5 w-5 rounded bg-violet-400" />
+              <span aria-hidden="true" className="bg-info h-0.5 w-5 rounded" />
               Registrerad vikt
             </li>
 
             {startWeight !== undefined && (
               <li className="flex items-center gap-2">
-                <span aria-hidden="true" className="w-5 border-t-2 border-dashed border-orange-400" />
+                <span aria-hidden="true" className="border-primary w-5 border-t-2 border-dashed" />
                 Startvikt ({formatWeight(startWeight)} kg)
               </li>
             )}
 
             {goalWeight !== undefined && (
               <li className="flex items-center gap-2">
-                <span aria-hidden="true" className="w-5 border-t-2 border-dashed border-emerald-400" />
+                <span aria-hidden="true" className="border-success w-5 border-t-2 border-dashed" />
                 Målvikt ({formatWeight(goalWeight)} kg)
               </li>
             )}
@@ -120,21 +120,21 @@ export default function WeightProgressChart({ history, startWeight, goalWeight }
             <div className="h-72 w-full min-w-0">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 5 }} accessibilityLayer>
-                  <CartesianGrid stroke="#3f3f46" strokeDasharray="4 4" vertical={false} />
+                  <CartesianGrid stroke="var(--color-border)" strokeDasharray="4 4" vertical={false} />
 
-                  <XAxis dataKey="date" stroke="#71717a" tick={{ fill: '#a1a1aa', fontSize: 12 }} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="date" stroke="var(--color-text-muted)" tick={{ fill: 'var(--color-text-secondary)', fontSize: 12 }} tickLine={false} axisLine={false} />
 
-                  <YAxis domain={[yMin, yMax]} stroke="#71717a" tick={{ fill: '#a1a1aa', fontSize: 12 }} tickLine={false} axisLine={false} width={45} tickFormatter={(value) => formatWeight(Number(value))} />
+                  <YAxis domain={[yMin, yMax]} stroke="var(--color-text-muted)" tick={{ fill: 'var(--color-text-secondary)', fontSize: 12 }} tickLine={false} axisLine={false} width={45} tickFormatter={(value) => formatWeight(Number(value))} />
 
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#171c23',
-                      border: '1px solid #30343a',
+                      backgroundColor: 'var(--color-surface)',
+                      border: '1px solid var(--color-border)',
                       borderRadius: '12px',
-                      color: '#f5f5f5',
+                      color: 'var(--color-text)',
                     }}
                     labelStyle={{
-                      color: '#9ca3af',
+                      color: 'var(--color-text-muted)',
                       marginBottom: 4,
                     }}
                     formatter={(value) => [`${formatWeight(Number(value))} kg`, 'Vikt']}
@@ -145,24 +145,24 @@ export default function WeightProgressChart({ history, startWeight, goalWeight }
                     }}
                   />
 
-                  {startWeight !== undefined && <ReferenceLine y={startWeight} stroke="#fb923c" strokeDasharray="6 4" strokeWidth={2} ifOverflow="extendDomain" />}
+                  {startWeight !== undefined && <ReferenceLine y={startWeight} stroke="var(--color-primary)" strokeDasharray="6 4" strokeWidth={2} ifOverflow="extendDomain" />}
 
-                  {goalWeight !== undefined && <ReferenceLine y={goalWeight} stroke="#34d399" strokeDasharray="6 4" strokeWidth={2} ifOverflow="extendDomain" />}
+                  {goalWeight !== undefined && <ReferenceLine y={goalWeight} stroke="var(--color-success)" strokeDasharray="6 4" strokeWidth={2} ifOverflow="extendDomain" />}
 
                   <Line
                     type="monotone"
                     dataKey="weight"
                     name="Vikt"
-                    stroke="#a78bfa"
+                    stroke="var(--color-info)"
                     strokeWidth={3}
                     dot={{
                       r: 4,
-                      fill: '#a78bfa',
+                      fill: 'var(--color-info)',
                       strokeWidth: 0,
                     }}
                     activeDot={{
                       r: 6,
-                      fill: '#c4b5fd',
+                      fill: 'var(--color-info)',
                     }}
                     connectNulls
                     isAnimationActive

@@ -12,9 +12,9 @@ type ProductTableProps = {
 };
 
 const qualityStyles = {
-  VERIFIED: 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/20',
-  STANDARD: 'bg-blue-500/10 text-blue-400 ring-blue-500/20',
-  UNVERIFIED: 'bg-amber-500/10 text-amber-400 ring-amber-500/20',
+  VERIFIED: 'bg-success/10 text-success ring-success/20',
+  STANDARD: 'bg-info/10 text-info ring-info/20',
+  UNVERIFIED: 'bg-warning/10 text-warning ring-warning/20',
 };
 
 const qualityLabels = {

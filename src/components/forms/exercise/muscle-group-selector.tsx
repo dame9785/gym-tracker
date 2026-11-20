@@ -66,7 +66,7 @@ export default function MuscleGroupSelector({ primaryMuscle, secondaryMuscles, o
 
         <p className="text-text-muted mt-3 text-xs leading-5">Select all muscles that assist during the exercise. Click a selected muscle again to remove it.</p>
 
-        {secondaryError && <p className="mt-1.5 text-xs text-red-400">{secondaryError}</p>}
+        {secondaryError && <p className="text-danger mt-1.5 text-xs">{secondaryError}</p>}
       </div>
     </div>
   );

@@ -307,7 +307,7 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
 
           {/* Add button */}
           <div className="flex justify-end">
-            <button type="button" onClick={() => void handleAddFood()} disabled={isSaving} className="bg-primary text-text hover:bg-primary-hover rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="button" onClick={() => void handleAddFood()} disabled={isSaving} className="bg-primary text-primary-foreground hover:bg-primary-hover rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50">
               {isSaving ? 'Adding...' : 'Add to meal'}
             </button>
           </div>
@@ -315,7 +315,7 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
       )}
 
       {/* Error */}
-      {error && <p className="mt-3 shrink-0 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
+      {error && <p className="border-danger/30 bg-danger/10 text-danger mt-3 shrink-0 rounded-lg border p-3 text-sm">{error}</p>}
     </div>
   );
 }

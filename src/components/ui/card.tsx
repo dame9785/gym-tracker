@@ -16,13 +16,13 @@ export default function Card({ children, className = '', variant = 'default', pa
 
   const variantStyles = {
     default: '',
-    interactive: 'transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-500/30 hover:shadow-lg hover:shadow-orange-500/[0.04]',
+    interactive: 'transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/[0.04]',
   };
 
   return (
-    <div className={`group relative min-w-0 overflow-hidden rounded-2xl border border-zinc-800/80 bg-linear-to-br from-zinc-900 via-zinc-900 to-zinc-950 shadow-sm ${paddingStyles[padding]} ${variantStyles[variant]} ${className}`} {...props}>
+    <div className={`group border-border from-surface via-surface to-background relative min-w-0 overflow-hidden rounded-2xl border bg-linear-to-br shadow-sm ${paddingStyles[padding]} ${variantStyles[variant]} ${className}`} {...props}>
       {/* Subtle top accent */}
-      {accent && <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-orange-500/50 to-transparent" />}
+      {accent && <div aria-hidden="true" className="via-primary/50 absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent to-transparent" />}
 
       {children}
     </div>

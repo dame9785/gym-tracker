@@ -44,7 +44,7 @@ export default function NotPerformedButton({ workoutSessionId }: Props) {
       type="button"
       onClick={setNotPerformed}
       disabled={isUpdating}
-      className="inline-flex h-11 min-w-33 items-center justify-center rounded-xl border border-red-700 bg-red-800/60 px-5 text-sm font-semibold text-red-300 transition-all duration-200 hover:border-red-600 hover:bg-red-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+      className="border-danger/70 bg-danger/15 text-danger hover:border-danger hover:bg-danger/25 hover:text-text inline-flex h-11 min-w-33 items-center justify-center rounded-xl border px-5 text-sm font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {isUpdating ? 'Updating...' : 'Set Not Performed'}
     </button>

@@ -14,8 +14,8 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
 
   const status = workout?.status ? WORKOUT_STATUS_CONFIG[workout.status] : null;
 
-  const cardClassName = `group flex h-full min-h-[220px] min-w-0 flex-col rounded-2xl border ${status?.borderClassName ?? 'border-border'} ${workout?.status === 'COMPLETED' ? 'bg-emerald-950/30' : 'bg-background/80'} p-4 transition-all duration-200 sm:min-h-[280px] ${
-    hasWorkout && onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-emerald-400/60' : ''
+  const cardClassName = `group flex h-full min-h-[220px] min-w-0 flex-col rounded-2xl border ${status?.borderClassName ?? 'border-border'} ${workout?.status === 'COMPLETED' ? 'bg-success/5' : 'bg-background/80'} p-4 transition-all duration-200 sm:min-h-[280px] ${
+    hasWorkout && onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-success/60' : ''
   }`;
 
   const content = (
@@ -37,8 +37,8 @@ export default function WorkoutDayCard({ day, workout, onClick }: WorkoutDayCard
 
       {hasWorkout && workout ? (
         <div className="mt-6 flex min-h-0 flex-1 flex-col">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500/10">
-            <Dumbbell className="h-5 w-5 text-blue-400" />
+          <div className="bg-info/10 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
+            <Dumbbell className="text-info h-5 w-5" />
           </div>
 
           <h3 className="text-text mt-4 line-clamp-2 min-h-12 text-base font-semibold break-words sm:text-lg">{workout.workoutName}</h3>

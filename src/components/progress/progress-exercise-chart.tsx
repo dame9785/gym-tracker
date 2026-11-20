@@ -110,7 +110,7 @@ export default function ExerciseChart({ history, metric }: Props) {
         </div>
 
         <div className="text-right">
-          <p className="text-lg font-bold text-purple-300">
+          <p className="text-info text-lg font-bold">
             {formatValue(maxValue)} {unit}
           </p>
 
@@ -121,11 +121,11 @@ export default function ExerciseChart({ history, metric }: Props) {
       <div className="h-64 w-full sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 12, right: 12, left: -12, bottom: 4 }}>
-            <CartesianGrid stroke="#30343a" strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" vertical={false} />
 
-            <XAxis dataKey="dateLabel" tick={{ fill: '#9ca3af', fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#454b55' }} minTickGap={18} />
+            <XAxis dataKey="dateLabel" tick={{ fill: 'var(--color-text-muted)', fontSize: 12 }} tickLine={false} axisLine={{ stroke: 'var(--color-border-hover)' }} minTickGap={18} />
 
-            <YAxis domain={[0, (dataMax: number) => Math.max(dataMax, 1) * 1.15]} allowDecimals={metric === 'weight'} tick={{ fill: '#9ca3af', fontSize: 12 }} tickLine={false} axisLine={false} width={48} tickFormatter={(value: number) => formatValue(value)} />
+            <YAxis domain={[0, (dataMax: number) => Math.max(dataMax, 1) * 1.15]} allowDecimals={metric === 'weight'} tick={{ fill: 'var(--color-text-muted)', fontSize: 12 }} tickLine={false} axisLine={false} width={48} tickFormatter={(value: number) => formatValue(value)} />
 
             <Tooltip
               content={({ active, payload }) => {
@@ -160,7 +160,7 @@ export default function ExerciseChart({ history, metric }: Props) {
                 );
               }}
               cursor={{
-                stroke: '#9ca3af',
+                stroke: 'var(--color-text-muted)',
                 strokeDasharray: '4 4',
               }}
             />
@@ -169,17 +169,17 @@ export default function ExerciseChart({ history, metric }: Props) {
               type="monotone"
               dataKey="value"
               name={metricLabel}
-              stroke="#a78bfa"
+              stroke="var(--color-info)"
               strokeWidth={2.5}
               dot={{
                 r: data.length === 1 ? 5 : 3,
-                fill: '#a78bfa',
+                fill: 'var(--color-info)',
                 strokeWidth: 0,
               }}
               activeDot={{
                 r: 6,
-                fill: '#c4b5fd',
-                stroke: '#171c23',
+                fill: 'var(--color-info)',
+                stroke: 'var(--color-surface)',
                 strokeWidth: 2,
               }}
               connectNulls

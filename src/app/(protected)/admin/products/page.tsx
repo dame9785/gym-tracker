@@ -44,7 +44,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     <div className="space-y-8">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-orange-400">ADMINISTRATION</p>
+          <p className="text-primary text-sm font-medium">ADMINISTRATION</p>
 
           <h1 className="text-text mt-2 text-3xl font-bold tracking-tight">Product catalogue</h1>
 

@@ -18,22 +18,22 @@ type WorkoutStatusConfig = {
 export const WORKOUT_STATUS_CONFIG: Record<WorkoutSessionStatus, WorkoutStatusConfig> = {
   ACTIVE: {
     label: 'Active',
-    badgeClassName: 'bg-orange-500/10 text-orange-400',
-    borderClassName: 'border-orange-500/50',
-    icon: <Circle className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />,
+    badgeClassName: 'bg-primary/10 text-primary',
+    borderClassName: 'border-primary/50',
+    icon: <Circle className="fill-primary text-primary h-3.5 w-3.5" />,
   },
 
   COMPLETED: {
     label: 'Completed',
-    badgeClassName: 'bg-emerald-500/15 text-emerald-300',
-    borderClassName: 'border-emerald-500/40',
-    icon: <Check className="h-3.5 w-3.5 text-emerald-400" />,
+    badgeClassName: 'bg-success/15 text-success',
+    borderClassName: 'border-success/40',
+    icon: <Check className="text-success h-3.5 w-3.5" />,
   },
 
   NOTCOMPLETED: {
     label: 'Missed',
-    badgeClassName: 'bg-red-500/10 text-red-400',
-    borderClassName: 'border-red-500/50',
-    icon: <X className="h-3.5 w-3.5 text-red-400" />,
+    badgeClassName: 'bg-danger/10 text-danger',
+    borderClassName: 'border-danger/50',
+    icon: <X className="text-danger h-3.5 w-3.5" />,
   },
 };

@@ -66,7 +66,7 @@ export default async function Workouts({ searchParams }: Props) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <nav aria-label="Workout pagination" className="flex justify-center border-t border-zinc-800/70 pt-6">
+        <nav aria-label="Workout pagination" className="border-border flex justify-center border-t pt-6">
           <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} basePath="/workout" ariaLabel="Workout pagination" />
         </nav>
       )}

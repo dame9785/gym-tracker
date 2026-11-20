@@ -10,7 +10,7 @@ export default function GoalProgress({ weightData }: Props) {
     return (
       <section className="border-border bg-surface/70 mb-10 rounded-2xl border p-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400">
+          <div className="bg-info/10 text-info flex h-11 w-11 items-center justify-center rounded-xl">
             <Target className="h-5 w-5" />
           </div>
 
@@ -84,7 +84,7 @@ export default function GoalProgress({ weightData }: Props) {
         </div>
 
         <div className="bg-surface-secondary h-3 overflow-hidden rounded-full" role="progressbar" aria-label="Goal completion" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(percentage)}>
-          <div className="from-primary h-full rounded-full bg-linear-to-r to-blue-500 transition-all duration-700" style={{ width: `${percentage}%` }} />
+          <div className="from-primary to-info h-full rounded-full bg-linear-to-r transition-all duration-700" style={{ width: `${percentage}%` }} />
         </div>
       </div>
 
@@ -92,7 +92,7 @@ export default function GoalProgress({ weightData }: Props) {
       <div className="border-border/50 mt-5 flex flex-col gap-2 border-t pt-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-text-secondary space-y-1 text-sm">
           {isGoalReached ? (
-            <span className="flex items-center gap-2 text-emerald-400">
+            <span className="text-success flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4" />
               You have reached or exceeded your weight goal.
             </span>
@@ -102,9 +102,9 @@ export default function GoalProgress({ weightData }: Props) {
                 Remaining to goal: <span className="text-text font-semibold">{formatWeight(remaining)} kg</span>
               </p>
 
-              {isBelowStart && <p className="text-amber-400">You are {formatWeight(distanceFromStart)} kg below your starting weight.</p>}
+              {isBelowStart && <p className="text-warning">You are {formatWeight(distanceFromStart)} kg below your starting weight.</p>}
 
-              {isAboveStart && <p className="text-amber-400">You are {formatWeight(distanceFromStart)} kg above your starting weight.</p>}
+              {isAboveStart && <p className="text-warning">You are {formatWeight(distanceFromStart)} kg above your starting weight.</p>}
             </>
           )}
         </div>

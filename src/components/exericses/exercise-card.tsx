@@ -56,7 +56,7 @@ export default function ExerciseCard({ exercise }: Props) {
 
         {/* Primary muscle */}
         <div className="absolute top-3 left-3 max-w-[90%]">
-          <span className="inline-flex rounded-full border border-blue-400/40 bg-blue-950/90 px-3 py-1.5 text-xs font-semibold text-blue-200 shadow-sm backdrop-blur-sm">{exercise.primaryMuscle}</span>
+          <span className="border-info/40 bg-info/15 text-info inline-flex rounded-full border px-3 py-1.5 text-xs font-semibold shadow-sm backdrop-blur-sm">{exercise.primaryMuscle}</span>
         </div>
       </div>
 
@@ -71,15 +71,15 @@ export default function ExerciseCard({ exercise }: Props) {
 
           {/* Secondary muscle groups */}
           {exercise.secondaryMuscles.length > 0 && (
-            <div className="border-border/80 bg-background/60 mt-4 rounded-xl border p-3">
+            <div className="border-border bg-background/60 mt-4 rounded-xl border p-3">
               <div className="mb-2 flex items-center gap-2">
-                <Activity className="h-3.5 w-3.5 text-violet-400" />
+                <Activity className="text-info h-3.5 w-3.5" />
                 <p className="text-text-muted text-[10px] font-bold tracking-wider uppercase">Secondary muscles</p>
               </div>
 
               <div className="flex flex-wrap gap-2">
                 {exercise.secondaryMuscles.map((muscle) => (
-                  <span key={muscle} className="rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-200 transition-colors hover:border-violet-400/50 hover:bg-violet-500/20">
+                  <span key={muscle} className="border-info/30 bg-info/10 text-info hover:border-info/50 hover:bg-info/20 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors">
                     {muscle}
                   </span>
                 ))}
@@ -110,7 +110,7 @@ export default function ExerciseCard({ exercise }: Props) {
           </div>
 
           {/* Details */}
-          <Link href={`/exercises/${exercise.slug}`} className="group/details border-border/80 text-text-muted hover:text-primary mt-4 flex items-center justify-between border-t pt-3 text-sm transition-colors">
+          <Link href={`/exercises/${exercise.slug}`} className="group/details border-border text-text-muted hover:text-primary mt-4 flex items-center justify-between border-t pt-3 text-sm transition-colors">
             <span className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               View exercise details
