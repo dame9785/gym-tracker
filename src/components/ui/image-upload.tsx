@@ -6,6 +6,7 @@ import { FaCloudUploadAlt, FaImage, FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
 
 import Button from '@/components/button/button';
+import FormInput from '@/components/ui/form-input';
 
 type ImageUploadProps = {
   file: File | null;
@@ -82,7 +83,7 @@ export default function ImageUpload({ file, onFileChange, currentImageUrl, curre
 
   return (
     <div className="w-full">
-      <input ref={inputRef} className="hidden" id={inputId} name="image" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} disabled={disabled} />
+      <FormInput ref={inputRef} className="hidden" id={inputId} name="image" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} disabled={disabled} aria-label="Upload image" />
 
       {displayedImage ? (
         <div className="border-primary/40 bg-surface overflow-hidden rounded-xl border p-3">
