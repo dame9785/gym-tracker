@@ -6,10 +6,6 @@ import type { MealViewModel } from '@/mapping/meal-mapping';
 
 import FoodSearch from '@/components/nutrition/food-search';
 
-// --------------------------------------------------
-// Types
-// --------------------------------------------------
-
 type Props = {
   mealType: MealViewModel['type'];
   mealLabel: string;
@@ -18,15 +14,7 @@ type Props = {
   onAdded: () => Promise<void>;
 };
 
-// --------------------------------------------------
-// Component
-// --------------------------------------------------
-
 export default function FoodModal({ mealType, mealLabel, date, onClose, onAdded }: Props) {
-  // --------------------------------------------------
-  // Modal behavior
-  // --------------------------------------------------
-
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -35,7 +23,6 @@ export default function FoodModal({ mealType, mealLabel, date, onClose, onAdded 
     }
 
     const previousOverflow = document.body.style.overflow;
-
     document.body.style.overflow = 'hidden';
 
     window.addEventListener('keydown', handleKeyDown);
@@ -46,20 +33,21 @@ export default function FoodModal({ mealType, mealLabel, date, onClose, onAdded 
     };
   }, [onClose]);
 
-  // --------------------------------------------------
-  // Render
-  // --------------------------------------------------
-
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-2 pt-[calc(env(safe-area-inset-top)+0.5rem)] pb-[calc(env(safe-area-inset-bottom)+0.5rem)] backdrop-blur-sm sm:p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
           onClose();
         }
       }}
     >
-      <div role="dialog" aria-modal="true" aria-label={`Add food to ${mealLabel}`} className="border-border bg-background max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border p-4 shadow-2xl sm:p-6">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Add food to ${mealLabel}`}
+        className="border-border bg-background flex h-full max-h-[900px] min-h-0 w-full max-w-4xl flex-col overflow-hidden rounded-2xl border p-3 shadow-2xl sm:p-5"
+      >
         <FoodSearch date={date} mealType={mealType} onClose={onClose} onAdded={onAdded} />
       </div>
     </div>
