@@ -101,15 +101,15 @@ export default function ExerciseChart({ history, metric }: Props) {
   }
 
   return (
-    <div className="border-border bg-background/50 mt-4 rounded-xl border p-3 sm:p-5">
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
+    <div className="border-border bg-background/50 mt-4 min-w-0 rounded-xl border p-3 sm:p-5">
+      <div className="mb-3 flex flex-col items-start gap-2 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between sm:mb-4">
         <div>
           <p className="text-text text-sm font-medium">{metricLabel} per Training Day</p>
 
           <p className="text-text-muted mt-1 text-xs">Each point shows the highest recorded value for that day.</p>
         </div>
 
-        <div className="text-right">
+        <div className="text-left min-[420px]:text-right">
           <p className="text-info text-lg font-bold">
             {formatValue(maxValue)} {unit}
           </p>
@@ -118,14 +118,14 @@ export default function ExerciseChart({ history, metric }: Props) {
         </div>
       </div>
 
-      <div className="h-64 w-full sm:h-72">
+      <div className="h-56 w-full min-w-0 min-[420px]:h-60 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 12, right: 12, left: -12, bottom: 4 }}>
+          <LineChart data={data} margin={{ top: 8, right: 8, left: -18, bottom: 4 }}>
             <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" vertical={false} />
 
-            <XAxis dataKey="dateLabel" tick={{ fill: 'var(--color-text-muted)', fontSize: 12 }} tickLine={false} axisLine={{ stroke: 'var(--color-border-hover)' }} minTickGap={18} />
+            <XAxis dataKey="dateLabel" tick={{ fill: 'var(--color-text-muted)', fontSize: 10 }} tickLine={false} axisLine={{ stroke: 'var(--color-border-hover)' }} minTickGap={14} />
 
-            <YAxis domain={[0, (dataMax: number) => Math.max(dataMax, 1) * 1.15]} allowDecimals={metric === 'weight'} tick={{ fill: 'var(--color-text-muted)', fontSize: 12 }} tickLine={false} axisLine={false} width={48} tickFormatter={(value: number) => formatValue(value)} />
+            <YAxis domain={[0, (dataMax: number) => Math.max(dataMax, 1) * 1.15]} allowDecimals={metric === 'weight'} tick={{ fill: 'var(--color-text-muted)', fontSize: 10 }} tickLine={false} axisLine={false} width={40} tickFormatter={(value: number) => formatValue(value)} />
 
             <Tooltip
               content={({ active, payload }) => {
@@ -189,7 +189,7 @@ export default function ExerciseChart({ history, metric }: Props) {
         </ResponsiveContainer>
       </div>
 
-      <p className="text-text-muted mt-3 text-xs">{data.length === 1 ? 'You have one recorded training day. As you record more workouts, your progress over time will appear here.' : `${data.length} training days displayed from oldest to newest entry.`}</p>
+      <p className="text-text-muted mt-3 text-xs leading-5">{data.length === 1 ? 'You have one recorded training day. As you record more workouts, your progress over time will appear here.' : `${data.length} training days displayed from oldest to newest entry.`}</p>
     </div>
   );
 }
