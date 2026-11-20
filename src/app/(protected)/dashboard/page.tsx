@@ -6,6 +6,7 @@ import { requireAuth } from '@/lib/auth';
 import { DashboardService } from '@/services/dashboard-service';
 import Header from '@/components/ui/header';
 import ErrorMessage from '@/components/ui/error-message';
+import PageContainer from '@/components/layout/page-container';
 
 export default async function DashboardPage() {
   const user = await requireAuth();
@@ -22,26 +23,18 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="w-full min-w-0 space-y-5 sm:space-y-8">
-      {/* Header */}
-      <section className="min-w-0">
-        <Header title="Welcome back" subTitle="Dashboard" description="Track your workouts and monitor your progress." />
-      </section>
+    <PageContainer>
+      {/* Page header */}
+      <Header title="Welcome back" subTitle="Dashboard" description="Track your workouts and monitor your progress." />
 
       {/* Statistics */}
-      <section className="min-w-0">
-        <DashboardStats summary={result.weeklySummary} />
-      </section>
+      <DashboardStats summary={result.weeklySummary} />
 
       {/* Weekly overview */}
-      <section className="min-w-0">
-        <WeeklyOverview workouts={result.weeklyOverview} />
-      </section>
+      <WeeklyOverview workouts={result.weeklyOverview} />
 
       {/* Calendar */}
-      <section className="min-w-0">
-        <DashboardCalendar />
-      </section>
-    </div>
+      <DashboardCalendar />
+    </PageContainer>
   );
 }

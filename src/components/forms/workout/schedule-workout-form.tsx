@@ -3,13 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { CalendarPlus } from 'lucide-react';
 
 import { createWorkoutScheduleAction } from '@/actions/workout-schedule-actions';
 
 import Button from '@/components/button/button';
 import FormStyles from '@/components/forms/form.module.css';
-import FormPageHeader from '@/components/forms/shared/form-page-header';
 
 import FormField from '@/components/ui/form-field';
 import FormInput from '@/components/ui/form-input';
@@ -65,6 +63,7 @@ export default function ScheduleWorkoutForm({ workouts }: Props) {
       }
 
       toast.success('Workout scheduled successfully.');
+
       router.push('/dashboard');
       router.refresh();
     } catch (error) {
@@ -77,8 +76,6 @@ export default function ScheduleWorkoutForm({ workouts }: Props) {
 
   return (
     <div className={FormStyles.formContainer}>
-      <FormPageHeader backHref="/workout" backLabel="Back to workout" eyebrow="Workout planning" title="Schedule" highlightedTitle="workout" description="Choose a workout and a date to add it to your training schedule." icon={CalendarPlus} />
-
       <form onSubmit={handleSubmit} className={FormStyles.form}>
         <div className={FormStyles.formGroup}>
           <FormField htmlFor="workout" label="Workout" required error={errors.workoutId}>

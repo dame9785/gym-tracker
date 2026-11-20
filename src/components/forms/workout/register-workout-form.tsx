@@ -5,10 +5,8 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 import { toast } from 'sonner';
-import { Dumbbell } from 'lucide-react';
 
 import FormStyles from '@/components/forms/form.module.css';
-import FormPageHeader from '@/components/forms/shared/form-page-header';
 
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
@@ -57,6 +55,7 @@ export default function AddWorkoutForm({ exericses }: Props) {
 
       if (!response.success) {
         setErrors(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined)));
+
         toast.error(response.message);
         return;
       }
@@ -118,9 +117,8 @@ export default function AddWorkoutForm({ exericses }: Props) {
 
   return (
     <div className={FormStyles.formContainer}>
-      <FormPageHeader backHref="/workout" backLabel="Back to workouts" eyebrow="Workout library" title="Add" highlightedTitle="workout" description="Create a workout by adding exercises, sets, reps and weights." icon={Dumbbell} />
-
       <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
+        {/* Workout name */}
         <div className={FormStyles.formGroup}>
           <FormField htmlFor="name" label="Workout name" required error={errors.name?.[0]}>
             <FormInput
@@ -142,6 +140,7 @@ export default function AddWorkoutForm({ exericses }: Props) {
           </FormField>
         </div>
 
+        {/* Description */}
         <div className={FormStyles.formGroup}>
           <FormField htmlFor="description" label="Description" error={errors.description?.[0]}>
             <FormTextarea
@@ -162,6 +161,7 @@ export default function AddWorkoutForm({ exericses }: Props) {
           </FormField>
         </div>
 
+        {/* Exercises */}
         <div className={FormStyles.exerciseSection}>
           <h2 className={FormStyles.sectionTitle}>Exercises</h2>
 
@@ -191,6 +191,7 @@ export default function AddWorkoutForm({ exericses }: Props) {
           </button>
         </div>
 
+        {/* Submit */}
         <div className="flex flex-wrap gap-3">
           <Button type="submit" variant="primary" size="md" loading={isSaving}>
             Save workout

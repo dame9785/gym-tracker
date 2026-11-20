@@ -12,8 +12,6 @@ import type { WorkoutViewModel } from '@/types/workout-types';
 import { toast } from 'sonner';
 
 import WorkoutExerciseFields from '@/components/forms/workout/workout-exercise-fields';
-import FormPageHeader from '@/components/forms/shared/form-page-header';
-import { Dumbbell } from 'lucide-react';
 
 import type { UpdateWorkoutDto } from '@/schemas/workout-schemas';
 
@@ -104,7 +102,7 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
 
       if (!response.success) {
         if (response.errors) {
-          setErrors(Object.fromEntries(Object.entries(response.errors ?? {}).filter((entry): entry is [string, string[]] => entry[1] !== undefined)));
+          setErrors(Object.fromEntries(Object.entries(response.errors).filter((entry): entry is [string, string[]] => entry[1] !== undefined)));
         }
 
         toast.error(response.message);
@@ -123,10 +121,8 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
 
   return (
     <div className={FormStyles.formContainer}>
-      {/* Page header */}
-      <FormPageHeader backHref="/workout" backLabel="Back to workouts" showBackButton={false} eyebrow="Workout library" title="Edit" highlightedTitle="Workout" description="Update the exercises, sets, reps and weights in your workout." icon={Dumbbell} />
-
       <form onSubmit={handleSubmit} className={`${FormStyles.form} mx-auto`}>
+        {/* Workout name */}
         <div className={FormStyles.formGroup}>
           <FormField htmlFor="name" label="Workout namn" required error={errors.name?.[0]}>
             <FormInput
@@ -148,6 +144,7 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
           </FormField>
         </div>
 
+        {/* Description */}
         <div className={FormStyles.formGroup}>
           <FormField htmlFor="description" label="Beskrivning" error={errors.description?.[0]}>
             <FormTextarea
@@ -168,6 +165,7 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
           </FormField>
         </div>
 
+        {/* Exercises */}
         <div className={FormStyles.exerciseSection}>
           <h2 className={FormStyles.sectionTitle}>Övningar</h2>
 
@@ -197,6 +195,7 @@ export default function EditWorkoutForm({ workout, exericses }: Props) {
           </button>
         </div>
 
+        {/* Submit */}
         <Button type="submit" variant="primary" disabled={isSaving}>
           {isSaving ? 'Updating workout...' : 'Update workout'}
         </Button>

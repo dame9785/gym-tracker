@@ -1,7 +1,11 @@
 import RegisterWorkoutForm from '@/components/forms/workout/register-workout-form';
 import ErrorMessage from '@/components/ui/error-message';
+import Header from '@/components/ui/header';
+import PageContainer from '@/components/layout/page-container';
+
 import { requireAuth } from '@/lib/auth';
 import { ExerciseService } from '@/services/exercise-service';
+
 import type { ExerciseViewModel } from '@/types/exercise-types';
 
 const exerciseService = new ExerciseService();
@@ -17,15 +21,28 @@ export default async function RegisterWorkout(): Promise<React.ReactElement> {
     const message = error instanceof Error ? error.message : 'Something went wrong while loading your exercises.';
 
     return (
-      <main>
+      <PageContainer>
         <ErrorMessage title="Unable to load exercises" message={message} />
-      </main>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="container">
+    <PageContainer>
+      <Header
+        title="Workout library"
+        subTitle="Create workout"
+        description="Create a workout by adding exercises, sets, reps and weights."
+        actions={[
+          {
+            label: 'Back to workouts',
+            href: '/workout',
+            variant: 'secondary',
+          },
+        ]}
+      />
+
       <RegisterWorkoutForm exericses={exercises} />
-    </div>
+    </PageContainer>
   );
 }

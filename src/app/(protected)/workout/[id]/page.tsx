@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation';
 
 import WorkoutDetails from '@/components/workout/workout-details';
 import ErrorMessage from '@/components/ui/error-message';
+import Header from '@/components/ui/header';
+import PageContainer from '@/components/layout/page-container';
 
 import { WorkoutService } from '@/services/workout-service';
 import { WorkoutSessionService } from '@/services/workout-session-service';
@@ -18,6 +20,7 @@ interface PageProps {
 export default async function WorkoutPage({ params }: PageProps) {
   const { id } = await params;
   const user = await requireAuth();
+
   const workoutId = Number(id);
 
   if (!Number.isSafeInteger(workoutId) || workoutId <= 0) {
@@ -36,9 +39,9 @@ export default async function WorkoutPage({ params }: PageProps) {
     console.error('Failed to load workout details:', error);
 
     return (
-      <main>
+      <PageContainer>
         <ErrorMessage title="Unable to load workout" message="Something went wrong while loading your workout. Please try again later." />
-      </main>
+      </PageContainer>
     );
   }
 
@@ -55,8 +58,21 @@ export default async function WorkoutPage({ params }: PageProps) {
   }
 
   return (
-    <div className="container">
+    <PageContainer>
+      <Header
+        title="Workout overview"
+        subTitle={workout.workout.name}
+        description={workout.workout.description || 'View your workout, planned exercises and training progression.'}
+        actions={[
+          {
+            label: 'Back to workouts',
+            href: '/workout',
+            variant: 'secondary',
+          },
+        ]}
+      />
+
       <WorkoutDetails workout={workout.workout} session={session} previousSessions={previousSessions} />
-    </div>
+    </PageContainer>
   );
 }

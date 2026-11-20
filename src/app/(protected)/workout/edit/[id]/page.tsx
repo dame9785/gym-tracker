@@ -1,5 +1,8 @@
 import EditWorkoutForm from '@/components/forms/workout/edit-workout-form';
 import ErrorMessage from '@/components/ui/error-message';
+import Header from '@/components/ui/header';
+import PageContainer from '@/components/layout/page-container';
+
 import { requireAuth } from '@/lib/auth';
 import { WorkoutService } from '@/services/workout-service';
 
@@ -14,13 +17,14 @@ const workoutService = new WorkoutService();
 export default async function EditWorkout({ params }: PageProps) {
   const user = await requireAuth();
   const { id } = await params;
+
   const workoutId = Number(id);
 
   if (!Number.isSafeInteger(workoutId) || workoutId <= 0) {
     return (
-      <main>
+      <PageContainer>
         <ErrorMessage title="Unable to load workout" message="Invalid workout ID." />
-      </main>
+      </PageContainer>
     );
   }
 
@@ -34,15 +38,28 @@ export default async function EditWorkout({ params }: PageProps) {
 
   if (!workoutData) {
     return (
-      <main>
+      <PageContainer>
         <ErrorMessage title="Unable to load workout" message="Something went wrong while loading your workout." />
-      </main>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="container">
+    <PageContainer>
+      <Header
+        title="Workout library"
+        subTitle="Edit workout"
+        description="Update the exercises, sets, reps and weights in your workout."
+        actions={[
+          {
+            label: 'Back to workouts',
+            href: '/workout',
+            variant: 'secondary',
+          },
+        ]}
+      />
+
       <EditWorkoutForm workout={workoutData.workout} exericses={workoutData.exercises} />
-    </div>
+    </PageContainer>
   );
 }

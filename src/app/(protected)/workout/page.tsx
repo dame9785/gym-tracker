@@ -2,6 +2,7 @@ import WorkoutDetailCard from '@/components/workout/workout-detail-card';
 import Pagination from '@/components/ui/pagination';
 import ErrorMessage from '@/components/ui/error-message';
 import Header from '@/components/ui/header';
+import PageContainer from '@/components/layout/page-container';
 
 import { WorkoutService } from '@/services/workout-service';
 import { requireAuth } from '@/lib/auth';
@@ -14,6 +15,7 @@ type Props = {
 
 export default async function Workouts({ searchParams }: Props) {
   const params = await searchParams;
+
   const parsedPage = Number(params.page);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
@@ -27,14 +29,18 @@ export default async function Workouts({ searchParams }: Props) {
   } catch (error: unknown) {
     console.error('Failed to load workouts:', error);
 
-    return <ErrorMessage title="Kunde inte hämta träningspass" message="Det gick inte att ladda dina träningspass. Försök igen senare." />;
+    return (
+      <PageContainer>
+        <ErrorMessage title="Kunde inte hämta träningspass" message="Det gick inte att ladda dina träningspass. Försök igen senare." />
+      </PageContainer>
+    );
   }
 
   const { workouts, pagination } = workoutData;
   const { totalPages } = pagination;
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+    <PageContainer>
       <Header
         title="YOUR TRAINING"
         subTitle="Workouts"
@@ -53,15 +59,17 @@ export default async function Workouts({ searchParams }: Props) {
         ]}
       />
 
-      <section aria-label="Workout library" className="space-y-5">
+      {/* Workout library */}
+      <section aria-label="Workout library">
         <WorkoutDetailCard workouts={workouts} />
       </section>
 
+      {/* Pagination */}
       {totalPages > 1 && (
-        <nav aria-label="Workout pagination" className="mt-10 flex justify-center border-t border-zinc-800/70 pt-6">
+        <nav aria-label="Workout pagination" className="flex justify-center border-t border-zinc-800/70 pt-6">
           <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} basePath="/workout" ariaLabel="Workout pagination" />
         </nav>
       )}
-    </main>
+    </PageContainer>
   );
 }
