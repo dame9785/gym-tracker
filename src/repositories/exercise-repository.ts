@@ -41,7 +41,7 @@ export class ExerciseRepository {
     });
   }
 
-  async register(dto: RegisterExericseDto, userId: number): Promise<ExerciseWithMuscles> {
+  async register(dto: RegisterExericseDto, userId: number, slug: string): Promise<ExerciseWithMuscles> {
     const muscleRelations = this.buildMuscleRelations({
       primaryMuscle: dto.primaryMuscle,
       secondaryMuscles: dto.secondaryMuscles,
@@ -49,6 +49,7 @@ export class ExerciseRepository {
 
     return prisma.exercise.create({
       data: {
+        slug,
         name: dto.name,
         equipment: dto.equipment || null,
         imagePath: dto.imagePath ?? null,
@@ -110,7 +111,7 @@ export class ExerciseRepository {
     });
   }
 
-  async update(id: number, dto: UpdateExericseDto, userId: number): Promise<void> {
+  async update(id: number, dto: UpdateExericseDto, userId: number, slug?: string): Promise<void> {
     await prisma.$transaction(async (tx): Promise<void> => {
       const existing = await tx.exercise.findFirst({
         where: {
@@ -128,6 +129,7 @@ export class ExerciseRepository {
       const musclesChanged = dto.primaryMuscle !== undefined || dto.secondaryMuscles !== undefined;
 
       const data: Prisma.ExerciseUpdateInput = {
+        ...(slug !== undefined && { slug }),
         ...(dto.name !== undefined && {
           name: dto.name,
         }),
@@ -209,6 +211,18 @@ export class ExerciseRepository {
       },
       include: exerciseWithMusclesInclude,
     });
+  }
+
+  async isSlugTaken(slug: string, excludeId?: number): Promise<boolean> {
+    const existing = await prisma.exercise.findFirst({
+      where: {
+        slug,
+        ...(excludeId !== undefined && { id: { not: excludeId } }),
+      },
+      select: { id: true },
+    });
+
+    return existing !== null;
   }
 
   async getBySlug(slug: string, userId: number): Promise<ExerciseWithMuscles | null> {
