@@ -36,7 +36,7 @@ export default function NutritionDateNavigation({ selectedDate, today, isLoading
         <h2 className="text-text mt-1 text-xl font-semibold">{formattedDate}</h2>
       </div>
 
-      <div className="flex items-end gap-2">
+      <div className="flex w-full min-w-0 items-end gap-2 sm:w-auto">
         <Button
           type="button"
           variant="ghost"
@@ -49,12 +49,13 @@ export default function NutritionDateNavigation({ selectedDate, today, isLoading
           <ChevronLeft size={20} />
         </Button>
 
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <FormField htmlFor="nutrition-date" label="Date">
             <FormInput
               id="nutrition-date"
               name="date"
               type="date"
+              className="!w-full !min-w-0"
               value={selectedDate}
               max={today}
               onChange={(event) => {
