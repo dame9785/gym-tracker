@@ -1,12 +1,27 @@
-//Components
 import LogWeightForm from '@/components/forms/log-weight/log-weight-form';
 
-export default async function create() {
+import Header from '@/components/ui/header';
+import PageContainer from '@/components/layout/page-container';
+
+export default function Create() {
   return (
-    <div className="container">
-      <div className="form-wrapper flex items-center justify-center">
+    <PageContainer>
+      <Header
+        title="WEIGHT TRACKING"
+        subTitle="Log weight"
+        description="Record your weight and keep track of your progress over time."
+        actions={[
+          {
+            label: 'Back to weight tracking',
+            href: '/log-weight',
+            variant: 'secondary',
+          },
+        ]}
+      />
+
+      <div className="flex justify-center">
         <LogWeightForm />
       </div>
-    </div>
+    </PageContainer>
   );
 }

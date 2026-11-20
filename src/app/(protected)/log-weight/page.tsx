@@ -1,17 +1,18 @@
 import Statistic from '@/components/log-weight/log-weight-statistics';
 import LogHistoryList from '@/components/log-weight/log-history-list';
-import Pagination from '@/components/ui/pagination';
+import WeightProgressChart from '@/components/log-weight/weight-progress-chart';
 
+import Pagination from '@/components/ui/pagination';
 import ErrorMessage from '@/components/ui/error-message';
 import Header from '@/components/ui/header';
+import EmptyState from '@/components/ui/empty-state';
 
 import GoalProgress from '@/components/progress/progress-goal';
-import WeightProgressChart from '@/components/log-weight/weight-progress-chart';
+import PageContainer from '@/components/layout/page-container';
 
 import { WeightLogService } from '@/services/weight-log-service';
 import ProgressService from '@/services/progress-service';
 import { requireAuth } from '@/lib/auth';
-import EmptyState from '@/components/ui/empty-state';
 
 type Props = {
   searchParams: Promise<{
@@ -37,17 +38,17 @@ export default async function LogWeight({ searchParams }: Props) {
     console.error('Failed to load weight history:', error);
 
     return (
-      <main className="w-full min-w-0">
+      <PageContainer>
         <ErrorMessage title="Unable to load weight history" message="We couldn't retrieve your weight history. Please try again later." />
-      </main>
+      </PageContainer>
     );
   }
 
   if (!response.success || !response.data) {
     return (
-      <main className="w-full min-w-0">
+      <PageContainer>
         <ErrorMessage title="Unable to load weight history" message="Something went wrong while loading your weight history." />
-      </main>
+      </PageContainer>
     );
   }
 
@@ -72,7 +73,7 @@ export default async function LogWeight({ searchParams }: Props) {
   const totalPage = data.pagination.totalPages;
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+    <PageContainer>
       <Header
         title="YOUR PROGRESS"
         subTitle="Weight tracking"
@@ -86,27 +87,19 @@ export default async function LogWeight({ searchParams }: Props) {
       />
 
       {/* Statistics */}
-      <div className="mb-6 min-w-0 sm:mb-8">
-        <Statistic currentWeight={currentWeight} startWeight={startWeight} />
-      </div>
+      <Statistic currentWeight={currentWeight} startWeight={startWeight} />
 
       {/* Goal Progress and Weight Chart */}
       {progressError ? (
-        <div className="mb-6 sm:mb-8">
-          <ErrorMessage title="Unable to load weight progress" message="We couldn't retrieve your weight progress. Please try again later." />
-        </div>
+        <ErrorMessage title="Unable to load weight progress" message="We couldn't retrieve your weight progress. Please try again later." />
       ) : (
         weightProgress && (
           <>
             {/* Goal Progress */}
-            <div className="mb-6 min-w-0 sm:mb-8">
-              <GoalProgress weightData={weightProgress} />
-            </div>
+            <GoalProgress weightData={weightProgress} />
 
             {/* Weight Progress Chart */}
-            <div className="mb-6 min-w-0 sm:mb-10">
-              <WeightProgressChart history={weightProgress.history} startWeight={weightProgress.startWeight} goalWeight={weightProgress.goalWeight} />
-            </div>
+            <WeightProgressChart history={weightProgress.history} startWeight={weightProgress.startWeight} goalWeight={weightProgress.goalWeight} />
           </>
         )
       )}
@@ -116,7 +109,6 @@ export default async function LogWeight({ searchParams }: Props) {
         <div className="mb-5 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-white">Weight History</h2>
-
             <p className="mt-1 text-xs text-zinc-500">Your previous weight entries</p>
           </div>
 
@@ -135,11 +127,7 @@ export default async function LogWeight({ searchParams }: Props) {
       </section>
 
       {/* Pagination */}
-      {totalPage > 1 && (
-        <div className="mt-4 min-w-0">
-          <Pagination currentPage={currentPage} totalPages={totalPage} basePath="/log-weight" ariaLabel="Weight log pagination" />
-        </div>
-      )}
-    </section>
+      {totalPage > 1 && <Pagination currentPage={currentPage} totalPages={totalPage} basePath="/log-weight" ariaLabel="Weight log pagination" />}
+    </PageContainer>
   );
 }
