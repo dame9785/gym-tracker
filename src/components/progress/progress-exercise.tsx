@@ -93,21 +93,21 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
   );
 
   return (
-    <section className="border-border from-surface to-background mb-10 rounded-2xl border bg-linear-to-br p-6">
-      <header className="flex items-center gap-3">
+    <section className="border-border from-surface to-background mb-8 rounded-2xl border bg-linear-to-br p-4 sm:mb-10 sm:p-6">
+      <header className="flex items-start gap-3 sm:items-center">
         <div className="bg-primary/10 text-primary flex h-11 w-11 items-center justify-center rounded-xl">
           <Dumbbell className="h-5 w-5" />
         </div>
 
         <div>
-          <h2 className="text-text font-semibold">Training Progress</h2>
-          <p className="text-text-muted text-sm">Track your performance and see how it improves over time.</p>
+          <h2 className="text-text text-lg font-semibold sm:text-xl">Training Progress</h2>
+          <p className="text-text-muted mt-1 text-sm leading-5">Track your performance and see how it improves over time.</p>
         </div>
       </header>
 
       {exerciseProgress.length > 0 ? (
         <>
-          <div className="mt-6 sm:max-w-md">
+          <div className="mt-5 sm:mt-6 sm:max-w-md">
             <FormField htmlFor="progress-exercise" label="Select Exercise">
               <FormSelect
                 id="progress-exercise"
@@ -130,7 +130,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
             <>
               {history.length > 0 ? (
                 <>
-                  <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  <div className="mt-4 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:mt-5 sm:grid-cols-3 sm:gap-4">
                     <StatCard
                       label={isPlank ? 'Latest Time' : 'Latest Result'}
                       value={isPlank ? `${current?.seconds ?? 0} sec` : `${current?.weight ?? 0} kg`}
@@ -154,11 +154,11 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                   </div>
 
                   {!isPlank && first && current && (
-                    <div className="border-border bg-surface/50 mt-4 rounded-xl border p-4">
+                    <div className="border-border bg-surface/50 mt-4 rounded-xl border p-3 sm:p-4">
                       <div className="text-text-secondary flex items-center gap-2">
                         {weightChange !== null && weightChange > 0 ? <ArrowUpRight className="text-success h-4 w-4" /> : weightChange !== null && weightChange < 0 ? <ArrowDownRight className="text-danger h-4 w-4" /> : <TrendingUp className="text-text-muted h-4 w-4" />}
 
-                        <h3 className="text-sm font-medium">Weight Progress Since First Entry</h3>
+                        <h3 className="text-sm leading-5 font-medium">Weight Progress Since First Entry</h3>
                       </div>
 
                       <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -167,7 +167,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                           {weightChange !== null ? weightChange.toLocaleString('en-US') : '—'} kg
                         </p>
 
-                        <p className="text-text-secondary text-sm">{weightChangePercent !== null ? `(${weightChangePercent > 0 ? '+' : ''}${weightChangePercent.toLocaleString('en-US', { maximumFractionDigits: 1 })}%)` : '(Percentage cannot be calculated from 0 kg)'}</p>
+                        <p className="text-text-secondary text-sm leading-5">{weightChangePercent !== null ? `(${weightChangePercent > 0 ? '+' : ''}${weightChangePercent.toLocaleString('en-US', { maximumFractionDigits: 1 })}%)` : '(Percentage cannot be calculated from 0 kg)'}</p>
                       </div>
 
                       <p className="text-text-muted mt-2 text-xs">
@@ -177,7 +177,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                   )}
 
                   {isPlank && first && current && (
-                    <div className="border-border bg-surface/50 mt-4 rounded-xl border p-4">
+                    <div className="border-border bg-surface/50 mt-4 rounded-xl border p-3 sm:p-4">
                       <h3 className="text-text-secondary text-sm font-medium">Time Progress Since First Entry</h3>
 
                       <p className="text-text-secondary mt-2 text-sm">
@@ -188,14 +188,14 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                     </div>
                   )}
 
-                  <div className="mt-8">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div className="mt-6 min-w-0 sm:mt-8">
+                    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
                       <div>
                         <h3 className="text-text text-lg font-semibold">Progress Over Time</h3>
-                        <p className="text-text-muted mt-1 text-sm">{isPlank ? 'Track how long you can hold a plank.' : 'Choose which metric you want to track in the chart.'}</p>
+                        <p className="text-text-muted mt-1 text-sm leading-5">{isPlank ? 'Track how long you can hold a plank.' : 'Choose which metric you want to track in the chart.'}</p>
                       </div>
 
-                      <div className="border-border bg-background inline-flex w-fit rounded-xl border p-1" role="group" aria-label="Select chart metric">
+                      <div className="border-border bg-background flex w-full rounded-xl border p-1 sm:w-fit" role="group" aria-label="Select chart metric">
                         {isPlank ? (
                           <span className="bg-info/15 text-info rounded-lg px-4 py-2 text-sm">Time (seconds)</span>
                         ) : (
@@ -206,7 +206,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                               size="sm"
                               onClick={() => setChartMetric('weight')}
                               ariaPressed={activeChartMetric === 'weight'}
-                              className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'weight' ? 'bg-info/15 text-info' : 'text-text-secondary hover:text-text'}`}
+                              className={`min-w-0 flex-1 rounded-lg px-2 py-2 text-sm transition sm:flex-none sm:px-4 ${activeChartMetric === 'weight' ? 'bg-info/15 text-info' : 'text-text-secondary hover:text-text'}`}
                             >
                               Weight (kg)
                             </Button>
@@ -217,7 +217,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                               size="sm"
                               onClick={() => setChartMetric('reps')}
                               ariaPressed={activeChartMetric === 'reps'}
-                              className={`rounded-lg px-4 py-2 text-sm transition ${activeChartMetric === 'reps' ? 'bg-info/15 text-info' : 'text-text-secondary hover:text-text'}`}
+                              className={`min-w-0 flex-1 rounded-lg px-2 py-2 text-sm transition sm:flex-none sm:px-4 ${activeChartMetric === 'reps' ? 'bg-info/15 text-info' : 'text-text-secondary hover:text-text'}`}
                             >
                               Reps
                             </Button>
@@ -229,21 +229,21 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                     <ExerciseChart history={history} metric={activeChartMetric} />
                   </div>
 
-                  <div className="mt-8">
-                    <div className="mb-5">
+                  <div className="mt-7 min-w-0 sm:mt-8">
+                    <div className="mb-4 sm:mb-5">
                       <h3 className="text-text text-lg font-semibold">Training History</h3>
-                      <p className="text-text-muted mt-1 text-sm">Your results and sets for each training day.</p>
+                      <p className="text-text-muted mt-1 text-sm leading-5">Your results and sets for each training day.</p>
                     </div>
 
-                    <div className="mb-5 grid grid-cols-2 gap-3">
-                      <div className="border-border bg-surface/50 rounded-xl border p-4">
-                        <p className="text-text-secondary text-sm">Training Days</p>
-                        <p className="text-text mt-2 text-2xl font-bold">{trainingDays}</p>
+                    <div className="mb-4 grid grid-cols-2 gap-2 sm:mb-5 sm:gap-3">
+                      <div className="border-border bg-surface/50 min-w-0 rounded-xl border p-3 sm:p-4">
+                        <p className="text-text-secondary text-xs sm:text-sm">Training Days</p>
+                        <p className="text-text mt-2 text-xl font-bold tabular-nums sm:text-2xl">{trainingDays}</p>
                       </div>
 
-                      <div className="border-border bg-surface/50 rounded-xl border p-4">
-                        <p className="text-text-secondary text-sm">Total Sets</p>
-                        <p className="text-primary mt-2 text-2xl font-bold">{history.length}</p>
+                      <div className="border-border bg-surface/50 min-w-0 rounded-xl border p-3 sm:p-4">
+                        <p className="text-text-secondary text-xs sm:text-sm">Total Sets</p>
+                        <p className="text-primary mt-2 text-xl font-bold tabular-nums sm:text-2xl">{history.length}</p>
                       </div>
                     </div>
 
@@ -262,9 +262,9 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                         .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
                         .map(([dateKey, entries]) => (
                           <div key={dateKey} className="border-border hover:border-border-hover overflow-hidden rounded-2xl border transition-colors">
-                            <div className="border-border bg-surface/70 flex items-center justify-between gap-3 border-b px-4 py-4 sm:px-5">
+                            <div className="border-border bg-surface/70 flex flex-col items-start gap-3 border-b px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4">
                               <div>
-                                <h4 className="text-text font-semibold">
+                                <h4 className="text-text text-sm leading-5 font-semibold sm:text-base">
                                   {new Date(`${dateKey}T12:00:00`).toLocaleDateString('en-US', {
                                     weekday: 'short',
                                     day: 'numeric',
@@ -278,7 +278,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                                 </p>
                               </div>
 
-                              <span className="border-primary/20 bg-primary/10 text-primary inline-flex shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold">
+                              <span className="border-primary/20 bg-primary/10 text-primary inline-flex shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold sm:text-sm">
                                 <Repeat2 className="h-4 w-4" />
                                 {entries.length} sets
                               </span>
@@ -291,18 +291,18 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                                 const isSecondsRecord = newSecondsRecords.has(entry);
 
                                 return (
-                                  <div key={`${entry.loggedAt}-${index}`} className="hover:bg-surface-hover/20 flex items-center justify-between gap-3 px-4 py-4 transition-colors sm:px-5">
+                                  <div key={`${entry.loggedAt}-${index}`} className="hover:bg-surface-hover/20 flex flex-col gap-2 px-3 py-3 transition-colors sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-5 sm:py-4">
                                     <div className="flex min-w-0 items-center gap-3">
                                       <div className="border-border bg-surface-secondary/80 text-text-secondary flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border text-sm font-semibold">{index + 1}</div>
 
                                       <div className="min-w-0">
-                                        <p className="text-text font-semibold">{isPlank ? `${entry.seconds ?? 0} seconds` : `${entry.weight ?? 0} kg × ${entry.reps} reps`}</p>
+                                        <p className="text-text text-sm leading-5 font-semibold sm:text-base">{isPlank ? `${entry.seconds ?? 0} seconds` : `${entry.weight ?? 0} kg × ${entry.reps} reps`}</p>
 
                                         <p className="text-text-muted mt-1 text-xs">Set {index + 1}</p>
                                       </div>
                                     </div>
 
-                                    <div className="flex shrink-0 flex-col items-end gap-2">
+                                    <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-col sm:items-end">
                                       {isPlank && isSecondsRecord && <RecordBadge label="Time Record" />}
 
                                       {!isPlank && isWeightRecord && <RecordBadge label="Weight Record" />}
@@ -344,14 +344,14 @@ function RecordBadge({ label, variant = 'purple' }: { label: string; variant?: '
 
 function StatCard({ label, value, detail, icon }: { label: string; value: string; detail: string; icon: React.ReactNode }) {
   return (
-    <div className="border-border bg-surface/50 rounded-xl border p-4">
-      <div className="text-text-muted flex items-center gap-2">
+    <div className="border-border bg-surface/50 min-w-0 rounded-xl border p-3 sm:p-4">
+      <div className="text-text-muted flex min-w-0 items-start gap-2">
         {icon}
-        <p className="text-xs font-medium tracking-wider uppercase">{label}</p>
+        <p className="min-w-0 text-xs leading-4 font-medium tracking-wide uppercase">{label}</p>
       </div>
 
-      <p className="text-text mt-3 text-2xl font-bold">{value}</p>
-      <p className="text-text-muted mt-1 text-xs">{detail}</p>
+      <p className="text-text mt-2 text-xl font-bold tabular-nums sm:mt-3 sm:text-2xl">{value}</p>
+      <p className="text-text-muted mt-1 text-xs leading-5">{detail}</p>
     </div>
   );
 }
