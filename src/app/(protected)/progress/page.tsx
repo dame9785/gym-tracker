@@ -32,10 +32,10 @@ export default async function ProgressPage() {
       <Header title="YOUR TRAINING" subTitle="Progress" description="Track your progress. Reach your goals. Keep track of your workouts, monitor your progress, and stay focused on your fitness goals." />
 
       <section>
-        <div className="mb-5 border-b border-zinc-800 pb-4">
-          <h2 className="text-lg font-semibold text-white">Training and Personal Records</h2>
+        <div className="border-border mb-5 border-b pb-4">
+          <h2 className="text-text text-lg font-semibold">Training and Personal Records</h2>
 
-          <p className="mt-1 text-sm leading-6 text-zinc-400">Track your exercise progress, compare results, and monitor your personal records over time.</p>
+          <p className="text-text-secondary mt-1 text-sm leading-6">Track your exercise progress, compare results, and monitor your personal records over time.</p>
         </div>
 
         <ExerciseProgress exerciseProgress={exerciseProgress} metric="weight" />

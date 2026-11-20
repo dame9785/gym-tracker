@@ -15,11 +15,11 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
     return (
       <main className="container mx-auto flex min-h-screen items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
-          <h1 className="text-2xl font-bold">Invalid password reset link</h1>
+          <h1 className="text-text text-2xl font-bold">Invalid password reset link</h1>
 
-          <p className="mt-4">The password reset link is missing or invalid.</p>
+          <p className="text-text-secondary mt-4">The password reset link is missing or invalid.</p>
 
-          <Link href="/account/forgot-password" className="mt-6 inline-block text-orange-500 hover:text-orange-400">
+          <Link href="/account/forgot-password" className="text-primary hover:text-primary-hover mt-6 inline-block transition-colors">
             Request a new reset link
           </Link>
         </div>

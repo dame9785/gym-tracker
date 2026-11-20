@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+
 import { ProductService } from '@/services/product-service';
 import ProductForm from '@/components/forms/products/product-form';
 
@@ -33,9 +34,11 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
   return (
     <div className="space-y-8">
       <header>
-        <p className="text-sm font-medium text-orange-400">PRODUCT CATALOGUE</p>
-        <h1 className="mt-2 text-3xl font-bold text-white">Edit product</h1>
-        <p className="mt-2 text-sm text-gray-400">Update product information and nutritional values.</p>
+        <p className="text-primary text-sm font-medium">PRODUCT CATALOGUE</p>
+
+        <h1 className="text-text mt-2 text-3xl font-bold">Edit product</h1>
+
+        <p className="text-text-muted mt-2 text-sm">Update product information and nutritional values.</p>
       </header>
 
       <ProductForm product={productData} />

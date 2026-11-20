@@ -59,7 +59,7 @@ export default function FoodModal({ mealType, mealLabel, date, onClose, onAdded 
         }
       }}
     >
-      <div role="dialog" aria-modal="true" aria-label={`Add food to ${mealLabel}`} className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-950 p-4 shadow-2xl sm:p-6">
+      <div role="dialog" aria-modal="true" aria-label={`Add food to ${mealLabel}`} className="border-border bg-background max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border p-4 shadow-2xl sm:p-6">
         <FoodSearch date={date} mealType={mealType} onClose={onClose} onAdded={onAdded} />
       </div>
     </div>

@@ -54,29 +54,29 @@ export default function LogHistory({ logItem }: PageProps) {
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         {/* Date */}
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-orange-500/10 bg-orange-500/[0.08] text-orange-400 transition-colors group-hover:bg-orange-500/[0.12]">
+          <div className="border-primary/10 bg-primary/[0.08] text-primary group-hover:bg-primary/[0.12] flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors">
             <CalendarDays className="h-5 w-5" />
           </div>
 
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-zinc-200 sm:text-base">{new Date(logItem.logDate ?? '').toLocaleDateString('sv-SE')}</p>
-            <p className="mt-0.5 text-xs text-zinc-500">Weight log</p>
+            <p className="text-text-secondary truncate text-sm font-semibold sm:text-base">{new Date(logItem.logDate ?? '').toLocaleDateString('sv-SE')}</p>
+            <p className="text-text-muted mt-0.5 text-xs">Weight log</p>
           </div>
         </div>
 
         {/* Weight */}
         <div className="flex shrink-0 items-center gap-2">
-          <div className="hidden h-9 w-9 items-center justify-center rounded-xl border border-blue-500/10 bg-blue-500/[0.08] text-blue-400 sm:flex">
+          <div className="border-info/10 bg-info/[0.08] text-info hidden h-9 w-9 items-center justify-center rounded-xl border sm:flex">
             <Scale className="h-4 w-4" />
           </div>
 
-          <span className="text-lg font-semibold text-zinc-100 tabular-nums sm:text-xl">{logItem.weight.toString()} kg</span>
+          <span className="text-text text-lg font-semibold tabular-nums sm:text-xl">{logItem.weight.toString()} kg</span>
         </div>
       </div>
 
       {/* Note and actions */}
-      <div className="mt-4 flex min-w-0 items-center justify-between gap-3 border-t border-zinc-800/80 pt-3">
-        <p className="min-w-0 flex-1 truncate text-xs text-zinc-500 sm:text-sm" title={logItem.note || 'Ingen anteckning'}>
+      <div className="border-border mt-4 flex min-w-0 items-center justify-between gap-3 border-t pt-3">
+        <p className="text-text-muted min-w-0 flex-1 truncate text-xs sm:text-sm" title={logItem.note || 'Ingen anteckning'}>
           {logItem.note || 'Ingen anteckning'}
         </p>
 

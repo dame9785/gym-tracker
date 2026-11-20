@@ -105,14 +105,14 @@ export default async function LogWeight({ searchParams }: Props) {
       )}
 
       {/* Weight History */}
-      <section className="min-w-0 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 sm:p-6" id="history-section-weight">
+      <section className="border-border bg-surface/50 min-w-0 rounded-2xl border p-4 sm:p-6" id="history-section-weight">
         <div className="mb-5 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-white">Weight History</h2>
-            <p className="mt-1 text-xs text-zinc-500">Your previous weight entries</p>
+            <h2 className="text-text text-xl font-semibold">Weight History</h2>
+            <p className="text-text-muted mt-1 text-xs">Your previous weight entries</p>
           </div>
 
-          <span className="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs font-medium text-zinc-400">{logList.length} entries</span>
+          <span className="border-border bg-background text-text-muted rounded-lg border px-3 py-1.5 text-xs font-medium">{logList.length} entries</span>
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">

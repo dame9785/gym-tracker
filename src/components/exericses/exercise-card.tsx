@@ -49,37 +49,37 @@ export default function ExerciseCard({ exercise }: Props) {
   return (
     <Card variant="interactive" padding="none" className="flex h-full flex-col">
       {/* Image */}
-      <div className="group relative h-52 shrink-0 overflow-hidden bg-zinc-900">
+      <div className="group bg-surface relative h-52 shrink-0 overflow-hidden">
         <Image src={exercise.imagePath || '/placeholder.png'} alt={exercise.name} fill sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, (max-width: 1535px) 33vw, 25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
 
         {/* Primary muscle */}
         <div className="absolute top-3 left-3 max-w-[90%]">
-          <span className="inline-flex rounded-full border border-blue-400/40 bg-blue-950/90 px-3 py-1.5 text-xs font-semibold text-blue-200 shadow-sm backdrop-blur-sm">{exercise.primaryMuscle}</span>
+          <span className="border-info/40 bg-info/15 text-info inline-flex rounded-full border px-3 py-1.5 text-xs font-semibold shadow-sm backdrop-blur-sm">{exercise.primaryMuscle}</span>
         </div>
       </div>
 
       {/* Card content */}
       <div className="flex flex-1 flex-col p-5">
         <div>
-          <h2 className="line-clamp-2 min-h-7 text-lg leading-snug font-bold text-white" title={exercise.name}>
+          <h2 className="text-text line-clamp-2 min-h-7 text-lg leading-snug font-bold" title={exercise.name}>
             {exercise.name}
           </h2>
 
-          <p className="mt-3 line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-zinc-400">{exercise.description || 'No description available.'}</p>
+          <p className="text-text-secondary mt-3 line-clamp-3 min-h-[4.5rem] text-sm leading-6">{exercise.description || 'No description available.'}</p>
 
           {/* Secondary muscle groups */}
           {exercise.secondaryMuscles.length > 0 && (
-            <div className="mt-4 rounded-xl border border-zinc-800/80 bg-zinc-950/60 p-3">
+            <div className="border-border bg-background/60 mt-4 rounded-xl border p-3">
               <div className="mb-2 flex items-center gap-2">
-                <Activity className="h-3.5 w-3.5 text-violet-400" />
-                <p className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">Secondary muscles</p>
+                <Activity className="text-info h-3.5 w-3.5" />
+                <p className="text-text-muted text-[10px] font-bold tracking-wider uppercase">Secondary muscles</p>
               </div>
 
               <div className="flex flex-wrap gap-2">
                 {exercise.secondaryMuscles.map((muscle) => (
-                  <span key={muscle} className="rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-200 transition-colors hover:border-violet-400/50 hover:bg-violet-500/20">
+                  <span key={muscle} className="border-info/30 bg-info/10 text-info hover:border-info/50 hover:bg-info/20 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors">
                     {muscle}
                   </span>
                 ))}
@@ -92,8 +92,8 @@ export default function ExerciseCard({ exercise }: Props) {
         <div className="mt-auto pt-5">
           <div className="flex items-center justify-between gap-3">
             {/* Equipment */}
-            <span className="inline-flex min-w-0 items-center gap-2 rounded-full border border-zinc-700 bg-zinc-800/70 px-3 py-2 text-xs font-medium text-zinc-200">
-              <Dumbbell className="h-4 w-4 shrink-0 text-orange-400" />
+            <span className="border-border-hover bg-surface-secondary/70 text-text-secondary inline-flex min-w-0 items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium">
+              <Dumbbell className="text-primary h-4 w-4 shrink-0" />
               <span className="truncate">{exercise.equipment || 'Bodyweight'}</span>
             </span>
 
@@ -110,7 +110,7 @@ export default function ExerciseCard({ exercise }: Props) {
           </div>
 
           {/* Details */}
-          <Link href={`/exercises/${exercise.slug}`} className="group/details mt-4 flex items-center justify-between border-t border-zinc-800/80 pt-3 text-sm text-zinc-400 transition-colors hover:text-orange-400">
+          <Link href={`/exercises/${exercise.slug}`} className="group/details border-border text-text-muted hover:text-primary mt-4 flex items-center justify-between border-t pt-3 text-sm transition-colors">
             <span className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               View exercise details

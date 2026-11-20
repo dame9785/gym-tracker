@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { setWorkoutSessionNotPerformedAction } from '@/actions/workout-session-actions';
+import Button from '@/components/button/button';
 
 type Props = {
   workoutSessionId: number;
@@ -40,13 +41,8 @@ export default function NotPerformedButton({ workoutSessionId }: Props) {
   };
 
   return (
-    <button
-      type="button"
-      onClick={setNotPerformed}
-      disabled={isUpdating}
-      className="inline-flex h-11 min-w-33 items-center justify-center rounded-xl border border-red-700 bg-red-800/60 px-5 text-sm font-semibold text-red-300 transition-all duration-200 hover:border-red-600 hover:bg-red-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-    >
+    <Button type="button" variant="danger" size="md" onClick={setNotPerformed} loading={isUpdating} disabled={isUpdating} className="h-11 min-w-33">
       {isUpdating ? 'Updating...' : 'Set Not Performed'}
-    </button>
+    </Button>
   );
 }

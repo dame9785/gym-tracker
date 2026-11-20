@@ -1,5 +1,6 @@
 import { Check, Plus } from 'lucide-react';
 
+import Button from '@/components/button/button';
 import FormField from '@/components/ui/form-field';
 import FormSelect from '@/components/ui/form-select';
 
@@ -22,12 +23,12 @@ export default function MuscleGroupSelector({ primaryMuscle, secondaryMuscles, o
     <div className="space-y-6">
       <FormField htmlFor="primaryMuscle" label="Primary muscle group" required error={primaryError}>
         <FormSelect id="primaryMuscle" name="primaryMuscle" value={primaryMuscle} onChange={(e) => onPrimaryMuscleChange(e.target.value)} required disabled={disabled} aria-invalid={!!primaryError}>
-          <option value="" disabled className="bg-zinc-900">
+          <option value="" disabled className="bg-surface">
             Select the main muscle group
           </option>
 
           {MUSCLE_GROUPS.map((muscle) => (
-            <option key={muscle} value={muscle} className="bg-zinc-900">
+            <option key={muscle} value={muscle} className="bg-surface">
               {muscle}
             </option>
           ))}
@@ -36,9 +37,9 @@ export default function MuscleGroupSelector({ primaryMuscle, secondaryMuscles, o
 
       <div>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <label className="text-sm font-medium text-zinc-200">Secondary muscle groups</label>
+          <label className="text-text-secondary text-sm font-medium">Secondary muscle groups</label>
 
-          <span className="rounded-full border border-zinc-700 bg-zinc-800 px-2.5 py-1 text-xs text-zinc-400">{secondaryMuscles.length} selected</span>
+          <span className="border-border-hover bg-surface-secondary text-text-muted rounded-full border px-2.5 py-1 text-xs">{secondaryMuscles.length} selected</span>
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -46,27 +47,30 @@ export default function MuscleGroupSelector({ primaryMuscle, secondaryMuscles, o
             const selected = secondaryMuscles.includes(muscle);
 
             return (
-              <button
+              <Button
                 key={muscle}
                 type="button"
+                variant="ghost"
+                size="md"
                 disabled={disabled}
-                aria-pressed={selected}
+                ariaPressed={selected}
+                ariaLabel={`${muscle}${selected ? ', selected' : ''}`}
                 onClick={() => onToggleSecondaryMuscle(muscle)}
-                className={`flex min-h-11 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left text-sm transition ${
-                  selected ? 'border-orange-500/60 bg-orange-500/10 text-orange-300' : 'border-zinc-800 bg-zinc-950/50 text-zinc-400 hover:border-zinc-600 hover:bg-zinc-800/70 hover:text-zinc-200'
-                } disabled:cursor-not-allowed disabled:opacity-50`}
+                className={`!flex !min-h-11 !w-full !justify-between !rounded-xl !border !px-3 !py-2.5 !text-left !text-sm !font-normal !tracking-normal transition ${
+                  selected ? '!border-primary/60 !bg-primary/10 !text-primary' : '!border-border !bg-background/50 !text-text-muted hover:!border-border-hover hover:!bg-surface-hover hover:!text-text-secondary'
+                }`}
               >
                 <span>{muscle}</span>
 
-                {selected ? <Check className="h-4 w-4 shrink-0 text-orange-400" /> : <Plus className="h-4 w-4 shrink-0 text-zinc-600" />}
-              </button>
+                {selected ? <Check className="text-primary h-4 w-4 shrink-0" /> : <Plus className="text-text-muted h-4 w-4 shrink-0" />}
+              </Button>
             );
           })}
         </div>
 
-        <p className="mt-3 text-xs leading-5 text-zinc-500">Select all muscles that assist during the exercise. Click a selected muscle again to remove it.</p>
+        <p className="text-text-muted mt-3 text-xs leading-5">Select all muscles that assist during the exercise. Click a selected muscle again to remove it.</p>
 
-        {secondaryError && <p className="mt-1.5 text-xs text-red-400">{secondaryError}</p>}
+        {secondaryError && <p className="text-danger mt-1.5 text-xs">{secondaryError}</p>}
       </div>
     </div>
   );

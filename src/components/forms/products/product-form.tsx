@@ -50,7 +50,7 @@ type FormValues = {
   nutritionSource: string;
 };
 
-const sectionClass = 'min-w-0 w-full rounded-2xl border border-zinc-800/90 bg-zinc-900/60 p-4 sm:p-7';
+const sectionClass = 'min-w-0 w-full rounded-2xl border border-border bg-surface p-4 sm:p-7';
 
 export default function ProductForm({ product }: ProductFormProps) {
   const router = useRouter();
@@ -145,13 +145,13 @@ export default function ProductForm({ product }: ProductFormProps) {
         {/* Product information */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <Package className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Product information</h2>
-              <p className="mt-1 text-xs text-zinc-500">Basic information about the product.</p>
+              <h2 className="text-text font-semibold">Product information</h2>
+              <p className="text-text-muted mt-1 text-xs">Basic information about the product.</p>
             </div>
           </div>
 
@@ -179,13 +179,13 @@ export default function ProductForm({ product }: ProductFormProps) {
         {/* Nutritional values */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <Activity className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Nutritional values</h2>
-              <p className="mt-1 text-xs text-zinc-500">Nutritional information per 100 grams.</p>
+              <h2 className="text-text font-semibold">Nutritional values</h2>
+              <p className="text-text-muted mt-1 text-xs">Nutritional information per 100 grams.</p>
             </div>
           </div>
 
@@ -211,13 +211,13 @@ export default function ProductForm({ product }: ProductFormProps) {
         {/* Data quality */}
         <section className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <FileText className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Data quality</h2>
-              <p className="mt-1 text-xs text-zinc-500">Specify how the nutritional information was verified.</p>
+              <h2 className="text-text font-semibold">Data quality</h2>
+              <p className="text-text-muted mt-1 text-xs">Specify how the nutritional information was verified.</p>
             </div>
           </div>
 
@@ -234,20 +234,20 @@ export default function ProductForm({ product }: ProductFormProps) {
               <FormInput id="nutritionSource" name="nutritionSource" type="text" placeholder="e.g. Manufacturer website or packaging" value={formData.nutritionSource} onChange={handleChange} maxLength={255} disabled={isSaving} aria-invalid={!!errors.nutritionSource} />
             </FormField>
 
-            {formData.dataQuality === 'VERIFIED' && <p className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-sm text-emerald-400">A nutrition source is required when a product is marked as verified.</p>}
+            {formData.dataQuality === 'VERIFIED' && <p className="border-success/20 bg-success/5 text-success rounded-lg border p-3 text-sm">A nutrition source is required when a product is marked as verified.</p>}
           </div>
         </section>
 
         {/* Product image */}
         <section className={sectionClass}>
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">
+            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
               <ImageIcon className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">Product image</h2>
-              <p className="mt-1 text-xs text-zinc-500">Upload or replace the product image.</p>
+              <h2 className="text-text font-semibold">Product image</h2>
+              <p className="text-text-muted mt-1 text-xs">Upload or replace the product image.</p>
             </div>
           </div>
 
@@ -262,32 +262,34 @@ export default function ProductForm({ product }: ProductFormProps) {
             disabled={isSaving}
           />
 
-          <p className="mt-3 text-xs leading-5 text-zinc-500">Optional. JPG, PNG or WebP, maximum 5 MB.</p>
+          <p className="text-text-muted mt-3 text-xs leading-5">Optional. JPG, PNG or WebP, maximum 5 MB.</p>
 
           {product?.imageUrl && !removeImage && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setSelectedImage(null);
                 setRemoveImage(true);
               }}
               disabled={isSaving}
-              className="mt-3 text-sm text-red-400 transition hover:text-red-300 disabled:opacity-50"
+              className="!text-danger hover:!text-danger/80 !mt-3"
             >
               Remove current image
-            </button>
+            </Button>
           )}
 
           {removeImage && (
-            <button type="button" onClick={() => setRemoveImage(false)} disabled={isSaving} className="mt-3 text-sm text-zinc-400 transition hover:text-white">
+            <Button type="button" variant="ghost" size="sm" onClick={() => setRemoveImage(false)} disabled={isSaving} className="!text-text-muted hover:!text-text !mt-3">
               Keep current image
-            </button>
+            </Button>
           )}
         </section>
 
         {/* Form actions */}
-        <div className="sticky bottom-3 z-10 flex flex-col-reverse gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/95 p-3 shadow-xl backdrop-blur-xl sm:flex-row sm:justify-end">
-          <Link href="/admin/products" aria-disabled={isSaving} className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-zinc-700 px-5 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800">
+        <div className="border-border bg-background/95 sticky bottom-3 z-10 flex flex-col-reverse gap-3 rounded-2xl border p-3 shadow-xl backdrop-blur-xl sm:flex-row sm:justify-end">
+          <Link href="/admin/products" aria-disabled={isSaving} className="border-border-hover text-text-secondary hover:bg-surface-hover hover:text-text flex min-h-12 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-medium transition">
             <ArrowLeft className="h-4 w-4" />
             Cancel
           </Link>

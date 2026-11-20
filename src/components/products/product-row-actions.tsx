@@ -2,6 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+
+import Button from '@/components/button/button';
+
 import { archiveProductAction, restoreProductAction, deleteProductAction } from '@/actions/product-actions';
 
 type ProductRowActionsProps = {
@@ -56,24 +59,26 @@ export default function ProductRowActions({ id, name, archived }: ProductRowActi
   return (
     <div className="flex flex-col items-end gap-2">
       <div className="flex items-center gap-2">
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="sm"
           disabled={isPending}
           onClick={handleArchiveAction}
-          className={`inline-flex h-9 w-24 items-center justify-center rounded-lg border text-xs font-medium transition-colors disabled:opacity-50 ${archived ? 'border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10' : 'border-amber-500/20 text-amber-400 hover:bg-amber-500/10'}`}
+          className={`!h-9 !w-24 !rounded-lg !border !text-xs !font-medium !transition-colors ${archived ? '!border-success/20 !text-success hover:!bg-success/10' : '!border-warning/20 !text-warning hover:!bg-warning/10'}`}
         >
           {isPending ? 'Please wait...' : archived ? 'Restore' : 'Archive'}
-        </button>
+        </Button>
 
         {archived && (
-          <button type="button" disabled={isPending} onClick={handleDelete} className="inline-flex h-9 w-24 items-center justify-center rounded-lg border border-red-500/20 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/10 disabled:opacity-50">
+          <Button type="button" variant="danger" size="sm" disabled={isPending} onClick={handleDelete} className="!border-danger/20 hover:!bg-danger/10 !h-9 !w-24 !rounded-lg !border !text-xs !font-medium !transition-colors">
             Delete
-          </button>
+          </Button>
         )}
       </div>
 
       {error && (
-        <p role="alert" className="max-w-60 text-right text-xs text-red-400">
+        <p role="alert" className="text-danger max-w-60 text-right text-xs">
           {error}
         </p>
       )}

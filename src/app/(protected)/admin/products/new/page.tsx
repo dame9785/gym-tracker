@@ -4,11 +4,11 @@ export default function NewProductPage() {
   return (
     <div className="space-y-8">
       <header>
-        <p className="text-sm font-medium text-orange-400">PRODUCT CATALOGUE</p>
+        <p className="text-primary text-sm font-medium">PRODUCT CATALOGUE</p>
 
-        <h1 className="mt-2 text-3xl font-bold text-white">Add product</h1>
+        <h1 className="text-text mt-2 text-3xl font-bold">Add product</h1>
 
-        <p className="mt-2 text-sm text-gray-400">Add a new product to the GymTracker catalogue.</p>
+        <p className="text-text-muted mt-2 text-sm">Add a new product to the GymTracker catalogue.</p>
       </header>
 
       <ProductForm />

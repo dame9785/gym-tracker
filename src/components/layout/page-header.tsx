@@ -18,11 +18,11 @@ export default function Header({ title, subTitle, description, actions = [] }: P
     <header className="mb-10">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="max-w-2xl">
-          <p className="mb-2 text-xs font-semibold tracking-[0.2em] text-orange-400 uppercase">{title}</p>
+          <p className="text-primary mb-2 text-xs font-semibold tracking-[0.2em] uppercase">{title}</p>
 
-          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{subTitle}</h1>
+          <h1 className="text-text text-3xl font-bold tracking-tight sm:text-4xl">{subTitle}</h1>
 
-          {description && <p className="mt-3 text-sm leading-6 text-zinc-400 sm:text-base">{description}</p>}
+          {description && <p className="text-text-secondary mt-3 text-sm leading-6 sm:text-base">{description}</p>}
         </div>
 
         {actions.length > 0 && (
@@ -36,7 +36,7 @@ export default function Header({ title, subTitle, description, actions = [] }: P
         )}
       </div>
 
-      <div className="mt-8 h-px w-full bg-linear-to-r from-orange-500/40 via-zinc-800 to-transparent" />
+      <div className="from-primary/40 via-border mt-8 h-px w-full bg-linear-to-r to-transparent" />
     </header>
   );
 }

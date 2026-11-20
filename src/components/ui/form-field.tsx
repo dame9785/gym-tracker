@@ -13,11 +13,11 @@ type FormFieldProps = {
 export default function FormField({ label, htmlFor, required = false, error, hint, footer, children }: FormFieldProps) {
   return (
     <div className="min-w-0">
-      <label htmlFor={htmlFor} className="mb-2 flex items-center gap-2 text-sm font-medium text-zinc-200">
+      <label htmlFor={htmlFor} className="text-text-secondary mb-2 flex items-center gap-2 text-sm font-medium">
         {label}
 
         {required && (
-          <span className="text-orange-400" aria-hidden="true">
+          <span className="text-primary" aria-hidden="true">
             *
           </span>
         )}
@@ -27,9 +27,9 @@ export default function FormField({ label, htmlFor, required = false, error, hin
 
       {(error || hint || footer) && (
         <div className="mt-1.5 flex justify-between gap-3">
-          <div className="min-w-0">{error ? <p className="text-xs text-red-400">{error}</p> : hint ? <p className="text-xs text-zinc-500">{hint}</p> : null}</div>
+          <div className="min-w-0">{error ? <p className="text-danger text-xs">{error}</p> : hint ? <p className="text-text-muted text-xs">{hint}</p> : null}</div>
 
-          {footer && <div className="shrink-0 text-xs text-zinc-500">{footer}</div>}
+          {footer && <div className="text-text-muted shrink-0 text-xs">{footer}</div>}
         </div>
       )}
     </div>
