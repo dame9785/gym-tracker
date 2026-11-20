@@ -69,8 +69,10 @@ export default function MealSection({ section, meal, date, isActive, editingItem
         </div>
 
         <Button type="button" variant="secondary" size="sm" onClick={onAddFood} className="!border-primary/40 !text-primary hover:!bg-primary/10 flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition">
-          <PlusCircle size={15} />
-          Add food
+          <div className="flex items-center gap-2">
+            <PlusCircle size={15} />
+            <span> Add food</span>
+          </div>
         </Button>
       </div>
 
