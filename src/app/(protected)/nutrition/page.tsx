@@ -6,6 +6,7 @@ import { GoalService } from '@/services/goal-service';
 import { MealMapping } from '@/mapping/meal-mapping';
 
 import Header from '@/components/ui/header';
+import PageContainer from '@/components/layout/page-container';
 import NutritionClient from '@/components/nutrition/nutrition-client';
 
 import { getTodayDate } from '@/utils/date-utils';
@@ -19,24 +20,18 @@ export default async function NutritionPage() {
   const initialDate = getTodayDate();
   const date = new Date(`${initialDate}T00:00:00.000Z`);
 
-  // --------------------------------------------------
   // Fetch meals
-  // --------------------------------------------------
-
   const meals = await mealService.getMealsByDate(user.userId, date);
   const mappedMeals = meals.map(MealMapping.mapMeal);
 
-  // --------------------------------------------------
   // Fetch nutrition goals
-  // --------------------------------------------------
-
   const nutritionGoals = await goalService.getByUserId(user.userId);
 
   return (
-    <div className="w-full">
+    <PageContainer>
       <Header title="Nutrition" subTitle="Daily nutrition" description="Track your daily food intake and keep an eye on your calories and macros." />
 
       <NutritionClient initialMeals={mappedMeals} initialDate={initialDate} initialGoals={nutritionGoals} />
-    </div>
+    </PageContainer>
   );
 }

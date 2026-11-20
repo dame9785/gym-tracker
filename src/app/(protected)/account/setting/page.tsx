@@ -1,5 +1,7 @@
 import UserSettingsTabs from '@/components/forms/user/user-settings-tabs';
+
 import ErrorMessage from '@/components/ui/error-message';
+import PageContainer from '@/components/layout/page-container';
 
 import { requireAuth } from '@/lib/auth';
 import { AuthService } from '@/services/auth-service';
@@ -17,15 +19,15 @@ export default async function UserSettings(): Promise<React.ReactElement> {
     console.error('Failed to load user settings:', error);
 
     return (
-      <main>
+      <PageContainer>
         <ErrorMessage title="Unable to load user" message="Something went wrong while loading your account. Please try again later." />
-      </main>
+      </PageContainer>
     );
   }
 
   return (
-    <main className="container mx-auto px-4 py-10">
+    <PageContainer>
       <UserSettingsTabs user={loggedInUser} />
-    </main>
+    </PageContainer>
   );
 }

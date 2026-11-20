@@ -10,6 +10,7 @@ import WorkoutSessions from '@/components/history/workout-sessions';
 import ErrorMessage from '@/components/ui/error-message';
 import Header from '@/components/ui/header';
 import Pagination from '@/components/ui/pagination';
+import PageContainer from '@/components/layout/page-container';
 
 type Props = {
   searchParams: Promise<{
@@ -35,17 +36,17 @@ export default async function HistoryPage({ searchParams }: Props) {
     console.error('Failed to load workout history:', error);
 
     return (
-      <main className="mx-auto w-full max-w-7xl px-0 py-8">
+      <PageContainer>
         <ErrorMessage title="Unable to load workout history" message="Something went wrong while loading your workout history. Please try again later." />
-      </main>
+      </PageContainer>
     );
   }
 
   if (!response.success || !response.data) {
     return (
-      <main className="mx-auto w-full max-w-7xl px-0 py-8">
+      <PageContainer>
         <ErrorMessage title="Unable to load workout history" message="Something went wrong while loading your workout history." />
-      </main>
+      </PageContainer>
     );
   }
 
@@ -58,33 +59,20 @@ export default async function HistoryPage({ searchParams }: Props) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-7xl min-w-0 px-0 py-8">
-      {/* Page header */}
-      <section className="min-w-0">
-        <Header title="WORKOUT HISTORY" subTitle="History" description="Review your completed workouts, track your training activity, and look back on your fitness journey." />
-      </section>
+    <PageContainer>
+      <Header title="WORKOUT HISTORY" subTitle="History" description="Review your completed workouts, track your training activity, and look back on your fitness journey." />
 
       {/* Overall workout statistics */}
-      <section className="mt-8">
-        <HistoryTopStats data={historyData} />
-      </section>
+      <HistoryTopStats data={historyData} />
 
       {/* Training time and completed sets */}
-      <section className="mt-5">
-        <HistoryMiddleStats totalTrainingTime={historyData.totalTrainingTime} totalCompletedSets={historyData.totalCompletedSets} />
-      </section>
+      <HistoryMiddleStats totalTrainingTime={historyData.totalTrainingTime} totalCompletedSets={historyData.totalCompletedSets} />
 
       {/* Workout sessions */}
-      <section className="mt-10">
-        <WorkoutSessions workoutSessions={historyData.workoutSessions} />
-      </section>
+      <WorkoutSessions workoutSessions={historyData.workoutSessions} />
 
       {/* Pagination */}
-      {pagination.totalPages > 1 && (
-        <section className="mt-8">
-          <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} basePath="/history" ariaLabel="Workout history pagination" />
-        </section>
-      )}
-    </main>
+      {pagination.totalPages > 1 && <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} basePath="/history" ariaLabel="Workout history pagination" />}
+    </PageContainer>
   );
 }
