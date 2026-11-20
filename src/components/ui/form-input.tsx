@@ -15,7 +15,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(function FormInpu
         <input
           ref={ref}
           {...props}
-          className={`block w-full min-w-0 max-w-full flex-1 border-0 bg-transparent p-0 text-sm leading-normal text-text outline-none focus:ring-0 disabled:cursor-not-allowed ${className ?? ''}`.trim()}
+          className={`block w-full min-w-0 max-w-full flex-1 border-0 bg-transparent p-0 text-sm leading-5 text-text outline-none focus:ring-0 disabled:cursor-not-allowed ${className ?? ''}`.trim()}
         />
       </div>
     );
