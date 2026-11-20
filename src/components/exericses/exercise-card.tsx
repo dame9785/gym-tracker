@@ -110,7 +110,7 @@ export default function ExerciseCard({ exercise }: Props) {
           </div>
 
           {/* Details */}
-          <Link href={`/exercises/${exercise.slug}`} className="group/details border-border text-text-muted hover:text-primary mt-4 flex items-center justify-between border-t pt-3 text-sm transition-colors">
+          <Link href={`/exercises/${exercise.slug ?? exercise.id}`} className="group/details border-border text-text-muted hover:text-primary mt-4 flex items-center justify-between border-t pt-3 text-sm transition-colors">
             <span className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               View exercise details

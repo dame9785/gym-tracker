@@ -90,9 +90,9 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
   const detailsGridClass = 'grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3';
 
   return (
-    <section className="mx-auto w-full min-w-0 space-y-8 pb-10">
+    <section className="mx-auto w-full min-w-0 space-y-6 pb-8 sm:space-y-8 sm:pb-10">
       {/* Statistics */}
-      <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
+      <div className="grid min-w-0 grid-cols-1 gap-3 min-[520px]:grid-cols-2 sm:gap-4 xl:grid-cols-3">
         <div className="col-span-1">
           <StatsCard icon={<FaDumbbell />} title="Övningar" value={totalExercises} subtitle="Övningar i träningspasset" />
         </div>
@@ -101,20 +101,20 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
           <StatsCard icon={<BsClock />} title="Planerade set" value={totalSets} subtitle="Totalt antal set" />
         </div>
 
-        <div className="col-span-2 xl:col-span-1">
+        <div className="col-span-1 min-[520px]:col-span-2 xl:col-span-1">
           <StatsCard icon={<FaFire />} title="Träningstid" value={totalSeconds > 0 ? formatDuration(totalSeconds) : '—'} subtitle="Beräknad tid för tidsövningar" />
         </div>
       </div>
 
       {/* Exercises */}
       <div className="w-full min-w-0">
-        <div className="mb-5 flex items-end justify-between gap-4">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3 sm:mb-5 sm:gap-4">
           <div>
-            <p className="text-info mb-1 text-xs font-bold tracking-[0.18em] uppercase">Ditt upplägg</p>
-            <h2 className="text-text text-2xl font-bold sm:text-3xl">Övningar</h2>
+            <p className="text-primary mb-1 text-xs font-bold tracking-[0.18em] uppercase">Ditt upplägg</p>
+            <h2 className="text-text text-xl font-bold sm:text-3xl">Övningar</h2>
           </div>
 
-          <span className="border-border bg-surface-secondary text-text-secondary rounded-lg border px-3 py-1.5 text-xs font-medium">{totalExercises} totalt</span>
+          <span className="border-border bg-surface-secondary text-text-secondary shrink-0 rounded-lg border px-3 py-1.5 text-xs font-medium">{totalExercises} totalt</span>
         </div>
 
         {exercises.length === 0 ? (
@@ -168,16 +168,16 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
               const summary = comparableCount === 0 ? 'Ingen jämförbar data' : `${improvedCount} av ${comparableCount} mätvärden förbättrade`;
 
               return (
-                <article key={`${exercise.exerciseId}-${exercise.order}`} className="border-border bg-surface/60 hover:border-info/30 hover:bg-surface flex min-w-0 flex-col overflow-hidden rounded-2xl border transition duration-200">
+                <article key={`${exercise.exerciseId}-${exercise.order}`} className="border-border bg-surface/60 hover:border-primary/30 hover:bg-surface flex min-w-0 flex-col overflow-hidden rounded-2xl border transition duration-200">
                   {/* Exercise header */}
-                  <div className="border-border flex items-start gap-4 border-b p-5 sm:p-6">
-                    <div className="border-info/15 bg-info/10 text-info flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border text-sm font-extrabold sm:h-14 sm:w-14">{String(index + 1).padStart(2, '0')}</div>
+                  <div className="border-border flex items-start gap-3 border-b p-4 sm:gap-4 sm:p-6">
+                    <div className="border-primary/15 bg-primary/10 text-primary flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border text-sm font-extrabold sm:h-14 sm:w-14">{String(index + 1).padStart(2, '0')}</div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 sm:gap-3">
                         <h3 className="text-text text-lg font-bold break-words">{exercise.name}</h3>
 
-                        <span className="border-border bg-surface-secondary text-text-secondary rounded-lg border px-3 py-1.5 text-xs font-medium">{exercise.sets} set planerade</span>
+                        <span className="border-border bg-surface-secondary text-text-secondary shrink-0 rounded-lg border px-2.5 py-1.5 text-xs font-medium sm:px-3">{exercise.sets} set planerade</span>
                       </div>
 
                       <p className="text-text-muted mt-1 text-xs">
@@ -191,9 +191,9 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
                               comparableCount === 0
                                 ? 'border-border bg-surface-secondary text-text-secondary'
                                 : lowerCount > 0
-                                  ? 'border-amber-400/20 bg-amber-400/10 text-amber-300'
+                                  ? 'border-warning/20 bg-warning/10 text-warning'
                                   : improvedCount > 0
-                                    ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'
+                                    ? 'border-primary/20 bg-primary/10 text-primary'
                                     : 'border-border bg-surface-secondary text-text-secondary'
                             }`}
                           >
@@ -202,14 +202,14 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
 
                           {unchangedCount > 0 && comparableCount > 0 && <span className="text-text-muted text-xs">{unchangedCount} oförändrade</span>}
 
-                          {lowerCount > 0 && <span className="text-xs text-amber-300">{lowerCount} lägre</span>}
+                          {lowerCount > 0 && <span className="text-warning text-xs">{lowerCount} lägre</span>}
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* Exercise content */}
-                  <div className="flex flex-1 flex-col gap-6 p-5 sm:p-6">
+                  <div className="flex flex-1 flex-col gap-5 p-4 sm:gap-6 sm:p-6">
                     {/* Planned values */}
                     <section className="min-w-0">
                       <SectionHeading>Planerade värden</SectionHeading>
@@ -227,8 +227,8 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
 
                     {/* Latest results */}
                     {session && sessionExercise && (
-                      <section className="min-w-0 rounded-2xl border border-emerald-400/15 bg-emerald-500/[0.05] p-4 sm:p-5">
-                        <SectionHeading color="emerald">Resultat från senaste passet</SectionHeading>
+                      <section className="border-primary/20 bg-primary/[0.04] min-w-0 rounded-2xl border p-3 sm:p-5">
+                        <SectionHeading color="primary">Resultat från senaste passet</SectionHeading>
 
                         <p className="text-text-muted mt-2 text-sm">Dina faktiskt registrerade träningsresultat</p>
 
@@ -244,8 +244,8 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
 
                     {/* Progression */}
                     {session && (
-                      <section className="border-info/15 bg-info/[0.05] min-w-0 rounded-2xl border p-4 sm:p-5">
-                        <SectionHeading color="blue">Progression</SectionHeading>
+                      <section className="border-primary/20 bg-primary/[0.03] min-w-0 rounded-2xl border p-3 sm:p-5">
+                        <SectionHeading color="primary">Progression</SectionHeading>
 
                         <p className="text-text-muted mt-2 text-sm">{previousSessionWithExercise ? `Senast utförd: ${formatDate(previousSessionWithExercise.finishedAt)}` : 'Ingen tidigare registrering av övningen'}</p>
 
@@ -265,14 +265,14 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
                   </div>
 
                   {/* Footer */}
-                  <div className="border-border mt-auto flex items-center justify-between gap-3 border-t px-5 py-4 sm:px-6">
+                  <div className="border-border mt-auto flex items-center justify-between gap-3 border-t px-4 py-3 sm:px-6 sm:py-4">
                     <span className="text-text-muted text-xs">
                       Övning {index + 1} av {totalExercises}
                     </span>
 
                     {exercise.seconds != null && (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-400">
-                        <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                      <span className="text-primary inline-flex items-center gap-1.5 text-xs font-medium">
+                        <span className="bg-primary h-1.5 w-1.5 rounded-full" />
                         Tidsbaserad
                       </span>
                     )}
@@ -287,8 +287,8 @@ export default function WorkoutDetails({ workout, session, previousSessions }: P
   );
 }
 
-function SectionHeading({ children, color = 'default' }: { children: React.ReactNode; color?: 'default' | 'emerald' | 'blue' }) {
-  const colorClass = color === 'emerald' ? 'text-emerald-400' : color === 'blue' ? 'text-info' : 'text-text-secondary';
+function SectionHeading({ children, color = 'default' }: { children: React.ReactNode; color?: 'default' | 'primary' }) {
+  const colorClass = color === 'primary' ? 'text-primary' : 'text-text-secondary';
 
   return <h4 className={`text-sm font-bold tracking-wider uppercase ${colorClass}`}>{children}</h4>;
 }
@@ -305,8 +305,8 @@ function MetricPill({ label, value }: { label: string; value: string }) {
 
 function ValueCard({ title, value, actual = false }: { title: string; value: string; actual?: boolean }) {
   return (
-    <div className="border-border bg-surface-secondary/50 min-w-0 rounded-xl border p-4">
-      <p className={`text-xs font-bold tracking-wider uppercase ${actual ? 'text-emerald-400/80' : 'text-text-muted'}`}>{title}</p>
+    <div className="border-border bg-surface-secondary/50 min-w-0 rounded-xl border p-3 sm:p-4">
+      <p className={`text-xs font-bold tracking-wider uppercase ${actual ? 'text-primary/80' : 'text-text-muted'}`}>{title}</p>
 
       <p className="text-text-secondary mt-3 text-sm leading-relaxed font-semibold break-words">{value}</p>
     </div>
@@ -318,7 +318,7 @@ function ProgressCard({ title, current, previous, unit, higherIsBetter = true }:
 
   if (current === null || previous === null) {
     return (
-      <div className="border-border bg-surface-secondary/50 min-w-0 rounded-xl border p-4">
+      <div className="border-border bg-surface-secondary/50 min-w-0 rounded-xl border p-3 sm:p-4">
         <p className="text-text-muted text-xs font-bold tracking-wider uppercase">{title}</p>
 
         <p className="text-text-secondary mt-3 text-sm">Otillräckliga data</p>
@@ -339,7 +339,7 @@ function ProgressCard({ title, current, previous, unit, higherIsBetter = true }:
       }
     : {
         label: improved ? 'Förbättring' : 'Lägre resultat',
-        color: improved ? 'text-emerald-400' : 'text-amber-400',
+        color: improved ? 'text-primary' : 'text-danger',
         icon: improved ? '↑' : '↓',
       };
 

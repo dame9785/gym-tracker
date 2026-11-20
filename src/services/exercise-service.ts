@@ -1,4 +1,5 @@
 import { ExerciseRepository } from '@/repositories/exercise-repository';
+import { createSlug } from '@/lib/slug';
 import { ExerciseMapper } from '@/mapping/exercise-mapping';
 
 import type { ExerciseViewModel } from '@/types/exercise-types';
@@ -25,7 +26,14 @@ export class ExerciseService {
       throw new Error(`Validation failed: ${JSON.stringify(validation.error.flatten().fieldErrors)}`);
     }
 
-    const exercise = await this.exerciseRepository.register(validation.data, userId);
+    const baseSlug = createSlug(validation.data.name);
+
+    if (!baseSlug) {
+      throw new Error('Could not generate a valid exercise slug.');
+    }
+
+    const slug = await this.generateUniqueSlug(baseSlug);
+    const exercise = await this.exerciseRepository.register(validation.data, userId, slug);
 
     return ExerciseMapper.exerciseModelToViewModel(exercise);
   }
@@ -57,6 +65,37 @@ export class ExerciseService {
       throw new Error(`Validation failed: ${JSON.stringify(validation.error.flatten().fieldErrors)}`);
     }
 
-    await this.exerciseRepository.update(id, validation.data, userId);
+    const existing = await this.exerciseRepository.getById(id, userId);
+
+    if (!existing) {
+      throw new Error('Exercise not found.');
+    }
+
+    let slug: string | undefined;
+
+    if (validation.data.name !== undefined && (validation.data.name !== existing.name || !existing.slug)) {
+      const baseSlug = createSlug(validation.data.name);
+
+      if (!baseSlug) {
+        throw new Error('Could not generate a valid exercise slug.');
+      }
+
+      slug = await this.generateUniqueSlug(baseSlug, id);
+    }
+
+    await this.exerciseRepository.update(id, validation.data, userId, slug);
+  }
+
+
+  private async generateUniqueSlug(baseSlug: string, excludeId?: number): Promise<string> {
+    let slug = baseSlug;
+    let counter = 1;
+
+    while (await this.exerciseRepository.isSlugTaken(slug, excludeId)) {
+      counter++;
+      slug = `${baseSlug}-${counter}`;
+    }
+
+    return slug;
   }
 }
