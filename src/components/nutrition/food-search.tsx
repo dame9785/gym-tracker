@@ -136,7 +136,7 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
   // --------------------------------------------------
 
   return (
-    <div className="flex max-h-[85vh] min-h-0 flex-col overflow-hidden">
+    <div className="flex h-full max-h-full min-h-0 flex-col overflow-hidden">
       {/* Header */}
       <div className="border-border flex shrink-0 items-center justify-between border-b pb-4">
         <div>
@@ -252,68 +252,75 @@ export default function FoodSearch({ date, mealType, onClose, onAdded }: Props) 
 
       {/* Selected food */}
       {selectedFood && (
-        <div className="border-border bg-background shrink-0 space-y-4 border-t pt-4">
-          <div className="flex items-center gap-3">
-            {selectedFood.source === 'PRODUCT' && <ProductImage imageUrl={selectedFood.food.imageUrl} name={selectedFood.food.name} size="large" />}
+        <div className="border-border bg-background flex max-h-[52%] min-h-0 shrink-0 flex-col border-t pt-3">
+          {/* Scrollable selected-food details */}
+          <div className="custom-scrollbar min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pb-3 pr-1">
+            <div className="flex items-center gap-3">
+              {selectedFood.source === 'PRODUCT' && <ProductImage imageUrl={selectedFood.food.imageUrl} name={selectedFood.food.name} size="large" />}
 
-            <div className="min-w-0">
-              <p className="text-text truncate font-semibold">{selectedFood.food.name}</p>
-
-              <p className="text-text-muted mt-1 text-xs">Nutrition per 100 g</p>
-            </div>
-          </div>
-
-          {/* Nutrition */}
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {[
-              {
-                label: 'Calories',
-                value: selectedFood.food.calories,
-                unit: 'kcal',
-              },
-              {
-                label: 'Protein',
-                value: selectedFood.food.protein,
-                unit: 'g',
-              },
-              {
-                label: 'Carbs',
-                value: selectedFood.food.carbs,
-                unit: 'g',
-              },
-              {
-                label: 'Fat',
-                value: selectedFood.food.fat,
-                unit: 'g',
-              },
-            ].map((item) => (
-              <div key={item.label} className="bg-surface rounded-lg p-3">
-                <p className="text-text-muted text-xs">{item.label}</p>
-
-                <p className="text-text mt-1 font-semibold">
-                  {Math.round(item.value * 10) / 10}
-                  <span className="text-text-muted ml-1 text-xs font-normal">{item.unit}</span>
-                </p>
+              <div className="min-w-0">
+                <p className="text-text truncate font-semibold">{selectedFood.food.name}</p>
+                <p className="text-text-muted mt-1 text-xs">Nutrition per 100 g</p>
               </div>
-            ))}
+            </div>
+
+            {/* Nutrition */}
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {[
+                { label: 'Calories', value: selectedFood.food.calories, unit: 'kcal' },
+                { label: 'Protein', value: selectedFood.food.protein, unit: 'g' },
+                { label: 'Carbs', value: selectedFood.food.carbs, unit: 'g' },
+                { label: 'Fat', value: selectedFood.food.fat, unit: 'g' },
+              ].map((item) => (
+                <div key={item.label} className="bg-surface rounded-lg p-3">
+                  <p className="text-text-muted text-xs">{item.label}</p>
+                  <p className="text-text mt-1 font-semibold">
+                    {Math.round(item.value * 10) / 10}
+                    <span className="text-text-muted ml-1 text-xs font-normal">{item.unit}</span>
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Quantity */}
+            <FormField htmlFor="food-quantity" label="Quantity (grams)">
+              <FormInput
+                id="food-quantity"
+                name="quantity"
+                type="number"
+                min="0.1"
+                max="10000"
+                step="0.1"
+                value={quantity}
+                disabled={isSaving}
+                onChange={(event) => setQuantity(event.target.value)}
+              />
+            </FormField>
           </div>
 
-          {/* Quantity */}
-          <FormField htmlFor="food-quantity" label="Quantity (grams)">
-            <FormInput id="food-quantity" name="quantity" type="number" min="0.1" max="10000" step="0.1" value={quantity} disabled={isSaving} onChange={(event) => setQuantity(event.target.value)} />
-          </FormField>
+          {/* Fixed action area */}
+          <div className="border-border bg-background flex shrink-0 flex-col gap-2 border-t pt-3">
+            {error && <p className="border-danger/30 bg-danger/10 text-danger rounded-lg border p-2 text-xs">{error}</p>}
 
-          {/* Add button */}
-          <div className="flex justify-end">
-            <Button type="button" variant="primary" size="md" onClick={() => void handleAddFood()} disabled={isSaving} loading={isSaving} className="px-5 py-2.5">
-              {isSaving ? 'Adding...' : 'Add to meal'}
-            </Button>
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="primary"
+                size="md"
+                onClick={() => void handleAddFood()}
+                disabled={isSaving}
+                loading={isSaving}
+                className="w-full px-5 py-2.5 sm:w-auto"
+              >
+                {isSaving ? 'Adding...' : 'Add to meal'}
+              </Button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Error */}
-      {error && <p className="border-danger/30 bg-danger/10 text-danger mt-3 shrink-0 rounded-lg border p-3 text-sm">{error}</p>}
+      {/* Search errors (before a food is selected) */}
+      {error && !selectedFood && <p className="border-danger/30 bg-danger/10 text-danger mt-3 shrink-0 rounded-lg border p-3 text-sm">{error}</p>}
     </div>
   );
 }

@@ -198,17 +198,6 @@ a:focus-visible {
 }
 
 /* =========================================
-   ROOT ELEMENT
-========================================= */
-
-#root {
-  min-height: 100vh;
-  min-height: 100dvh;
-  margin: 0;
-  padding: 0;
-}
-
-/* =========================================
    LISTS
 ========================================= */
 
@@ -269,16 +258,6 @@ img {
 
 .grid-2 {
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.grid-3 {
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
-}
-
-.grid-4 {
-  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 20px;
 }
 

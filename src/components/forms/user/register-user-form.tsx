@@ -153,7 +153,7 @@ export default function RegisterForm() {
       <FormPageHeader backHref="/account/login" backLabel="Back to login" eyebrow="GymTracker account" title="Create" highlightedTitle="account" description="Create your account to manage workouts, track your progress, and reach your fitness goals." icon={UserRoundPlus} />
 
       <div className={FormStyles.formGrid}>
-        <div className={FormStyles.formLeft}>
+        <div className={FormStyles['form-left']}>
           {/* EMAIL */}
           <div className={FormStyles.formGroup}>
             <FormField
