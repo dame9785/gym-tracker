@@ -130,7 +130,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
             <>
               {history.length > 0 ? (
                 <>
-                  <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-5 sm:grid-cols-3 sm:gap-4">
+                  <div className="mt-4 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:mt-5 sm:grid-cols-3 sm:gap-4">
                     <StatCard
                       label={isPlank ? 'Latest Time' : 'Latest Result'}
                       value={isPlank ? `${current?.seconds ?? 0} sec` : `${current?.weight ?? 0} kg`}
@@ -158,7 +158,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                       <div className="text-text-secondary flex items-center gap-2">
                         {weightChange !== null && weightChange > 0 ? <ArrowUpRight className="text-success h-4 w-4" /> : weightChange !== null && weightChange < 0 ? <ArrowDownRight className="text-danger h-4 w-4" /> : <TrendingUp className="text-text-muted h-4 w-4" />}
 
-                        <h3 className="text-sm font-medium">Weight Progress Since First Entry</h3>
+                        <h3 className="text-sm leading-5 font-medium">Weight Progress Since First Entry</h3>
                       </div>
 
                       <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -167,7 +167,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                           {weightChange !== null ? weightChange.toLocaleString('en-US') : '—'} kg
                         </p>
 
-                        <p className="text-text-secondary text-sm">{weightChangePercent !== null ? `(${weightChangePercent > 0 ? '+' : ''}${weightChangePercent.toLocaleString('en-US', { maximumFractionDigits: 1 })}%)` : '(Percentage cannot be calculated from 0 kg)'}</p>
+                        <p className="text-text-secondary text-sm leading-5">{weightChangePercent !== null ? `(${weightChangePercent > 0 ? '+' : ''}${weightChangePercent.toLocaleString('en-US', { maximumFractionDigits: 1 })}%)` : '(Percentage cannot be calculated from 0 kg)'}</p>
                       </div>
 
                       <p className="text-text-muted mt-2 text-xs">
@@ -177,7 +177,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                   )}
 
                   {isPlank && first && current && (
-                    <div className="border-border bg-surface/50 mt-4 rounded-xl border p-4">
+                    <div className="border-border bg-surface/50 mt-4 rounded-xl border p-3 sm:p-4">
                       <h3 className="text-text-secondary text-sm font-medium">Time Progress Since First Entry</h3>
 
                       <p className="text-text-secondary mt-2 text-sm">
@@ -188,11 +188,11 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                     </div>
                   )}
 
-                  <div className="mt-7 sm:mt-8">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div className="mt-6 min-w-0 sm:mt-8">
+                    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
                       <div>
                         <h3 className="text-text text-lg font-semibold">Progress Over Time</h3>
-                        <p className="text-text-muted mt-1 text-sm">{isPlank ? 'Track how long you can hold a plank.' : 'Choose which metric you want to track in the chart.'}</p>
+                        <p className="text-text-muted mt-1 text-sm leading-5">{isPlank ? 'Track how long you can hold a plank.' : 'Choose which metric you want to track in the chart.'}</p>
                       </div>
 
                       <div className="border-border bg-background flex w-full rounded-xl border p-1 sm:w-fit" role="group" aria-label="Select chart metric">
@@ -229,21 +229,21 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                     <ExerciseChart history={history} metric={activeChartMetric} />
                   </div>
 
-                  <div className="mt-8">
-                    <div className="mb-5">
+                  <div className="mt-7 min-w-0 sm:mt-8">
+                    <div className="mb-4 sm:mb-5">
                       <h3 className="text-text text-lg font-semibold">Training History</h3>
-                      <p className="text-text-muted mt-1 text-sm">Your results and sets for each training day.</p>
+                      <p className="text-text-muted mt-1 text-sm leading-5">Your results and sets for each training day.</p>
                     </div>
 
                     <div className="mb-4 grid grid-cols-2 gap-2 sm:mb-5 sm:gap-3">
-                      <div className="border-border bg-surface/50 rounded-xl border p-4">
-                        <p className="text-text-secondary text-sm">Training Days</p>
-                        <p className="text-text mt-2 text-2xl font-bold">{trainingDays}</p>
+                      <div className="border-border bg-surface/50 min-w-0 rounded-xl border p-3 sm:p-4">
+                        <p className="text-text-secondary text-xs sm:text-sm">Training Days</p>
+                        <p className="text-text mt-2 text-xl font-bold tabular-nums sm:text-2xl">{trainingDays}</p>
                       </div>
 
-                      <div className="border-border bg-surface/50 rounded-xl border p-4">
-                        <p className="text-text-secondary text-sm">Total Sets</p>
-                        <p className="text-primary mt-2 text-2xl font-bold">{history.length}</p>
+                      <div className="border-border bg-surface/50 min-w-0 rounded-xl border p-3 sm:p-4">
+                        <p className="text-text-secondary text-xs sm:text-sm">Total Sets</p>
+                        <p className="text-primary mt-2 text-xl font-bold tabular-nums sm:text-2xl">{history.length}</p>
                       </div>
                     </div>
 
@@ -264,7 +264,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                           <div key={dateKey} className="border-border hover:border-border-hover overflow-hidden rounded-2xl border transition-colors">
                             <div className="border-border bg-surface/70 flex flex-col items-start gap-3 border-b px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4">
                               <div>
-                                <h4 className="text-text font-semibold">
+                                <h4 className="text-text text-sm leading-5 font-semibold sm:text-base">
                                   {new Date(`${dateKey}T12:00:00`).toLocaleDateString('en-US', {
                                     weekday: 'short',
                                     day: 'numeric',
@@ -296,7 +296,7 @@ export default function ExerciseProgress({ exerciseProgress, metric }: Props) {
                                       <div className="border-border bg-surface-secondary/80 text-text-secondary flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border text-sm font-semibold">{index + 1}</div>
 
                                       <div className="min-w-0">
-                                        <p className="text-text font-semibold">{isPlank ? `${entry.seconds ?? 0} seconds` : `${entry.weight ?? 0} kg × ${entry.reps} reps`}</p>
+                                        <p className="text-text text-sm leading-5 font-semibold sm:text-base">{isPlank ? `${entry.seconds ?? 0} seconds` : `${entry.weight ?? 0} kg × ${entry.reps} reps`}</p>
 
                                         <p className="text-text-muted mt-1 text-xs">Set {index + 1}</p>
                                       </div>
