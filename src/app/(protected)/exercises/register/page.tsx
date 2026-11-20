@@ -1,9 +1,25 @@
 import RegisterForm from '@/components/forms/exercise/register-exercise-form';
 
+import Header from '@/components/ui/header';
+import PageContainer from '@/components/layout/page-container';
+
 export default function RegisterExercise() {
   return (
-    <main className="w-full min-w-0 px-0">
+    <PageContainer>
+      <Header
+        title="YOUR EXERCISES"
+        subTitle="Create exercise"
+        description="Create an exercise with muscle groups, instructions and technique tips so you can use it in your workouts."
+        actions={[
+          {
+            label: 'Back to exercises',
+            href: '/exercises',
+            variant: 'secondary',
+          },
+        ]}
+      />
+
       <RegisterForm />
-    </main>
+    </PageContainer>
   );
 }

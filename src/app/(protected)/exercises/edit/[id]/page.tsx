@@ -1,7 +1,10 @@
 import { notFound } from 'next/navigation';
 
 import EditExerciseForm from '@/components/forms/exercise/edit-exercise-form';
+
 import ErrorMessage from '@/components/ui/error-message';
+import Header from '@/components/ui/header';
+import PageContainer from '@/components/layout/page-container';
 
 import { requireAuth } from '@/lib/auth';
 import { ExerciseService } from '@/services/exercise-service';
@@ -40,17 +43,28 @@ export default async function EditExercises({ params }: PageProps) {
     console.error('Failed to load exercise for editing:', error);
 
     return (
-      <main className="mx-auto w-full max-w-5xl p-4 sm:p-6 lg:p-8">
+      <PageContainer>
         <ErrorMessage title="Unable to load exercise" message="We couldn't retrieve this exercise. Please try again later." />
-      </main>
+      </PageContainer>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-5xl p-4 sm:p-6 lg:p-8">
-      <div className="flex items-center justify-center">
-        <EditExerciseForm exericse={exercise} />
-      </div>
-    </main>
+    <PageContainer>
+      <Header
+        title="YOUR EXERCISES"
+        subTitle="Edit exercise"
+        description="Update the muscle groups, instructions, equipment and other details for this exercise."
+        actions={[
+          {
+            label: 'Back to exercises',
+            href: '/exercises',
+            variant: 'secondary',
+          },
+        ]}
+      />
+
+      <EditExerciseForm exericse={exercise} />
+    </PageContainer>
   );
 }

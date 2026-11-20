@@ -2,6 +2,7 @@ import ExerciseProgress from '@/components/progress/progress-exercise';
 
 import ErrorMessage from '@/components/ui/error-message';
 import Header from '@/components/ui/header';
+import PageContainer from '@/components/layout/page-container';
 
 import { requireAuth } from '@/lib/auth';
 import ProgressService from '@/services/progress-service';
@@ -20,14 +21,14 @@ export default async function ProgressPage() {
     console.error('Failed to load exercise progress:', error);
 
     return (
-      <main className="mx-auto w-full max-w-7xl px-0 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <PageContainer>
         <ErrorMessage title="Unable to load progress" message="We couldn't retrieve your exercise progress. Please try again later." />
-      </main>
+      </PageContainer>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-0 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <PageContainer>
       <Header title="YOUR TRAINING" subTitle="Progress" description="Track your progress. Reach your goals. Keep track of your workouts, monitor your progress, and stay focused on your fitness goals." />
 
       <section>
@@ -39,6 +40,6 @@ export default async function ProgressPage() {
 
         <ExerciseProgress exerciseProgress={exerciseProgress} metric="weight" />
       </section>
-    </main>
+    </PageContainer>
   );
 }

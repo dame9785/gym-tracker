@@ -200,8 +200,6 @@ export default function EditExercise({ exericse }: Props) {
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 pt-8 pb-12 sm:px-6 lg:pt-10">
-      {/* Page header */}
-      <FormPageHeader backHref="/exercises" backLabel="Back to exercises" eyebrow="Exercise library" title="Edit" highlightedTitle="exercise" description="Update the muscle groups, instructions and other details for this exercise." icon={Dumbbell} />
       {/* Current exercise */}
       <div className="mb-6 flex items-center gap-4 rounded-xl border border-orange-500/20 bg-orange-500/[0.06] p-4">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-400">

@@ -140,9 +140,6 @@ export default function RegisterForm() {
 
   return (
     <div className="mx-auto w-full max-w-4xl min-w-0 px-3 pt-5 pb-8 sm:px-6 sm:pt-8 sm:pb-12 lg:pt-10">
-      {/* Page header */}
-      <FormPageHeader backHref="/exercises" backLabel="Back to exercises" eyebrow="Exercise library" title="Add" highlightedTitle="exercise" description="Create an exercise with muscle groups, instructions and technique tips so you can use it in your workouts." icon={Dumbbell} />
-
       {/* Progress / info strip */}
       <div className="mb-6 flex items-center gap-3 rounded-xl border border-orange-500/20 bg-orange-500/[0.06] px-4 py-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-500/10 text-orange-400">
