@@ -139,6 +139,19 @@ const products: ProductSeed[] = [
     nutritionSource: 'Anamma / Dabas – Vegokorv, näringsvärde per 100 g.',
   },
 
+  {
+    slug: 'anamma-vegofars',
+    name: 'Vegofärs',
+    brand: 'Anamma',
+    category: 'Vegetariskt',
+    calories: 171,
+    protein: 17,
+    carbs: 1.8,
+    fat: 9.5,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Mathem / Orkla Foods Sverige – Anamma Vegofärs Fryst 1000 g. Näringsvärde per 100 g.',
+  },
+
   // ================================================
   // KOLHYDRATER
   // ================================================
