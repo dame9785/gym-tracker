@@ -209,6 +209,19 @@ const products: ProductSeed[] = [
     nutritionSource: 'Garant – Blomkålsris, 500 g. Uppskattade generiska näringsvärden för blomkål per 100 g, ej verifierade mot produktens näringsdeklaration.',
   },
 
+  {
+    slug: 'felix-saltgurka-hel',
+    name: 'Saltgurka Hel',
+    brand: 'Felix',
+    category: 'Grönsaker',
+    calories: 12,
+    protein: 0.9,
+    carbs: 1.7,
+    fat: 0,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Mathem / Felix – Saltgurka Hel 700 g, avrunnen vikt 340 g. Näringsvärde per 100 g.',
+  },
+
   // ================================================
   // MEJERI
   // ================================================
