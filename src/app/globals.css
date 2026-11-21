@@ -292,23 +292,27 @@ img {
    DATE INPUTS
 ========================================= */
 
+/* =========================================
+   DATE INPUTS – iOS SAFARI FIX
+========================================= */
+
 input[type='date'] {
   display: block;
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  min-inline-size: 0;
-  max-inline-size: 100%;
+  flex: 1 1 0;
   box-sizing: border-box;
-  text-align: left;
+
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-input[type='date']::-webkit-date-and-time-value {
-  display: block;
-  width: 100%;
+.formGroup,
+.form-left,
+.form-right {
   min-width: 0;
-  min-inline-size: 0;
-  text-align: left;
+  width: 100%;
 }
 
 /* =========================================
