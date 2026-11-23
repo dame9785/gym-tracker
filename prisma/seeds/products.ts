@@ -169,6 +169,19 @@ const products: ProductSeed[] = [
     nutritionSource: 'Mathem – AXA Havregryn 1,5 kg, näringsvärde per 100 g',
   },
 
+  {
+    slug: 'kungsornen-snabbmakaroner',
+    name: 'Snabbmakaroner',
+    brand: 'Kungsörnen',
+    category: 'Kolhydrater',
+    calories: 360,
+    protein: 11,
+    carbs: 72,
+    fat: 2,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Kungsörnen / Lantmännen Cerealia – Snabbmakaroner 1300 g. Näringsvärde per 100 g okokt pasta.',
+  },
+
   // ================================================
   // GRÖNSAKER OCH FRUKT
   // ================================================
