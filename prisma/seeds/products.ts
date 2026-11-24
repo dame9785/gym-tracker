@@ -70,7 +70,7 @@ const products: ProductSeed[] = [
   },
 
   // ================================================
-  // ÄGG, KÖTT OCH FISK
+  // ÄGG, KÖTT OCH FISK, KYCKLING
   // ================================================
 
   {
@@ -95,6 +95,19 @@ const products: ProductSeed[] = [
     fat: 21,
     dataQuality: 'STANDARD',
     nutritionSource: 'Garant – officiell produktinformation, 140 g. Näringsvärde per 100 g.',
+  },
+
+  {
+    slug: 'guldfageln-chicken-nuggets',
+    name: 'Chicken Nuggets',
+    brand: 'Guldfågeln',
+    category: 'Kyckling',
+    calories: 270,
+    protein: 12,
+    carbs: 14,
+    fat: 18,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Mathem / Guldfågeln – Chicken Nuggets Fryst 350 g. Näringsvärde per 100 g.',
   },
 
   // ================================================
