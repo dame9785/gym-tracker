@@ -181,6 +181,18 @@ const products: ProductSeed[] = [
     dataQuality: 'STANDARD',
     nutritionSource: 'Kungsörnen / Lantmännen Cerealia – Snabbmakaroner 1300 g. Näringsvärde per 100 g okokt pasta.',
   },
+  {
+    slug: 'felix-klassiska-rosti',
+    name: 'Klassiska Rösti',
+    brand: 'Felix',
+    category: 'Potatis',
+    calories: 200,
+    protein: 1.9,
+    carbs: 29,
+    fat: 8,
+    dataQuality: 'STANDARD',
+    nutritionSource: 'Felix – Klassiska Rösti 750 g. Näringsvärde per 100 g.',
+  },
 
   // ================================================
   // GRÖNSAKER OCH FRUKT
