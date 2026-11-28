@@ -34,7 +34,7 @@ export default function Button({ children, variant = 'primary', size = 'md', loa
   const content = (
     <>
       {loading && <span className={styles.spinner} aria-hidden="true" />}
-      <span>{children}</span>
+      <span className="inline-flex items-center justify-center gap-2">{children}</span>
     </>
   );
 

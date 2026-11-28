@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { CalendarDays, ChevronRight, Dumbbell, Pencil, Search, Trash2, X, ListChecks } from 'lucide-react';
+import { CalendarDays, ChevronRight, Dumbbell, Eye, Pencil, Search, Trash2, X, ListChecks } from 'lucide-react';
 import { toast } from 'sonner';
 
 import type { WorkoutViewModel } from '@/types/workout-types';
@@ -23,6 +23,7 @@ export default function WorkoutDetailCard({ workouts }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutViewModel | null>(null);
 
+  // Close modal with Escape key
   useEffect(() => {
     if (!selectedWorkout) return;
 
@@ -39,12 +40,14 @@ export default function WorkoutDetailCard({ workouts }: Props) {
     };
   }, [selectedWorkout]);
 
+  // Search workouts and exercises
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
   const filteredWorkouts = workouts.filter((workout) => {
     return workout.name.toLowerCase().includes(normalizedQuery) || (workout.description ?? '').toLowerCase().includes(normalizedQuery) || workout.workoutExercises.some((exercise) => exercise.name.toLowerCase().includes(normalizedQuery));
   });
 
+  // Delete workout confirmation
   const handleDelete = (id: number) => {
     toast('Are you sure you want to delete this workout?', {
       action: {
@@ -159,7 +162,7 @@ export default function WorkoutDetailCard({ workouts }: Props) {
 
                   {/* Exercise summary */}
                   <div className="border-border/80 bg-background/20 mt-5 rounded-xl border p-3">
-                    <div className="mb-3 flex items-center justify-between gap-2">
+                    <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <ListChecks className="text-info h-4 w-4" />
 
@@ -170,29 +173,14 @@ export default function WorkoutDetailCard({ workouts }: Props) {
                     </div>
 
                     {workout.workoutExercises.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {workout.workoutExercises.slice(0, 3).map((exercise) => (
-                          <span key={exercise.exerciseId} className="border-info/10 bg-info/[0.07] text-info max-w-full truncate rounded-lg border px-2.5 py-1.5 text-xs font-medium">
-                            {exercise.name}
-                          </span>
-                        ))}
-
-                        {workout.workoutExercises.length > 3 && (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setSelectedWorkout(workout)}
-                            ariaLabel={`Show all exercises for ${workout.name}`}
-                            className="!border-border-hover !bg-surface/70 !text-text-secondary hover:!border-info/30 hover:!text-info !h-auto !gap-1 !rounded-lg !border !px-2.5 !py-1.5 !text-xs !font-medium"
-                          >
-                            +{workout.workoutExercises.length - 3} more
-                            <ChevronRight className="h-3.5 w-3.5" />
-                          </Button>
-                        )}
+                      <div className="flex">
+                        <Button type="button" variant="secondary" size="sm" onClick={() => setSelectedWorkout(workout)} ariaLabel={`View exercise details for ${workout.name}`} className="!mt-3 !flex !h-10 !w-full !flex-row !items-center !justify-center !gap-2 !rounded-lg">
+                          <Eye className="h-4 w-4" />
+                          View details
+                        </Button>
                       </div>
                     ) : (
-                      <p className="text-text-muted text-sm">No exercises added yet.</p>
+                      <p className="text-text-muted mt-3 text-sm">No exercises added yet.</p>
                     )}
                   </div>
 
@@ -245,20 +233,26 @@ export default function WorkoutDetailCard({ workouts }: Props) {
         )}
       </section>
 
-      {/* All exercises dialog */}
+      {/* Workout details modal */}
       {selectedWorkout && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm sm:items-center sm:p-4" onClick={() => setSelectedWorkout(null)}>
-          <div role="dialog" aria-modal="true" aria-labelledby="workout-dialog-title" className="border-border bg-background flex max-h-[85dvh] w-full flex-col overflow-hidden rounded-t-3xl border shadow-2xl sm:max-h-[80vh] sm:max-w-lg sm:rounded-2xl" onClick={(event) => event.stopPropagation()}>
-            {/* Dialog header */}
-            <div className="border-border flex shrink-0 items-center justify-between gap-3 border-b px-4 py-4 sm:px-6 sm:py-5">
-              <div className="min-w-0">
-                <h2 id="workout-dialog-title" className="text-text truncate text-lg font-semibold">
-                  {selectedWorkout.name}
-                </h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6" onClick={() => setSelectedWorkout(null)}>
+          <div role="dialog" aria-modal="true" aria-labelledby="workout-dialog-title" className="border-border bg-background flex max-h-[90dvh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border shadow-2xl" onClick={(event) => event.stopPropagation()}>
+            {/* Modal header */}
+            <div className="border-border flex shrink-0 items-center justify-between gap-3 border-b p-4 sm:p-6">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="border-info/20 bg-info/10 text-info flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border">
+                  <Dumbbell className="h-6 w-6" />
+                </div>
 
-                <p className="text-text-muted mt-1 text-sm">
-                  {selectedWorkout.workoutExercises.length} {selectedWorkout.workoutExercises.length === 1 ? 'exercise' : 'exercises'}
-                </p>
+                <div className="min-w-0">
+                  <h2 id="workout-dialog-title" className="text-text truncate text-lg font-semibold sm:text-xl">
+                    {selectedWorkout.name}
+                  </h2>
+
+                  <p className="text-text-muted mt-1 text-sm">
+                    {selectedWorkout.workoutExercises.length} {selectedWorkout.workoutExercises.length === 1 ? 'exercise' : 'exercises'} in this workout
+                  </p>
+                </div>
               </div>
 
               <Button type="button" variant="ghost" size="sm" onClick={() => setSelectedWorkout(null)} ariaLabel="Close dialog" className="!h-10 !w-10 !shrink-0 !rounded-xl !p-0">
@@ -267,19 +261,82 @@ export default function WorkoutDetailCard({ workouts }: Props) {
             </div>
 
             {/* Exercise list */}
-            <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4 sm:p-6">
-              {selectedWorkout.workoutExercises.map((exercise, index) => (
-                <div key={exercise.exerciseId} className="border-border bg-surface flex min-w-0 items-center gap-3 rounded-xl border p-3">
-                  <span className="bg-info/10 text-info flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-semibold">{String(index + 1).padStart(2, '0')}</span>
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4 sm:p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-text text-sm font-semibold">Exercise overview</h3>
 
-                  <span className="text-text min-w-0 text-sm font-medium break-words sm:text-base">{exercise.name}</span>
-                </div>
+                <span className="text-text-muted text-xs">Training plan</span>
+              </div>
+
+              {selectedWorkout.workoutExercises.map((exercise, index) => (
+                <article key={`${exercise.exerciseId}-${exercise.order}`} className="border-border bg-surface rounded-xl border p-4">
+                  {/* Exercise name */}
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className="bg-info/10 text-info flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-semibold">{String(index + 1).padStart(2, '0')}</span>
+
+                    <div className="min-w-0">
+                      <h4 className="text-text text-sm font-semibold sm:text-base">{exercise.name}</h4>
+
+                      <p className="text-text-muted mt-0.5 text-xs">Exercise {index + 1}</p>
+                    </div>
+                  </div>
+
+                  {/* Exercise statistics */}
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    <div className="bg-background/70 rounded-lg p-3">
+                      <p className="text-text-muted mb-1 text-xs">Sets</p>
+
+                      <p className="text-text text-base font-semibold">{exercise.sets}</p>
+                    </div>
+
+                    {exercise.reps > 0 && (
+                      <div className="bg-background/70 rounded-lg p-3">
+                        <p className="text-text-muted mb-1 text-xs">Repetitions</p>
+
+                        <p className="text-text text-base font-semibold">{exercise.reps}</p>
+                      </div>
+                    )}
+
+                    {exercise.seconds > 0 && (
+                      <div className="bg-background/70 rounded-lg p-3">
+                        <p className="text-text-muted mb-1 text-xs">Duration</p>
+
+                        <p className="text-text text-base font-semibold">{exercise.seconds} sec</p>
+                      </div>
+                    )}
+
+                    {exercise.weight > 0 && (
+                      <div className="bg-background/70 rounded-lg p-3">
+                        <p className="text-text-muted mb-1 text-xs">Weight</p>
+
+                        <p className="text-text text-base font-semibold">{exercise.weight} kg</p>
+                      </div>
+                    )}
+
+                    {exercise.weight === 0 && (
+                      <div className="bg-background/70 rounded-lg p-3">
+                        <p className="text-text-muted mb-1 text-xs">Resistance</p>
+
+                        <p className="text-text text-sm font-semibold">Bodyweight</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Exercise notes */}
+                  {exercise.note && (
+                    <div className="border-border mt-3 border-t pt-3">
+                      <p className="text-text-muted mb-1 text-xs font-medium">Notes</p>
+
+                      <p className="text-text-secondary text-sm leading-relaxed">{exercise.note}</p>
+                    </div>
+                  )}
+                </article>
               ))}
             </div>
 
-            {/* Dialog footer */}
+            {/* Modal footer */}
             <div className="border-border shrink-0 border-t p-4 sm:px-6">
-              <Button type="button" variant="secondary" size="md" onClick={() => setSelectedWorkout(null)} className="!min-h-11 !w-full !rounded-xl !px-4 !py-2.5">
+              <Button type="button" variant="secondary" size="md" onClick={() => setSelectedWorkout(null)} className="!w-full !rounded-xl">
                 Close
               </Button>
             </div>
